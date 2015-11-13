@@ -1,4 +1,4 @@
-# 分布式服务通讯框架xxl-rpc
+# 异步通讯框架xxl-mq
 github地址：https://github.com/xuxueli/xxl-mq
 
 git.osc地址：http://git.oschina.net/xuxueli0323/xxl-mq
