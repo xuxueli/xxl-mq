@@ -11,9 +11,21 @@
 		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd 
 		http://www.springframework.org/schema/tx 
 		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+		
+	<context:annotation-config />
+	<context:component-scan base-package="com.xxl.service.impl, com.xxl.dao.impl" />
+
+	<bean id="xxlMqPropertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="fileEncoding" value="utf-8" />
+		<property name="locations">
+			<list>
+				<value>classpath*:jdbc-xxl-mq.properties</value>
+			</list>
+		</property>
+	</bean>
 
 	<!-- c3p0：Main数据源  -->
-	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"  destroy-method="close">  
+	<bean id="xxlMqDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"  destroy-method="close">  
 	    <property name="driverClass" value="${c3p0.driverClass}" />  
 	    <property name="jdbcUrl" value="${c3p0.url}" />  
 	    <property name="user" value="${c3p0.user}" />  
@@ -27,14 +39,14 @@
 	    <property name="preferredTestQuery" value="SELECT 1" />
 	</bean>
 	
-	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<property name="dataSource" ref="dataSource" />
+	<bean id="xxlMqSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="xxlMqDataSource" />
 		<property name="mapperLocations" value="classpath*:com/xxl/core/model/mapper/*.xml"/>
 	</bean>
     
     <!-- Template在Junit测试的时候，必须使用scope="prototype"，原因未知 -->
-    <bean id="sqlSessionTemplate"  class="org.mybatis.spring.SqlSessionTemplate" scope="prototype">  
-          <constructor-arg index="0" ref="sqlSessionFactory" />  
+    <bean id="xxlMqSqlSessionTemplate"  class="org.mybatis.spring.SqlSessionTemplate" scope="prototype">  
+          <constructor-arg index="0" ref="xxlMqSqlSessionFactory" />  
     </bean> 
 	
 </beans>

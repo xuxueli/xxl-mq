@@ -8,7 +8,10 @@
            http://www.springframework.org/schema/context/spring-context-3.0.xsd
            http://www.springframework.org/schema/util 
            http://www.springframework.org/schema/util/spring-util.xsd">
-           
+    
+    <!-- xxl-mq : mq listener init -->
+	<context:component-scan base-package="com.xxl.service.mq" />
+	
 	<!-- topic consumer -->
 	<bean id="topic01Consumer" class="com.xxl.mq.client.MessageConsumer" init-method="init">
 		<property name="connectionFactory" ref="xxlMqConnectionFactory" />
@@ -28,7 +31,9 @@
 				<constructor-arg value="queue_01" />
 			</bean>
 		</property>
+		<property name="messageListener" ref="topic01MessageListener" />
+		<property name="consumer_concurrent_switch" value="true" />
+		<property name="consumer_concurrent_num" value="3" />
 	</bean>
-	
 	
 </beans>

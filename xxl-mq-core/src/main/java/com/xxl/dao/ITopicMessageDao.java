@@ -8,6 +8,8 @@ public interface ITopicMessageDao {
 
 	public int insert(TopicMessage message);
 	
-	public List<TopicMessage> selectList(int pagesize);
+	public List<TopicMessage> selectList(String topicName, int lifetime, String consumerUuid, int pagesize);
+
+	public int cleanDeadTopic(int lifetime);
 	
 }

@@ -22,11 +22,22 @@
 		VALUES(#{topicName}, #{invokeRequest}, #{effectTime})
 	</insert>
 	
-	<select id="selectList" parameterType="java.lang.Integer" resultMap="TopicMessage">
+	<select id="selectList" parameterType="java.util.HashMap" resultMap="TopicMessage">
 		SELECT <include refid="Base_Column_List" />
 		FROM xxlmq_topic_message AS t
+		WHERE t.topic_name = #{topicName} 
+			AND t.effect_time <![CDATA[ > ]]> DATE_ADD(NOW(),INTERVAL -#{lifetime} SECOND)
+			AND NOT EXISTS (
+					SELECT log.topic_message_id FROM xxlmq_topic_log AS log 
+					WHERE t.id = log.topic_message_id AND log.consumer_uuid = #{consumerUuid}
+			)
 		ORDER BY t.id desc
 		LIMIT #{pagesize}
 	</select>
+	
+	<delete id="cleanDeadTopic" parameterType="java.lang.Integer">
+		DELETE FROM xxlmq_topic_message
+		WHERE effect_time <![CDATA[ < ]]> DATE_ADD(NOW(),INTERVAL -#{lifetime} SECOND)
+	</delete>
 	
 </mapper>

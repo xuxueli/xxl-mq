@@ -10,6 +10,7 @@
 	    <result column="effect_time" property="effectTime" />
 	    <result column="status" property="status" />
 	    <result column="retry_count" property="retryCount" />
+	    <result column="retry_count_log" property="retryCountLog" />
 	</resultMap>
 	
 	<sql id="Base_Column_List">
@@ -18,17 +19,21 @@
 		t.invoke_request,
 		t.effect_time,
 		t.status,
-		t.retry_count
+		t.retry_count,
+		t.retry_count_log
 	</sql>
 	
 	<insert id="insert" parameterType="com.xxl.core.model.QueueMessage" >
-		INSERT INTO xxlmq_queue_message(queue_name, invoke_request, effect_time, status, retry_count)
-		VALUES(#{queueName}, #{invokeRequest}, #{effectTime}, #{status}, #{retryCount})
+		INSERT INTO xxlmq_queue_message(queue_name, invoke_request, effect_time, status, retry_count, retry_count_log)
+		VALUES(#{queueName}, #{invokeRequest}, #{effectTime}, #{status}, #{retryCount}, 0)
 	</insert>
 	
 	<select id="selectList" parameterType="java.util.HashMap" resultMap="QueueMessage">
 		SELECT <include refid="Base_Column_List" />
 		FROM xxlmq_queue_message AS t
+		WHERE status != #{successStatus} 
+			AND retry_count <![CDATA[ > ]]> 0
+			AND effect_time <![CDATA[ < ]]> NOW()
 		ORDER BY t.id desc
 		LIMIT #{pagesize}
 	</select>
@@ -36,9 +41,12 @@
 	<update id="descRetryCount" parameterType="java.util.HashMap" >
 		<![CDATA[
 			UPDATE xxlmq_queue_message
-			SET retry_count = retry_count - 1
+			SET retry_count = retry_count - 1,
+				status = #{successStatus},
+				retry_count_log = retry_count_log + 1 
 			WHERE id = #{id}
 				and retry_count - 1 >= 0
+				and status != #{successStatus}
 		]]>
 	</update>
 	
@@ -47,5 +55,21 @@
 			SET status = #{status}
 			WHERE id = #{id}
 	</update>
+	
+	<delete id="cleanSuccessQueueMessage">
+		DELETE FROM xxlmq_queue_message
+		WHERE status = 1
+	</delete>
+	
+	<select id="selectListQueueByConsumer" parameterType="java.util.HashMap" resultMap="QueueMessage">
+		SELECT <include refid="Base_Column_List" />
+		FROM xxlmq_queue_message AS t
+		WHERE status != #{successStatus} 
+			AND retry_count <![CDATA[ > ]]> 0
+			AND effect_time <![CDATA[ < ]]> NOW()
+			AND MOD(id, #{count}) = #{rank}
+		ORDER BY t.id desc
+		LIMIT #{pagesize}
+	</select>
 	
 </mapper>

@@ -9,25 +9,14 @@
            http://www.springframework.org/schema/util 
            http://www.springframework.org/schema/util/spring-util.xsd">
 
-	<context:annotation-config />
-	<context:component-scan base-package="com.xxl.service.impl, com.xxl.dao.impl" />
-
-	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="fileEncoding" value="utf-8" />
-		<property name="locations">
-			<list>
-				<value>classpath*:jdbc.properties</value>
-			</list>
-		</property>
-	</bean>
-	
-    <bean id="freemarkerPropertiesBean" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-        <property name="location" value="classpath:freemarker.properties" />
-    </bean>
 	<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
-		<property name="freemarkerSettings" ref="freemarkerPropertiesBean" />	<!-- FreeMarker属性配置 -->
-		<property name="templateLoaderPath" value="/WEB-INF/template/" />		<!-- 模板文件所在目录 -->
-		<property name="freemarkerVariables">									<!-- FreeMarker全局变量 -->
+		<property name="templateLoaderPath" value="/WEB-INF/template/" />
+		<property name="freemarkerSettings" >
+			<bean class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		        <property name="location" value="classpath:freemarker.properties" />
+		    </bean>
+		</property>
+		<property name="freemarkerVariables">
 			<bean class="org.springframework.beans.factory.config.PropertiesFactoryBean">
 				<property name="location" value="classpath:freemarker.variables.properties" />
 			</bean>

@@ -8,13 +8,16 @@
            http://www.springframework.org/schema/context/spring-context-3.0.xsd
            http://www.springframework.org/schema/util 
            http://www.springframework.org/schema/util/spring-util.xsd">
-           
-	<!-- connectionFactory -->
-	<bean id="xxlMqConnectionFactory" class="com.xxl.mq.factory.ConnectionFactory">
-		<property name="messageService" ref="messageService" />
+	
+	<!-- xxl-mq : base init -->
+	<import resource="classpath*:applicationcontext-xxl-mq-database.xml"/>
+	<import resource="classpath*:applicationcontext-xxl-mq-tx.xml"/>
+	<!-- xxl-mq : mq init -->
+	<bean id="xxlMqConnectionFactory" class="com.xxl.mq.factory.ConnectionFactory" init-method="init">
+		<property name="topic_cleandead" value="false" />
 	</bean>
 	
-	<!-- popic producer -->
+	<!-- topic producer -->
 	<bean id="topic01Producer" class="com.xxl.mq.client.MessageProducer">
 		<property name="connectionFactory" ref="xxlMqConnectionFactory" />
 		<property name="destination">

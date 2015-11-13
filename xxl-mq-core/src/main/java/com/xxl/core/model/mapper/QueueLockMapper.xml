@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="QueueLockMapper">
+	
+	<resultMap type="com.xxl.core.model.QueueLock" id="QueueLock" >
+	    <id column="id" property="id" />
+	    <result column="queue_name" property="queueName" />
+	    <result column="consumer_uuid" property="consumerUuid" />
+	    <result column="lock_time" property="lockTime" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		t.id,
+		t.queue_name,
+		t.consumer_uuid,
+		t.lock_time
+	</sql>
+	
+	<select id="getQueueLock" parameterType="java.lang.String" resultMap="QueueLock">
+		SELECT <include refid="Base_Column_List" />
+		FROM xxlmq_queue_lock AS t
+		WHERE queue_name = #{queueName}
+		ORDER BY id desc LIMIT 1
+	</select>
+	
+	<insert id="insert" parameterType="com.xxl.core.model.QueueLock" >
+		INSERT INTO `xxlmq_queue_lock` (`queue_name`, `consumer_uuid`, `lock_time`) 
+		VALUES (#{queueName}, #{consumerUuid}, #{lockTime});
+	</insert>
+	
+	<update id="competeQueueLock" parameterType="java.util.HashMap" >
+		UPDATE xxlmq_queue_lock
+		SET lock_time = NOW(), consumer_uuid = #{consumerUuid}
+		WHERE queue_name= #{queueName}
+			AND (
+				(lock_time <![CDATA[ > ]]> DATE_ADD(NOW(),INTERVAL -#{lifetime} SECOND) AND consumer_uuid = #{consumerUuid})
+				OR lock_time <![CDATA[ < ]]> DATE_ADD(NOW(),INTERVAL -#{lifetime} SECOND)
+			)
+			AND id = (
+				SELECT id from(
+					SELECT t2.id from xxlmq_queue_lock AS t2
+					WHERE t2.queue_name = queue_name
+					ORDER BY t2.id desc LIMIT 1
+				) AS t3
+			)
+	</update>
+	
+	<delete id="cleanDeadQueueLock" parameterType="java.lang.Integer" >
+		DELETE FROM xxlmq_queue_lock
+		WHERE lock_time <![CDATA[ < ]]> DATE_ADD(NOW(),INTERVAL -#{lifetime} SECOND)
+	</delete>
+	
+</mapper>

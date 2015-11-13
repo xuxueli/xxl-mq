@@ -3,11 +3,12 @@ package com.xxl.mq.client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.xxl.core.model.QueueMessage;
+import com.xxl.core.model.TopicMessage;
 import com.xxl.mq.destination.Destination;
 import com.xxl.mq.destination.impl.Queue;
 import com.xxl.mq.destination.impl.Topic;
 import com.xxl.mq.factory.ConnectionFactory;
-import com.xxl.mq.message.impl.ObjectMessage;
 import com.xxl.mq.spring.IMessageService;
 import com.xxl.mq.util.JacksonUtil;
 
@@ -21,34 +22,46 @@ public class MessageProducer {
 	 * send message
 	 * @param message
 	 */
-	public void send(ObjectMessage message) {
-		logger.debug("############# xxl-mq send msg:[destination:{},message{}]", 
-				JacksonUtil.writeValueAsString(destination), JacksonUtil.writeValueAsString(message));
-		if (destination instanceof Topic) {
-			sendTopicMessage(message);
-		} else if (destination instanceof Queue) {
-			sendQueueMessage(message);
+	public void send(Object message) {
+		if (destination instanceof Topic && message instanceof TopicMessage) {
+			IMessageService service = this.connectionFactory.getMessageService();
+			Topic topic = (Topic) destination;
+			
+			TopicMessage topicMessage = (TopicMessage) message;
+			topicMessage.setTopicName(topic.getTopicName());
+			
+			// validate
+			if (topic.getTopicName() == null 
+					|| topic.getTopicName().trim().length() == 0
+					|| topicMessage.getEffectTime() == null) {
+				logger.info(">>>>>>>>>>> xxl-mq producer send topic msg fail, error params ,:[destination:{} ,message{}]", 
+						JacksonUtil.writeValueAsString(destination), JacksonUtil.writeValueAsString(message));
+				return;
+			}
+			
+			service.addTopidMessage(topicMessage);
+		} else if (destination instanceof Queue && message instanceof QueueMessage) {
+			IMessageService service = this.connectionFactory.getMessageService();
+			Queue queue = (Queue) destination;
+			
+			QueueMessage queueMessage = (QueueMessage) message;
+			queueMessage.setQueueName(queue.getQueueName());
+			
+			// validate
+			if (queue.getQueueName() == null 
+					|| queue.getQueueName().trim().length() == 0 
+					|| queueMessage.getEffectTime() == null) {
+				logger.info(">>>>>>>>>>> xxl-mq producer send queue msg fail, error params ,:[destination:{} ,message{}]", 
+						JacksonUtil.writeValueAsString(destination), JacksonUtil.writeValueAsString(message));
+				return;
+			}
+			
+			service.addQueueMessage(queueMessage);
+		} else {
+			throw new IllegalArgumentException("xxl-mq producer, send illegal message");
 		}
-	}
-	
-	/**
-	 * send to topic
-	 * @param message
-	 */
-	private void sendTopicMessage(ObjectMessage message){
-		Topic topic = (Topic) destination;
-		IMessageService service = this.connectionFactory.getMessageService();
-		service.addTopidMessage(topic, message);
-	}
-	
-	/**
-	 * send to queue
-	 * @param message
-	 */
-	private void sendQueueMessage(ObjectMessage message){
-		Queue queue = (Queue) destination;
-		IMessageService service = this.connectionFactory.getMessageService();
-		service.addQueueMessage(queue, message);
+		logger.info(">>>>>>>>>>> xxl-mq send msg success:[destination:{} ,message{}]", 
+				JacksonUtil.writeValueAsString(destination), JacksonUtil.writeValueAsString(message));
 	}
 
 	public ConnectionFactory getConnectionFactory() {
