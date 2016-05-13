@@ -5,14 +5,14 @@ git.osc地址：http://git.oschina.net/xuxueli0323/xxl-mq
 
 博客地址(内附使用教程)：http://www.cnblogs.com/xuxueli/p/4918535.html
 
-邮件：931591021@qq.com
+技术交流群(仅作技术交流)：367260654
+
+![image](http://images2015.cnblogs.com/blog/554415/201605/554415-20160513183306234-1939652116.png)
+
+技术的发展离不开你的支持，请作者喝杯咖啡吧！
 
 
-《异步通讯框架xxl-mq》
-==========================
-
-简介：
---------------------
+## 简介：
 	一款轻量级、设计极简的 “异步通讯框架” ；
 	支持Topic和Queue两种异步通讯模型；
 	去中心化，可插拔式，完美集成spring；
@@ -20,16 +20,14 @@ git.osc地址：http://git.oschina.net/xuxueli0323/xxl-mq
 	参考JMS1.1规范，一定程度上借鉴activemq、diagping-swollow和diagping-tiger；
 
 
-同类型产品 (排名不分先后)：
---------------------
+## 同类型产品 (排名不分先后)：
 	activemq : 一个完全支持JMS1.1和J2EE 1.4规范的 JMS Provider实现，应用广泛，自带队列状况监控。然而，ha通过zk的master-slave实现的，并没有负载分流能力；
 	memcacheq : 一款轻量级的分布式队列服务，基于memcache协议，消息数据持久化写入BerkeleyDB，只有get/set两个方法，支持ha，性能比通用的MQ高很多倍；
 	kafka : 效率极高的mq服务，天生支持ha；但是有得必有失，kafka不保证消息事务，没有消息确认机制，适合于比较不严谨的数据；
 	diagping-swollow : 队列服务；支持master-slave；cs结构，client端通过pegion发送消息；通过netty接收server端推送消息，队列逻辑在server端；使用mongo持久化消息，一个topic对应一个数据库实例；
 	diagping-tiger : 队列服务；mysql持久化消息；producer和consumer均通过jdbc主动pull队列消息；通过zk协调各节点消息分配；自带执行结果监控；可以精确查看每条消息的详细信息和执行状况；支持delay；
 
-xxl-mq实现原理：
---------------------
+## xxl-mq实现原理：
 	Topic实现原理：【每条Topic消息，每个监听对应topicName的comsumer线程都会执行且只一次；】
 		producer：通过jdbc向mysql中push消息；
 		consumer：根据心跳时间，周期性通过jdbc从pull新消息，执行成功后记录执行日志；一条topic消息一个comsumer线程只会执行一次；超过topic生存周期(3*beat)的topic被抛弃；
