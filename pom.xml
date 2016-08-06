@@ -6,7 +6,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
-		<module>xxl-mq-client</module>
+		<module>xxl-mq-core</module>
 		<module>xxl-mq-incubator</module>
 		<module>xxl-mq-demo</module>
 	</modules>
