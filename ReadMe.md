@@ -10,7 +10,14 @@ git.osc地址：http://git.oschina.net/xuxueli0323/xxl-mq
 ---
 xxl-mq-admin: 端口6080, zk + netty集群: 接受生产消息入库, 消费消息推送至client端口;
 xxl-mq-client: 向admin推送消息, 接受admin消费消息;
-xxl-mq-example;
+xxl-mq-example: 
+
+每个队列指定唯一名称: mqName
+
+- topic: topic表 + client, 发送给在线的所有client端;
+- queue-串行: queue串行表 + client, 住选择在线的其中一个client执行;
+- queue-并行: queue并行表 + client, 消息对admin分组, 值消费各自分组内的消息;
+ 
 
 适用于2W/天以及以下的队列场景, 需要定期做表数据清理;
 
