@@ -7,6 +7,12 @@ git.osc地址：http://git.oschina.net/xuxueli0323/xxl-mq
 
 技术交流群(仅作技术交流)：367260654
 
+---
+xxl-mq-admin: 端口6080, zk + netty集群: 接受生产消息入库, 消费消息推送至client端口;
+xxl-mq-client: 向admin推送消息, 接受admin消费消息;
+xxl-mq-example;
+
+适用于2W/天以及以下的队列场景, 需要定期做表数据清理;
 
 ## 简介：
 	一款轻量级、设计极简的 “异步通讯框架” ；
