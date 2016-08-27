@@ -7,19 +7,66 @@ git.osc地址：http://git.oschina.net/xuxueli0323/xxl-mq
 
 技术交流群(仅作技术交流)：367260654
 
----
-xxl-mq-admin: 端口6080, zk + netty集群: 接受生产消息入库, 消费消息推送至client端口;
-xxl-mq-client: 向admin推送消息, 接受admin消费消息;
-xxl-mq-example: 
+## V1.1规划
 
-每个队列指定唯一名称: mqName
+##### 角色
+- mq: 消息
+    - destination:
+        - TOPIC=广播, 消息推送给该主题下所有 consumer
+        - QUEUE=串行队列, 消息队列方式执行, 支持Delay, 消息将会按照被生产的顺序被串行的消费, 即如存在多个 consumer 时, 只会有一个被激活进行消息消费;
+        - CONCURRENT_QUEUE=并发队列, 消息队列方式执行, 支持Delay, 消息将会被多个broker并行消费, 不保证消费顺序, 消息会根据broker进行分组;
+    - name: 消息主题
+    - data: 消息数据, Map<String, String>对象系列化的JSON字符串
+    - delay_time: 延迟执行的时间, new Date()立即执行, 否则在延迟时间点之后开始执行;
+    - add_time: 创建时间
+    - update_time: 更新时间
+    - status: 消息状态, 可选范围: NEW=新消息、ING=消费中、SUCCESS=消费成功、FAIL=消费失败、TIMEOUT=超时
+    - msg: 历史流转日志
+- producer: 生产者
+- consumer: 消费者
 
-- topic: topic表 + client, 发送给在线的所有client端;
-- queue-串行: queue串行表 + client, 住选择在线的其中一个client执行;
-- queue-并行: queue并行表 + client, 消息对admin分组, 值消费各自分组内的消息;
- 
+- broker: 代理, 负责: 1、接收 producer 生产的消息, 2、向 consumer 推送订阅的消息, 3、接受 consumer 对消息的消费结果回调;
+    - message 需要登记: 1、主题下一旦有消息数据,不可删除; 只可修改备注 ,1、broker 只服务登记的消息;2、登记便于报表统计;3、便于邮件报警;4、
+- client: 提供 producer 和 consumer 支持;
 
-适用于2W/天以及以下的队列场景, 需要定期做表数据清理;
+##### 实现
+
+ZK节点:
+```
+-xxl-mq
+    - broker()
+        - address1(6080)
+        - address2
+    - mq
+        - name1
+            - address1(6070)
+            - address2
+        - name2
+            - address1
+            - address2
+```
+
+- client(producer): rpc客户端, 向远程rpc发送请求服务
+- client(consumer) rpc服务, 端口 6070, 自动注册
+- broker: rpc服务, 端口 6080, 自动注册
+    
+实现原理:
+- TOPIC处理器线程池: 一个 mq 一个线程, 节点最小的 broker,加载全部 TOPIC 消息, 匹配 mq 找到 consumer 地址列表, 广播发送消息(rpc请求, client接收到立即响应,执行结果异步通知);
+- QUEUE处理器线程池: 一个 mq 一个线程, 节点最小的 broker,加载全部 TOPIC 消息, 匹配 mq 找到 consumer 地址列表, 选中最小的节点发送消息(rpc请求, client接收到立即响应,执行结果异步通知);
+- CONCURRENT_QUEUE处理器: 
+
+- 超时处理器: 每间隔30MIN扫描一次全表, 把超过1H状态仍然为ING的消息状态改为TIMEOUT,并在消息msg字段记录日志
+- 报警器: 每间隔30MIN扫描一次全表, 以消息主题为维度进行统计, 邮件通知消息执行失败情况; 
+
+##### 消息状态
+
+##### 项目划分
+- xxl-mq-broker: 端口6080, zk + netty集群: 接受生产消息入库, 消费消息推送至client端口;
+- xxl-mq-client: 向admin推送消息, 接受admin消费消息;
+- xxl-mq-example: 
+
+瓶颈在于消息持久化,即mysql, 适用于2W/天以及以下的队列场景, 需要定期做表数据清理;
+
 
 ## 简介：
 	一款轻量级、设计极简的 “异步通讯框架” ；
