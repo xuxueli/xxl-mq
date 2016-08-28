@@ -1,8 +1,8 @@
 package com.xxl.dao;
 
-import java.util.List;
-
 import com.xxl.core.model.QueueMessage;
+
+import java.util.List;
 
 public interface IQueueMessageDao {
 

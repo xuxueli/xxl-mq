@@ -1,21 +1,13 @@
 package com.xxl.mq.jms;
 
-import java.util.concurrent.LinkedBlockingQueue;
+import com.xxl.mq.jms.impl.*;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MessageListener;
 import javax.jms.Session;
 import javax.naming.NamingException;
-
-import com.xxl.mq.jms.impl.ConnectionFactoryImpl;
-import com.xxl.mq.jms.impl.ConnectionImpl;
-import com.xxl.mq.jms.impl.MessageConsumerImpl;
-import com.xxl.mq.jms.impl.MessageListenerImpl;
-import com.xxl.mq.jms.impl.MessageProducerImpl;
-import com.xxl.mq.jms.impl.ObjectMessageImpl;
-import com.xxl.mq.jms.impl.SessionImpl;
-import com.xxl.mq.jms.impl.TopicImpl;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Main {
 	

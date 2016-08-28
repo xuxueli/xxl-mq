@@ -1,15 +1,5 @@
 package com.xxl.mq.client;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.xxl.core.model.QueueLock;
 import com.xxl.core.model.QueueMessage;
 import com.xxl.core.model.QueueMessage.StatusEnum;
@@ -21,6 +11,15 @@ import com.xxl.mq.factory.ConnectionFactory;
 import com.xxl.mq.spring.IMessageService;
 import com.xxl.mq.spring.MessageListener;
 import com.xxl.mq.util.JacksonUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * core comsumer

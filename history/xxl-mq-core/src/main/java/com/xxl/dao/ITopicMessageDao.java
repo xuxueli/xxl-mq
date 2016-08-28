@@ -1,8 +1,8 @@
 package com.xxl.dao;
 
-import java.util.List;
-
 import com.xxl.core.model.TopicMessage;
+
+import java.util.List;
 
 public interface ITopicMessageDao {
 

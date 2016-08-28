@@ -4,13 +4,11 @@ import com.xxl.mq.client.rpc.netcom.common.codec.RpcRequest;
 import com.xxl.mq.client.rpc.netcom.common.codec.RpcResponse;
 import com.xxl.mq.client.rpc.netcom.netty.server.NettyServer;
 import com.xxl.mq.client.rpc.registry.ZkServiceRegistry;
-import com.xxl.mq.client.service.BrokerService;
 import net.sf.cglib.reflect.FastClass;
 import net.sf.cglib.reflect.FastMethod;
 import org.apache.zookeeper.KeeperException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,29 +22,21 @@ import java.util.concurrent.TimeUnit;
  *
  * <bean class="com.xxl.rpc.netcom.NetComFactory" />
  */
-public class NetComServerFactory implements InitializingBean {
+public class NetComServerFactory {
 	private static final Logger logger = LoggerFactory.getLogger(NetComServerFactory.class);
 
-	// ---------------------- server config ----------------------
+	// ---------------------- server start ----------------------
 	private static int port = 6080;
-	private BrokerService brokerService;
-	public void setPort(int port) {
+	private static Map<String, Object> serviceMap = new HashMap<String, Object>();
+	public NetComServerFactory(int port, Map<String, Object> serviceMap) throws Exception {
 		this.port = port;
-	}
-	public void setBrokerService(BrokerService brokerService) {
-		this.brokerService = brokerService;
-	}
+		this.serviceMap = serviceMap;
 
-	// ---------------------- server init ----------------------
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		serviceMap.put(BrokerService.class.getName(), brokerService);
-
-		// init rpc provider
+		// setver start
 		new NettyServer().start(6080);
-
 	}
 
+	// sync refresh registry address
 	private static Executor executor = Executors.newCachedThreadPool();
 	static {
 		executor.execute(new Runnable() {
@@ -71,7 +61,7 @@ public class NetComServerFactory implements InitializingBean {
 	/**
 	 * init local rpc service map
 	 */
-	private static Map<String, Object> serviceMap = new HashMap<String, Object>();
+
 	public static RpcResponse invokeService(RpcRequest request, Object serviceBean) {
 		if (serviceBean==null) {
 			serviceBean = serviceMap.get(request.getClassName());

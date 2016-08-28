@@ -1,18 +1,17 @@
 package com.xxl.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.xxl.core.model.QueueMessage;
+import com.xxl.core.model.TopicMessage;
+import com.xxl.mq.client.MessageProducer;
+import com.xxl.mq.util.JacksonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.xxl.core.model.QueueMessage;
-import com.xxl.core.model.TopicMessage;
-import com.xxl.mq.client.MessageProducer;
-import com.xxl.mq.util.JacksonUtil;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class DemoController {

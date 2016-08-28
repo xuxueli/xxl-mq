@@ -1,16 +1,15 @@
 package com.xxl.mq.jms.impl;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import com.xxl.mq.jms.Main;
+import com.xxl.mq.util.JacksonUtil;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
-
-import com.xxl.mq.jms.Main;
-import com.xxl.mq.util.JacksonUtil;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class MessageConsumerImpl implements MessageConsumer {
 	

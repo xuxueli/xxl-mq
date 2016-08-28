@@ -5,7 +5,7 @@
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 	<!-- broker server -->
-	<bean class="com.xxl.mq.client.rpc.netcom.NetComServerFactory">
+	<bean class="com.xxl.mq.client.XxlMqBroker">
 		<property name="port" value="6080" />
 		<property name="brokerService" ref="brokerService" />
 	</bean>

@@ -1,11 +1,10 @@
 package com.xxl.dao.impl;
 
+import com.xxl.core.model.TopicLog;
+import com.xxl.dao.ITopicLogDao;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import com.xxl.core.model.TopicLog;
-import com.xxl.dao.ITopicLogDao;
 
 @Repository
 public class TopicLogDaoImpl implements ITopicLogDao {

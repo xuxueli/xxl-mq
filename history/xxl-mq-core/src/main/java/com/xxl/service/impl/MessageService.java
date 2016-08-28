@@ -1,24 +1,19 @@
 package com.xxl.service.impl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
+import com.xxl.core.model.QueueLock;
+import com.xxl.core.model.QueueMessage;
+import com.xxl.core.model.TopicLog;
+import com.xxl.core.model.TopicMessage;
+import com.xxl.dao.*;
+import com.xxl.mq.spring.IMessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.xxl.core.model.QueueLock;
-import com.xxl.core.model.QueueMessage;
-import com.xxl.core.model.TopicLog;
-import com.xxl.core.model.TopicMessage;
-import com.xxl.dao.IQueueConsumerDao;
-import com.xxl.dao.IQueueLockDao;
-import com.xxl.dao.IQueueMessageDao;
-import com.xxl.dao.ITopicLogDao;
-import com.xxl.dao.ITopicMessageDao;
-import com.xxl.mq.spring.IMessageService;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Service("messageService")
 public class MessageService implements IMessageService {

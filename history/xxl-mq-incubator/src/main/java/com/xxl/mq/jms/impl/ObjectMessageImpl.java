@@ -1,14 +1,13 @@
 package com.xxl.mq.jms.impl;
 
-import java.io.Serializable;
-import java.util.Enumeration;
-import java.util.concurrent.ConcurrentHashMap;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.io.Serializable;
+import java.util.Enumeration;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ObjectMessageImpl implements ObjectMessage, Serializable {
 

@@ -9,7 +9,6 @@ import com.xxl.mq.client.service.BrokerService;
  */
 public class XxlMqProducer {
 
-
     private static BrokerService tcpService;
     public static BrokerService getInstance() throws Exception {
         if (tcpService == null) {

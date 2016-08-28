@@ -1,12 +1,12 @@
 package com.xxl.mq.jms.impl;
 
+import com.xxl.mq.jms.Main;
+import com.xxl.mq.util.JacksonUtil;
+
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageProducer;
-
-import com.xxl.mq.jms.Main;
-import com.xxl.mq.util.JacksonUtil;
 
 public class MessageProducerImpl implements MessageProducer {
 

@@ -1,11 +1,11 @@
 package com.xxl.mq.spring;
 
-import java.util.List;
-import java.util.Map;
-
 import com.xxl.core.model.QueueLock;
 import com.xxl.core.model.QueueMessage;
 import com.xxl.core.model.TopicMessage;
+
+import java.util.List;
+import java.util.Map;
 
 public interface IMessageService {
 

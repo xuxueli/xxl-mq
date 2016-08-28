@@ -34,17 +34,19 @@ git.osc地址：http://git.oschina.net/xuxueli0323/xxl-mq
 ZK节点:
 ```
 -xxl-mq
-    - broker()
+    - com.xxl.mq.client.service.BrokerService
         - address1(6080)
         - address2
-    - mq
-        - name1
-            - address1(6070)
-            - address2
-        - name2
-            - address1
-            - address2
+    - mq:test01
+        - address1(6070)
+        - address2
+    - mq:test01
+        - address1
+        - address2
 ```
+
+provider >> rpc >> broker 服务
+broker >> rpc >> comsumer
 
 - client(producer): rpc客户端
 - client(consumer) 附带一个rpc服务, 端口 6070, 汇总@MqHandler

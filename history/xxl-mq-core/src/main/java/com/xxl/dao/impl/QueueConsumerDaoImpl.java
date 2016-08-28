@@ -1,13 +1,12 @@
 package com.xxl.dao.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.xxl.dao.IQueueConsumerDao;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.xxl.dao.IQueueConsumerDao;
+import java.util.HashMap;
+import java.util.Map;
 
 @Repository
 public class QueueConsumerDaoImpl implements IQueueConsumerDao {
