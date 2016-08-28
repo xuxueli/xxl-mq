@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd
+           http://www.springframework.org/schema/util 
+           http://www.springframework.org/schema/util/spring-util.xsd">
+    
+    <!-- xxl-mq : mq listener init -->
+	<context:component-scan base-package="com.xxl.service.mq" />
+	
+	<!-- topic consumer -->
+	<bean id="topic01Consumer" class="com.xxl.mq.client.MessageConsumer" init-method="init">
+		<property name="connectionFactory" ref="xxlMqConnectionFactory" />
+		<property name="destination">
+			<bean class="com.xxl.mq.destination.impl.Topic">
+				<constructor-arg value="topic_01" />
+			</bean>
+		</property>
+		<property name="messageListener" ref="topic01MessageListener" />
+	</bean>
+	
+	<!-- queue consumer -->
+	<bean id="queue01Consumer" class="com.xxl.mq.client.MessageConsumer" init-method="init">
+		<property name="connectionFactory" ref="xxlMqConnectionFactory" />
+		<property name="destination">
+			<bean class="com.xxl.mq.destination.impl.Queue">
+				<constructor-arg value="queue_01" />
+			</bean>
+		</property>
+		<property name="messageListener" ref="topic01MessageListener" />
+		<property name="consumer_concurrent_switch" value="true" />
+		<property name="consumer_concurrent_num" value="3" />
+	</bean>
+	
+</beans>

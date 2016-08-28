@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>xxl-mq</artifactId>
+        <groupId>com.xxl</groupId>
+        <version>${xxl.mq.version}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>xxl-mq-example</artifactId>
+    <version>${xxl.mq.version}</version>
+    <packaging>war</packaging>
+
+
+    <dependencies>
+
+        <!-- springframe start -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- jackson (support spring restful) -->
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>1.9.13</version>
+        </dependency>
+
+        <!-- slf4j -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.7</version>
+        </dependency>
+
+        <!-- servlet -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>2.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- xxl-mq-client -->
+        <dependency>
+            <groupId>com.xxl</groupId>
+            <artifactId>xxl-mq-client</artifactId>
+            <version>${xxl.mq.version}</version>
+        </dependency>
+
+    </dependencies>
+
+
+</project>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TopicMessageMapper">
+	
+	<resultMap type="com.xxl.core.model.TopicMessage" id="TopicMessage" >
+	    <id column="id" property="id" />
+	    <result column="topic_name" property="topicName" />
+	    <result column="invoke_request" property="invokeRequest" />
+	    <result column="effect_time" property="effectTime" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		t.id,
+		t.topic_name,
+		t.invoke_request,
+		t.effect_time
+	</sql>
+	
+	<insert id="insert" parameterType="com.xxl.core.model.TopicMessage" >
+		INSERT INTO xxlmq_topic_message(topic_name, invoke_request, effect_time)
+		VALUES(#{topicName}, #{invokeRequest}, #{effectTime})
+	</insert>
+	
+	<select id="selectList" parameterType="java.util.HashMap" resultMap="TopicMessage">
+		SELECT <include refid="Base_Column_List" />
+		FROM xxlmq_topic_message AS t
+		WHERE t.topic_name = #{topicName} 
+			AND t.effect_time <![CDATA[ > ]]> DATE_ADD(NOW(),INTERVAL -#{lifetime} SECOND)
+			AND NOT EXISTS (
+					SELECT log.topic_message_id FROM xxlmq_topic_log AS log 
+					WHERE t.id = log.topic_message_id AND log.consumer_uuid = #{consumerUuid}
+			)
+		ORDER BY t.id desc
+		LIMIT #{pagesize}
+	</select>
+	
+	<delete id="cleanDeadTopic" parameterType="java.lang.Integer">
+		DELETE FROM xxlmq_topic_message
+		WHERE effect_time <![CDATA[ < ]]> DATE_ADD(NOW(),INTERVAL -#{lifetime} SECOND)
+	</delete>
+	
+</mapper>
