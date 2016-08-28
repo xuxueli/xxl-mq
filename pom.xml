@@ -3,16 +3,19 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.xxl</groupId>
 	<artifactId>xxl-mq</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${xxl.mq.version}</version>
 	<packaging>pom</packaging>
 	<modules>
 		<module>xxl-mq-core</module>
 		<module>xxl-mq-incubator</module>
 		<module>xxl-mq-demo</module>
-	</modules>
+        <module>xxl-mq-broker</module>
+    </modules>
 
-	<dependencies>
-	</dependencies>
+	<properties>
+		<xxl.mq.version>1.1.0</xxl.mq.version>
+		<spring.version>3.2.13.RELEASE</spring.version>
+	</properties>
 
 	<build>
 		<plugins>
