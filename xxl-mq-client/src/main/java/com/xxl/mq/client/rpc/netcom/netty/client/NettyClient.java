@@ -21,7 +21,7 @@ public class NettyClient {
 
 	public RpcResponse send(RpcRequest request) throws Exception {
 		// client pool	[tips03 : may save 35ms/100invoke if move it to constructor, but it is necessary. cause by ConcurrentHashMap.get]
-        GenericObjectPool<NettyClientPoolProxy> clientPool = NettyClientPool.getPool(request.getClassName());
+        GenericObjectPool<NettyClientPoolProxy> clientPool = NettyClientPool.getPool(request.getRegistryKey());
         
         // client proxt
         NettyClientPoolProxy clientPoolProxy = null;

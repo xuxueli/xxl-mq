@@ -4,7 +4,6 @@ import com.xxl.core.model.QueueLock;
 import com.xxl.core.model.QueueMessage;
 import com.xxl.core.model.TopicLog;
 import com.xxl.core.model.TopicMessage;
-import com.xxl.dao.*;
 import com.xxl.mq.spring.IMessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

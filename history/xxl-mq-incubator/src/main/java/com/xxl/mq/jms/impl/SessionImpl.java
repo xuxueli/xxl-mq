@@ -1,6 +1,5 @@
 package com.xxl.mq.jms.impl;
 
-import javax.jms.*;
 import java.io.Serializable;
 
 public class SessionImpl implements Session {

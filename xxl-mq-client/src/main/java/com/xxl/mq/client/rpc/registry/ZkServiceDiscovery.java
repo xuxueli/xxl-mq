@@ -87,7 +87,7 @@ public class ZkServiceDiscovery {
 				while (true) {
 					freshServiceAddress();
 					try {
-						TimeUnit.SECONDS.sleep(10L);
+						TimeUnit.SECONDS.sleep(30L);
 					} catch (InterruptedException e) {
 						logger.error("", e);
 					}

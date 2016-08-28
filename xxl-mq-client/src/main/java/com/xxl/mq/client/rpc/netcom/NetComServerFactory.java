@@ -10,7 +10,6 @@ import org.apache.zookeeper.KeeperException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -26,14 +25,14 @@ public class NetComServerFactory {
 	private static final Logger logger = LoggerFactory.getLogger(NetComServerFactory.class);
 
 	// ---------------------- server start ----------------------
-	private static int port = 6080;
-	private static Map<String, Object> serviceMap = new HashMap<String, Object>();
+	private static int port;
+	private static Map<String, Object> regitsryMap;
 	public NetComServerFactory(int port, Map<String, Object> serviceMap) throws Exception {
 		this.port = port;
-		this.serviceMap = serviceMap;
+		this.regitsryMap = serviceMap;
 
 		// setver start
-		new NettyServer().start(6080);
+		new NettyServer().start(port);
 	}
 
 	// sync refresh registry address
@@ -45,8 +44,8 @@ public class NetComServerFactory {
 				while (true) {
 					// registry
 					try {
-						ZkServiceRegistry.registerServices(port, serviceMap.keySet());
-						TimeUnit.SECONDS.sleep(10);
+						ZkServiceRegistry.registerServices(port, regitsryMap.keySet());
+						TimeUnit.SECONDS.sleep(30);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					} catch (KeeperException e) {
@@ -64,7 +63,7 @@ public class NetComServerFactory {
 
 	public static RpcResponse invokeService(RpcRequest request, Object serviceBean) {
 		if (serviceBean==null) {
-			serviceBean = serviceMap.get(request.getClassName());
+			serviceBean = regitsryMap.get(request.getRegistryKey());
 		}
 		if (serviceBean == null) {
 			// TODO

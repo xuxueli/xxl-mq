@@ -1,7 +1,5 @@
 package com.xxl.mq.jms.impl;
 
-import javax.jms.*;
-
 public class ConnectionImpl implements Connection {
 
 	@Override

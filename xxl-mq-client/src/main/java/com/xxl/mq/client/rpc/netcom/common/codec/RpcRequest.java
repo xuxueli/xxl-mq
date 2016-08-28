@@ -9,14 +9,21 @@ import java.util.Arrays;
  */
 public class RpcRequest implements Serializable{
 	private static final long serialVersionUID = 1L;
-	
+
+	private String registryKey;
 	private String requestId;
 	private long createMillisTime;
     private String className;
     private String methodName;
     private Class<?>[] parameterTypes;
     private Object[] parameters;
-    
+
+	public String getRegistryKey() {
+		return registryKey;
+	}
+	public void setRegistryKey(String registryKey) {
+		this.registryKey = registryKey;
+	}
 	public String getRequestId() {
 		return requestId;
 	}
@@ -53,14 +60,18 @@ public class RpcRequest implements Serializable{
 	public void setParameters(Object[] parameters) {
 		this.parameters = parameters;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "NettyRequest [requestId=" + requestId + ", createMillisTime="
-				+ createMillisTime + ", className=" + className
-				+ ", methodName=" + methodName + ", parameterTypes="
-				+ Arrays.toString(parameterTypes) + ", parameters="
-				+ Arrays.toString(parameters) + "]";
+		return "RpcRequest{" +
+				"registryKey='" + registryKey + '\'' +
+				", requestId='" + requestId + '\'' +
+				", createMillisTime=" + createMillisTime +
+				", className='" + className + '\'' +
+				", methodName='" + methodName + '\'' +
+				", parameterTypes=" + Arrays.toString(parameterTypes) +
+				", parameters=" + Arrays.toString(parameters) +
+				'}';
 	}
-	
+
 }

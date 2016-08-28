@@ -3,6 +3,7 @@ package com.xxl.mq.broker.service.impl;
 import com.xxl.mq.broker.core.model.XxlMqMessage;
 import com.xxl.mq.broker.dao.impl.XxlMqMessageDaoImpl;
 import com.xxl.mq.client.message.Message;
+import com.xxl.mq.client.rpc.util.JacksonUtil;
 import com.xxl.mq.client.service.BrokerService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
@@ -28,12 +29,12 @@ public class BrokerServiceImpl implements BrokerService {
         XxlMqMessage msg = new XxlMqMessage();
         msg.setName(message.getName());
         msg.setDestination(message.getName());
-        msg.setData(message.getName());
+        msg.setData(JacksonUtil.writeValueAsString(message.getDataMap()));
         msg.setDelayTime(new Date());
         msg.setAddTime(new Date());
         msg.setUpdateTime(new Date());
-        msg.setStatus(message.getName());
-        msg.setMsg(message.getName());
+        msg.setStatus("NEW");
+        msg.setMsg(null);
 
         int id = xxlMqMessageDao.save(msg);
     }

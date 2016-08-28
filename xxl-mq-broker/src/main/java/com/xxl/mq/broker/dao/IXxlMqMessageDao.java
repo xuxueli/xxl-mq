@@ -16,4 +16,5 @@ public interface IXxlMqMessageDao {
 
     public int save(XxlMqMessage xxlMqMessage);
 
+    public int update(XxlMqMessage messge);
 }

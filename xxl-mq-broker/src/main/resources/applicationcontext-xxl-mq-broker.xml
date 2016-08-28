@@ -8,6 +8,7 @@
 	<bean class="com.xxl.mq.client.XxlMqBroker">
 		<property name="port" value="6080" />
 		<property name="brokerService" ref="brokerService" />
+		<property name="messageManage" ref="messageManage" />
 	</bean>
 
 </beans>

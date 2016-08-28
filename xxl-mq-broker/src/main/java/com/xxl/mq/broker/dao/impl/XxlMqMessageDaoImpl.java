@@ -54,4 +54,9 @@ public class XxlMqMessageDaoImpl implements IXxlMqMessageDao {
         return sqlSessionTemplate.insert("XxlMqMessageMapper.save", xxlMqMessage);
     }
 
+    @Override
+    public int update(XxlMqMessage messge) {
+        return sqlSessionTemplate.update("XxlMqMessageMapper.update", messge);
+    }
+
 }

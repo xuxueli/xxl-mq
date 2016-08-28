@@ -24,11 +24,13 @@ public class NetComClientProxy implements FactoryBean<Object>, InitializingBean 
 	// ---------------------- config ----------------------
 	private Class<?> iface;
 	private long timeoutMillis = 5000;
+	private String registryKey;
 
-	public NetComClientProxy(Class<?> iface, long timeoutMillis) {
+	public NetComClientProxy(Class<?> iface, long timeoutMillis, String registryKey) {
 
 		this.iface = iface;
 		this.timeoutMillis = timeoutMillis;
+		this.registryKey = registryKey;
 		try {
 			this.afterPropertiesSet();
 		} catch (Exception e) {
@@ -53,12 +55,17 @@ public class NetComClientProxy implements FactoryBean<Object>, InitializingBean 
 						
 						// request
 						RpcRequest request = new RpcRequest();
+						request.setRegistryKey(registryKey);
 	                    request.setRequestId(UUID.randomUUID().toString());
 	                    request.setCreateMillisTime(System.currentTimeMillis());
 	                    request.setClassName(method.getDeclaringClass().getName());
 	                    request.setMethodName(method.getName());
 	                    request.setParameterTypes(method.getParameterTypes());
 	                    request.setParameters(args);
+
+						if (request.getRegistryKey()==null) {
+							request.setRegistryKey(request.getClassName());
+						}
 	                    
 	                    // send
 	                    RpcResponse response = client.send(request);
