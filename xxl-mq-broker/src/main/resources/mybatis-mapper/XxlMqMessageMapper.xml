@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="XxlMqMessageMapper">
+	
+	<resultMap id="XxlMqMessage" type="com.xxl.mq.broker.core.model.XxlMqMessage" >
+		<result column="id" property="id" />
+		<result column="name" property="name" />
+	    <result column="destination" property="destination" />
+	    <result column="data" property="data" />
+	    <result column="delay_time" property="delayTime" />
+	    <result column="add_time" property="addTime" />
+	    <result column="update_time" property="updateTime" />
+	    <result column="status" property="status" />
+		<result column="msg" property="msg" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		t.id,
+		t.name ,
+		t.destination ,
+		t.data ,
+		t.delay_time ,
+		t.add_time ,
+		t.update_time ,
+		t.status ,
+		t.msg
+	</sql>
+	
+	<select id="pageList" parameterType="java.util.HashMap" resultMap="XxlMqMessage">
+		SELECT <include refid="Base_Column_List" />
+		FROM XXL_MQ_MESSAGE AS t
+		<trim prefix="WHERE" prefixOverrides="AND | OR" >
+			<if test="name != null and name != ''">
+				AND t.name = #{name}
+			</if>
+			<if test="status != null and status != ''">
+				AND t.status = #{status}
+			</if>
+		</trim>
+		ORDER BY t.update_time DESC
+		LIMIT #{offset}, #{pagesize}
+	</select>
+	
+	<select id="pageListCount" parameterType="java.util.HashMap" resultType="int">
+		SELECT count(1)
+		FROM XXL_MQ_MESSAGE AS t
+		<trim prefix="WHERE" prefixOverrides="AND | OR" >
+			<if test="name != null and name != ''">
+				AND t.name = #{name}
+			</if>
+			<if test="status != null and status != ''">
+				AND t.status = #{status}
+			</if>
+		</trim>
+		ORDER BY t.update_time DESC
+	</select>
+	
+	<insert id="save" parameterType="com.xxl.mq.broker.core.model.XxlMqMessage" useGeneratedKeys="true" keyProperty="id" >
+		INSERT INTO XXL_MQ_MESSAGE (
+			`name` ,
+			`destination` ,
+			`data` ,
+			`delay_time` ,
+			`add_time` ,
+			`update_time` ,
+			`status` ,
+			`msg`
+		) VALUES (
+			#{name},
+			#{destination},
+			#{data},
+			#{delayTime},
+			NOW(),
+			NOW(),
+			#{status},
+			#{msg}
+		);
+		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+			SELECT LAST_INSERT_ID() 
+		</selectKey> 
+	</insert>
+	
+	<select id="load" parameterType="java.util.HashMap" resultMap="XxlMqMessage">
+		SELECT <include refid="Base_Column_List" />
+		FROM XXL_MQ_MESSAGE AS t
+		WHERE t.id = #{id}
+	</select>
+	
+	<update id="update" parameterType="com.xxl.mq.broker.core.model.XxlMqMessage" >
+		UPDATE XXL_MQ_MESSAGE
+		SET	update_time = NOW(),
+			status = #{status},
+			msg = #{msg}
+		WHERE id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		DELETE FROM XXL_MQ_MESSAGE
+		WHERE id = #{id}
+	</delete>
+
+</mapper>

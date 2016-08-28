@@ -5,12 +5,12 @@
 	<artifactId>xxl-mq</artifactId>
 	<version>${xxl.mq.version}</version>
 	<packaging>pom</packaging>
+
 	<modules>
-		<module>xxl-mq-core</module>
-		<module>xxl-mq-incubator</module>
-		<module>xxl-mq-demo</module>
         <module>xxl-mq-broker</module>
-    </modules>
+		<module>xxl-mq-client</module>
+		<module>xxl-mq-example</module>
+	</modules>
 
 	<properties>
 		<xxl.mq.version>1.1.0</xxl.mq.version>
@@ -27,6 +27,14 @@
 					<source>1.6</source>
 					<target>1.6</target>
 					<encoding>UTF8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<archiveClasses>true</archiveClasses>
 				</configuration>
 			</plugin>
 		</plugins>

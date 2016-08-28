@@ -11,16 +11,16 @@ git.osc地址：http://git.oschina.net/xuxueli0323/xxl-mq
 
 ##### 角色
 - mq: 消息
+    - name: 消息主题
     - destination:
         - TOPIC=广播, 消息推送给该主题下所有 consumer
         - QUEUE=串行队列, 消息队列方式执行, 支持Delay, 消息将会按照被生产的顺序被串行的消费, 即如存在多个 consumer 时, 只会有一个被激活进行消息消费;
         - CONCURRENT_QUEUE=并发队列, 消息队列方式执行, 支持Delay, 消息将会被多个broker并行消费, 不保证消费顺序, 消息会根据broker进行分组;
-    - name: 消息主题
     - data: 消息数据, Map<String, String>对象系列化的JSON字符串
     - delay_time: 延迟执行的时间, new Date()立即执行, 否则在延迟时间点之后开始执行;
     - add_time: 创建时间
     - update_time: 更新时间
-    - status: 消息状态, 可选范围: NEW=新消息、ING=消费中、SUCCESS=消费成功、FAIL=消费失败、TIMEOUT=超时
+    - status: 消息状态: NEW=新消息、ING=消费中、SUCCESS=消费成功、FAIL=消费失败、TIMEOUT=超时
     - msg: 历史流转日志
 - producer: 生产者
 - consumer: 消费者
