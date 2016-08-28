@@ -48,6 +48,9 @@ ZK节点:
 provider >> rpc >> broker 服务
 broker >> rpc >> comsumer
 
+通讯: 功能基本完成
+下一步: 广播、串行, 底层数据和bug修复
+
 - client(producer): rpc客户端
 - client(consumer) 附带一个rpc服务, 端口 6070, 汇总@MqHandler
 - broker: 附带一个rpc服务, 端口 6080, 接受，推送，回调
