@@ -1,6 +1,6 @@
-package com.xxl.mq.client.rpc.netcom.netty.codec;
+package com.xxl.mq.client.rpc.netcom.codec;
 
-import com.xxl.mq.client.rpc.serialize.HessianSerializer;
+import com.xxl.mq.client.rpc.util.HessianSerializer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;

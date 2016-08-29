@@ -1,4 +1,4 @@
-package com.xxl.mq.client.rpc.netcom.common.codec;
+package com.xxl.mq.client.rpc.netcom.model;
 
 import java.text.MessageFormat;
 import java.util.concurrent.ConcurrentHashMap;

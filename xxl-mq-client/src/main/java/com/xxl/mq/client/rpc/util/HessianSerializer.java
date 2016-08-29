@@ -1,4 +1,4 @@
-package com.xxl.mq.client.rpc.serialize;
+package com.xxl.mq.client.rpc.util;
 
 import com.caucho.hessian.io.HessianInput;
 import com.caucho.hessian.io.HessianOutput;

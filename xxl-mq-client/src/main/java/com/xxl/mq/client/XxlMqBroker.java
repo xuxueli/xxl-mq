@@ -5,7 +5,6 @@ import com.xxl.mq.client.rpc.netcom.NetComClientProxy;
 import com.xxl.mq.client.rpc.netcom.NetComServerFactory;
 import com.xxl.mq.client.service.BrokerService;
 import com.xxl.mq.client.service.ConsumerHandler;
-import com.xxl.mq.client.service.MessageManage;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.util.HashMap;
@@ -22,16 +21,12 @@ public class XxlMqBroker implements InitializingBean {
 
     // ---------------------- server config ----------------------
     private static int port = 6080;
-    private BrokerService brokerService;
-    private static MessageManage messageManage;
+    private static BrokerService brokerService;
     public void setPort(int port) {
         this.port = port;
     }
     public void setBrokerService(BrokerService brokerService) {
         this.brokerService = brokerService;
-    }
-    public void setMessageManage(MessageManage messageManage) {
-        this.messageManage = messageManage;
     }
 
     @Override
@@ -55,11 +50,10 @@ public class XxlMqBroker implements InitializingBean {
             public void run() {
                 while (true) {
                     try {
-                        LinkedList<Message> list = messageManage.pageList(20, "test");
+                        LinkedList<Message> list = brokerService.pageList(20, "test");
                         if (list!=null) {
                             for (Message message: list) {
                                 getInstance(message.getName()).consume(message);
-
                             }
                         }
                     } catch (Exception e) {

@@ -141,12 +141,15 @@ public class ZkServiceDiscovery {
     }
     
     public static String discover(String interfaceName) {
-    	logger.debug(">>>>>>>>>>>> discover:{}", serviceAddress);
-		freshServiceAddress();
     	Set<String> addressSet = serviceAddress.get(interfaceName);
     	if (addressSet==null || addressSet.size()==0) {
-			return null;
+			freshServiceAddress();
+			addressSet = serviceAddress.get(interfaceName);
+			if (addressSet==null || addressSet.size()==0) {
+				return null;
+			}
 		}
+
     	String address;
     	List<String> addressArr = new ArrayList<String>(addressSet);
         int size = addressSet.toArray().length;

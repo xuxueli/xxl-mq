@@ -1,9 +1,9 @@
-package com.xxl.mq.client.rpc.netcom.netty.server;
+package com.xxl.mq.client.rpc.netcom.server;
 
-import com.xxl.mq.client.rpc.netcom.common.codec.RpcRequest;
-import com.xxl.mq.client.rpc.netcom.common.codec.RpcResponse;
-import com.xxl.mq.client.rpc.netcom.netty.codec.NettyDecoder;
-import com.xxl.mq.client.rpc.netcom.netty.codec.NettyEncoder;
+import com.xxl.mq.client.rpc.netcom.model.RpcRequest;
+import com.xxl.mq.client.rpc.netcom.model.RpcResponse;
+import com.xxl.mq.client.rpc.netcom.codec.NettyDecoder;
+import com.xxl.mq.client.rpc.netcom.codec.NettyEncoder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;

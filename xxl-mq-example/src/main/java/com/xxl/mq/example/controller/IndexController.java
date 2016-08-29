@@ -22,7 +22,8 @@ public class IndexController {
 
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("num", System.currentTimeMillis()+"");
-		Message message = new Message("test", map);
+
+		Message message = new Message("test", Message.Destination.TOPIC, map, null);
 		XxlMqProducer.saveMessage(message);
 
 		return "SUCCESS";
