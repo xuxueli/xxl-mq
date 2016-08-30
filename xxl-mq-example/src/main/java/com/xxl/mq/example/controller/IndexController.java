@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +24,12 @@ public class IndexController {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("num", System.currentTimeMillis()+"");
 
-		Message message = new Message("test", Message.Destination.TOPIC, map, null);
+		Message message = new Message();
+		message.setName("test");
+		message.setData(map);
+		message.setDelayTime(new Date());
+		message.setStatus(Message.Status.NEW);
+
 		XxlMqProducer.produce(message);
 
 		return "SUCCESS";

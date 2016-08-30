@@ -53,11 +53,9 @@
 					            	<tr>
 					                	<th name="id" >ID</th>
 					                  	<th name="name" >主题</th>
-                                        <th name="destination" >消息类型</th>
                                         <th name="data" >消息数据</th>
                                         <th name="delayTime" title="延迟执行的时间, new Date()立即执行, 否则在延迟时间点之后开始执行;" >Delay执行时间</th>
-                                        <th name="addTime" >创建时间</th>
-                                        <th name="updateTime" >更新时间</th>
+                                        <th name="addTime/updateTime" >创建时间/更新时间</th>
                                         <th name="status" >消息状态</th>
                                         <th name="msg" >历史流转日志</th>
 					                  	<th>操作</th>

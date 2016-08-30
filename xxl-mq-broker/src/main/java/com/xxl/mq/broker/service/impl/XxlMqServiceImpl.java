@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -32,13 +31,10 @@ public class XxlMqServiceImpl implements XxlMqService {
 
         XxlMqMessage msg = new XxlMqMessage();
         msg.setName(message.getName());
-        msg.setDestination(message.getDestination().name());
         msg.setData(JacksonUtil.writeValueAsString(message.getData()));
         msg.setDelayTime(message.getDelayTime());
-        msg.setAddTime(new Date());
-        msg.setUpdateTime(new Date());
         msg.setStatus(message.getStatus().name());
-        msg.setMsg(null);
+        msg.setRetryCount(message.getRetryCount());
 
         return xxlMqMessageDao.save(msg);
     }

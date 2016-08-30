@@ -11,18 +11,18 @@ public class XxlMqMessage {
 
 	private int id;
 	private String name;		// 消息主题
-	private String destination;	// 消息类型：TOPIC=广播、QUEUE=串行队列、CONCURRENT_QUEUE=并发队列
 	private String data;		// 消息数据, Map<String, String>对象系列化的JSON字符串
 	private Date delayTime;		// 延迟执行的时间, new Date()立即执行, 否则在延迟时间点之后开始执行;
 	private Date addTime;		// 创建时间
 	private Date updateTime;	// 更新时间
 	private String status;		// 消息状态: NEW=新消息、ING=消费中、SUCCESS=消费成功、FAIL=消费失败、TIMEOUT=超时
 	private String msg;			// 历史流转日志
+	private int retryCount;		// 重试次数, 默认0不重试
+
 
 	public int getId() {
 		return id;
 	}
-
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -33,14 +33,6 @@ public class XxlMqMessage {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public String getDestination() {
-		return destination;
-	}
-
-	public void setDestination(String destination) {
-		this.destination = destination;
 	}
 
 	public String getData() {
@@ -89,5 +81,13 @@ public class XxlMqMessage {
 
 	public void setMsg(String msg) {
 		this.msg = msg;
+	}
+
+	public int getRetryCount() {
+		return retryCount;
+	}
+
+	public void setRetryCount(int retryCount) {
+		this.retryCount = retryCount;
 	}
 }

@@ -20,7 +20,6 @@ $(function() {
 	    "columns": [
 	                { data: 'id', visible: false},
 					{ data: 'name'},
-					{ data: 'destination'},
 					{ data: 'data'},
 					{
 						data: 'delayTime',
@@ -31,15 +30,13 @@ $(function() {
 					{
 						data: 'addTime',
 						render : function ( data, type, row ) {
-							return data?moment(new Date(data)).format("YYYY-MM-DD HH:mm:ss"):"";
+							var temp = data?moment(new Date(data)).format("YYYY-MM-DD HH:mm:ss"):"";
+							temp += "<br>";
+							temp += data?moment(new Date(row.updateTime)).format("YYYY-MM-DD HH:mm:ss"):"";
+							return temp;
 						}
 					},
-					{
-						data: 'updateTime',
-						render : function ( data, type, row ) {
-							return data?moment(new Date(data)).format("YYYY-MM-DD HH:mm:ss"):"";
-						}
-					},
+					//{ data: 'updateTime'},
 					{ data: 'status'},
 					{ data: 'msg'},
 	                { data: 'msg' ,

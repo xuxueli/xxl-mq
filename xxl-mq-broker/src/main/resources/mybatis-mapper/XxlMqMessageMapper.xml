@@ -6,25 +6,25 @@
 	<resultMap id="XxlMqMessage" type="com.xxl.mq.broker.core.model.XxlMqMessage" >
 		<result column="id" property="id" />
 		<result column="name" property="name" />
-	    <result column="destination" property="destination" />
 	    <result column="data" property="data" />
 	    <result column="delay_time" property="delayTime" />
 	    <result column="add_time" property="addTime" />
 	    <result column="update_time" property="updateTime" />
 	    <result column="status" property="status" />
 		<result column="msg" property="msg" />
+		<result column="retry_count" property="retryCount" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
 		t.id,
 		t.name ,
-		t.destination ,
 		t.data ,
 		t.delay_time ,
 		t.add_time ,
 		t.update_time ,
 		t.status ,
-		t.msg
+		t.msg,
+		t.retry_count
 	</sql>
 	
 	<select id="pageList" parameterType="java.util.HashMap" resultMap="XxlMqMessage">
@@ -38,7 +38,7 @@
 				AND t.status = #{status}
 			</if>
 		</trim>
-		ORDER BY t.update_time DESC
+		ORDER BY t.add_time DESC
 		LIMIT #{offset}, #{pagesize}
 	</select>
 	
@@ -53,28 +53,28 @@
 				AND t.status = #{status}
 			</if>
 		</trim>
-		ORDER BY t.update_time DESC
+		ORDER BY t.add_time DESC
 	</select>
 	
 	<insert id="save" parameterType="com.xxl.mq.broker.core.model.XxlMqMessage" useGeneratedKeys="true" keyProperty="id" >
 		INSERT INTO XXL_MQ_MESSAGE (
 			`name` ,
-			`destination` ,
 			`data` ,
 			`delay_time` ,
 			`add_time` ,
 			`update_time` ,
 			`status` ,
-			`msg`
+			`msg`,
+			`retry_count`
 		) VALUES (
 			#{name},
-			#{destination},
 			#{data},
 			#{delayTime},
 			NOW(),
 			NOW(),
 			#{status},
-			#{msg}
+			#{msg},
+			#{retryCount}
 		);
 		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
 			SELECT LAST_INSERT_ID() 
