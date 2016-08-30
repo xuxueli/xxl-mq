@@ -5,7 +5,7 @@ import com.xxl.mq.client.rpc.netcom.codec.NettyEncoder;
 import com.xxl.mq.client.rpc.netcom.codec.model.RpcCallbackFuture;
 import com.xxl.mq.client.rpc.netcom.codec.model.RpcRequest;
 import com.xxl.mq.client.rpc.netcom.codec.model.RpcResponse;
-import com.xxl.mq.client.rpc.registry.ZkServiceDiscovery;
+import com.xxl.mq.client.rpc.util.ZkServiceUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -25,10 +25,11 @@ import org.slf4j.LoggerFactory;
 public class NettyClient {
 	private static Logger logger = LoggerFactory.getLogger(NettyClient.class);
 
-	// ----------
-
 	private static ConcurrentHashMap<String, Channel> addressToChannel = new ConcurrentHashMap<String, Channel>();
-	private static Channel getInstance(String address) throws InterruptedException {
+	private static Channel getChannel(String address) throws InterruptedException {
+		if (address==null || address.trim().length()==0) {
+			return null;
+		}
 
 		// load channel
 		Channel channel = addressToChannel.get(address);
@@ -79,10 +80,10 @@ public class NettyClient {
 
 	public static RpcResponse send(RpcRequest request) throws Exception {
 
-		String address = ZkServiceDiscovery.discover(request.getRegistryKey());
-		Channel channel = getInstance(address);
-
 		try {
+			String address = ZkServiceUtil.discover(request.getRegistryKey());
+			Channel channel = getChannel(address);
+
 			// future init	[tips04 : may save 20ms/100invoke if remove and wait for channel instead, but it is necessary. cause by ConcurrentHashMap.get]
 			RpcCallbackFuture future = new RpcCallbackFuture(request);
 			RpcCallbackFuture.futurePool.put(request.getRequestId(), future);

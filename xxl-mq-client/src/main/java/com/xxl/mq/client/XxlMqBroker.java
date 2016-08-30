@@ -56,12 +56,15 @@ public class XxlMqBroker implements XxlMqService {
     }
 
     @Override
-    public void saveMessage(Message message) {
-        xxlMqMessageLinkedBlockingQueue.add(message);
+    public int saveMessage(Message message) {
+        return xxlMqMessageLinkedBlockingQueue.add(message)?1:-1;
+    }
+    public int updateMessage(Message message) {
+        return xxlMqService.updateMessage(message);
     }
 
     @Override
     public LinkedList<Message> pageList(int pagesize, String name) {
-        return xxlMqService.pageList(0, name);
+        return xxlMqService.pageList(pagesize, name);
     }
 }

@@ -25,9 +25,9 @@ public class XxlMqServiceImpl implements XxlMqService {
     private IXxlMqMessageDao xxlMqMessageDao;
 
     @Override
-    public void saveMessage(Message message) {
+    public int saveMessage(Message message) {
         if (message == null || StringUtils.isBlank(message.getName())) {
-            return;
+            return -1;
         }
 
         XxlMqMessage msg = new XxlMqMessage();
@@ -40,10 +40,13 @@ public class XxlMqServiceImpl implements XxlMqService {
         msg.setStatus(message.getStatus().name());
         msg.setMsg(null);
 
-        xxlMqMessageDao.save(msg);
+        return xxlMqMessageDao.save(msg);
     }
 
-
+    @Override
+    public int updateMessage(Message message) {
+        return xxlMqMessageDao.updateStatus(message.getId(), message.getStatus().name(), message.getMsg());
+    }
 
     @Override
     public LinkedList<Message> pageList(int pagesize, String name) {
@@ -52,17 +55,12 @@ public class XxlMqServiceImpl implements XxlMqService {
 
             LinkedList<Message> msgList = new LinkedList<Message>();
             for (XxlMqMessage xxlMqMessage : list) {
-                // update
-                xxlMqMessage.setStatus(Message.Status.ING.name());
-                xxlMqMessageDao.update(xxlMqMessage);
-
                 Message msg = new Message();
                 msg.setId(xxlMqMessage.getId());
                 msg.setName(xxlMqMessage.getName());
                 msg.setData(JacksonUtil.readValue(xxlMqMessage.getData(), Map.class));
 
                 msgList.add(msg);
-
             }
             return msgList;
         }

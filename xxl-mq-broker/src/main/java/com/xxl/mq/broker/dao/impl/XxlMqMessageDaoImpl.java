@@ -59,4 +59,14 @@ public class XxlMqMessageDaoImpl implements IXxlMqMessageDao {
         return sqlSessionTemplate.update("XxlMqMessageMapper.update", messge);
     }
 
+    @Override
+    public int updateStatus(int id, String status, String addMsg) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("id", id);
+        params.put("status", status);
+        params.put("addMsg", addMsg);
+
+        return sqlSessionTemplate.update("XxlMqMessageMapper.updateStatus", params);
+    }
+
 }

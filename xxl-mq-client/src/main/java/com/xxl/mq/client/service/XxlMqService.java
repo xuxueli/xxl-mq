@@ -9,8 +9,8 @@ import java.util.LinkedList;
  */
 public interface XxlMqService {
 
-    public void saveMessage(Message message);
+    public int saveMessage(Message message);
+    public int updateMessage(Message message);
 
     public LinkedList<Message> pageList(int pagesize, String name);
-
 }

@@ -3,7 +3,7 @@ package com.xxl.mq.client.rpc.netcom;
 import com.xxl.mq.client.rpc.netcom.codec.model.RpcRequest;
 import com.xxl.mq.client.rpc.netcom.codec.model.RpcResponse;
 import com.xxl.mq.client.rpc.netcom.server.NettyServer;
-import com.xxl.mq.client.rpc.registry.ZkServiceRegistry;
+import com.xxl.mq.client.rpc.util.ZkServiceUtil;
 import net.sf.cglib.reflect.FastClass;
 import net.sf.cglib.reflect.FastMethod;
 import org.apache.zookeeper.KeeperException;
@@ -18,8 +18,6 @@ import java.util.concurrent.TimeUnit;
 /**
  * netcom init
  * @author xuxueli 2015-10-31 22:54:27
- *
- * <bean class="com.xxl.rpc.netcom.NetComFactory" />
  */
 public class NetComServerFactory {
 	private static final Logger logger = LoggerFactory.getLogger(NetComServerFactory.class);
@@ -35,7 +33,7 @@ public class NetComServerFactory {
 		new NettyServer().start(port);
 	}
 
-	// sync refresh registry address
+	// refresh registry address
 	private static Executor executor = Executors.newCachedThreadPool();
 	static {
 		executor.execute(new Runnable() {
@@ -44,8 +42,8 @@ public class NetComServerFactory {
 				while (true) {
 					// registry
 					try {
-						ZkServiceRegistry.registerServices(port, regitsryMap.keySet());
-						TimeUnit.SECONDS.sleep(30);
+						ZkServiceUtil.registry(port, regitsryMap.keySet());
+						TimeUnit.SECONDS.sleep(60);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					} catch (KeeperException e) {

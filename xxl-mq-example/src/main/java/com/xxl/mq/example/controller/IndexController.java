@@ -24,7 +24,7 @@ public class IndexController {
 		map.put("num", System.currentTimeMillis()+"");
 
 		Message message = new Message("test", Message.Destination.TOPIC, map, null);
-		XxlMqProducer.saveMessage(message);
+		XxlMqProducer.produce(message);
 
 		return "SUCCESS";
 	}

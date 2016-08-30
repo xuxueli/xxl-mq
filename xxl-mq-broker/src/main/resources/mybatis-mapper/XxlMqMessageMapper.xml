@@ -91,10 +91,19 @@
 		UPDATE XXL_MQ_MESSAGE
 		SET	update_time = NOW(),
 			status = #{status},
-			msg = #{msg}
+			msg = msg + #{msg}
 		WHERE id = #{id}
 	</update>
-	
+
+	<update id="updateStatus" parameterType="java.util.HashMap" >
+		UPDATE XXL_MQ_MESSAGE
+		SET
+			update_time = NOW(),
+			status = #{status},
+		 	msg = CONCAT( IFNULL(msg, ''), #{addMsg})
+		WHERE id = #{id}
+	</update>
+
 	<delete id="delete" parameterType="java.lang.Integer">
 		DELETE FROM XXL_MQ_MESSAGE
 		WHERE id = #{id}

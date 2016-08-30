@@ -1,6 +1,5 @@
-package com.xxl.mq.client.rpc.registry;
+package com.xxl.mq.client.rpc.util;
 
-import com.xxl.mq.client.rpc.util.Environment;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
@@ -9,16 +8,16 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * zookeeper service registry
  * @author xuxueli 2015-10-29 14:43:46
  */
-public class ZkServiceRegistry {
-    private static final Logger logger = LoggerFactory.getLogger(ZkServiceRegistry.class);
+public class ZkServiceUtil {
+    private static final Logger logger = LoggerFactory.getLogger(ZkServiceUtil.class);
 
 	// ------------------------------ zookeeper client ------------------------------
 	private static ZooKeeper zooKeeper;
@@ -54,6 +53,12 @@ public class ZkServiceRegistry {
 							} catch (InterruptedException e) {
 								logger.error("", e);
 							}
+
+							// refresh service address
+							if (event.getType() == Event.EventType.NodeChildrenChanged || event.getState() == Event.KeeperState.SyncConnected) {
+								freshRegistryAddresss();
+							}
+
 						}
 					});
 
@@ -74,9 +79,12 @@ public class ZkServiceRegistry {
 	// ------------------------------ register service ------------------------------
     /**
      * register service
+	 * {
+	 *     registry-key1:[address1, address2, address3]
+	 *     registry-key2:[address1, address2, address3]
+	 * }
      */
-    public static void registerServices(int port, Set<String> serviceList) throws KeeperException, InterruptedException {
-
+    public static void registry(int port, Set<String> serviceList) throws KeeperException, InterruptedException {
     	// valid
     	if (port < 1 || (serviceList==null || serviceList.size()==0)) {
     		return;
@@ -118,9 +126,93 @@ public class ZkServiceRegistry {
 			if (addreddStat == null) {
 				String path = getInstance().create(addressPath, serverAddress.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
 			}
-			logger.info(">>>>>>>>>>> xxl-rpc register service on zookeeper success, interfaceName:{}, serverAddress:{}, addressPath:{}", interfaceName, serverAddress, addressPath);
+			logger.info(">>>>>>>>>>> xxl-mq register success, interfaceName:{}, serverAddress:{}, addressPath:{}", interfaceName, serverAddress, addressPath);
 		}
 
     }
-    
+
+	// ------------------------------ discover service ------------------------------
+	private static Executor executor = Executors.newCachedThreadPool();
+	static {
+		executor.execute(new Runnable() {
+			@Override
+			public void run() {
+				while (true) {
+					freshRegistryAddresss();
+					try {
+						TimeUnit.SECONDS.sleep(30L);
+					} catch (InterruptedException e) {
+						logger.error("", e);
+					}
+				}
+			}
+		});
+	}
+
+	/**
+	 * 	/xxl-rpc/iface1/address1
+	 * 	/xxl-rpc/iface1/address2
+	 * 	/xxl-rpc/iface1/address3
+	 * 	/xxl-rpc/iface2/address1
+	 */
+	private static volatile ConcurrentMap<String, Set<String>> registryKeyToAddresss = new ConcurrentHashMap<String, Set<String>>();
+
+	public static void freshRegistryAddresss(){
+		ConcurrentMap<String, Set<String>> tempMap = new ConcurrentHashMap<String, Set<String>>();
+		try {
+			// iface list
+			List<String> registryKeyList = getInstance().getChildren(Environment.ZK_SERVICES_PATH, true);
+
+			if (registryKeyList!=null && registryKeyList.size()>0) {
+				for (String registryKey : registryKeyList) {
+
+					// address list
+					String ifacePath = Environment.ZK_SERVICES_PATH.concat("/").concat(registryKey);
+					List<String> addressList = getInstance().getChildren(ifacePath, true);
+
+					if (addressList!=null && addressList.size() > 0) {
+						Set<String> addressSet = new HashSet<String>();
+						for (String address : addressList) {
+
+							// data from address
+							String addressPath = ifacePath.concat("/").concat(address);
+							byte[] bytes = getInstance().getData(addressPath, false, null);
+							addressSet.add(new String(bytes));
+						}
+						tempMap.put(registryKey, addressSet);
+					}
+				}
+				registryKeyToAddresss = tempMap;
+				logger.info(">>>>>>>>>>> xxl-rpc fresh registryKeyToAddresss success: {}", registryKeyToAddresss);
+			}
+
+		} catch (KeeperException e) {
+			logger.error("", e);
+		} catch (InterruptedException e) {
+			logger.error("", e);
+		}
+	}
+
+	public static String discover(String registryKey) {
+		Set<String> addressSet = registryKeyToAddresss.get(registryKey);
+		if (addressSet==null || addressSet.size()==0) {
+			freshRegistryAddresss();
+			addressSet = registryKeyToAddresss.get(registryKey);
+			if (addressSet==null || addressSet.size()==0) {
+				return null;
+			}
+		}
+
+		String address;
+		List<String> addressArr = new ArrayList<String>(addressSet);
+		int size = addressSet.toArray().length;
+		if (size == 1) {
+			address = addressArr.get(0);
+		} else {
+			address = addressArr.get(new Random().nextInt(size));
+		}
+		return address;
+	}
+
+
 }
