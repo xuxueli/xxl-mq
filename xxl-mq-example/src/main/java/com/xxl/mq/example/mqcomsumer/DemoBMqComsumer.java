@@ -11,14 +11,14 @@ import org.springframework.stereotype.Service;
 /**
  * Created by xuxueli on 16/8/28.
  */
-@MqConsumer("test")
+@MqConsumer("mqconsumer-02")
 @Service
-public class DemoMqComsumer implements ConsumerHandler {
-    private Logger logger = LoggerFactory.getLogger(DemoMqComsumer.class);
+public class DemoBMqComsumer implements ConsumerHandler {
+    private Logger logger = LoggerFactory.getLogger(DemoBMqComsumer.class);
 
     @Override
-    public void consume(Message message) {
-        logger.info("消费一条消息:{}", JacksonUtil.writeValueAsString(message));
+    public void consume(Message message) throws Exception {
+        logger.info("{}消费一条消息:{}", "mqconsumer-02",  JacksonUtil.writeValueAsString(message));
     }
 
 }

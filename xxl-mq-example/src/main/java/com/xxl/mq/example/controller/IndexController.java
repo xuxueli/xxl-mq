@@ -19,13 +19,13 @@ public class IndexController {
 
 	@RequestMapping("/")
 	@ResponseBody
-	public String loginDo(){
+	public String index(){
 
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("num", System.currentTimeMillis()+"");
 
 		Message message = new Message();
-		message.setName("test");
+		message.setName("mqconsumer-01");
 		message.setData(map);
 		message.setDelayTime(new Date());
 		message.setStatus(Message.Status.NEW);

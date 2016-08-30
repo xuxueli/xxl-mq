@@ -7,6 +7,6 @@ import com.xxl.mq.client.message.Message;
  */
 public interface ConsumerHandler {
 
-    public void consume(Message message);
+    public void consume(Message message) throws Exception;
 
 }

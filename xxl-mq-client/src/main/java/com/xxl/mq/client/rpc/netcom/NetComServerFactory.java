@@ -6,7 +6,6 @@ import com.xxl.mq.client.rpc.netcom.server.NettyServer;
 import com.xxl.mq.client.rpc.util.ZkServiceUtil;
 import net.sf.cglib.reflect.FastClass;
 import net.sf.cglib.reflect.FastMethod;
-import org.apache.zookeeper.KeeperException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,10 +43,8 @@ public class NetComServerFactory {
 					try {
 						ZkServiceUtil.registry(port, regitsryMap.keySet());
 						TimeUnit.SECONDS.sleep(60);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					} catch (KeeperException e) {
-						e.printStackTrace();
+					} catch (Exception e) {
+						logger.error("", e);
 					}
 				}
 			}

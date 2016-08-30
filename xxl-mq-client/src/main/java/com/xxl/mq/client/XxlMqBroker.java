@@ -37,7 +37,8 @@ public class XxlMqBroker implements XxlMqService {
     }
 
     // ---------------------- broker proxy ----------------------
-    private static LinkedBlockingQueue<Message> xxlMqMessageLinkedBlockingQueue = new LinkedBlockingQueue<Message>();
+    private static LinkedBlockingQueue<Message> newMessageQueue = new LinkedBlockingQueue<Message>();
+    private static LinkedBlockingQueue<Message> callbackMessageQueue = new LinkedBlockingQueue<Message>();
     private static Executor executor = Executors.newCachedThreadPool();
     static {
         executor.execute(new Runnable() {
@@ -45,9 +46,22 @@ public class XxlMqBroker implements XxlMqService {
             public void run() {
                 while (true) {
                     try {
-                        Message msg = xxlMqMessageLinkedBlockingQueue.take();
+                        Message msg = newMessageQueue.take();
                         xxlMqService.saveMessage(msg);
-                    } catch (InterruptedException e) {
+                    } catch (Exception e) {
+                        logger.error("", e);
+                    }
+                }
+            }
+        });
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Message msg = callbackMessageQueue.take();
+                        xxlMqService.updateMessage(msg);
+                    } catch (Exception e) {
                         logger.error("", e);
                     }
                 }
@@ -57,14 +71,14 @@ public class XxlMqBroker implements XxlMqService {
 
     @Override
     public int saveMessage(Message message) {
-        return xxlMqMessageLinkedBlockingQueue.add(message)?1:-1;
+        return newMessageQueue.add(message)?1:-1;
     }
     public int updateMessage(Message message) {
-        return xxlMqService.updateMessage(message);
+        return callbackMessageQueue.add(message)?1:-1;
     }
 
     @Override
-    public LinkedList<Message> pageList(int pagesize, String name) {
-        return xxlMqService.pageList(pagesize, name);
+    public LinkedList<Message> pullMessage(String name, String status, int pagesize, int consumerRank, int consumerTotal) {
+        return xxlMqService.pullMessage(name, status, pagesize, consumerRank, consumerTotal);
     }
 }

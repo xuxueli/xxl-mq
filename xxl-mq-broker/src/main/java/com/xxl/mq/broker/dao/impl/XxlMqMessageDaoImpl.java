@@ -45,6 +45,10 @@ public class XxlMqMessageDaoImpl implements IXxlMqMessageDao {
     }
 
     @Override
+    public int update(XxlMqMessage messge) {
+        return sqlSessionTemplate.update("XxlMqMessageMapper.update", messge);
+    }
+    @Override
     public int delete(int id) {
         return sqlSessionTemplate.delete("XxlMqMessageMapper.delete", id);
     }
@@ -55,11 +59,6 @@ public class XxlMqMessageDaoImpl implements IXxlMqMessageDao {
     }
 
     @Override
-    public int update(XxlMqMessage messge) {
-        return sqlSessionTemplate.update("XxlMqMessageMapper.update", messge);
-    }
-
-    @Override
     public int updateStatus(int id, String status, String addMsg) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("id", id);
@@ -67,6 +66,18 @@ public class XxlMqMessageDaoImpl implements IXxlMqMessageDao {
         params.put("addMsg", addMsg);
 
         return sqlSessionTemplate.update("XxlMqMessageMapper.updateStatus", params);
+    }
+
+    @Override
+    public List<XxlMqMessage> pullMessage(String name, String status, int pagesize, int consumerRank, int consumerTotal) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("name", name);
+        params.put("status", status);
+        params.put("pagesize", pagesize);
+        params.put("consumerRank", consumerRank);
+        params.put("consumerTotal", consumerTotal);
+
+        return sqlSessionTemplate.selectList("XxlMqMessageMapper.pullMessage", params);
     }
 
 }

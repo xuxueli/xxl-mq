@@ -55,38 +55,8 @@
 		</trim>
 		ORDER BY t.add_time DESC
 	</select>
-	
-	<insert id="save" parameterType="com.xxl.mq.broker.core.model.XxlMqMessage" useGeneratedKeys="true" keyProperty="id" >
-		INSERT INTO XXL_MQ_MESSAGE (
-			`name` ,
-			`data` ,
-			`delay_time` ,
-			`add_time` ,
-			`update_time` ,
-			`status` ,
-			`msg`,
-			`retry_count`
-		) VALUES (
-			#{name},
-			#{data},
-			#{delayTime},
-			NOW(),
-			NOW(),
-			#{status},
-			#{msg},
-			#{retryCount}
-		);
-		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
-			SELECT LAST_INSERT_ID() 
-		</selectKey> 
-	</insert>
-	
-	<select id="load" parameterType="java.util.HashMap" resultMap="XxlMqMessage">
-		SELECT <include refid="Base_Column_List" />
-		FROM XXL_MQ_MESSAGE AS t
-		WHERE t.id = #{id}
-	</select>
-	
+
+
 	<update id="update" parameterType="com.xxl.mq.broker.core.model.XxlMqMessage" >
 		UPDATE XXL_MQ_MESSAGE
 		SET	update_time = NOW(),
@@ -94,6 +64,35 @@
 			msg = msg + #{msg}
 		WHERE id = #{id}
 	</update>
+	<delete id="delete" parameterType="java.lang.Integer">
+		DELETE FROM XXL_MQ_MESSAGE
+		WHERE id = #{id}
+	</delete>
+
+	<insert id="save" parameterType="com.xxl.mq.broker.core.model.XxlMqMessage" useGeneratedKeys="true" keyProperty="id" >
+		INSERT INTO XXL_MQ_MESSAGE (
+		`name` ,
+		`data` ,
+		`delay_time` ,
+		`add_time` ,
+		`update_time` ,
+		`status` ,
+		`msg`,
+		`retry_count`
+		) VALUES (
+		#{name},
+		#{data},
+		#{delayTime},
+		NOW(),
+		NOW(),
+		#{status},
+		#{msg},
+		#{retryCount}
+		);
+		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
 
 	<update id="updateStatus" parameterType="java.util.HashMap" >
 		UPDATE XXL_MQ_MESSAGE
@@ -104,9 +103,16 @@
 		WHERE id = #{id}
 	</update>
 
-	<delete id="delete" parameterType="java.lang.Integer">
-		DELETE FROM XXL_MQ_MESSAGE
-		WHERE id = #{id}
-	</delete>
+	<select id="pullMessage" parameterType="java.util.HashMap" resultMap="XxlMqMessage">
+		SELECT <include refid="Base_Column_List" />
+		FROM XXL_MQ_MESSAGE AS t
+		WHERE t.name = #{name}
+			AND t.status = #{status}
+			<if test="consumerTotal > 1">
+				AND MOD(t.id, #{consumerTotal}) = #{consumerRank}
+			</if>
+		ORDER BY t.add_time DESC
+		LIMIT #{pagesize}
+	</select>
 
 </mapper>

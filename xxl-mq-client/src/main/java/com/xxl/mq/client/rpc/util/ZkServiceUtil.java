@@ -77,6 +77,22 @@ public class ZkServiceUtil {
 	}
 
 	// ------------------------------ register service ------------------------------
+
+	public static String getAddress(int port){
+		// init address: ip : port
+		String ip = null;
+		try {
+			ip = InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e1) {
+			e1.printStackTrace();
+		}
+		if (ip == null) {
+			return null;
+		}
+		String address = ip + ":" + port;
+		return address;
+	}
+
     /**
      * register service
 	 * {
@@ -84,23 +100,13 @@ public class ZkServiceUtil {
 	 *     registry-key2:[address1, address2, address3]
 	 * }
      */
-    public static void registry(int port, Set<String> serviceList) throws KeeperException, InterruptedException {
+    public static void registry(int port, Set<String> registryKeys) throws KeeperException, InterruptedException {
     	// valid
-    	if (port < 1 || (serviceList==null || serviceList.size()==0)) {
+    	if (port < 1 || (registryKeys==null || registryKeys.size()==0)) {
     		return;
     	}
 
-    	// init address: ip : port
-    	String ip = null;
-		try {
-			ip = InetAddress.getLocalHost().getHostAddress();
-		} catch (UnknownHostException e1) {
-			e1.printStackTrace();
-		}
-		if (ip == null) {
-			return;
-		}
-		String serverAddress = ip + ":" + port;
+		String address = getAddress(port);
 
 		// base path
 		Stat stat = getInstance().exists(Environment.ZK_SERVICES_PATH, true);
@@ -109,11 +115,11 @@ public class ZkServiceUtil {
 		}
 
 		// register
-		for (String interfaceName : serviceList) {
+		for (String registryKey : registryKeys) {
 
-			// init servicePath prefix : servicePath : xxl-rpc/interfaceName/serverAddress(ip01:port9999)
-			String ifacePath = Environment.ZK_SERVICES_PATH.concat("/").concat(interfaceName);
-			String addressPath = Environment.ZK_SERVICES_PATH.concat("/").concat(interfaceName).concat("/").concat(serverAddress);
+			// init servicePath prefix : servicePath : xxl-rpc/registryKey/address(ip01:port9999)
+			String ifacePath = Environment.ZK_SERVICES_PATH.concat("/").concat(registryKey);
+			String addressPath = Environment.ZK_SERVICES_PATH.concat("/").concat(registryKey).concat("/").concat(address);
 
 			// ifacePath(parent) path must be PERSISTENT
 			Stat ifacePathStat = getInstance().exists(ifacePath, true);
@@ -124,9 +130,9 @@ public class ZkServiceUtil {
 			// register service path must be EPHEMERAL
 			Stat addreddStat = getInstance().exists(addressPath, true);
 			if (addreddStat == null) {
-				String path = getInstance().create(addressPath, serverAddress.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+				String path = getInstance().create(addressPath, address.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
 			}
-			logger.info(">>>>>>>>>>> xxl-mq register success, interfaceName:{}, serverAddress:{}, addressPath:{}", interfaceName, serverAddress, addressPath);
+			logger.info(">>>>>>>>>>> xxl-mq register success, registryKey:{}, address:{}, addressPath:{}", registryKey, address, addressPath);
 		}
 
     }
@@ -141,7 +147,7 @@ public class ZkServiceUtil {
 					freshRegistryAddresss();
 					try {
 						TimeUnit.SECONDS.sleep(30L);
-					} catch (InterruptedException e) {
+					} catch (Exception e) {
 						logger.error("", e);
 					}
 				}
@@ -183,7 +189,7 @@ public class ZkServiceUtil {
 					}
 				}
 				registryKeyToAddresss = tempMap;
-				logger.info(">>>>>>>>>>> xxl-rpc fresh registryKeyToAddresss success: {}", registryKeyToAddresss);
+				logger.info(">>>>>>>>>>> xxl-mq fresh registryKeyToAddresss success: {}", registryKeyToAddresss);
 			}
 
 		} catch (KeeperException e) {
@@ -193,14 +199,31 @@ public class ZkServiceUtil {
 		}
 	}
 
+	public static int[] registryRankInfo(String registryKey, String address) {
+		Set<String> addressSet= registryKeyToAddresss.get(registryKey);
+		if (addressSet==null || !addressSet.contains(address)){
+			logger.info(">>>>>>>>>>> xxl-mq, registryRank fail, registryKey={}, address={}", registryKey, address);
+			return null;
+		}
+		int[] result = new int[2];
+		result[0] = addressSet.size();
+
+		TreeSet<String> sortSet = new TreeSet<String>(addressSet);
+		int index = 0;
+		for (String item: sortSet) {
+			if (item.equals(address)) {
+				result[1] = index;
+				break;
+			}
+		}
+
+		return result;
+	}
+
 	public static String discover(String registryKey) {
 		Set<String> addressSet = registryKeyToAddresss.get(registryKey);
 		if (addressSet==null || addressSet.size()==0) {
-			freshRegistryAddresss();
-			addressSet = registryKeyToAddresss.get(registryKey);
-			if (addressSet==null || addressSet.size()==0) {
-				return null;
-			}
+			return null;
 		}
 
 		String address;

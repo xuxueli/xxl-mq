@@ -45,8 +45,8 @@ public class XxlMqServiceImpl implements XxlMqService {
     }
 
     @Override
-    public LinkedList<Message> pageList(int pagesize, String name) {
-        List<XxlMqMessage> list = xxlMqMessageDao.pageList(0, pagesize, name, Message.Status.NEW.name());
+    public LinkedList<Message> pullMessage(String name, String status, int pagesize, int consumerRank, int consumerTotal) {
+        List<XxlMqMessage> list = xxlMqMessageDao.pullMessage(name, status, pagesize, consumerRank, consumerTotal);
         if (list!=null && list.size()>0) {
 
             LinkedList<Message> msgList = new LinkedList<Message>();
