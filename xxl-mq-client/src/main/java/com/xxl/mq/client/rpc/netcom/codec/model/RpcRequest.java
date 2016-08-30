@@ -1,4 +1,4 @@
-package com.xxl.mq.client.rpc.netcom.model;
+package com.xxl.mq.client.rpc.netcom.codec.model;
 
 import java.io.Serializable;
 import java.util.Arrays;

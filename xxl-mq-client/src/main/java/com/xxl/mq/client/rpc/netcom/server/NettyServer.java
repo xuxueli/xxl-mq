@@ -1,7 +1,7 @@
 package com.xxl.mq.client.rpc.netcom.server;
 
-import com.xxl.mq.client.rpc.netcom.model.RpcRequest;
-import com.xxl.mq.client.rpc.netcom.model.RpcResponse;
+import com.xxl.mq.client.rpc.netcom.codec.model.RpcRequest;
+import com.xxl.mq.client.rpc.netcom.codec.model.RpcResponse;
 import com.xxl.mq.client.rpc.netcom.codec.NettyDecoder;
 import com.xxl.mq.client.rpc.netcom.codec.NettyEncoder;
 import io.netty.bootstrap.ServerBootstrap;

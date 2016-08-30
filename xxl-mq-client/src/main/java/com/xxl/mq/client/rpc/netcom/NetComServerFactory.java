@@ -1,7 +1,7 @@
 package com.xxl.mq.client.rpc.netcom;
 
-import com.xxl.mq.client.rpc.netcom.model.RpcRequest;
-import com.xxl.mq.client.rpc.netcom.model.RpcResponse;
+import com.xxl.mq.client.rpc.netcom.codec.model.RpcRequest;
+import com.xxl.mq.client.rpc.netcom.codec.model.RpcResponse;
 import com.xxl.mq.client.rpc.netcom.server.NettyServer;
 import com.xxl.mq.client.rpc.registry.ZkServiceRegistry;
 import net.sf.cglib.reflect.FastClass;

@@ -1,8 +1,8 @@
 package com.xxl.mq.client.rpc.netcom;
 
 import com.xxl.mq.client.rpc.netcom.client.NettyClient;
-import com.xxl.mq.client.rpc.netcom.model.RpcRequest;
-import com.xxl.mq.client.rpc.netcom.model.RpcResponse;
+import com.xxl.mq.client.rpc.netcom.codec.model.RpcRequest;
+import com.xxl.mq.client.rpc.netcom.codec.model.RpcResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;

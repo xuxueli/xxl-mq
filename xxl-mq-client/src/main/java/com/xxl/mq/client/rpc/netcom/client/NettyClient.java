@@ -2,9 +2,9 @@ package com.xxl.mq.client.rpc.netcom.client;
 
 import com.xxl.mq.client.rpc.netcom.codec.NettyDecoder;
 import com.xxl.mq.client.rpc.netcom.codec.NettyEncoder;
-import com.xxl.mq.client.rpc.netcom.model.RpcCallbackFuture;
-import com.xxl.mq.client.rpc.netcom.model.RpcRequest;
-import com.xxl.mq.client.rpc.netcom.model.RpcResponse;
+import com.xxl.mq.client.rpc.netcom.codec.model.RpcCallbackFuture;
+import com.xxl.mq.client.rpc.netcom.codec.model.RpcRequest;
+import com.xxl.mq.client.rpc.netcom.codec.model.RpcResponse;
 import com.xxl.mq.client.rpc.registry.ZkServiceDiscovery;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -50,7 +50,7 @@ public class NettyClient {
 						channel.pipeline()
 								.addLast(new NettyEncoder(RpcRequest.class))
 								.addLast(new NettyDecoder(RpcResponse.class))
-								.addLast(new NettyHandler());
+								.addLast(new NettyClientHandler());
 					}
 				})
 				.option(ChannelOption.TCP_NODELAY, true)

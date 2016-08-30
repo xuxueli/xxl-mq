@@ -4,9 +4,10 @@ import com.xxl.mq.broker.core.model.XxlMqMessage;
 import com.xxl.mq.broker.dao.IXxlMqMessageDao;
 import com.xxl.mq.client.message.Message;
 import com.xxl.mq.client.rpc.util.JacksonUtil;
-import com.xxl.mq.client.service.BrokerService;
+import com.xxl.mq.client.service.XxlMqService;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -17,8 +18,8 @@ import java.util.Map;
 /**
  * Created by xuxueli on 16/8/28.
  */
-@Service("brokerService")
-public class BrokerServiceImpl implements BrokerService {
+public class XxlMqServiceImpl implements XxlMqService {
+    private final static Logger logger = LoggerFactory.getLogger(XxlMqServiceImpl.class);
 
     @Resource
     private IXxlMqMessageDao xxlMqMessageDao;
@@ -39,8 +40,10 @@ public class BrokerServiceImpl implements BrokerService {
         msg.setStatus(message.getStatus().name());
         msg.setMsg(null);
 
-        int id = xxlMqMessageDao.save(msg);
+        xxlMqMessageDao.save(msg);
     }
+
+
 
     @Override
     public LinkedList<Message> pageList(int pagesize, String name) {

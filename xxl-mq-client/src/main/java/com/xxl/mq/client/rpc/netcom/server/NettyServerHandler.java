@@ -1,8 +1,8 @@
 package com.xxl.mq.client.rpc.netcom.server;
 
 import com.xxl.mq.client.rpc.netcom.NetComServerFactory;
-import com.xxl.mq.client.rpc.netcom.model.RpcRequest;
-import com.xxl.mq.client.rpc.netcom.model.RpcResponse;
+import com.xxl.mq.client.rpc.netcom.codec.model.RpcRequest;
+import com.xxl.mq.client.rpc.netcom.codec.model.RpcResponse;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;

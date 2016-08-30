@@ -7,7 +7,7 @@ import java.util.LinkedList;
 /**
  * Created by xuxueli on 16/8/28.
  */
-public interface BrokerService {
+public interface XxlMqService {
 
     public void saveMessage(Message message);
 
