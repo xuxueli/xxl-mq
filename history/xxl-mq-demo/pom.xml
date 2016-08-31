@@ -6,7 +6,7 @@
 		<artifactId>xxl-mq</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>xxl-mq-demo</artifactId>
+	<artifactId>xxl-mq-example</artifactId>
 	<packaging>war</packaging>
 
 

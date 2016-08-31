@@ -9,7 +9,7 @@
 	<bean id="xxlMqService" class="com.xxl.mq.broker.service.impl.XxlMqServiceImpl" />
 
 	<!-- broker server -->
-	<bean class="com.xxl.mq.client.XxlMqBroker" init-method="init" >
+	<bean class="com.xxl.mq.client.XxlMqBroker" init-method="init" destroy-method="destroy" >
 		<property name="port" value="6080" />
 		<property name="xxlMqService" ref="xxlMqService" />
 	</bean>

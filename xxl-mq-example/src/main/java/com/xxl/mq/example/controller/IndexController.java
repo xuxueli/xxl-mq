@@ -17,9 +17,9 @@ import java.util.Map;
 @Controller
 public class IndexController {
 
-	@RequestMapping("/")
+	@RequestMapping("/produce")
 	@ResponseBody
-	public String index(){
+	public String produce(){
 
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("num", System.currentTimeMillis()+"");

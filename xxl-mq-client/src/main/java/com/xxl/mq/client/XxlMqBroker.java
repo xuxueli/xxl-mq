@@ -35,6 +35,8 @@ public class XxlMqBroker implements XxlMqService {
         serviceMap.put(XxlMqService.class.getName(), this);
         new NetComServerFactory(port, serviceMap);
     }
+    public void destroy(){
+    }
 
     // ---------------------- broker proxy ----------------------
     private static LinkedBlockingQueue<Message> newMessageQueue = new LinkedBlockingQueue<Message>();
