@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
@@ -14,8 +16,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * zookeeper service registry
  * @author xuxueli 2015-10-29 14:43:46
  */
-public class ZkServiceUtil {
-    private static final Logger logger = LoggerFactory.getLogger(ZkServiceUtil.class);
+public class ZkConsumerUtil {
+    private static final Logger logger = LoggerFactory.getLogger(ZkConsumerUtil.class);
 
 	// ------------------------------ zookeeper client ------------------------------
 	private static ZooKeeper zooKeeper;
@@ -30,9 +32,9 @@ public class ZkServiceUtil {
 					countDownLatch.await();*/
 					zooKeeper = new ZooKeeper(Environment.ZK_ADDRESS, 30000, new Watcher() {
 						@Override
-						public void process(WatchedEvent watchedEvent) {
+						public void process(WatchedEvent event) {
 							// session expire, close old and create new
-							if (watchedEvent.getState() == Event.KeeperState.Expired) {
+							if (event.getState() == Event.KeeperState.Expired) {
 								try {
 									zooKeeper.close();
 								} catch (InterruptedException e) {
@@ -42,7 +44,7 @@ public class ZkServiceUtil {
 							}
 							// add One-time trigger, ZooKeeper的Watcher是一次性的，用过了需要再注册
 							try {
-								String znodePath = watchedEvent.getPath();
+								String znodePath = event.getPath();
 								if (znodePath != null) {
 									zooKeeper.exists(znodePath, true);
 								}
@@ -52,21 +54,14 @@ public class ZkServiceUtil {
 								logger.error("", e);
 							}
 
-							Event.EventType eventType = watchedEvent.getType();
-							if (eventType == Event.EventType.NodeCreated) {
-								String path = watchedEvent.getPath();
-							} else if (eventType == Event.EventType.NodeDeleted) {
-								String path = watchedEvent.getPath();
-
-							} else if (eventType == Event.EventType.NodeDataChanged) {
-								String path = watchedEvent.getPath();
-
-							} else if (eventType == Event.EventType.NodeChildrenChanged) {
+							// refresh service address
+							if (event.getType() == Event.EventType.NodeChildrenChanged) {
 								syncLocalRegistryAddresss();
 							}
+
 						}
 					});
-					createWithParent(Environment.ZK_SERVICES_PATH);
+
 					logger.info(">>>>>>>>> xxl-rpc zookeeper connnect success.");
 				}
 			} catch (InterruptedException e) {
@@ -81,40 +76,22 @@ public class ZkServiceUtil {
 		return zooKeeper;
 	}
 
-	/**
-	 * create node path with parent path (如果父节点不存在,循环创建父节点, 因为父节点不存在zookeeper会抛异常)
-	 * @param path	()
-	 */
-	private static Stat createWithParent(String path){
-		// valid
-		if (path==null || path.trim().length()==0) {
+	// ------------------------------ register service ------------------------------
+
+	public static String getAddress(int port){
+		// init address: ip : port
+		String ip = null;
+		try {
+			ip = InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e1) {
+			e1.printStackTrace();
+		}
+		if (ip == null) {
 			return null;
 		}
-
-		try {
-			Stat stat = getInstance().exists(path, true);
-			if (stat == null) {
-				//  valid parent, createWithParent if not exists
-				if (path.lastIndexOf("/") > 0) {
-					String parentPath = path.substring(0, path.lastIndexOf("/"));
-					Stat parentStat = getInstance().exists(parentPath, true);
-					if (parentStat == null) {
-						createWithParent(parentPath);
-					}
-				}
-				// create desc node path
-				zooKeeper.create(path, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-			}
-			return getInstance().exists(path, true);
-		} catch (KeeperException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		return null;
+		String address = ip + ":" + port;
+		return address;
 	}
-
-	// ------------------------------ register service ------------------------------
 
     /**
      * register service
@@ -129,7 +106,7 @@ public class ZkServiceUtil {
     		return;
     	}
 
-		String address = IpUtil.getAddress(port);
+		String address = getAddress(port);
 
 		// base path
 		Stat stat = getInstance().exists(Environment.ZK_SERVICES_PATH, true);

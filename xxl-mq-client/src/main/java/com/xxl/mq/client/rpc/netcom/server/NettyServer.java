@@ -1,9 +1,10 @@
 package com.xxl.mq.client.rpc.netcom.server;
 
-import com.xxl.mq.client.rpc.netcom.codec.model.RpcRequest;
-import com.xxl.mq.client.rpc.netcom.codec.model.RpcResponse;
+import com.xxl.mq.client.rpc.netcom.NetComServerFactory;
 import com.xxl.mq.client.rpc.netcom.codec.NettyDecoder;
 import com.xxl.mq.client.rpc.netcom.codec.NettyEncoder;
+import com.xxl.mq.client.rpc.netcom.codec.model.RpcRequest;
+import com.xxl.mq.client.rpc.netcom.codec.model.RpcResponse;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -46,7 +47,8 @@ public class NettyServer {
 		                .childOption(ChannelOption.SO_KEEPALIVE, true);
 		            ChannelFuture future = bootstrap.bind(port).sync();
 					logger.info(">>>>>>>>>>> xxl-rpc server start success, netcon={}, port={}", NettyServer.class.getName(), port);
-		            future.channel().closeFuture().sync();
+					NetComServerFactory.registry();
+					future.channel().closeFuture().sync();
 		        } catch (InterruptedException e) {
 		        	logger.error("", e);
 				} finally {

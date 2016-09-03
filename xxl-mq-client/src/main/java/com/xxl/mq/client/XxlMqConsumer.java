@@ -1,6 +1,7 @@
 package com.xxl.mq.client;
 
 import com.xxl.mq.client.message.Message;
+import com.xxl.mq.client.rpc.util.IpUtil;
 import com.xxl.mq.client.rpc.util.ZkServiceUtil;
 import com.xxl.mq.client.service.ConsumerHandler;
 import com.xxl.mq.client.service.annotation.MqConsumer;
@@ -26,6 +27,7 @@ public class XxlMqConsumer implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 
+        // parse consumer
         Map<String, Object> serviceMap = applicationContext.getBeansWithAnnotation(MqConsumer.class);
         if (serviceMap!=null && serviceMap.size()>0) {
             for (Object serviceBean : serviceMap.values()) {
@@ -40,20 +42,20 @@ public class XxlMqConsumer implements ApplicationContextAware {
                     // init mq thread for each consumer
                     ConsumerHandler consumerHandler = (ConsumerHandler) serviceBean;
                     MqThread mqThread = new MqThread(consumerHandler);
-                    mqThread.start();
                     mqThreadMap.put(name, mqThread);
-                    logger.info(">>>>>>>>>>> xxl-mq, init consumer success, name={}, type={}, ConsumerHandler={}", name, type, serviceBean.getClass());
                 }
             }
         }
+        if (mqThreadMap==null || mqThreadMap.size()==0) {
+            return;
+        }
 
-    }
-
-    // refresh registry address
-    private static final int localPort = 6080;
-    private static String localConsumerRegistryAddress = ZkServiceUtil.getAddress(localPort);
-    private static Executor executor = Executors.newCachedThreadPool();
-    static {
+        // registry (consumer) each 120s
+        try {
+            ZkServiceUtil.registry(localPort, mqThreadMap.keySet());
+        } catch (Exception e) {
+            logger.error("", e);
+        }
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -61,21 +63,36 @@ public class XxlMqConsumer implements ApplicationContextAware {
                     // registry
                     try {
                         ZkServiceUtil.registry(localPort, mqThreadMap.keySet());
-                        TimeUnit.SECONDS.sleep(30);
+                        TimeUnit.SECONDS.sleep(60);
                     } catch (Exception e) {
                         logger.error("", e);
                     }
                 }
             }
         });
+
+        // consumer thread start
+        for (Map.Entry<String, MqThread> item: mqThreadMap.entrySet()) {
+            item.getValue().start();
+            MqConsumer annotation = item.getValue().getConsumerHandler().getClass().getAnnotation(MqConsumer.class);
+            logger.info(">>>>>>>>>>> xxl-mq, consumer thread start, name={}, type={}", annotation.value(), annotation.type());
+        }
+
     }
 
+    // registry (consumer) each 120s
+    private static final int localPort = 6080;
+    private static String localConsumerRegistryAddress = IpUtil.getAddress(localPort);
+    private static Executor executor = Executors.newCachedThreadPool();
     private static ConcurrentHashMap<String, MqThread> mqThreadMap = new ConcurrentHashMap<String, MqThread>();
     public static class MqThread extends Thread {
 
         private ConsumerHandler consumerHandler;
         public MqThread(ConsumerHandler consumerHandler) {
             this.consumerHandler = consumerHandler;
+        }
+        public ConsumerHandler getConsumerHandler() {
+            return consumerHandler;
         }
 
         @Override
@@ -91,7 +108,7 @@ public class XxlMqConsumer implements ApplicationContextAware {
                     // TODO
                 }
                 case SERIAL_QUEUE :{
-                    int waitTim = 5;
+                    /*int waitTim = 5;
                     while (true) {
                         try {
                             int[] result = ZkServiceUtil.registryRankInfo(name, localConsumerRegistryAddress);
@@ -128,12 +145,13 @@ public class XxlMqConsumer implements ApplicationContextAware {
                                 }
 
                             } else {
+                                TimeUnit.SECONDS.sleep(5);
                                 logger.info(">>>>>>>>>>> xxl-mq, registryRankInfo(SERIAL_QUEUE) fail, registryKey:{}", name);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    }
+                    }*/
                 }case QUEUE :{
                     int waitTim = 5;
                     while (true) {
@@ -171,6 +189,11 @@ public class XxlMqConsumer implements ApplicationContextAware {
                             }
 
                         } catch (Exception e) {
+                            try {
+                                TimeUnit.SECONDS.sleep(2);
+                            } catch (Exception e1) {
+                                logger.error("", e1);
+                            }
                             logger.error("", e);
                         }
                     }

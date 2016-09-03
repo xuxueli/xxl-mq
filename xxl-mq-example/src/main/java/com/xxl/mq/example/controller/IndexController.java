@@ -19,13 +19,13 @@ public class IndexController {
 
 	@RequestMapping("/produce")
 	@ResponseBody
-	public String produce(){
+	public String produce(String name){
 
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("num", System.currentTimeMillis()+"");
 
 		Message message = new Message();
-		message.setName("mqconsumer-01");
+		message.setName(name);
 		message.setData(map);
 		message.setDelayTime(new Date());
 		message.setStatus(Message.Status.NEW);

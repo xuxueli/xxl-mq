@@ -10,9 +10,14 @@ public class Environment {
 
 
 	/**
-	 * rpc service address on zookeeper, servicePath : /xxl-mq/interfaceName/serverAddress(ip01:port9999)
+	 * rpc service address on zookeeper, service path : /xxl-mq/rpc/registrykey01/address01
      */
-	public static final String ZK_SERVICES_PATH = "/xxl-mq";
+	public static final String ZK_SERVICES_PATH = "/xxl-mq/rpc";
+
+	/**
+	 * consumer name on zookeepr, consumerpath : /xxl-mq/consumer01/address01
+     */
+	public static final String ZK_CONSUMER_PATH = "/xxl-mq/consumer";
 
 	/**
 	 * zk config file

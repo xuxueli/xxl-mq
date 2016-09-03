@@ -32,9 +32,14 @@ public class NetComServerFactory {
 		new NettyServer().start(port);
 	}
 
-	// refresh registry address
+	// registry (service) each 120s
 	private static Executor executor = Executors.newCachedThreadPool();
-	static {
+	public static void registry(){
+		try {
+			ZkServiceUtil.registry(port, regitsryMap.keySet());
+		} catch (Exception e) {
+			logger.error("", e);
+		}
 		executor.execute(new Runnable() {
 			@Override
 			public void run() {
@@ -42,7 +47,7 @@ public class NetComServerFactory {
 					// registry
 					try {
 						ZkServiceUtil.registry(port, regitsryMap.keySet());
-						TimeUnit.SECONDS.sleep(60);
+						TimeUnit.SECONDS.sleep(120);
 					} catch (Exception e) {
 						logger.error("", e);
 					}
