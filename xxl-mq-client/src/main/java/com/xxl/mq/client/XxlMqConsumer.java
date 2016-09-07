@@ -2,7 +2,7 @@ package com.xxl.mq.client;
 
 import com.xxl.mq.client.message.Message;
 import com.xxl.mq.client.rpc.util.IpUtil;
-import com.xxl.mq.client.rpc.util.ZkServiceUtil;
+import com.xxl.mq.client.rpc.util.ZkConsumerUtil;
 import com.xxl.mq.client.service.ConsumerHandler;
 import com.xxl.mq.client.service.annotation.MqConsumer;
 import org.jboss.netty.util.internal.ConcurrentHashMap;
@@ -52,7 +52,7 @@ public class XxlMqConsumer implements ApplicationContextAware {
 
         // registry (consumer) each 120s
         try {
-            ZkServiceUtil.registry(localPort, mqThreadMap.keySet());
+            ZkConsumerUtil.registry(localPort, mqThreadMap.keySet());
         } catch (Exception e) {
             logger.error("", e);
         }
@@ -62,7 +62,7 @@ public class XxlMqConsumer implements ApplicationContextAware {
                 while (true) {
                     // registry
                     try {
-                        ZkServiceUtil.registry(localPort, mqThreadMap.keySet());
+                        ZkConsumerUtil.registry(localPort, mqThreadMap.keySet());
                         TimeUnit.SECONDS.sleep(60);
                     } catch (Exception e) {
                         logger.error("", e);
@@ -156,7 +156,7 @@ public class XxlMqConsumer implements ApplicationContextAware {
                     int waitTim = 5;
                     while (true) {
                         try {
-                            int[] result = ZkServiceUtil.registryRankInfo(name, localConsumerRegistryAddress);
+                            int[] result = ZkConsumerUtil.registryRankInfo(name, localConsumerRegistryAddress);
                             if (result!=null) {
                                 int consumerTotal = result[0];
                                 int consumerRank = result[1];

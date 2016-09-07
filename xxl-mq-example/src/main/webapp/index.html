@@ -16,7 +16,7 @@
                     $("#console").prepend("<br>请输入-消息主题 ");
                     return;
                 }
-                $.post("produce", {}, function(data,status){
+                $.post("produce", {'name':name}, function(data,status){
                     var temp = "<br>" + new Date().format("yyyy-MM-dd HH:mm:ss") + ":";
                     temp += ("SUCCESS" == data)?'成功发送一条消息':data;
                     $("#console").prepend(temp);

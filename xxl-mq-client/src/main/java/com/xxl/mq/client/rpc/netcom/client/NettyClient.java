@@ -5,7 +5,7 @@ import com.xxl.mq.client.rpc.netcom.codec.NettyEncoder;
 import com.xxl.mq.client.rpc.netcom.codec.model.RpcCallbackFuture;
 import com.xxl.mq.client.rpc.netcom.codec.model.RpcRequest;
 import com.xxl.mq.client.rpc.netcom.codec.model.RpcResponse;
-import com.xxl.mq.client.rpc.util.ZkServiceUtil;
+import com.xxl.mq.client.rpc.util.ZkServiceDiscovery;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -81,7 +81,7 @@ public class NettyClient {
 	public static RpcResponse send(RpcRequest request) throws Exception {
 
 		try {
-			String address = ZkServiceUtil.discover(request.getRegistryKey());
+			String address = ZkServiceDiscovery.discover(request.getRegistryKey());
 			if (address == null) {
 				throw new RuntimeException(">>>>>>>>>>> xxl-rpc, no address from service:{}" + request.getClassName());
 			}

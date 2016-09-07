@@ -3,7 +3,7 @@ package com.xxl.mq.client.rpc.netcom;
 import com.xxl.mq.client.rpc.netcom.codec.model.RpcRequest;
 import com.xxl.mq.client.rpc.netcom.codec.model.RpcResponse;
 import com.xxl.mq.client.rpc.netcom.server.NettyServer;
-import com.xxl.mq.client.rpc.util.ZkServiceUtil;
+import com.xxl.mq.client.rpc.util.ZkServiceRegistry;
 import net.sf.cglib.reflect.FastClass;
 import net.sf.cglib.reflect.FastMethod;
 import org.slf4j.Logger;
@@ -36,7 +36,7 @@ public class NetComServerFactory {
 	private static Executor executor = Executors.newCachedThreadPool();
 	public static void registry(){
 		try {
-			ZkServiceUtil.registry(port, regitsryMap.keySet());
+			ZkServiceRegistry.registerServices(port, regitsryMap.keySet());
 		} catch (Exception e) {
 			logger.error("", e);
 		}
@@ -46,8 +46,8 @@ public class NetComServerFactory {
 				while (true) {
 					// registry
 					try {
-						ZkServiceUtil.registry(port, regitsryMap.keySet());
 						TimeUnit.SECONDS.sleep(120);
+						ZkServiceRegistry.registerServices(port, regitsryMap.keySet());
 					} catch (Exception e) {
 						logger.error("", e);
 					}
