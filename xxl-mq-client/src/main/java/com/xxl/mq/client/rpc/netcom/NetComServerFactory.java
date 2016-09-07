@@ -46,7 +46,7 @@ public class NetComServerFactory {
 				while (true) {
 					// registry
 					try {
-						TimeUnit.SECONDS.sleep(120);
+						TimeUnit.SECONDS.sleep(60L);
 						ZkServiceRegistry.registerServices(port, regitsryMap.keySet());
 					} catch (Exception e) {
 						logger.error("", e);

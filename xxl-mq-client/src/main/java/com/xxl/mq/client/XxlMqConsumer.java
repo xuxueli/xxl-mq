@@ -1,7 +1,6 @@
 package com.xxl.mq.client;
 
 import com.xxl.mq.client.message.Message;
-import com.xxl.mq.client.rpc.util.IpUtil;
 import com.xxl.mq.client.rpc.util.ZkConsumerUtil;
 import com.xxl.mq.client.service.ConsumerHandler;
 import com.xxl.mq.client.service.annotation.MqConsumer;
@@ -27,7 +26,7 @@ public class XxlMqConsumer implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 
-        // parse consumer
+        // init consumer respository
         Map<String, Object> serviceMap = applicationContext.getBeansWithAnnotation(MqConsumer.class);
         if (serviceMap!=null && serviceMap.size()>0) {
             for (Object serviceBean : serviceMap.values()) {
@@ -41,18 +40,18 @@ public class XxlMqConsumer implements ApplicationContextAware {
                     }
                     // init mq thread for each consumer
                     ConsumerHandler consumerHandler = (ConsumerHandler) serviceBean;
-                    MqThread mqThread = new MqThread(consumerHandler);
-                    mqThreadMap.put(name, mqThread);
+                    ConsumerThread mqThread = new ConsumerThread(consumerHandler);
+                    consumerRespository.put(name, mqThread);
                 }
             }
         }
-        if (mqThreadMap==null || mqThreadMap.size()==0) {
+        if (consumerRespository ==null || consumerRespository.size()==0) {
             return;
         }
 
-        // registry (consumer) each 120s
+        // registry consumer, and fresh each 60s
         try {
-            ZkConsumerUtil.registry(localPort, mqThreadMap.keySet());
+            ZkConsumerUtil.registerConsumers(consumerRespository.keySet());
         } catch (Exception e) {
             logger.error("", e);
         }
@@ -62,8 +61,8 @@ public class XxlMqConsumer implements ApplicationContextAware {
                 while (true) {
                     // registry
                     try {
-                        ZkConsumerUtil.registry(localPort, mqThreadMap.keySet());
                         TimeUnit.SECONDS.sleep(60);
+                        ZkConsumerUtil.registerConsumers(consumerRespository.keySet());
                     } catch (Exception e) {
                         logger.error("", e);
                     }
@@ -72,7 +71,7 @@ public class XxlMqConsumer implements ApplicationContextAware {
         });
 
         // consumer thread start
-        for (Map.Entry<String, MqThread> item: mqThreadMap.entrySet()) {
+        for (Map.Entry<String, ConsumerThread> item: consumerRespository.entrySet()) {
             item.getValue().start();
             MqConsumer annotation = item.getValue().getConsumerHandler().getClass().getAnnotation(MqConsumer.class);
             logger.info(">>>>>>>>>>> xxl-mq, consumer thread start, name={}, type={}", annotation.value(), annotation.type());
@@ -80,15 +79,17 @@ public class XxlMqConsumer implements ApplicationContextAware {
 
     }
 
-    // registry (consumer) each 120s
-    private static final int localPort = 6080;
-    private static String localConsumerRegistryAddress = IpUtil.getAddress(localPort);
+    // fresh consumer
     private static Executor executor = Executors.newCachedThreadPool();
-    private static ConcurrentHashMap<String, MqThread> mqThreadMap = new ConcurrentHashMap<String, MqThread>();
-    public static class MqThread extends Thread {
+
+    // consumer respository
+    private static ConcurrentHashMap<String, ConsumerThread> consumerRespository = new ConcurrentHashMap<String, ConsumerThread>();
+
+    // consumer thread
+    public static class ConsumerThread extends Thread {
 
         private ConsumerHandler consumerHandler;
-        public MqThread(ConsumerHandler consumerHandler) {
+        public ConsumerThread(ConsumerHandler consumerHandler) {
             this.consumerHandler = consumerHandler;
         }
         public ConsumerHandler getConsumerHandler() {
@@ -100,9 +101,7 @@ public class XxlMqConsumer implements ApplicationContextAware {
             MqConsumer annotation = consumerHandler.getClass().getAnnotation(MqConsumer.class);
             MqConsumer.MqType type = annotation.type();
             final String name = annotation.value();
-            if (type==null || name==null || name.trim().length()==0) {
-                return;
-            }
+
             switch (type){
                 case TOPIC :{
                     // TODO
@@ -156,12 +155,10 @@ public class XxlMqConsumer implements ApplicationContextAware {
                     int waitTim = 5;
                     while (true) {
                         try {
-                            int[] result = ZkConsumerUtil.registryRankInfo(name, localConsumerRegistryAddress);
-                            if (result!=null) {
-                                int consumerTotal = result[0];
-                                int consumerRank = result[1];
+                            ZkConsumerUtil.ActiveInfo activeInfo = ZkConsumerUtil.isActice(annotation);
+                            if (activeInfo!=null) {
 
-                                LinkedList<Message> list =  XxlMqClient.getXxlMqService().pullMessage(name, Message.Status.NEW.name(), 10, consumerRank, consumerTotal);
+                                LinkedList<Message> list =  XxlMqClient.getXxlMqService().pullMessage(name, Message.Status.NEW.name(), 10, activeInfo.rank, activeInfo.total);
                                 if (list!=null && list.size()>0) {
                                     waitTim = 0;
                                     for (Message msg: list) {
@@ -183,9 +180,10 @@ public class XxlMqConsumer implements ApplicationContextAware {
                                 if (waitTim>0) {
                                     TimeUnit.SECONDS.sleep(waitTim);
                                 }
+
                             } else {
                                 TimeUnit.SECONDS.sleep(5);
-                                logger.info(">>>>>>>>>>> xxl-mq, registryRankInfo(QUEUE) fail, registryKey:{}", name);
+                                logger.info(">>>>>>>>>>> xxl-mq, isActice(QUEUE) fail, registryKey:{}", name);
                             }
 
                         } catch (Exception e) {
@@ -202,9 +200,4 @@ public class XxlMqConsumer implements ApplicationContextAware {
         }
     }
 
-    public static void main(String[] args) {
-        for (int i = 0; i < 10; i++) {
-            System.out.println(i%2);
-        }
-    }
 }

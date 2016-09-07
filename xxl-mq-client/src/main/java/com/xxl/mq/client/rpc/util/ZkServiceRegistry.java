@@ -25,11 +25,11 @@ public class ZkServiceRegistry {
 	private static ZooKeeper getInstance(){
 		if (zooKeeper==null) {
 			try {
-				if (INSTANCE_INIT_LOCK.tryLock(2, TimeUnit.SECONDS)) {
+				if (INSTANCE_INIT_LOCK.tryLock(5, TimeUnit.SECONDS)) {
 					/*final CountDownLatch countDownLatch = new CountDownLatch(1);
 					countDownLatch.countDown();
 					countDownLatch.await();*/
-					zooKeeper = new ZooKeeper(Environment.ZK_ADDRESS, 30000, new Watcher() {
+					zooKeeper = new ZooKeeper(Environment.ZK_ADDRESS, 10000, new Watcher() {
 						@Override
 						public void process(WatchedEvent event) {
 
@@ -96,7 +96,7 @@ public class ZkServiceRegistry {
 			if (addreddStat == null) {
 				String path = getInstance().create(registryKeyAddressPath, address.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);	// must be EPHEMERAL
 			}
-			logger.info(">>>>>>>>>>> xxl-rpc registerServices success, registryKey:{}, address:{}, registryKeyAddressPath:{}", registryKey, address, registryKeyAddressPath);
+			logger.info(">>>>>>>>>>> xxl-rpc registe service item, registryKey:{}, address:{}, registryKeyAddressPath:{}", registryKey, address, registryKeyAddressPath);
 		}
 
     }

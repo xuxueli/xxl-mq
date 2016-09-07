@@ -26,11 +26,11 @@ public class ZkServiceDiscovery {
 	private static ZooKeeper getInstance(){
 		if (zooKeeper==null) {
 			try {
-				if (INSTANCE_INIT_LOCK.tryLock(2, TimeUnit.SECONDS)) {
+				if (INSTANCE_INIT_LOCK.tryLock(5, TimeUnit.SECONDS)) {
 					/*final CountDownLatch countDownLatch = new CountDownLatch(1);
 					countDownLatch.countDown();
 					countDownLatch.await();*/
-					zooKeeper = new ZooKeeper(Environment.ZK_ADDRESS, 30000, new Watcher() {
+					zooKeeper = new ZooKeeper(Environment.ZK_ADDRESS, 10000, new Watcher() {
 						@Override
 						public void process(WatchedEvent event) {
 
@@ -78,7 +78,7 @@ public class ZkServiceDiscovery {
 			public void run() {
 				while (true) {
 					try {
-						TimeUnit.SECONDS.sleep(30L);
+						TimeUnit.SECONDS.sleep(60L);
 						//discoverServices();
 					} catch (Exception e) {
 						logger.error("", e);
