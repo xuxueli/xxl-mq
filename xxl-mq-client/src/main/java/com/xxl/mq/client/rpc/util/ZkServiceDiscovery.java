@@ -46,13 +46,12 @@ public class ZkServiceDiscovery {
 
 							// refresh service address
 							logger.info("" + event);
-							if (event.getType() == Event.EventType.NodeChildrenChanged || event.getState() == Event.KeeperState.SyncConnected) {
-								if (event.getPath()!=null && event.getPath().startsWith(Environment.ZK_SERVICES_PATH)) {
-									try {
-										discoverServices();
-									} catch (Exception e) {
-										logger.error("", e);
-									}
+							if ((event.getType() == Event.EventType.NodeChildrenChanged && event.getPath()!=null && event.getPath().startsWith(Environment.ZK_SERVICES_PATH)) ||
+									event.getType() == Event.EventType.None) {
+								try {
+									discoverServices();
+								} catch (Exception e) {
+									logger.error("", e);
 								}
 							}
 
@@ -71,7 +70,7 @@ public class ZkServiceDiscovery {
 	}
 
 	// ------------------------------ private discover service ------------------------------
-	private static Executor executor = Executors.newCachedThreadPool();
+	/*private static Executor executor = Executors.newCachedThreadPool();
 	static {
 		executor.execute(new Runnable() {
 			@Override
@@ -79,7 +78,7 @@ public class ZkServiceDiscovery {
 				while (true) {
 					try {
 						TimeUnit.SECONDS.sleep(60L);
-						//discoverServices();
+						discoverServices();
 					} catch (Exception e) {
 						logger.error("", e);
 					}
@@ -87,7 +86,7 @@ public class ZkServiceDiscovery {
 				}
 			}
 		});
-	}
+	}*/
 
 	// "resigtry key's address" path : /xxl-rpc/registry-key/address
     private static volatile ConcurrentMap<String, Set<String>> serviceAddress = new ConcurrentHashMap<String, Set<String>>();

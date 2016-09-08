@@ -47,13 +47,12 @@ public class ZkConsumerUtil {
 
 							// refresh service address
 							logger.info("" + event);
-							if (event.getType() == Event.EventType.NodeChildrenChanged || event.getState() == Event.KeeperState.SyncConnected) {
-								if (event.getPath()!=null && event.getPath().startsWith(Environment.ZK_CONSUMER_PATH)) {
-									try {
-										discoverConsumers();
-									} catch (Exception e) {
-										logger.error("", e);
-									}
+							if ((event.getType() == Event.EventType.NodeChildrenChanged && event.getPath()!=null && event.getPath().startsWith(Environment.ZK_CONSUMER_PATH)) ||
+									event.getType() == Event.EventType.None) {
+								try {
+									discoverConsumers();
+								} catch (Exception e) {
+									logger.error("", e);
 								}
 							}
 
@@ -75,7 +74,7 @@ public class ZkConsumerUtil {
 	}
 
 	// ------------------------------ register service ------------------------------
-	private static final String localAddress = IpUtil.getAddress(6080);
+	public static final String localAddress = IpUtil.getAddress(6080);
 	/**
 	 * register service
 	 */

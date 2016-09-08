@@ -38,7 +38,13 @@ $(function() {
 					},
 					//{ data: 'updateTime'},
 					{ data: 'status'},
-					{ data: 'msg'},
+					{
+						data: 'msg',
+						render : function ( data, type, row ) {
+							var temp = '<a href="javascript:;" class="msg_log" msg="'+ data +'" >流转日志</a>';
+							return temp;
+						}
+					},
 	                { data: 'msg' ,
 	                	"render": function ( data, type, row ) {
 	                		return function(){
@@ -75,7 +81,13 @@ $(function() {
 			}
 		}
 	});
-	
+
+	// msg弹框
+	$("#data_list").on('click', '.msg_log',function() {
+		ComAlertTec.show($(this).attr('msg'));
+	});
+
+
 	// 搜索按钮
 	$('#searchBtn').on('click', function(){
 		dataTable.fnDraw();
