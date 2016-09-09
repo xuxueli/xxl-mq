@@ -17,7 +17,7 @@ public class XxlMqMessage {
 	private Date updateTime;	// 更新时间
 	private String status;		// 消息状态: NEW=新消息、ING=消费中、SUCCESS=消费成功、FAIL=消费失败、TIMEOUT=超时
 	private String msg;			// 历史流转日志
-	private int retryCount;		// 重试次数, 默认0不重试
+	private int retryCount;		// 剩余重试次数, 默认0不重试
 
 
 	public int getId() {

@@ -39,6 +39,9 @@
 	            <div class="col-xs-2">
 	            	<button class="btn btn-block btn-info" id="searchBtn">搜索</button>
 	            </div>
+                <div class="col-xs-2">
+                    <button class="btn btn-block btn-default" id="msg_add">+新增消息</button>
+                </div>
           	</div>
 	    	
 			<div class="row">
@@ -58,6 +61,7 @@
                                         <th name="addTime/updateTime" >创建时间/更新时间</th>
                                         <th name="status" >消息状态</th>
                                         <th name="msg" >历史流转日志</th>
+                                        <th name="retryCount" >剩余重试次数</th>
 					                  	<th>操作</th>
 					                </tr>
 				                </thead>
@@ -77,27 +81,41 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" >新增配置</h4>
+                    <h4 class="modal-title" >新增消息</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal form" role="form" >
                         <div class="form-group">
-                            <label for="firstname" class="col-sm-2 control-label">KEY</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="nodeKey" placeholder="请输入KEY" maxlength="100" ></div>
+                            <label for="lastname" class="col-sm-3 control-label">主题</label>
+                            <div class="col-sm-9"><input type="text" class="form-control" name="name"  ></div>
                         </div>
                         <div class="form-group">
-                            <label for="lastname" class="col-sm-2 control-label">描述</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="nodeDesc" placeholder="请输入描述" maxlength="100" ></div>
-                        </div>
-                        <div class="form-group">
-                            <label for="lastname" class="col-sm-2 control-label">VALUE</label>
-                            <div class="col-sm-10">
-                                <textarea class="textarea" name="nodeValue" maxlength="512" placeholder="请输入VALUE" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                            <label for="lastname" class="col-sm-3 control-label">数据</label>
+                            <div class="col-sm-9">
+                                <textarea class="textarea" name="data" maxlength="1024" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
                             </div>
                         </div>
                         <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-10">
-                                <button type="submit" class="btn btn-primary"  >保存</button>
+                            <label for="lastname" class="col-sm-3 control-label">Delay</label>
+                            <div class="col-sm-9"><input type="text" class="form-control" name="delayTime" data-inputmask="'alias': 'dd/mm/yyyy hh:mm xm'" data-mask ></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-3 control-label">状态</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" name="status">
+                                <#list status as item>
+                                    <option value="${item}">${item}</option>
+                                </#list>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-3 control-label">剩余重试次数</label>
+                            <div class="col-sm-9"><input type="text" class="form-control" name="retryCount" value="0" ></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-9">
+                                <button type="submit" class="btn btn-primary"  >更新</button>
                                 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
                             </div>
                         </div>
@@ -135,6 +153,10 @@
 									</#list>
                                 </select>
                             </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-3 control-label">剩余重试次数</label>
+                            <div class="col-sm-9"><input type="text" class="form-control" name="retryCount" value="0" ></div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-3 col-sm-9">

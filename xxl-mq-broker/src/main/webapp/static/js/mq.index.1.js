@@ -51,6 +51,7 @@ $(function() {
 							return temp;
 						}
 					},
+					{ data: 'retryCount'},
 	                { data: 'msg' ,
 	                	"render": function ( data, type, row ) {
 	                		return function(){
@@ -58,6 +59,7 @@ $(function() {
 										'" name="'+ row.name +
 										'" delayTime="'+ row.delayTime +
 										'" status="'+ row.status +
+										'" retryCount="'+ row.retryCount +
 										'">' +
 										'<textarea name="data" style="display: none">'+row.data+'</textarea>' +
 										'<button class="btn btn-info btn-xs msg_update" type="button">编辑</button>  '+
@@ -131,23 +133,12 @@ $(function() {
 		});
 	});
 
-	// 时间格式化
-	$("[data-mask]").inputmask({
-		mask: "y-m-d h:s:s",
-		placeholder: "yyyy-mm-dd hh:mm:ss",
-		hourFormat: "24"
+	// msg_add
+	$('#msg_add').on('click', function(){
+		$("#addModal .form input[name='delayTime']").val( moment(new Date()).format("YYYY-MM-DD HH:mm:ss") );
+		$('#addModal').modal({backdrop: false, keyboard: false}).modal('show');
 	});
-
-	// msg_update
-	$("#data_list").on('click', '.msg_update',function() {
-		$("#updateModal .form input[name='id']").val( $(this).parent('p').attr("id") );
-		$("#updateModal .form textarea[name='data']").val( $(this).parent('p').find("textarea[name='data']").val() );
-		$("#updateModal .form input[name='delayTime']").val( moment(new Date(Number( $(this).parent('p').attr("delayTime") ))).format("YYYY-MM-DD HH:mm:ss") );
-		$("#updateModal .form select[name='status']").find("option[value='" + $(this).parent('p').attr("status") + "']").prop("selected",true);
-
-		$('#updateModal').modal({backdrop: false, keyboard: false}).modal('show');
-	});
-	var updateModalValidate = $("#updateModal .form").validate({
+	var addModalValidate = $("#addModal .form").validate({
 		errorElement : 'span',
 		errorClass : 'help-block',
 		focusInvalid : true,
@@ -156,16 +147,86 @@ $(function() {
 				required : true ,
 				minlength: 10,
 				maxlength: 250
+			},
+			retryCount : {
+				required:true,
+				digits : true
 			}
 		},
 		messages : {
-			nodeKey : {
+			name : {
 				required :'请输入"消息主题".'  ,
 				minlength:'"消息主题"不应低于4位',
-				maxlength:'"消息主题"不应超过100位'
+				maxlength:'"消息主题"不应超过250位'
 			},
-			nodeValue : {	},
-			nodeDesc : {	}
+			retryCount : {
+				required:"请输入重试次数",
+				digits :'请输入"正整数".'
+			}
+		},
+		highlight : function(element) {
+			$(element).closest('.form-group').addClass('has-error');
+		},
+		success : function(label) {
+			label.closest('.form-group').removeClass('has-error');
+			label.remove();
+		},
+		errorPlacement : function(error, element) {
+			element.parent('div').append(error);
+		},
+		submitHandler : function(form) {
+			$.post(base_url + "/mq/add", $("#addModal .form").serialize(), function(data, status) {
+				if (data.code == "200") {
+					$('#addModal').modal('hide');
+					setTimeout(function(){
+						ComAlert.show(1, "新增成功", function(){
+							dataTable.fnDraw();
+						});
+					}, 315)
+				} else {
+					ComAlert.show(2, data.msg);
+				}
+			});
+		}
+	});
+	$("#addModal").on('hide.bs.modal', function () {
+		$("#addModal .form")[0].reset();
+	});
+
+
+	// 时间格式化
+	$("[data-mask]").inputmask({
+		mask: "y-m-d h:s:s",
+		placeholder: "yyyy-mm-dd hh:mm:ss",
+		hourFormat: "24"
+	});
+
+
+	// msg_update
+	$("#data_list").on('click', '.msg_update',function() {
+		$("#updateModal .form input[name='id']").val( $(this).parent('p').attr("id") );
+		$("#updateModal .form textarea[name='data']").val( $(this).parent('p').find("textarea[name='data']").val() );
+		$("#updateModal .form input[name='delayTime']").val( moment(new Date(Number( $(this).parent('p').attr("delayTime") ))).format("YYYY-MM-DD HH:mm:ss") );
+		$("#updateModal .form select[name='status']").find("option[value='" + $(this).parent('p').attr("status") + "']").prop("selected",true);
+		$("#updateModal .form input[name='retryCount']").val( $(this).parent('p').attr("retryCount") );
+
+		$('#updateModal').modal({backdrop: false, keyboard: false}).modal('show');
+	});
+	var updateModalValidate = $("#updateModal .form").validate({
+		errorElement : 'span',
+		errorClass : 'help-block',
+		focusInvalid : true,
+		rules : {
+			retryCount : {
+				required:true,
+				digits : true
+			}
+		},
+		messages : {
+			retryCount : {
+				required:"请输入重试次数",
+				digits :'请输入"正整数".'
+			}
 		},
 		highlight : function(element) {
 			$(element).closest('.form-group').addClass('has-error');

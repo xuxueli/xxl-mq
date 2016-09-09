@@ -28,7 +28,7 @@ public class MqController {
 	@PermessionLimit
 	public String index(Model model){
 		model.addAttribute("status", Message.Status.values());
-		return "mq/index";
+		return "mq/mq.index";
 	}
 	
 	@RequestMapping("/pageList")
@@ -50,8 +50,15 @@ public class MqController {
 	@RequestMapping("/update")
 	@ResponseBody
 	@PermessionLimit
-	public ReturnT<String> update(int id, String data, String delayTime, String status){
-		return xxlMqMessageService.update(id, data, delayTime, status);
+	public ReturnT<String> update(int id, String data, String delayTime, String status, int retryCount){
+		return xxlMqMessageService.update(id, data, delayTime, status, retryCount);
+	}
+
+	@RequestMapping("/add")
+	@ResponseBody
+	@PermessionLimit
+	public ReturnT<String> add(String name, String data, String delayTime, String status, int retryCount){
+		return xxlMqMessageService.add(name, data, delayTime, status, retryCount);
 	}
 
 }

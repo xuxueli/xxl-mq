@@ -46,7 +46,7 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
     }
 
     @Override
-    public ReturnT<String> update(int id, String data, String delayTimeStr, String status) {
+    public ReturnT<String> update(int id, String data, String delayTimeStr, String status, int retryCount) {
         // id
         if (id<1){
             return new ReturnT<String>(500, "参数非法");
@@ -72,6 +72,11 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
         if (Message.Status.valueOf(status)==null) {
             return new ReturnT<String>(500, "消息状态不合法");
         }
+        // retryCount
+        if (retryCount<0) {
+            retryCount = 0;
+        }
+        // addMsg
         String tim = null;
         try {
             tim = DateFormatUtil.formatDateTime(new Date());
@@ -79,7 +84,64 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
             e.printStackTrace();
         }
         String addMsg = "<hr>》》》时间:{"+ tim +"}<br>》》》操作:人工手工修改";
-        int ret = xxlMqMessageDao.update(id ,data, delayTime, status, addMsg);
+
+        int ret = xxlMqMessageDao.update(id ,data, delayTime, status, addMsg, retryCount);
         return ret>0 ? ReturnT.SUCCESS : ReturnT.FAIL;
+    }
+
+    @Override
+    public ReturnT<String> add(String name, String data, String delayTimeStr, String status, int retryCount) {
+        // name
+        if (name==null || name.trim().length()==0) {
+            return new ReturnT<String>(500, "消息主题不可为空");
+        }
+        if (name.length()>250) {
+            return new ReturnT<String>(500, "消息主题长度超长");
+        }
+        // data
+        if (StringUtils.isNotBlank(data)){
+            Map<String,String> dataMap = JacksonUtil.readValue(data, Map.class);
+            if (dataMap==null) {
+                return new ReturnT<String>(500, "消息数据格式不合法");
+            }
+        }
+        // delayTime
+        Date delayTime = null;
+        try {
+            delayTime = DateFormatUtil.parseDateTime(delayTimeStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (delayTime==null) {
+            return new ReturnT<String>(500, "消息数据格式不合法");
+        }
+        // status
+        if (Message.Status.valueOf(status)==null) {
+            return new ReturnT<String>(500, "消息状态不合法");
+        }
+        // retryCount
+        if (retryCount<0) {
+            retryCount = 0;
+        }
+        // addMsg
+        String tim = null;
+        try {
+            tim = DateFormatUtil.formatDateTime(new Date());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        String addMsg = "<hr>》》》时间:{"+ tim +"}<br>》》》操作:人工手工录入";
+
+
+        XxlMqMessage msg = new XxlMqMessage();
+        msg.setName(name);
+        msg.setData(data);
+        msg.setDelayTime(delayTime);
+        msg.setStatus(status);
+        msg.setMsg(addMsg);
+        msg.setRetryCount(retryCount);
+
+        xxlMqMessageDao.save(msg);
+        return ReturnT.SUCCESS;
     }
 }

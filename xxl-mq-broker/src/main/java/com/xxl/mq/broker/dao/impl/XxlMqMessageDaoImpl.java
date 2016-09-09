@@ -51,13 +51,14 @@ public class XxlMqMessageDaoImpl implements IXxlMqMessageDao {
     }
 
     @Override
-    public int update(int id, String data, Date delayTime, String status, String addMsg) {
+    public int update(int id, String data, Date delayTime, String status, String addMsg, int retryCount) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("id", id);
         params.put("data", data);
         params.put("delayTime", delayTime);
         params.put("status", status);
         params.put("addMsg", addMsg);
+        params.put("retryCount", retryCount);
 
         return sqlSessionTemplate.delete("XxlMqMessageMapper.update", params);
     }
