@@ -40,11 +40,6 @@ public class XxlMqServiceImpl implements XxlMqService {
     }
 
     @Override
-    public int updateMessage(Message message) {
-        return xxlMqMessageDao.updateStatus(message.getId(), message.getStatus().name(), message.getMsg());
-    }
-
-    @Override
     public LinkedList<Message> pullMessage(String name, String status, int pagesize, int consumerRank, int consumerTotal) {
         List<XxlMqMessage> list = xxlMqMessageDao.pullMessage(name, status, pagesize, consumerRank, consumerTotal);
         if (list!=null && list.size()>0) {
@@ -61,6 +56,16 @@ public class XxlMqServiceImpl implements XxlMqService {
             return msgList;
         }
         return null;
+    }
+
+    @Override
+    public int lockMessage(Message message) {
+        return xxlMqMessageDao.lockMessage(message.getId(), message.getStatus().name(), message.getMsg(), Message.Status.NEW.name());
+    }
+
+    @Override
+    public int updateMessage(Message message) {
+        return xxlMqMessageDao.updateStatus(message.getId(), message.getStatus().name(), message.getMsg());
     }
 
 }

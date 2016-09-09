@@ -45,10 +45,6 @@ public class XxlMqMessageDaoImpl implements IXxlMqMessageDao {
     }
 
     @Override
-    public int update(XxlMqMessage messge) {
-        return sqlSessionTemplate.update("XxlMqMessageMapper.update", messge);
-    }
-    @Override
     public int delete(int id) {
         return sqlSessionTemplate.delete("XxlMqMessageMapper.delete", id);
     }
@@ -56,16 +52,6 @@ public class XxlMqMessageDaoImpl implements IXxlMqMessageDao {
     @Override
     public int save(XxlMqMessage xxlMqMessage) {
         return sqlSessionTemplate.insert("XxlMqMessageMapper.save", xxlMqMessage);
-    }
-
-    @Override
-    public int updateStatus(int id, String status, String addMsg) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("id", id);
-        params.put("status", status);
-        params.put("addMsg", addMsg);
-
-        return sqlSessionTemplate.update("XxlMqMessageMapper.updateStatus", params);
     }
 
     @Override
@@ -78,6 +64,27 @@ public class XxlMqMessageDaoImpl implements IXxlMqMessageDao {
         params.put("consumerTotal", consumerTotal);
 
         return sqlSessionTemplate.selectList("XxlMqMessageMapper.pullMessage", params);
+    }
+
+    @Override
+    public int lockMessage(int id, String status, String addMsg, String originStatus) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("id", id);
+        params.put("status", status);
+        params.put("addMsg", addMsg);
+        params.put("originStatus", originStatus);
+
+        return sqlSessionTemplate.update("XxlMqMessageMapper.lockMessage", params);
+    }
+
+    @Override
+    public int updateStatus(int id, String status, String addMsg) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("id", id);
+        params.put("status", status);
+        params.put("addMsg", addMsg);
+
+        return sqlSessionTemplate.update("XxlMqMessageMapper.updateStatus", params);
     }
 
 }

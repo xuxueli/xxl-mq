@@ -124,7 +124,7 @@ public class ZkConsumerUtil {
 				while (true) {
 					try {
 						TimeUnit.SECONDS.sleep(60L);
-						//discoverConsumers();
+						discoverConsumers();
 					} catch (Exception e) {
 						logger.error("", e);
 					}

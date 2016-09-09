@@ -75,4 +75,18 @@ public class Message implements Serializable {
     public void setRetryCount(int retryCount) {
         this.retryCount = retryCount;
     }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", data=" + data +
+                ", delayTime=" + delayTime +
+                ", status=" + status +
+                ", msg='" + msg + '\'' +
+                ", retryCount=" + retryCount +
+                '}';
+    }
+
 }

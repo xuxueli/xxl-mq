@@ -56,14 +56,6 @@
 		ORDER BY t.add_time DESC
 	</select>
 
-
-	<update id="update" parameterType="com.xxl.mq.broker.core.model.XxlMqMessage" >
-		UPDATE XXL_MQ_MESSAGE
-		SET	update_time = NOW(),
-			status = #{status},
-			msg = msg + #{msg}
-		WHERE id = #{id}
-	</update>
 	<delete id="delete" parameterType="java.lang.Integer">
 		DELETE FROM XXL_MQ_MESSAGE
 		WHERE id = #{id}
@@ -94,6 +86,27 @@
 		</selectKey>
 	</insert>
 
+	<select id="pullMessage" parameterType="java.util.HashMap" resultMap="XxlMqMessage">
+		SELECT <include refid="Base_Column_List" />
+		FROM XXL_MQ_MESSAGE AS t
+		WHERE t.name = #{name}
+		AND t.status = #{status}
+		<if test="consumerTotal > 1">
+			AND MOD(t.id, #{consumerTotal}) = #{consumerRank}
+		</if>
+		ORDER BY t.add_time DESC
+		LIMIT #{pagesize}
+	</select>
+
+	<update id="lockMessage" parameterType="java.util.HashMap" >
+		UPDATE XXL_MQ_MESSAGE
+		SET
+		update_time = NOW(),
+		status = #{status},
+		msg = CONCAT( IFNULL(msg, ''), #{addMsg})
+		WHERE id = #{id} AND status =  #{originStatus}
+	</update>
+
 	<update id="updateStatus" parameterType="java.util.HashMap" >
 		UPDATE XXL_MQ_MESSAGE
 		SET
@@ -102,17 +115,5 @@
 		 	msg = CONCAT( IFNULL(msg, ''), #{addMsg})
 		WHERE id = #{id}
 	</update>
-
-	<select id="pullMessage" parameterType="java.util.HashMap" resultMap="XxlMqMessage">
-		SELECT <include refid="Base_Column_List" />
-		FROM XXL_MQ_MESSAGE AS t
-		WHERE t.name = #{name}
-			AND t.status = #{status}
-			<if test="consumerTotal > 1">
-				AND MOD(t.id, #{consumerTotal}) = #{consumerRank}
-			</if>
-		ORDER BY t.add_time DESC
-		LIMIT #{pagesize}
-	</select>
 
 </mapper>

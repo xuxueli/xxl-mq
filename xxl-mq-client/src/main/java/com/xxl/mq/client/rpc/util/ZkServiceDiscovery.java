@@ -70,7 +70,7 @@ public class ZkServiceDiscovery {
 	}
 
 	// ------------------------------ private discover service ------------------------------
-	/*private static Executor executor = Executors.newCachedThreadPool();
+	private static Executor executor = Executors.newCachedThreadPool();
 	static {
 		executor.execute(new Runnable() {
 			@Override
@@ -86,7 +86,7 @@ public class ZkServiceDiscovery {
 				}
 			}
 		});
-	}*/
+	}
 
 	// "resigtry key's address" path : /xxl-rpc/registry-key/address
     private static volatile ConcurrentMap<String, Set<String>> serviceAddress = new ConcurrentHashMap<String, Set<String>>();

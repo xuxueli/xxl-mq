@@ -1,6 +1,7 @@
 package com.xxl.mq.client;
 
 import com.xxl.mq.client.message.Message;
+import com.xxl.mq.client.rpc.util.DateFormatUtil;
 import com.xxl.mq.client.rpc.util.ZkConsumerUtil;
 import com.xxl.mq.client.service.ConsumerHandler;
 import com.xxl.mq.client.service.annotation.MqConsumer;
@@ -12,11 +13,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import java.text.MessageFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import static com.xxl.mq.client.service.annotation.MqConsumer.MqType.*;
 
 /**
  * Created by xuxueli on 16/8/28.
@@ -100,77 +104,76 @@ public class XxlMqConsumer implements ApplicationContextAware {
         @Override
         public void run() {
             MqConsumer annotation = consumerHandler.getClass().getAnnotation(MqConsumer.class);
-            MqConsumer.MqType type = annotation.type();
-            final String name = annotation.value();
 
             int pagesize = 10;
             int waitTim = 5;
-            switch (type){
-                case TOPIC :{
-                    // TODO
-                }
-                case SERIAL_QUEUE :{
-                    // TODO
-                }case QUEUE :{
 
-                    while (true) {
-                        try {
-                            // check load
-                            ZkConsumerUtil.ActiveInfo checkPull = ZkConsumerUtil.isActice(annotation);
-                            if (checkPull!=null) {
+            if (annotation.type()==SERIAL_QUEUE || annotation.type()==QUEUE) {
+                while (true) {
+                    try {
+                        // check load
+                        ZkConsumerUtil.ActiveInfo checkPull = ZkConsumerUtil.isActice(annotation);
+                        if (checkPull!=null) {
+                            logger.info(">>>>>>>>>>> xxl-mq, isActice: name={}, rank={}, total={}", annotation.value(), checkPull.rank, checkPull.total);
 
-                                // load
-                                LinkedList<Message> messageList =  XxlMqClient.getXxlMqService().pullMessage(name, Message.Status.NEW.name(), pagesize, checkPull.rank, checkPull.total);
-                                if (messageList!=null && messageList.size()>0) {
-                                    waitTim = 0;
-                                    for (Message msg: messageList) {
+                            // load
+                            LinkedList<Message> messageList =  XxlMqClient.getXxlMqService().pullMessage(annotation.value(), Message.Status.NEW.name(), pagesize, checkPull.rank, checkPull.total);
+                            if (messageList!=null && messageList.size()>0) {
+                                waitTim = 0;
+                                for (Message msg: messageList) {
 
-                                        // check consumer
-                                        ZkConsumerUtil.ActiveInfo checkConsume = ZkConsumerUtil.isActice(annotation);
-                                        if (!(checkConsume!=null && checkConsume.rank==checkPull.rank && checkConsume.total==checkPull.total)) {
-                                            break;
-                                        }
-
-                                        // consumer
-                                        msg.setStatus(Message.Status.ING);
-                                        msg.setMsg(MessageFormat.format("<hr>》》》机器: {0} <br>》》》操作: 消息锁定(status>>>ING)", ZkConsumerUtil.localAddress));
-                                        XxlMqClient.getXxlMqService().updateMessage(msg);
-
-                                        try {
-                                            consumerHandler.consume(msg);
-                                            msg.setStatus(Message.Status.SUCCESS);
-                                            msg.setMsg(MessageFormat.format("<hr>》》》机器: {0} <br>》》》操作: 消息消费成功(status>>>SUCCESS)", ZkConsumerUtil.localAddress));
-                                        } catch (Exception e) {
-                                            logger.error("", e);
-                                            msg.setStatus(Message.Status.FAIL);
-                                            msg.setMsg(MessageFormat.format("<hr>》》》机器: {0} <br>》》》操作: 消息锁定失败(status>>>FAIL) <br>日志:{1}", ZkConsumerUtil.localAddress, e.getMessage()));
-                                        } finally {
-                                            XxlMqClient.getXxlMqService().updateMessage(msg);
-                                        }
-
+                                    // check consumer
+                                    ZkConsumerUtil.ActiveInfo checkConsume = ZkConsumerUtil.isActice(annotation);
+                                    if (!(checkConsume!=null && checkConsume.rank==checkPull.rank && checkConsume.total==checkPull.total)) {
+                                        break;
                                     }
-                                }
 
-                                waitTim = (waitTim<60) ? (waitTim+5) : waitTim;
-                                if (waitTim>0) {
-                                    TimeUnit.SECONDS.sleep(waitTim);
-                                }
+                                    String tim = DateFormatUtil.formatDateTime(new Date());
+                                    // consumer
+                                    msg.setStatus(Message.Status.ING);
+                                    msg.setMsg(MessageFormat.format("<hr>》》》时间: {0} <br>》》》机器: {1} <br>》》》操作: 消息锁定(status>>>ING)", tim, ZkConsumerUtil.localAddress));
+                                    int lockRet = XxlMqClient.getXxlMqService().lockMessage(msg);
+                                    if (lockRet<1){
+                                        continue;
+                                    }
 
-                            } else {
-                                TimeUnit.SECONDS.sleep(5);
-                                logger.info(">>>>>>>>>>> xxl-mq, isActice(QUEUE) fail, registryKey:{}", name);
+                                    try {
+                                        consumerHandler.consume(msg);
+                                        msg.setStatus(Message.Status.SUCCESS);
+                                        msg.setMsg(MessageFormat.format("<hr>》》》时间: {0} <br>》》》机器: {1} <br>》》》操作: 消息消费成功(status>>>SUCCESS)", tim, ZkConsumerUtil.localAddress));
+                                    } catch (Exception e) {
+                                        logger.error("", e);
+                                        msg.setStatus(Message.Status.FAIL);
+                                        msg.setMsg(MessageFormat.format("<hr>》》》时间: {0} <br>》》》机器: {1} <br>》》》操作: 消息锁定失败(status>>>FAIL) <br>日志:{1}", tim, ZkConsumerUtil.localAddress, e.getMessage()));
+                                    } finally {
+                                        XxlMqClient.getXxlMqService().updateMessage(msg);
+                                        logger.info(">>>>>>>>>> xxl-mq, consumer message: {}", msg);
+                                    }
+
+                                }
                             }
 
-                        } catch (Exception e) {
-                            try {
-                                TimeUnit.SECONDS.sleep(2);
-                            } catch (Exception e1) {
-                                logger.error("", e1);
+                            waitTim = (waitTim<60) ? (waitTim+5) : waitTim;
+                            if (waitTim>0) {
+                                TimeUnit.SECONDS.sleep(waitTim);
                             }
-                            logger.error("", e);
+
+                        } else {
+                            TimeUnit.SECONDS.sleep(5);
+                            logger.info(">>>>>>>>>>> xxl-mq, isActice(QUEUE) fail, registryKey:{}", annotation.value());
                         }
+
+                    } catch (Exception e) {
+                        try {
+                            TimeUnit.SECONDS.sleep(2);
+                        } catch (Exception e1) {
+                            logger.error("", e1);
+                        }
+                        logger.error("", e);
                     }
                 }
+            } else if (annotation.type() == TOPIC){
+                // TODO
             }
         }
     }

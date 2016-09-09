@@ -75,12 +75,19 @@ public class XxlMqBroker implements XxlMqService {
     public int saveMessage(Message message) {
         return newMessageQueue.add(message)?1:-1;
     }
-    public int updateMessage(Message message) {
-        return callbackMessageQueue.add(message)?1:-1;
-    }
 
     @Override
     public LinkedList<Message> pullMessage(String name, String status, int pagesize, int consumerRank, int consumerTotal) {
         return xxlMqService.pullMessage(name, status, pagesize, consumerRank, consumerTotal);
     }
+
+    @Override
+    public int lockMessage(Message message) {
+        return xxlMqService.lockMessage(message);
+    }
+
+    public int updateMessage(Message message) {
+        return callbackMessageQueue.add(message)?1:-1;
+    }
+
 }
