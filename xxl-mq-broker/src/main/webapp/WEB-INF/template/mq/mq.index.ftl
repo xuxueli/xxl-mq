@@ -30,12 +30,22 @@
 	    <section class="content">
 	    
 	    	<div class="row">
-	            <div class="col-xs-8">
+	            <div class="col-xs-4">
 	              	<div class="input-group">
 	                	<span class="input-group-addon">主题</span>
 	                	<input type="text" class="form-control" id="name" autocomplete="on" >
 	              	</div>
 	            </div>
+                <div class="col-xs-4">
+                    <div class="input-group">
+                        <span class="input-group-addon">状态</span>
+                        <select class="form-control" id="status" >
+                        <#list status as item>
+                            <option value="${item}">${item}</option>
+                        </#list>
+                        </select>
+                    </div>
+                </div>
 	            <div class="col-xs-2">
 	            	<button class="btn btn-block btn-info" id="searchBtn">搜索</button>
 	            </div>

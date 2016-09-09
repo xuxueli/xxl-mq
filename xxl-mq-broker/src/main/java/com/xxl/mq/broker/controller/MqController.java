@@ -35,9 +35,9 @@ public class MqController {
 	@ResponseBody
 	@PermessionLimit
 	public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start,
-		@RequestParam(required = false, defaultValue = "10") int length, String name){
+		@RequestParam(required = false, defaultValue = "10") int length, String name, String status){
 
-		return xxlMqMessageService.pageList(start, length, name, null);
+		return xxlMqMessageService.pageList(start, length, name, status);
 	}
 	
 	@RequestMapping("/delete")

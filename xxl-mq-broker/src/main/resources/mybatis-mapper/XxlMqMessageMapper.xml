@@ -32,7 +32,7 @@
 		FROM XXL_MQ_MESSAGE AS t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
 			<if test="name != null and name != ''">
-				AND t.name = CONCAT(CONCAT('%', #{name}), '%')
+				AND t.name like CONCAT(CONCAT('%', #{name}), '%')
 			</if>
 			<if test="status != null and status != ''">
 				AND t.status = #{status}
@@ -47,7 +47,7 @@
 		FROM XXL_MQ_MESSAGE AS t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
 			<if test="name != null and name != ''">
-				AND t.name = CONCAT(CONCAT('%', #{name}), '%')
+				AND t.name like CONCAT(CONCAT('%', #{name}), '%')
 			</if>
 			<if test="status != null and status != ''">
 				AND t.status = #{status}

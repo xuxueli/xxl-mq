@@ -11,6 +11,7 @@ $(function() {
 				obj.start = d.start;
 				obj.length = d.length;
 				obj.name = $('#name').val();
+				obj.status = $('#status').val();
 				return obj;
             }
 	    },
