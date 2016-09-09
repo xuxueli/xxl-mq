@@ -7,10 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -74,7 +71,7 @@ public class ZkConsumerUtil {
 	}
 
 	// ------------------------------ register service ------------------------------
-	public static final String localAddress = IpUtil.getAddress(6080);
+	public static final String localAddressRandom = IpUtil.getAddress(new Random().nextInt(50000));
 	/**
 	 * register service
 	 */
@@ -86,7 +83,7 @@ public class ZkConsumerUtil {
 		}
 
 		// address
-		String address = localAddress;
+		String address = localAddressRandom;
 
 		// "base" path : /xxl-rpc
 		Stat stat = getInstance().exists(Environment.ZK_CONSUMER_PATH, false);
@@ -190,7 +187,7 @@ public class ZkConsumerUtil {
 		TreeSet<String> sortSet = new TreeSet<String>(addressSet);
 		int index = 0;
 		for (String item: sortSet) {
-			if (item.equals(localAddress)) {
+			if (item.equals(localAddressRandom)) {
 				break;
 			}
 			index++;
