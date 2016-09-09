@@ -51,6 +51,7 @@ $(function() {
 	                			var html = '<p id="'+ row.id +
 										'" name="'+ row.name +
 										'" delayTime="'+ row.delayTime +
+										'" status="'+ row.status +
 										'">' +
 										'<textarea name="data" style="display: none">'+row.data+'</textarea>' +
 								  		'<button class="btn btn-danger btn-xs msg_remove" type="button">删除</button>  '+
@@ -133,11 +134,10 @@ $(function() {
 
 	// msg_update
 	$("#data_list").on('click', '.msg_update',function() {
-		var delayTime = moment(new Date(Number( $(this).parent('p').attr("delayTime") ))).format("YYYY-MM-DD HH:mm:ss");
-
-		$("#updateModal .form input[name='name']").val( $(this).parent('p').attr("name") );
-		//$("#updateModal .form input[name='delayTime']").val(delayTime);
+		$("#updateModal .form input[name='id']").val( $(this).parent('p').attr("id") );
 		$("#updateModal .form textarea[name='data']").val( $(this).parent('p').find("textarea[name='data']").val() );
+		$("#updateModal .form input[name='delayTime']").val( moment(new Date(Number( $(this).parent('p').attr("delayTime") ))).format("YYYY-MM-DD HH:mm:ss") );
+		$("#updateModal .form select[name='status']").find("option[value='" + $(this).parent('p').attr("status") + "']").prop("selected",true);
 
 		$('#updateModal').modal({backdrop: false, keyboard: false}).modal('show');
 	});
@@ -146,23 +146,17 @@ $(function() {
 		errorClass : 'help-block',
 		focusInvalid : true,
 		rules : {
-			nodeKey : {
+			name : {
 				required : true ,
-				minlength: 4,
-				maxlength: 100
-			},
-			nodeValue : {
-				required : false
-			},
-			nodeDesc : {
-				required : false
+				minlength: 10,
+				maxlength: 250
 			}
 		},
 		messages : {
 			nodeKey : {
-				required :'请输入"KEY".'  ,
-				minlength:'"KEY"不应低于4位',
-				maxlength:'"KEY"不应超过100位'
+				required :'请输入"消息主题".'  ,
+				minlength:'"消息主题"不应低于4位',
+				maxlength:'"消息主题"不应超过100位'
 			},
 			nodeValue : {	},
 			nodeDesc : {	}
@@ -178,12 +172,14 @@ $(function() {
 			element.parent('div').append(error);
 		},
 		submitHandler : function(form) {
-			$.post(base_url + "/conf/update", $("#updateModal .form").serialize(), function(data, status) {
+			$.post(base_url + "/mq/update", $("#updateModal .form").serialize(), function(data, status) {
 				if (data.code == "200") {
-					ComAlert.show(1, "更新配置成功", function(){
-						confTable.fnDraw();
-						$('#updateModal').modal('hide');
-					});
+					$('#updateModal').modal('hide');
+					setTimeout(function(){
+						ComAlert.show(1, "更新成功", function(){
+							dataTable.fnDraw();
+						});
+					}, 315)
 				} else {
 					ComAlert.show(2, data.msg);
 				}
@@ -191,7 +187,7 @@ $(function() {
 		}
 	});
 	$("#updateModal").on('hide.bs.modal', function () {
-		$("#updateModal .form")[0].reset()
+		$("#updateModal .form")[0].reset();
 	});
 	
 });

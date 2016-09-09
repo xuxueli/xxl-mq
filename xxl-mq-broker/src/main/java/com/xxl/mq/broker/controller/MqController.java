@@ -3,7 +3,9 @@ package com.xxl.mq.broker.controller;
 import com.xxl.mq.broker.controller.annotation.PermessionLimit;
 import com.xxl.mq.broker.core.result.ReturnT;
 import com.xxl.mq.broker.service.IXxlMqMessageService;
+import com.xxl.mq.client.message.Message;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,7 +26,8 @@ public class MqController {
 	
 	@RequestMapping("")
 	@PermessionLimit
-	public String index(){
+	public String index(Model model){
+		model.addAttribute("status", Message.Status.values());
 		return "mq/index";
 	}
 	
@@ -42,6 +45,13 @@ public class MqController {
 	@PermessionLimit
 	public ReturnT<String> delete(int id){
 		return xxlMqMessageService.delete(id);
+	}
+
+	@RequestMapping("/update")
+	@ResponseBody
+	@PermessionLimit
+	public ReturnT<String> update(int id, String data, String delayTime, String status){
+		return xxlMqMessageService.update(id, data, delayTime, status);
 	}
 
 }

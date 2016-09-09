@@ -2,6 +2,7 @@ package com.xxl.mq.broker.dao;
 
 import com.xxl.mq.broker.core.model.XxlMqMessage;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,6 +14,7 @@ public interface IXxlMqMessageDao {
     public int pageListCount(int offset, int pagesize, String name, String status);
 
     public int delete(int id);
+    public int update(int id, String data, Date delayTime, String status, String addMsg);
 
     public int save(XxlMqMessage xxlMqMessage);
     public List<XxlMqMessage> pullMessage(String name, String status, int pagesize, int consumerRank, int consumerTotal);

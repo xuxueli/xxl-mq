@@ -6,6 +6,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,18 @@ public class XxlMqMessageDaoImpl implements IXxlMqMessageDao {
     @Override
     public int delete(int id) {
         return sqlSessionTemplate.delete("XxlMqMessageMapper.delete", id);
+    }
+
+    @Override
+    public int update(int id, String data, Date delayTime, String status, String addMsg) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("id", id);
+        params.put("data", data);
+        params.put("delayTime", delayTime);
+        params.put("status", status);
+        params.put("addMsg", addMsg);
+
+        return sqlSessionTemplate.delete("XxlMqMessageMapper.update", params);
     }
 
     @Override

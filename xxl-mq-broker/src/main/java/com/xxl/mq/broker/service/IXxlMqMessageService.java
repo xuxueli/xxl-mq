@@ -13,4 +13,6 @@ public interface IXxlMqMessageService {
 
     public ReturnT<String> delete(int id);
 
+    public ReturnT<String> update(int id, String data, String delayTimeStr, String status);
+
 }

@@ -7,9 +7,7 @@ CREATE TABLE `XXL_MQ_MESSAGE` (
   `add_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL COMMENT '更新时间',
   `status` varchar(255) NOT NULL COMMENT '消息状态: NEW=新消息、ING=消费中、SUCCESS=消费成功、FAIL=消费失败、TIMEOUT=超时',
-  `msg` varchar(255) DEFAULT NULL COMMENT '历史流转日志',
+  `msg` varchar(1024) DEFAULT NULL COMMENT '历史流转日志',
   `retry_count` int(11) NOT NULL DEFAULT '0' COMMENT '重试次数',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-

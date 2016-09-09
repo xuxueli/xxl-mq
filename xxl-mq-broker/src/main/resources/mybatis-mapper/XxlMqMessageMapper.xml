@@ -61,6 +61,17 @@
 		WHERE id = #{id}
 	</delete>
 
+	<update id="update" parameterType="java.util.HashMap" >
+		UPDATE XXL_MQ_MESSAGE
+		SET
+			data = #{data},
+			delay_time = #{delayTime},
+			status = #{status},
+			update_time = NOW(),
+			msg = CONCAT( IFNULL(msg, ''), #{addMsg})
+		WHERE id = #{id}
+	</update>
+
 	<insert id="save" parameterType="com.xxl.mq.broker.core.model.XxlMqMessage" useGeneratedKeys="true" keyProperty="id" >
 		INSERT INTO XXL_MQ_MESSAGE (
 		`name` ,
@@ -91,6 +102,7 @@
 		FROM XXL_MQ_MESSAGE AS t
 		WHERE t.name = #{name}
 		AND t.status = #{status}
+		AND t.delay_time <![CDATA[ < ]]> NOW()
 		<if test="consumerTotal > 1">
 			AND MOD(t.id, #{consumerTotal}) = #{consumerRank}
 		</if>

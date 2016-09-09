@@ -112,28 +112,35 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" >更新配置</h4>
+                    <h4 class="modal-title" >更新消息</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal form" role="form" >
                         <div class="form-group">
-                            <label for="firstname" class="col-sm-3 control-label">消息主题</label>
-                            <div class="col-sm-9"><input type="text" class="form-control" name="name" placeholder="请输入消息主题" maxlength="100" readonly></div>
+                            <label for="lastname" class="col-sm-3 control-label">数据</label>
+                            <div class="col-sm-9">
+                                <textarea class="textarea" name="data" maxlength="1024" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label for="lastname" class="col-sm-3 control-label">Delay执行时间</label>
+                            <label for="lastname" class="col-sm-3 control-label">Delay</label>
                             <div class="col-sm-9"><input type="text" class="form-control" name="delayTime" data-inputmask="'alias': 'dd/mm/yyyy hh:mm xm'" data-mask ></div>
                         </div>
                         <div class="form-group">
-                            <label for="lastname" class="col-sm-3 control-label">消息数据</label>
+                            <label for="lastname" class="col-sm-3 control-label">状态</label>
                             <div class="col-sm-9">
-                                <textarea class="textarea" name="data" maxlength="1024" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                                <select class="form-control" name="status">
+									<#list status as item>
+                                    <option value="${item}">${item}</option>
+									</#list>
+                                </select>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-3 col-sm-9">
                                 <button type="submit" class="btn btn-primary"  >更新</button>
                                 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+								<input type="hidden" name="id">
                             </div>
                         </div>
                     </form>

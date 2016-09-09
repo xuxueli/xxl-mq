@@ -77,7 +77,7 @@ public class DateFormatUtil {
 	/**
 	 * 日期解析
 	 * 
-	 * @param date
+	 * @param dateString
 	 * @param pattern
 	 * @return
 	 * @throws ParseException
