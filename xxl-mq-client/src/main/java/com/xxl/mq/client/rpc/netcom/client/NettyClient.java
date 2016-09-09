@@ -83,11 +83,11 @@ public class NettyClient {
 		try {
 			String address = ZkServiceDiscovery.discover(request.getRegistryKey());
 			if (address == null) {
-				throw new RuntimeException(">>>>>>>>>>> xxl-rpc, no address from service:{}" + request.getClassName());
+				throw new RuntimeException(">>>>>>>>>>> xxl-rpc, no address from service:" + request.getClassName());
 			}
 			Channel channel = getChannel(address);
 			if (channel == null) {
-				throw new RuntimeException(">>>>>>>>>>> xxl-rpc, no channel from service:{}" + request.getClassName());
+				throw new RuntimeException(">>>>>>>>>>> xxl-rpc, no channel from service:" + request.getClassName());
 			}
 
 			// future init	[tips04 : may save 20ms/100invoke if remove and wait for channel instead, but it is necessary. cause by ConcurrentHashMap.get]
