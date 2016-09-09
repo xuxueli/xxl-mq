@@ -48,8 +48,13 @@ $(function() {
 	                { data: 'msg' ,
 	                	"render": function ( data, type, row ) {
 	                		return function(){
-	                			var html = '<p id="'+ row.id + '" name="'+ row.name + '">' +
+	                			var html = '<p id="'+ row.id +
+										'" name="'+ row.name +
+										'" delayTime="'+ row.delayTime +
+										'">' +
+										'<textarea name="data" style="display: none">'+row.data+'</textarea>' +
 								  		'<button class="btn btn-danger btn-xs msg_remove" type="button">删除</button>  '+
+										'<button class="btn btn-info btn-xs msg_update" type="button">编辑</button>  '+
 								  		'</p>';
 	                			return html;
 	                		};
@@ -93,7 +98,7 @@ $(function() {
 		dataTable.fnDraw();
 	});
 	
-	// job operate
+	// msg_remove
 	$("#data_list").on('click', '.msg_remove',function() {
 
 		var id = $(this).parent('p').attr("id");
@@ -117,6 +122,76 @@ $(function() {
 				},
 			});
 		});
+	});
+
+	// 时间格式化
+	$("[data-mask]").inputmask({
+		mask: "y-m-d h:s:s",
+		placeholder: "yyyy-mm-dd hh:mm:ss",
+		hourFormat: "24"
+	});
+
+	// msg_update
+	$("#data_list").on('click', '.msg_update',function() {
+		var delayTime = moment(new Date(Number( $(this).parent('p').attr("delayTime") ))).format("YYYY-MM-DD HH:mm:ss");
+
+		$("#updateModal .form input[name='name']").val( $(this).parent('p').attr("name") );
+		//$("#updateModal .form input[name='delayTime']").val(delayTime);
+		$("#updateModal .form textarea[name='data']").val( $(this).parent('p').find("textarea[name='data']").val() );
+
+		$('#updateModal').modal({backdrop: false, keyboard: false}).modal('show');
+	});
+	var updateModalValidate = $("#updateModal .form").validate({
+		errorElement : 'span',
+		errorClass : 'help-block',
+		focusInvalid : true,
+		rules : {
+			nodeKey : {
+				required : true ,
+				minlength: 4,
+				maxlength: 100
+			},
+			nodeValue : {
+				required : false
+			},
+			nodeDesc : {
+				required : false
+			}
+		},
+		messages : {
+			nodeKey : {
+				required :'请输入"KEY".'  ,
+				minlength:'"KEY"不应低于4位',
+				maxlength:'"KEY"不应超过100位'
+			},
+			nodeValue : {	},
+			nodeDesc : {	}
+		},
+		highlight : function(element) {
+			$(element).closest('.form-group').addClass('has-error');
+		},
+		success : function(label) {
+			label.closest('.form-group').removeClass('has-error');
+			label.remove();
+		},
+		errorPlacement : function(error, element) {
+			element.parent('div').append(error);
+		},
+		submitHandler : function(form) {
+			$.post(base_url + "/conf/update", $("#updateModal .form").serialize(), function(data, status) {
+				if (data.code == "200") {
+					ComAlert.show(1, "更新配置成功", function(){
+						confTable.fnDraw();
+						$('#updateModal').modal('hide');
+					});
+				} else {
+					ComAlert.show(2, data.msg);
+				}
+			});
+		}
+	});
+	$("#updateModal").on('hide.bs.modal', function () {
+		$("#updateModal .form")[0].reset()
 	});
 	
 });
