@@ -2,7 +2,6 @@ package com.xxl.mq.client.message;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Map;
 
 /**
  * Created by xuxueli on 16/8/28.
@@ -13,12 +12,14 @@ public class Message implements Serializable {
     public enum Status{NEW, ING, SUCCESS, FAIL, TIMEOUT;}
 
     private int id;
-    private String name;		        // 消息主题
-    private Map<String, String> data;	// 消息数据, Map<String, String>对象系列化的JSON字符串
-    private Date delayTime;		        // 延迟执行的时间, new Date()立即执行, 否则在延迟时间点之后开始执行;
-    private Status status;		        // 消息状态: NEW=新消息、ING=消费中、SUCCESS=消费成功、FAIL=消费失败、TIMEOUT=超时
-    private String msg;			        // 历史流转日志
-    private int retryCount;		// 充实次数, 默认0不重试
+    private String name;		// 消息主题
+    private String data;		// 消息数据, Map<String, String>对象系列化的JSON字符串
+    private Date delayTime;		// 延迟执行的时间, new Date()立即执行, 否则在延迟时间点之后开始执行;
+    //private Date addTime;		// 创建时间
+    //private Date updateTime;	// 更新时间
+    private String status;		// 消息状态: NEW=新消息、ING=消费中、SUCCESS=消费成功、FAIL=消费失败、TIMEOUT=超时
+    private String msg;			// 历史流转日志
+    private int retryCount;		// 重试次数, 默认0不重试
 
     public int getId() {
         return id;
@@ -36,11 +37,11 @@ public class Message implements Serializable {
         this.name = name;
     }
 
-    public Map<String, String> getData() {
+    public String getData() {
         return data;
     }
 
-    public void setData(Map<String, String> data) {
+    public void setData(String data) {
         this.data = data;
     }
 
@@ -52,11 +53,11 @@ public class Message implements Serializable {
         this.delayTime = delayTime;
     }
 
-    public Status getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -81,12 +82,11 @@ public class Message implements Serializable {
         return "Message{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", data=" + data +
+                ", data='" + data + '\'' +
                 ", delayTime=" + delayTime +
-                ", status=" + status +
+                ", status='" + status + '\'' +
                 ", msg='" + msg + '\'' +
                 ", retryCount=" + retryCount +
                 '}';
     }
-
 }

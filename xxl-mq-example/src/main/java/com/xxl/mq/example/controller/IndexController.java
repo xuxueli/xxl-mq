@@ -1,12 +1,10 @@
 package com.xxl.mq.example.controller;
 
 import com.xxl.mq.client.XxlMqProducer;
-import com.xxl.mq.client.message.Message;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,16 +19,12 @@ public class IndexController {
 	@ResponseBody
 	public String produce(String name){
 
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("num", System.currentTimeMillis()+"");
+		// 消息数据
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("时间戳", System.currentTimeMillis()+"");
 
-		Message message = new Message();
-		message.setName(name);
-		message.setData(map);
-		message.setDelayTime(new Date());
-		message.setStatus(Message.Status.NEW);
-
-		XxlMqProducer.produce(message);
+		// 生产消息
+		XxlMqProducer.produce(name, data);
 
 		return "SUCCESS";
 	}

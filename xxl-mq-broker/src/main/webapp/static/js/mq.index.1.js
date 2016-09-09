@@ -20,7 +20,13 @@ $(function() {
 	    "columns": [
 	                { data: 'id', visible: false},
 					{ data: 'name'},
-					{ data: 'data'},
+					{
+						data: 'data',
+						render : function ( data, type, row ) {
+							var temp = '<a href="javascript:;" class="tec_tips" >查看<span style="display: none;">'+ data +'</span></spam></a>';
+							return temp;
+						}
+					},
 					{
 						data: 'delayTime',
 						render : function ( data, type, row ) {
@@ -41,7 +47,7 @@ $(function() {
 					{
 						data: 'msg',
 						render : function ( data, type, row ) {
-							var temp = '<a href="javascript:;" class="msg_log" msg="'+ data +'" >流转日志</a>';
+							var temp = '<a href="javascript:;" class="tec_tips" >查看<span style="display: none;">'+ data +'</span></spam></a>';
 							return temp;
 						}
 					},
@@ -54,8 +60,8 @@ $(function() {
 										'" status="'+ row.status +
 										'">' +
 										'<textarea name="data" style="display: none">'+row.data+'</textarea>' +
-								  		'<button class="btn btn-danger btn-xs msg_remove" type="button">删除</button>  '+
 										'<button class="btn btn-info btn-xs msg_update" type="button">编辑</button>  '+
+										'<button class="btn btn-danger btn-xs msg_remove" type="button">删除</button>  '+
 								  		'</p>';
 	                			return html;
 	                		};
@@ -89,8 +95,8 @@ $(function() {
 	});
 
 	// msg弹框
-	$("#data_list").on('click', '.msg_log',function() {
-		ComAlertTec.show($(this).attr('msg'));
+	$("#data_list").on('click', '.tec_tips',function() {
+		ComAlertTec.show($(this).children('span').html());
 	});
 
 

@@ -130,7 +130,7 @@ public class XxlMqConsumer implements ApplicationContextAware {
 
                                     String tim = DateFormatUtil.formatDateTime(new Date());
                                     // consumer
-                                    msg.setStatus(Message.Status.ING);
+                                    msg.setStatus(Message.Status.ING.name());
                                     msg.setMsg(MessageFormat.format("<hr>》》》时间: {0} <br>》》》机器: {1} <br>》》》操作: 消息锁定(status>>>ING)", tim, ZkConsumerUtil.localAddress));
                                     int lockRet = XxlMqClient.getXxlMqService().lockMessage(msg);
                                     if (lockRet<1){
@@ -139,11 +139,11 @@ public class XxlMqConsumer implements ApplicationContextAware {
 
                                     try {
                                         consumerHandler.consume(msg);
-                                        msg.setStatus(Message.Status.SUCCESS);
+                                        msg.setStatus(Message.Status.SUCCESS.name());
                                         msg.setMsg(MessageFormat.format("<hr>》》》时间: {0} <br>》》》机器: {1} <br>》》》操作: 消息消费成功(status>>>SUCCESS)", tim, ZkConsumerUtil.localAddress));
                                     } catch (Exception e) {
                                         logger.error("", e);
-                                        msg.setStatus(Message.Status.FAIL);
+                                        msg.setStatus(Message.Status.FAIL.name());
                                         msg.setMsg(MessageFormat.format("<hr>》》》时间: {0} <br>》》》机器: {1} <br>》》》操作: 消息锁定失败(status>>>FAIL) <br>日志:{1}", tim, ZkConsumerUtil.localAddress, e.getMessage()));
                                     } finally {
                                         XxlMqClient.getXxlMqService().updateMessage(msg);

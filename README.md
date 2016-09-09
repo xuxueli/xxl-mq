@@ -8,6 +8,10 @@ git.osc地址：http://git.oschina.net/xuxueli0323/xxl-mq
 技术交流群(仅作技术交流)：367260654
 
 ## V1.1规划
+- 1、消息新增;
+- 2、重试次数,异常时,将会扣减重试次数,并不会修改状态;
+- 3、Mq线程内,队列方式执行, Topic-ZK向Mq线程队列push消息实现广播;
+- 4、文档,发布;
 
 ##### 角色
 - mq: 消息
@@ -28,59 +32,6 @@ git.osc地址：http://git.oschina.net/xuxueli0323/xxl-mq
 - broker: 代理, 负责: 1、接收 producer 生产的消息, 2、向 consumer 推送订阅的消息, 3、接受 consumer 对消息的消费结果回调;
     - message 需要登记: 1、主题下一旦有消息数据,不可删除; 只可修改备注 ,1、broker 只服务登记的消息;2、登记便于报表统计;3、便于邮件报警;4、
 - client: 提供 producer 和 consumer 支持;
-
-##### 实现
-
-ZK节点:
-```
--xxl-mq
-    - com.xxl.mq.client.service.BrokerService
-        - address1(6080)
-        - address2
-    - mq:test01
-        - address1(6070)
-        - address2
-    - mq:test01
-        - address1
-        - address2
-```
-
-provider >> rpc >> broker 服务
-broker >> rpc >> comsumer
-
-通讯: 功能基本完成
-下一步: 广播、串行, 底层数据和bug修复
-
-- client(producer): rpc客户端
-- client(consumer) 附带一个rpc服务, 端口 6070, 汇总@MqHandler
-- broker: 附带一个rpc服务, 端口 6080, 接受，推送，回调
-
-
-
-broker 实现原理:
-- 代理把消息同步写入表
-- 一个mq一个线程，各线程10s过滤一次消息表
-- 广播:遍历所有节点，发送rpc请求
-- 串行:匹配最小节点，发送rpc请求
-- 并行:顺序选择节点，发送rpc请求
-
-- 超时处理器: 每间隔30MIN扫描一次全表, 把超过1H状态仍然为ING的消息状态改为TIMEOUT,并在消息msg字段记录日志
-- 报警器: 每间隔30MIN扫描一次全表, 以消息主题为维度进行统计, 邮件通知消息执行失败情况; 
-
-- 代理方轮训堵塞，只消费new状态消息，推送成功即改状态run
-- 消费方串行，队列执行，容纳100，队列满则代理阻塞10s询问一次，直至降至5通知代理可以继续推送
-- 并行，顺序遍历，各个节点容纳100，最后一个都都满了等10s，
-
-
-##### 消息状态
-
-##### 项目划分
-- xxl-mq-broker: 端口6080, zk + netty集群: 接受生产消息入库, 消费消息推送至client端口;
-- xxl-mq-client: 向admin推送消息, 接受admin消费消息;
-- xxl-mq-example: 
-
-瓶颈在于消息持久化,即mysql, 适用于2W/天以及以下的队列场景, 需要定期做表数据清理;
-
 
 ## 简介：
 	一款轻量级、设计极简的 “异步通讯框架” ；
