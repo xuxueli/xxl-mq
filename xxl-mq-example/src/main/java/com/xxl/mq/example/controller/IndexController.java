@@ -29,4 +29,18 @@ public class IndexController {
 		return "SUCCESS";
 	}
 
+	@RequestMapping("/broadcast")
+	@ResponseBody
+	public String broadcast(String name){
+
+		// 消息数据
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("时间戳", System.currentTimeMillis()+"");
+
+		// 生产消息
+		XxlMqProducer.broadcast(name, data);
+
+		return "SUCCESS";
+	}
+
 }

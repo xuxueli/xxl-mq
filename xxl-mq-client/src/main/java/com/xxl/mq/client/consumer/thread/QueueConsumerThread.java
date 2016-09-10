@@ -7,7 +7,7 @@ import com.xxl.mq.client.message.MessageStatus;
 import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.rpc.util.DateFormatUtil;
 import com.xxl.mq.client.rpc.util.JacksonUtil;
-import com.xxl.mq.client.rpc.util.ZkConsumerUtil;
+import com.xxl.mq.client.rpc.util.ZkQueueConsumerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +43,7 @@ public class QueueConsumerThread extends Thread {
         while (true) {
             try {
                 // check load
-                ZkConsumerUtil.ActiveInfo checkPull = ZkConsumerUtil.isActice(annotation);
+                ZkQueueConsumerUtil.ActiveInfo checkPull = ZkQueueConsumerUtil.isActice(annotation);
                 if (checkPull != null) {
                     logger.info(">>>>>>>>>>> xxl-mq, isActice: consumer={}, ActiveInfo={}", annotation, checkPull.toString());
 
@@ -54,7 +54,7 @@ public class QueueConsumerThread extends Thread {
                         for (XxlMqMessage msg : messageList) {
 
                             // check consumer
-                            ZkConsumerUtil.ActiveInfo checkConsume = ZkConsumerUtil.isActice(annotation);
+                            ZkQueueConsumerUtil.ActiveInfo checkConsume = ZkQueueConsumerUtil.isActice(annotation);
                             if (!(checkConsume != null && checkConsume.rank == checkPull.rank && checkConsume.total == checkPull.total)) {
                                 break;
                             }

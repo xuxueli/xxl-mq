@@ -5,7 +5,9 @@ import com.xxl.mq.client.consumer.annotation.MqConsumer;
 import com.xxl.mq.client.consumer.annotation.MqConsumerType;
 import com.xxl.mq.client.consumer.thread.QueueConsumerThread;
 import com.xxl.mq.client.consumer.thread.TopicConsumerThread;
-import com.xxl.mq.client.rpc.util.ZkConsumerUtil;
+import com.xxl.mq.client.message.XxlMqMessage;
+import com.xxl.mq.client.rpc.util.ZkQueueConsumerUtil;
+import com.xxl.mq.client.rpc.util.ZkTopicConsumerUtil;
 import org.jboss.netty.util.internal.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +59,9 @@ public class XxlMqConsumer implements ApplicationContextAware {
         initTopicConsumer();
     }
 
+
+    // ---------------------- queue consumer ----------------------
+
     // fresh consumer
     private static Executor executor = Executors.newCachedThreadPool();
 
@@ -74,7 +79,7 @@ public class XxlMqConsumer implements ApplicationContextAware {
 
         // registry consumer, and fresh each 60s
         try {
-            ZkConsumerUtil.registerConsumers(queueConsumerRespository.keySet());
+            ZkQueueConsumerUtil.registerConsumers(queueConsumerRespository.keySet());
         } catch (Exception e) {
             logger.error("", e);
         }
@@ -85,7 +90,7 @@ public class XxlMqConsumer implements ApplicationContextAware {
                     // registry
                     try {
                         TimeUnit.SECONDS.sleep(60);
-                        ZkConsumerUtil.registerConsumers(queueConsumerRespository.keySet());
+                        ZkQueueConsumerUtil.registerConsumers(queueConsumerRespository.keySet());
                     } catch (Exception e) {
                         logger.error("", e);
                     }
@@ -102,6 +107,8 @@ public class XxlMqConsumer implements ApplicationContextAware {
     }
 
 
+    // ---------------------- topic consumer ----------------------
+
     // topic consumer respository
     private static ConcurrentHashMap<String, TopicConsumerThread> topicConsumerRespository = new ConcurrentHashMap<String, TopicConsumerThread>();
 
@@ -111,6 +118,43 @@ public class XxlMqConsumer implements ApplicationContextAware {
     private static void initTopicConsumer(){
         if (topicConsumerRespository==null || topicConsumerRespository.size()==0) {
             return;
+        }
+
+        // registry consumer, and fresh each 60s
+        try {
+            ZkTopicConsumerUtil.watchTopic(topicConsumerRespository.keySet());
+        } catch (Exception e) {
+            logger.error("", e);
+        }
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    // registry
+                    try {
+                        TimeUnit.SECONDS.sleep(60);
+                        ZkQueueConsumerUtil.registerConsumers(queueConsumerRespository.keySet());
+                    } catch (Exception e) {
+                        logger.error("", e);
+                    }
+                }
+            }
+        });
+
+        // consumer thread start
+        for (Map.Entry<String, TopicConsumerThread> item: topicConsumerRespository.entrySet()) {
+            item.getValue().start();
+            MqConsumer annotation = item.getValue().getConsumerHandler().getClass().getAnnotation(MqConsumer.class);
+            logger.info(">>>>>>>>>>> xxl-mq, topic consumer thread start, annotation={}", annotation);
+        }
+    }
+
+    public static void pushTopicMessage(String name, String data){
+        TopicConsumerThread topicConsumerThread = topicConsumerRespository.get(name);
+        if (topicConsumerThread!=null) {
+            XxlMqMessage msg = new XxlMqMessage();
+            msg.setData(data);
+            topicConsumerThread.pushMessage(msg);
         }
     }
 

@@ -21,7 +21,7 @@ public class DemoBMqComsumer implements IMqConsumer {
 
     @Override
     public void consume(Map<String, String> data) throws Exception {
-        logger.info("{}消费一条消息:{}", "mqconsumer-02",  JacksonUtil.writeValueAsString(data));
+        logger.info("SERIAL_QUEUE(串行队列): {}消费一条消息:{}", "mqconsumer-02",  JacksonUtil.writeValueAsString(data));
     }
 
 }

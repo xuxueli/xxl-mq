@@ -19,8 +19,8 @@ import static com.xxl.mq.client.consumer.annotation.MqConsumerType.*;
  * zookeeper service registry
  * @author xuxueli 2015-10-29 14:43:46
  */
-public class ZkConsumerUtil {
-    private static final Logger logger = LoggerFactory.getLogger(ZkConsumerUtil.class);
+public class ZkQueueConsumerUtil {
+    private static final Logger logger = LoggerFactory.getLogger(ZkQueueConsumerUtil.class);
 
 	// ------------------------------ zookeeper client ------------------------------
 	private static ZooKeeper zooKeeper;

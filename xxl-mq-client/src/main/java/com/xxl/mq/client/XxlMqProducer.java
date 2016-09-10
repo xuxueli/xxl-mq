@@ -4,6 +4,7 @@ import com.xxl.mq.client.consumer.remote.XxlMqClient;
 import com.xxl.mq.client.message.MessageStatus;
 import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.rpc.util.JacksonUtil;
+import com.xxl.mq.client.rpc.util.ZkTopicConsumerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +17,8 @@ import java.util.Map;
 public class XxlMqProducer {
     private static Logger logger = LoggerFactory.getLogger(XxlMqProducer.class);
 
+    // ---------------------- for queue message ----------------------
+
     public static void produce(String name, Map<String, String> dataMap, Date delayTime, int retryCount){
 
         // name
@@ -27,7 +30,7 @@ public class XxlMqProducer {
         if (dataMap!=null) {
             dataJson = JacksonUtil.writeValueAsString(dataMap);
             if (dataJson.length()>2048) {
-                logger.warn(">>>>>>>>>>> xxl-mq, message data length over limit 2048");
+                throw new IllegalArgumentException(">>>>>>>>>>> xxl-mq, message data length over limit 2048");
             }
         }
         // delayTime
@@ -52,6 +55,25 @@ public class XxlMqProducer {
 
     public static void produce(String name, Map<String, String> dataMap){
         produce(name, dataMap, null, 0);
+    }
+
+    // ---------------------- for topic message ----------------------
+
+    public static void broadcast(String name, Map<String, String> dataMap){
+        // name
+        if (name==null || name.length()>255) {
+            throw  new IllegalArgumentException("消息标题长度不合法");
+        }
+        // data
+        String dataJson = "";
+        if (dataMap!=null) {
+            dataJson = JacksonUtil.writeValueAsString(dataMap);
+            if (dataJson.length()>2048) {
+                throw new IllegalArgumentException(">>>>>>>>>>> xxl-mq, message data length over limit 2048");
+            }
+        }
+        // broadcast
+        ZkTopicConsumerUtil.broadcast(name, dataJson);
     }
 
 }

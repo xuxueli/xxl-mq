@@ -1,24 +1,27 @@
 <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
 <body>
 
-    消息主题=
-    <input type="text" id="name" value="mqconsumer-01" />
-    <input type="button" id="produce" value="发送消息" />
+    QUEUE (并行消费队列)= mqconsumer-01
+    <input type="button" class="send" consumer="mqconsumer-01" url="produce" mqtype="QUEUE" value="生产消息" />
+    <br><br>
+
+    SERIAL_QUEUE (串行消费队列)= mqconsumer-02
+    <input type="button" class="send" consumer="mqconsumer-02" url="produce" mqtype="SERIAL_QUEUE" value="生产消息" />
+    <br><br>
+
+    TOPIC (广播消息)= mqconsumer-03
+    <input type="button" class="send" consumer="mqconsumer-03" url="broadcast" mqtype="TOPIC" value="生产消息" />
 
     <hr>
     <div id="console"></div>
 
     <script>
         $(function(){
-            $("#produce").click(function () {
-                var name = $("#name").val();
-                if (!name){
-                    $("#console").prepend("<br>请输入-消息主题 ");
-                    return;
-                }
-                $.post("produce", {'name':name}, function(data,status){
+            $(".send").click(function () {
+                var mqtype = $(this).attr("mqtype");
+                $.post($(this).attr("url"), {'name':$(this).attr("consumer")}, function(data,status){
                     var temp = "<br>" + new Date().format("yyyy-MM-dd HH:mm:ss") + ":";
-                    temp += ("SUCCESS" == data)?'成功发送一条消息':data;
+                    temp += ("SUCCESS" == data)?('成功发送一条'+ mqtype +'消息'):data;
                     $("#console").prepend(temp);
                 });
             });
