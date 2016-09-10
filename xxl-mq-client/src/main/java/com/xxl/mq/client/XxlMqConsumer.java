@@ -1,10 +1,12 @@
 package com.xxl.mq.client;
 
+import com.xxl.mq.client.consumer.remote.XxlMqClient;
 import com.xxl.mq.client.message.Message;
 import com.xxl.mq.client.rpc.util.DateFormatUtil;
+import com.xxl.mq.client.rpc.util.JacksonUtil;
 import com.xxl.mq.client.rpc.util.ZkConsumerUtil;
-import com.xxl.mq.client.service.ConsumerHandler;
-import com.xxl.mq.client.service.annotation.MqConsumer;
+import com.xxl.mq.client.consumer.IMqConsumer;
+import com.xxl.mq.client.consumer.annotation.MqConsumer;
 import org.jboss.netty.util.internal.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +22,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static com.xxl.mq.client.service.annotation.MqConsumer.MqType.*;
+import static com.xxl.mq.client.consumer.annotation.MqConsumer.MqType.*;
 
 /**
  * Created by xuxueli on 16/8/28.
@@ -35,7 +37,7 @@ public class XxlMqConsumer implements ApplicationContextAware {
         Map<String, Object> serviceMap = applicationContext.getBeansWithAnnotation(MqConsumer.class);
         if (serviceMap!=null && serviceMap.size()>0) {
             for (Object serviceBean : serviceMap.values()) {
-                if (serviceBean instanceof ConsumerHandler) {
+                if (serviceBean instanceof IMqConsumer) {
                     // valid
                     MqConsumer annotation = serviceBean.getClass().getAnnotation(MqConsumer.class);
                     MqConsumer.MqType type = annotation.type();
@@ -44,7 +46,7 @@ public class XxlMqConsumer implements ApplicationContextAware {
                         return;
                     }
                     // init mq thread for each consumer
-                    ConsumerHandler consumerHandler = (ConsumerHandler) serviceBean;
+                    IMqConsumer consumerHandler = (IMqConsumer) serviceBean;
                     ConsumerThread mqThread = new ConsumerThread(consumerHandler);
                     consumerRespository.put(name, mqThread);
                 }
@@ -93,11 +95,11 @@ public class XxlMqConsumer implements ApplicationContextAware {
     // consumer thread
     public static class ConsumerThread extends Thread {
 
-        private ConsumerHandler consumerHandler;
-        public ConsumerThread(ConsumerHandler consumerHandler) {
+        private IMqConsumer consumerHandler;
+        public ConsumerThread(IMqConsumer consumerHandler) {
             this.consumerHandler = consumerHandler;
         }
-        public ConsumerHandler getConsumerHandler() {
+        public IMqConsumer getConsumerHandler() {
             return consumerHandler;
         }
 
@@ -117,7 +119,7 @@ public class XxlMqConsumer implements ApplicationContextAware {
                             logger.info(">>>>>>>>>>> xxl-mq, isActice: consumer={}, ActiveInfo={}", annotation, checkPull.toString());
 
                             // load
-                            LinkedList<Message> messageList =  XxlMqClient.getXxlMqService().pullMessage(annotation.value(), Message.Status.NEW.name(), pagesize, checkPull.rank, checkPull.total);
+                            LinkedList<Message> messageList =  XxlMqClient.getXxlMqService().pullNewMessage(annotation.value(), pagesize, checkPull.rank, checkPull.total);
                             if (messageList!=null && messageList.size()>0) {
                                 waitTim = 0;
                                 for (Message msg: messageList) {
@@ -129,27 +131,33 @@ public class XxlMqConsumer implements ApplicationContextAware {
                                     }
 
                                     String tim = DateFormatUtil.formatDateTime(new Date());
-                                    // consumer
-                                    msg.setStatus(Message.Status.ING.name());
-                                    msg.setMsg(MessageFormat.format("<hr>》》》时间: {0} <br>》》》注册信息: {1} <br>》》》操作: 消息锁定(status>>>ING)", tim, checkConsume.toString()));
-                                    int lockRet = XxlMqClient.getXxlMqService().lockMessage(msg);
+
+                                    // lock message
+                                    String lockAddMsg = MessageFormat.format("<hr>》》》时间: {0} <br>》》》注册信息: {1} <br>》》》操作: 消息锁定(status>>>ING)", tim, checkConsume.toString());
+                                    int lockRet = XxlMqClient.getXxlMqService().lockMessage(msg.getId(), lockAddMsg);
                                     if (lockRet<1){
                                         continue;
                                     }
 
                                     try {
-                                        consumerHandler.consume(msg);
+                                        // consume message
+                                        Map<String, String> data = null;
+                                        if (msg.getData()!=null && msg.getData().trim().length()>0) {
+                                            data = JacksonUtil.readValue(msg.getData(), Map.class);
+                                        }
+                                        consumerHandler.consume(data);
+
+                                        // consume suceess
                                         msg.setStatus(Message.Status.SUCCESS.name());
                                         msg.setMsg(MessageFormat.format("<hr>》》》时间: {0} <br>》》》注册信息: {1} <br>》》》操作: 消息消费成功(status>>>SUCCESS)", tim, checkConsume.toString()));
                                     } catch (Exception e) {
                                         logger.error("", e);
+
+                                        // consume error
                                         msg.setStatus(Message.Status.FAIL.name());
-                                        msg.setMsg(MessageFormat.format("<hr>》》》时间: {0} <br>》》》注册信息: {1} <br>》》》操作: 消息锁定失败(status>>>FAIL) <br>日志:{1}", tim, checkConsume.toString(), e.getMessage()));
+                                        msg.setMsg(MessageFormat.format("<hr>》》》时间: {0} <br>》》》注册信息: {1} <br>》》》操作: 消息消费失败(status>>>FAIL) <br>日志:{1}", tim, checkConsume.toString(), e.getMessage()));
                                     } finally {
-                                        if (msg.getRetryCount()>0) {
-                                            // 消耗一次重试次数
-                                        }
-                                        XxlMqClient.getXxlMqService().updateMessage(msg);
+                                        XxlMqClient.getXxlMqService().consumeCallbackMessage(msg);
                                         logger.info(">>>>>>>>>> xxl-mq, consumer message: {}", msg);
                                     }
 

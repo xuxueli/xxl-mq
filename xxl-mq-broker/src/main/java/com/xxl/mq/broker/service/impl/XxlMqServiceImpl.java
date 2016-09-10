@@ -3,7 +3,7 @@ package com.xxl.mq.broker.service.impl;
 import com.xxl.mq.broker.core.model.XxlMqMessage;
 import com.xxl.mq.broker.dao.IXxlMqMessageDao;
 import com.xxl.mq.client.message.Message;
-import com.xxl.mq.client.service.XxlMqService;
+import com.xxl.mq.client.broker.biz.MqBrokerService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by xuxueli on 16/8/28.
  */
-public class XxlMqServiceImpl implements XxlMqService {
+public class XxlMqServiceImpl implements MqBrokerService {
     private final static Logger logger = LoggerFactory.getLogger(XxlMqServiceImpl.class);
 
     @Resource
@@ -39,8 +39,8 @@ public class XxlMqServiceImpl implements XxlMqService {
     }
 
     @Override
-    public LinkedList<Message> pullMessage(String name, String status, int pagesize, int consumerRank, int consumerTotal) {
-        List<XxlMqMessage> list = xxlMqMessageDao.pullMessage(name, status, pagesize, consumerRank, consumerTotal);
+    public LinkedList<Message> pullNewMessage(String name, int pagesize, int consumerRank, int consumerTotal) {
+        List<XxlMqMessage> list = xxlMqMessageDao.pullNewMessage(name, Message.Status.NEW.name(), pagesize, consumerRank, consumerTotal);
         if (list!=null && list.size()>0) {
 
             LinkedList<Message> msgList = new LinkedList<Message>();
@@ -58,12 +58,12 @@ public class XxlMqServiceImpl implements XxlMqService {
     }
 
     @Override
-    public int lockMessage(Message message) {
-        return xxlMqMessageDao.lockMessage(message.getId(), message.getStatus(), message.getMsg(), Message.Status.NEW.name());
+    public int lockMessage(int id, String addMsg) {
+        return xxlMqMessageDao.lockMessage(id, addMsg, Message.Status.NEW.name(), Message.Status.ING.name());
     }
 
     @Override
-    public int updateMessage(Message message) {
+    public int consumeCallbackMessage(Message message) {
         return xxlMqMessageDao.updateStatus(message.getId(), message.getStatus(), message.getMsg());
     }
 

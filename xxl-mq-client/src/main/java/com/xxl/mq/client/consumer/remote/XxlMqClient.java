@@ -1,7 +1,7 @@
-package com.xxl.mq.client;
+package com.xxl.mq.client.consumer.remote;
 
 import com.xxl.mq.client.rpc.netcom.NetComClientProxy;
-import com.xxl.mq.client.service.XxlMqService;
+import com.xxl.mq.client.broker.biz.MqBrokerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,14 +13,14 @@ import java.util.concurrent.CountDownLatch;
 public class XxlMqClient {
     private final static Logger logger = LoggerFactory.getLogger(XxlMqClient.class);
 
-    private static XxlMqService xxlMqService;
-    public static XxlMqService getXxlMqService() {
+    private static MqBrokerService xxlMqService;
+    public static MqBrokerService getXxlMqService() {
         if (xxlMqService!=null) {
             return xxlMqService;
         }
         CountDownLatch countDownLatch = new CountDownLatch(1);
         try {
-            xxlMqService = (XxlMqService) new NetComClientProxy(XxlMqService.class, 1000 * 5, null).getObject();
+            xxlMqService = (MqBrokerService) new NetComClientProxy(MqBrokerService.class, 1000 * 5, null).getObject();
         } catch (Exception e) {
             logger.error("", e);
         } finally {

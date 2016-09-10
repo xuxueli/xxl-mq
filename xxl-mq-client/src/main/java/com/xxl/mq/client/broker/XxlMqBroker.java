@@ -1,8 +1,8 @@
-package com.xxl.mq.client;
+package com.xxl.mq.client.broker;
 
+import com.xxl.mq.client.broker.biz.MqBrokerService;
 import com.xxl.mq.client.message.Message;
 import com.xxl.mq.client.rpc.netcom.NetComServerFactory;
-import com.xxl.mq.client.service.XxlMqService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,23 +16,23 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * Created by xuxueli on 16/8/28.
  */
-public class XxlMqBroker implements XxlMqService {
+public class XxlMqBroker implements MqBrokerService {
     private final static Logger logger = LoggerFactory.getLogger(XxlMqBroker.class);
 
     // ---------------------- broker config ----------------------
     private static int port = 6080;
-    private static XxlMqService xxlMqService;
+    private static MqBrokerService xxlMqService;
     public void setPort(int port) {
         this.port = port;
     }
-    public void setXxlMqService(XxlMqService xxlMqService) {
+    public void setXxlMqService(MqBrokerService xxlMqService) {
         XxlMqBroker.xxlMqService = xxlMqService;
     }
 
     // ---------------------- broker init ----------------------
     public void init() throws Exception {
         Map<String, Object> serviceMap = new HashMap<String, Object>();
-        serviceMap.put(XxlMqService.class.getName(), this);
+        serviceMap.put(MqBrokerService.class.getName(), this);
         new NetComServerFactory(port, serviceMap);
     }
     public void destroy(){
@@ -40,9 +40,12 @@ public class XxlMqBroker implements XxlMqService {
 
     // ---------------------- broker proxy ----------------------
     private static LinkedBlockingQueue<Message> newMessageQueue = new LinkedBlockingQueue<Message>();
-    private static LinkedBlockingQueue<Message> callbackMessageQueue = new LinkedBlockingQueue<Message>();
+    private static LinkedBlockingQueue<Message> consumeCallbackMessageQueue = new LinkedBlockingQueue<Message>();
     private static Executor executor = Executors.newCachedThreadPool();
     static {
+        /**
+         * async save message
+         */
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -56,19 +59,35 @@ public class XxlMqBroker implements XxlMqService {
                 }
             }
         });
+        /**
+         * async consume message callback process
+         */
         executor.execute(new Runnable() {
             @Override
             public void run() {
                 while (true) {
                     try {
-                        Message msg = callbackMessageQueue.take();
-                        xxlMqService.updateMessage(msg);
+                        Message msg = consumeCallbackMessageQueue.take();
+                        xxlMqService.consumeCallbackMessage(msg);
                     } catch (Exception e) {
                         logger.error("", e);
                     }
                 }
             }
         });
+
+        /**
+         * 重试消息处理
+         */
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+
+                }
+            }
+        });
+
     }
 
     @Override
@@ -77,17 +96,17 @@ public class XxlMqBroker implements XxlMqService {
     }
 
     @Override
-    public LinkedList<Message> pullMessage(String name, String status, int pagesize, int consumerRank, int consumerTotal) {
-        return xxlMqService.pullMessage(name, status, pagesize, consumerRank, consumerTotal);
+    public LinkedList<Message> pullNewMessage(String name, int pagesize, int consumerRank, int consumerTotal) {
+        return xxlMqService.pullNewMessage(name, pagesize, consumerRank, consumerTotal);
     }
 
     @Override
-    public int lockMessage(Message message) {
-        return xxlMqService.lockMessage(message);
+    public int lockMessage(int id, String addMsg) {
+        return xxlMqService.lockMessage(id, addMsg);
     }
 
-    public int updateMessage(Message message) {
-        return callbackMessageQueue.add(message)?1:-1;
+    public int consumeCallbackMessage(Message message) {
+        return consumeCallbackMessageQueue.add(message)?1:-1;
     }
 
 }

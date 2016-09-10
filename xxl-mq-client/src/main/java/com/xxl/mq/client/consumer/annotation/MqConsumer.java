@@ -1,4 +1,4 @@
-package com.xxl.mq.client.service.annotation;
+package com.xxl.mq.client.consumer.annotation;
 
 import java.lang.annotation.*;
 

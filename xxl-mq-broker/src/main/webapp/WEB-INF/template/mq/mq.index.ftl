@@ -148,7 +148,7 @@
                         <div class="form-group">
                             <label for="lastname" class="col-sm-3 control-label">数据</label>
                             <div class="col-sm-9">
-                                <textarea class="textarea" name="data" maxlength="1024" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                                <textarea class="textarea" name="data" maxlength="2048" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
                             </div>
                         </div>
                         <div class="form-group">

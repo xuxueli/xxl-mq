@@ -1,7 +1,10 @@
 package com.xxl.mq.client;
 
+import com.xxl.mq.client.consumer.remote.XxlMqClient;
 import com.xxl.mq.client.message.Message;
 import com.xxl.mq.client.rpc.util.JacksonUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.Map;
@@ -10,6 +13,7 @@ import java.util.Map;
  * Created by xuxueli on 16/8/28.
  */
 public class XxlMqProducer {
+    private static Logger logger = LoggerFactory.getLogger(XxlMqProducer.class);
 
     public static void produce(String name, Map<String, String> dataMap, Date delayTime, int retryCount){
 
@@ -21,8 +25,8 @@ public class XxlMqProducer {
         String dataJson = null;
         if (dataMap!=null) {
             dataJson = JacksonUtil.writeValueAsString(dataMap);
-            if (dataJson.length()>1024) {
-                throw  new IllegalArgumentException("消息数据长度超长");
+            if (dataJson.length()>2048) {
+                logger.warn(">>>>>>>>>>> xxl-mq, message data length over limit 2048");
             }
         }
         // delayTime

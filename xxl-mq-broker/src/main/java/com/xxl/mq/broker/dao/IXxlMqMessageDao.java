@@ -17,9 +17,9 @@ public interface IXxlMqMessageDao {
     public int update(int id, String data, Date delayTime, String status, String addMsg, int retryCount);
 
     public int save(XxlMqMessage xxlMqMessage);
-    public List<XxlMqMessage> pullMessage(String name, String status, int pagesize, int consumerRank, int consumerTotal);
+    public List<XxlMqMessage> pullNewMessage(String name, String newStatus, int pagesize, int consumerRank, int consumerTotal);
 
-    public int lockMessage(int id, String status, String addMsg, String originStatus);
+    public int lockMessage(int id, String addMsg, String fromStatus, String toStatus);
     public int updateStatus(int id, String status, String addMsg);
 
 }

@@ -1,6 +1,6 @@
 package com.xxl.mq.client.rpc.util;
 
-import com.xxl.mq.client.service.annotation.MqConsumer;
+import com.xxl.mq.client.consumer.annotation.MqConsumer;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static com.xxl.mq.client.service.annotation.MqConsumer.MqType.*;
+import static com.xxl.mq.client.consumer.annotation.MqConsumer.MqType.*;
 
 /**
  * zookeeper service registry

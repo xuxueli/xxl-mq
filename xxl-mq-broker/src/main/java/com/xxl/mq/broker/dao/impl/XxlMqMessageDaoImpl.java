@@ -69,24 +69,24 @@ public class XxlMqMessageDaoImpl implements IXxlMqMessageDao {
     }
 
     @Override
-    public List<XxlMqMessage> pullMessage(String name, String status, int pagesize, int consumerRank, int consumerTotal) {
+    public List<XxlMqMessage> pullNewMessage(String name, String newStatus, int pagesize, int consumerRank, int consumerTotal) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("name", name);
-        params.put("status", status);
+        params.put("newStatus", newStatus);
         params.put("pagesize", pagesize);
         params.put("consumerRank", consumerRank);
         params.put("consumerTotal", consumerTotal);
 
-        return sqlSessionTemplate.selectList("XxlMqMessageMapper.pullMessage", params);
+        return sqlSessionTemplate.selectList("XxlMqMessageMapper.pullNewMessage", params);
     }
 
     @Override
-    public int lockMessage(int id, String status, String addMsg, String originStatus) {
+    public int lockMessage(int id, String addMsg, String fromStatus, String toStatus) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("id", id);
-        params.put("status", status);
         params.put("addMsg", addMsg);
-        params.put("originStatus", originStatus);
+        params.put("fromStatus", fromStatus);
+        params.put("toStatus", toStatus);
 
         return sqlSessionTemplate.update("XxlMqMessageMapper.lockMessage", params);
     }

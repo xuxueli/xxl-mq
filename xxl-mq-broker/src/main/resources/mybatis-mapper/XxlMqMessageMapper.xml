@@ -98,11 +98,11 @@
 		</selectKey>
 	</insert>
 
-	<select id="pullMessage" parameterType="java.util.HashMap" resultMap="XxlMqMessage">
+	<select id="pullNewMessage" parameterType="java.util.HashMap" resultMap="XxlMqMessage">
 		SELECT <include refid="Base_Column_List" />
 		FROM XXL_MQ_MESSAGE AS t
 		WHERE t.name = #{name}
-		AND t.status = #{status}
+		AND t.status = #{newStatus}
 		AND t.delay_time <![CDATA[ < ]]> NOW()
 		<if test="consumerTotal > 1">
 			AND MOD(t.id, #{consumerTotal}) = #{consumerRank}
@@ -115,9 +115,9 @@
 		UPDATE XXL_MQ_MESSAGE
 		SET
 		update_time = NOW(),
-		status = #{status},
+		status = #{toStatus},
 		msg = CONCAT( IFNULL(msg, ''), #{addMsg})
-		WHERE id = #{id} AND status =  #{originStatus}
+		WHERE id = #{id} AND status =  #{fromStatus}
 	</update>
 
 	<update id="updateStatus" parameterType="java.util.HashMap" >
