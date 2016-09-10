@@ -19,7 +19,7 @@ $(function() {
 	    "ordering": false,
 	    //"scrollX": true,	// X轴滚动条，取消自适应
 	    "columns": [
-	                { data: 'id', visible: false},
+	                { data: 'id', visible: true},
 					{ data: 'name'},
 					{
 						data: 'data',

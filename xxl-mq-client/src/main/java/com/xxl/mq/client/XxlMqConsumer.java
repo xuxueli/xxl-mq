@@ -163,7 +163,7 @@ public class XxlMqConsumer implements ApplicationContextAware {
 
                         } else {
                             TimeUnit.SECONDS.sleep(5);
-                            logger.info(">>>>>>>>>>> xxl-mq, isActice(QUEUE) fail, registryKey:{}", annotation.value());
+                            logger.debug(">>>>>>>>>>> xxl-mq, isActice(QUEUE) fail, registryKey:{}", annotation.value());
                         }
 
                     } catch (Exception e) {
