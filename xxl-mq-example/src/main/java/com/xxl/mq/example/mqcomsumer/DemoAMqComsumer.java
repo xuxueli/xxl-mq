@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 /**
+ * 消息模型 1/3 : QUEUE = 点对点模式, 消息进去队列之后, 只会被消费一次。但是,同一个Topic下只会有一个Consumer串行消费消息, 适用于严格限制并发的场景
  * Created by xuxueli on 16/8/28.
  */
 @MqConsumer("mqconsumer-01")

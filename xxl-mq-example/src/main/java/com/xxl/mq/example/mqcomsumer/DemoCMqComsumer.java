@@ -12,6 +12,7 @@ import java.util.Map;
 import static com.xxl.mq.client.consumer.annotation.MqConsumerType.TOPIC;
 
 /**
+ * 消息模型 3/3 : TOPIC = 广播消息 : 发布/订阅模式, 一条消息将会广播发送给所有在线的Consumer
  * Created by xuxueli on 16/8/28.
  */
 @MqConsumer(value = "mqconsumer-03", type = TOPIC)
