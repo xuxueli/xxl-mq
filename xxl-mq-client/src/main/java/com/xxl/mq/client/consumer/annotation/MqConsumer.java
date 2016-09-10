@@ -20,21 +20,6 @@ public @interface MqConsumer {
      * 类型
      * @return
      */
-    MqType type() default MqType.QUEUE;
-
-    enum MqType{
-        /**
-         * 广播消息
-         */
-        TOPIC,
-        /**
-         * 串行消费队列
-         */
-        SERIAL_QUEUE,
-        /**
-         * 并行消费队列
-         */
-        QUEUE
-    }
+    MqConsumerType type() default MqConsumerType.QUEUE;
 
 }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-import static com.xxl.mq.client.consumer.annotation.MqConsumer.MqType.SERIAL_QUEUE;
+import static com.xxl.mq.client.consumer.annotation.MqConsumerType.SERIAL_QUEUE;
 
 /**
  * Created by xuxueli on 16/8/28.

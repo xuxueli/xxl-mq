@@ -1,7 +1,8 @@
 package com.xxl.mq.client;
 
 import com.xxl.mq.client.consumer.remote.XxlMqClient;
-import com.xxl.mq.client.message.Message;
+import com.xxl.mq.client.message.MessageStatus;
+import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.rpc.util.JacksonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +40,11 @@ public class XxlMqProducer {
         }
 
         // package message
-        Message message = new Message();
+        XxlMqMessage message = new XxlMqMessage();
         message.setName(name);
         message.setData(dataJson);
         message.setDelayTime(delayTime);
-        message.setStatus(Message.Status.NEW.name());
+        message.setStatus(MessageStatus.NEW.name());
         message.setRetryCount(retryCount);
 
         XxlMqClient.getXxlMqService().saveMessage(message);

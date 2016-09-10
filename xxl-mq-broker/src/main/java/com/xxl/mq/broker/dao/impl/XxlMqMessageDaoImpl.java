@@ -1,9 +1,8 @@
 package com.xxl.mq.broker.dao.impl;
 
-import com.xxl.mq.broker.core.model.XxlMqMessage;
-import com.xxl.mq.broker.dao.IXxlMqMessageDao;
+import com.xxl.mq.client.broker.remote.IXxlMqMessageDao;
+import com.xxl.mq.client.message.XxlMqMessage;
 import org.mybatis.spring.SqlSessionTemplate;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -14,7 +13,6 @@ import java.util.Map;
 /**
  * Created by xuxueli on 16/8/28.
  */
-@Component
 public class XxlMqMessageDaoImpl implements IXxlMqMessageDao {
 
     @Resource
@@ -100,5 +98,26 @@ public class XxlMqMessageDaoImpl implements IXxlMqMessageDao {
 
         return sqlSessionTemplate.update("XxlMqMessageMapper.updateStatus", params);
     }
+
+    @Override
+    public List<Integer> retryMessageIds(int pagesize, String failStatus) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("pagesize", pagesize);
+        params.put("failStatus", failStatus);
+
+        return sqlSessionTemplate.selectList("XxlMqMessageMapper.pagelistRetryMessage", params);
+    }
+
+    @Override
+    public int retryStatusFresh(int id, String addMsg, String failStatus, String newStatus) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("id", id);
+        params.put("addMsg", addMsg);
+        params.put("failStatus", failStatus);
+        params.put("newStatus", newStatus);
+
+        return sqlSessionTemplate.update("XxlMqMessageMapper.retryStatusFresh", params);
+    }
+
 
 }

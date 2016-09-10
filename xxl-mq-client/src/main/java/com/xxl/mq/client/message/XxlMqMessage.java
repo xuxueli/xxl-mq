@@ -1,13 +1,14 @@
-package com.xxl.mq.broker.core.model;
+package com.xxl.mq.client.message;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * 消息对象
  * @author xuxueli 2016-08-28 14:05:23
  */
-public class XxlMqMessage {
-
+public class XxlMqMessage implements Serializable {
+	private static final long serialVersionUID = 42L;
 
 	private int id;
 	private String name;		// 消息主题
@@ -90,4 +91,20 @@ public class XxlMqMessage {
 	public void setRetryCount(int retryCount) {
 		this.retryCount = retryCount;
 	}
+
+	@Override
+	public String toString() {
+		return "XxlMqMessage{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				", data='" + data + '\'' +
+				", delayTime=" + delayTime +
+				", addTime=" + addTime +
+				", updateTime=" + updateTime +
+				", status='" + status + '\'' +
+				", msg='" + msg + '\'' +
+				", retryCount=" + retryCount +
+				'}';
+	}
+
 }

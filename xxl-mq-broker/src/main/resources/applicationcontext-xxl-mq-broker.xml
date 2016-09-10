@@ -6,12 +6,12 @@
 
 
 	<!-- message operate service -->
-	<bean id="xxlMqService" class="com.xxl.mq.broker.service.impl.XxlMqServiceImpl" />
+	<bean id="xxlMqMessageDao" class="com.xxl.mq.broker.dao.impl.XxlMqMessageDaoImpl" />
 
 	<!-- broker server -->
 	<bean class="com.xxl.mq.client.broker.XxlMqBroker" init-method="init" destroy-method="destroy" >
 		<property name="port" value="6080" />
-		<property name="xxlMqService" ref="xxlMqService" />
+		<property name="xxlMqMessageDao" ref="xxlMqMessageDao" />
 	</bean>
 
 </beans>

@@ -1,20 +1,20 @@
-package com.xxl.mq.client.broker.biz;
+package com.xxl.mq.client.broker.remote;
 
-import com.xxl.mq.client.message.Message;
+import com.xxl.mq.client.message.XxlMqMessage;
 
-import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by xuxueli on 16/8/28.
  */
-public interface MqBrokerService {
+public interface IXxlMqBroker {
 
-    public int saveMessage(Message message);
+    public int saveMessage(XxlMqMessage message);
 
     /**
      * 分布式获取分配给自己的数据: MOD(id, #{consumerTotal}) = #{consumerRank}, 当值为 consumerTotal>1 时生效
      */
-    public LinkedList<Message> pullNewMessage(String name, int pagesize, int consumerRank, int consumerTotal);
+    public List<XxlMqMessage> pullNewMessage(String name, int pagesize, int consumerRank, int consumerTotal);
 
     /**
      * 消费者,锁定一条消息 (NEW >>> ING)
@@ -29,6 +29,6 @@ public interface MqBrokerService {
      * @param message
      * @return
      */
-    public int consumeCallbackMessage(Message message);
+    public int consumeCallbackMessage(XxlMqMessage message);
 
 }

@@ -1,10 +1,10 @@
 package com.xxl.mq.broker.service.impl;
 
-import com.xxl.mq.broker.core.model.XxlMqMessage;
 import com.xxl.mq.broker.core.result.ReturnT;
-import com.xxl.mq.broker.dao.IXxlMqMessageDao;
+import com.xxl.mq.client.broker.remote.IXxlMqMessageDao;
 import com.xxl.mq.broker.service.IXxlMqMessageService;
-import com.xxl.mq.client.message.Message;
+import com.xxl.mq.client.message.MessageStatus;
+import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.rpc.util.DateFormatUtil;
 import com.xxl.mq.client.rpc.util.JacksonUtil;
 import org.apache.commons.lang.StringUtils;
@@ -69,7 +69,7 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
             return new ReturnT<String>(500, "消息数据格式不合法");
         }
         // status
-        if (Message.Status.valueOf(status)==null) {
+        if (MessageStatus.valueOf(status)==null) {
             return new ReturnT<String>(500, "消息状态不合法");
         }
         // retryCount
@@ -116,7 +116,7 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
             return new ReturnT<String>(500, "消息数据格式不合法");
         }
         // status
-        if (Message.Status.valueOf(status)==null) {
+        if (MessageStatus.valueOf(status)==null) {
             return new ReturnT<String>(500, "消息状态不合法");
         }
         // retryCount

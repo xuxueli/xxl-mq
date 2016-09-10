@@ -3,7 +3,7 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="XxlMqMessageMapper">
 	
-	<resultMap id="XxlMqMessage" type="com.xxl.mq.broker.core.model.XxlMqMessage" >
+	<resultMap id="XxlMqMessage" type="com.xxl.mq.client.message.XxlMqMessage" >
 		<result column="id" property="id" />
 		<result column="name" property="name" />
 	    <result column="data" property="data" />
@@ -73,7 +73,7 @@
 		WHERE id = #{id}
 	</update>
 
-	<insert id="save" parameterType="com.xxl.mq.broker.core.model.XxlMqMessage" useGeneratedKeys="true" keyProperty="id" >
+	<insert id="save" parameterType="com.xxl.mq.client.message.XxlMqMessage" useGeneratedKeys="true" keyProperty="id" >
 		INSERT INTO XXL_MQ_MESSAGE (
 		`name` ,
 		`data` ,
@@ -127,6 +127,26 @@
 			status = #{status},
 		 	msg = CONCAT( IFNULL(msg, ''), #{addMsg})
 		WHERE id = #{id}
+	</update>
+
+	<select id="pagelistRetryMessage" parameterType="java.util.HashMap" resultType="java.lang.Integer" >
+		SELECT t.id
+		FROM XXL_MQ_MESSAGE AS t
+		WHERE t.status = #{failStatus} AND t.retry_count <![CDATA[ > ]]> 0
+		ORDER BY t.add_time ASC
+		LIMIT #{pagesize}
+	</select>
+
+	<update id="retryStatusFresh" parameterType="java.util.HashMap" >
+		UPDATE XXL_MQ_MESSAGE
+		SET
+			update_time = NOW(),
+			status = #{newStatus},
+			retry_count = retry_count-1 ,
+			msg = CONCAT( IFNULL(msg, ''), #{addMsg})
+		WHERE id = #{id}
+			AND status =  #{failStatus}
+			AND (retry_count -1) <![CDATA[ >= ]]> 0
 	</update>
 
 </mapper>

@@ -1,6 +1,7 @@
 package com.xxl.mq.client.rpc.util;
 
 import com.xxl.mq.client.consumer.annotation.MqConsumer;
+import com.xxl.mq.client.consumer.annotation.MqConsumerType;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
@@ -12,7 +13,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static com.xxl.mq.client.consumer.annotation.MqConsumer.MqType.*;
+import static com.xxl.mq.client.consumer.annotation.MqConsumerType.*;
 
 /**
  * zookeeper service registry
@@ -173,7 +174,7 @@ public class ZkConsumerUtil {
 	public static ActiveInfo isActice(MqConsumer annotation) {
 		// info
 		String name = annotation.value();
-		MqConsumer.MqType type = annotation.type();
+		MqConsumerType type = annotation.type();
 
 		// load address set
 		Set<String> addressSet = consumerAddress.get(name);

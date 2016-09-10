@@ -19,6 +19,7 @@ public class DemoAMqComsumer implements IMqConsumer {
     @Override
     public void consume(Map<String, String> data) throws Exception {
         logger.info("{}消费一条消息:{}", "mqconsumer-01",  data);
+        int asd = 9/0;
     }
 
 }
