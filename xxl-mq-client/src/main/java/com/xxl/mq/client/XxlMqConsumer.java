@@ -114,7 +114,7 @@ public class XxlMqConsumer implements ApplicationContextAware {
                         // check load
                         ZkConsumerUtil.ActiveInfo checkPull = ZkConsumerUtil.isActice(annotation);
                         if (checkPull!=null) {
-                            logger.info(">>>>>>>>>>> xxl-mq, isActice: name={}, rank={}, total={}", annotation.value(), checkPull.rank, checkPull.total);
+                            logger.info(">>>>>>>>>>> xxl-mq, isActice: consumer={}, ActiveInfo={}", annotation, checkPull.toString());
 
                             // load
                             LinkedList<Message> messageList =  XxlMqClient.getXxlMqService().pullMessage(annotation.value(), Message.Status.NEW.name(), pagesize, checkPull.rank, checkPull.total);
@@ -131,7 +131,7 @@ public class XxlMqConsumer implements ApplicationContextAware {
                                     String tim = DateFormatUtil.formatDateTime(new Date());
                                     // consumer
                                     msg.setStatus(Message.Status.ING.name());
-                                    msg.setMsg(MessageFormat.format("<hr>》》》时间: {0} <br>》》》机器: {1} <br>》》》操作: 消息锁定(status>>>ING)", tim, ZkConsumerUtil.localAddressRandom));
+                                    msg.setMsg(MessageFormat.format("<hr>》》》时间: {0} <br>》》》注册信息: {1} <br>》》》操作: 消息锁定(status>>>ING)", tim, checkConsume.toString()));
                                     int lockRet = XxlMqClient.getXxlMqService().lockMessage(msg);
                                     if (lockRet<1){
                                         continue;
@@ -140,12 +140,15 @@ public class XxlMqConsumer implements ApplicationContextAware {
                                     try {
                                         consumerHandler.consume(msg);
                                         msg.setStatus(Message.Status.SUCCESS.name());
-                                        msg.setMsg(MessageFormat.format("<hr>》》》时间: {0} <br>》》》机器: {1} <br>》》》操作: 消息消费成功(status>>>SUCCESS)", tim, ZkConsumerUtil.localAddressRandom));
+                                        msg.setMsg(MessageFormat.format("<hr>》》》时间: {0} <br>》》》注册信息: {1} <br>》》》操作: 消息消费成功(status>>>SUCCESS)", tim, checkConsume.toString()));
                                     } catch (Exception e) {
                                         logger.error("", e);
                                         msg.setStatus(Message.Status.FAIL.name());
-                                        msg.setMsg(MessageFormat.format("<hr>》》》时间: {0} <br>》》》机器: {1} <br>》》》操作: 消息锁定失败(status>>>FAIL) <br>日志:{1}", tim, ZkConsumerUtil.localAddressRandom, e.getMessage()));
+                                        msg.setMsg(MessageFormat.format("<hr>》》》时间: {0} <br>》》》注册信息: {1} <br>》》》操作: 消息锁定失败(status>>>FAIL) <br>日志:{1}", tim, checkConsume.toString(), e.getMessage()));
                                     } finally {
+                                        if (msg.getRetryCount()>0) {
+                                            // 消耗一次重试次数
+                                        }
                                         XxlMqClient.getXxlMqService().updateMessage(msg);
                                         logger.info(">>>>>>>>>> xxl-mq, consumer message: {}", msg);
                                     }

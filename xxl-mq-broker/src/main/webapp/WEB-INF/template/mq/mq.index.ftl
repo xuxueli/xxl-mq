@@ -40,9 +40,10 @@
                     <div class="input-group">
                         <span class="input-group-addon">状态</span>
                         <select class="form-control" id="status" >
-                        <#list status as item>
-                            <option value="${item}">${item}</option>
-                        </#list>
+                            <option value="">全部</option>
+                            <#list status as item>
+                                <option value="${item}">${item}</option>
+                            </#list>
                         </select>
                     </div>
                 </div>

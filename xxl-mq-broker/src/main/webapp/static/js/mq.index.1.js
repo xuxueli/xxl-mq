@@ -24,8 +24,11 @@ $(function() {
 					{
 						data: 'data',
 						render : function ( data, type, row ) {
-							var temp = '<a href="javascript:;" class="tec_tips" >查看<span style="display: none;">'+ data +'</span></spam></a>';
-							return temp;
+							if (data) {
+								return '<a href="javascript:;" class="tec_tips" >查看<span style="display: none;">'+ data +'</span></spam></a>';
+							} else {
+								return '空';
+							}
 						}
 					},
 					{
@@ -48,8 +51,11 @@ $(function() {
 					{
 						data: 'msg',
 						render : function ( data, type, row ) {
-							var temp = '<a href="javascript:;" class="tec_tips" >查看<span style="display: none;">'+ data +'</span></spam></a>';
-							return temp;
+							if (data) {
+								return '<a href="javascript:;" class="tec_tips" >查看<span style="display: none;">'+ data +'</span></spam></a>';
+							} else {
+								return '空';
+							}
 						}
 					},
 					{ data: 'retryCount'},

@@ -7,9 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
+
+import static com.xxl.mq.client.service.annotation.MqConsumer.MqType.*;
 
 /**
  * zookeeper service registry
@@ -192,30 +195,43 @@ public class ZkConsumerUtil {
 			}
 			index++;
 		}
+		String registryTreeKeys = MessageFormat.format("LocalRegistryKey={0}, AllRegistryTree={1}", localAddressRandom, sortSet.toString());
 
 		// for biz
-		switch (type) {
-			case TOPIC: {
-				// TODO
+		if (type == QUEUE) {
+			return new ActiveInfo(index, sortSet.size(), registryTreeKeys);
+		} else if (type == SERIAL_QUEUE) {
+			if (index == 0) {
+				return new ActiveInfo(0, 1, registryTreeKeys);
 			}
-			case SERIAL_QUEUE: {
-				if (index == 0) {
-					return new ActiveInfo(index, sortSet.size());
-				}
-			}
-			case QUEUE: {
-				return new ActiveInfo(index, sortSet.size());
-			}
+			return null;
+		} else if (type == TOPIC) {
+
 		}
 		return null;
 	}
 
 	public static class ActiveInfo{
+		// consumer rank
 		public int rank;
+		// alive num
 		public int total;
-		public ActiveInfo(int rank, int total) {
+		// registry rank info
+		public String registryRankInfo;
+
+		public ActiveInfo(int rank, int total, String registryRankInfo) {
 			this.rank = rank;
 			this.total = total;
+			this.registryRankInfo = registryRankInfo;
+		}
+
+		@Override
+		public String toString() {
+			return "ActiveInfo{" +
+					"rank=" + rank +
+					", total=" + total +
+					", registryRankInfo='" + registryRankInfo + '\'' +
+					'}';
 		}
 	}
 

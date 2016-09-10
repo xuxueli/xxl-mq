@@ -9,7 +9,7 @@ import java.util.Date;
 public class Message implements Serializable {
     private static final long serialVersionUID = 42L;
 
-    public enum Status{NEW, ING, SUCCESS, FAIL, TIMEOUT;}
+    public enum Status{NEW, ING, SUCCESS, FAIL;}
 
     private int id;
     private String name;		// 消息主题

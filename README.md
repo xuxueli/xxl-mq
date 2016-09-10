@@ -9,9 +9,11 @@ git.osc地址：http://git.oschina.net/xuxueli0323/xxl-mq
 
 ## V1.1规划
 - 2、重试次数,异常时,将会扣减重试次数,并不会修改状态;
-- 3、Mq线程内,队列方式执行, Topic-ZK向Mq线程队列push消息实现广播;
+- 3、Topic消息: zk-util + push + 队列; Topic-ZK,单独一个Util, 消费者不会注册,但是会监听节点,节点变动时会会匹配项目内Topic消费者,push消息;
+- 4、Queue: 轮训;
 - 4、文档,发布;
 - 1、成功消息,自动删除;
+- 5、RPC方法入参,改为基本类型,不在复用Message,容易出问题;
 
 ##### 角色
 - mq: 消息
