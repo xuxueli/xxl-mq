@@ -11,3 +11,4 @@ CREATE TABLE `XXL_MQ_MESSAGE` (
   `retry_count` int(11) NOT NULL DEFAULT '0' COMMENT '重试次数',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+

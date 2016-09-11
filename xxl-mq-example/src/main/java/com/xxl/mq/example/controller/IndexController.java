@@ -23,7 +23,7 @@ public class IndexController {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("时间戳", System.currentTimeMillis()+"");
 
-		// 生产消息
+		// 生产队列消息
 		XxlMqProducer.produce(name, data);
 
 		return "SUCCESS";
@@ -37,7 +37,7 @@ public class IndexController {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("时间戳", System.currentTimeMillis()+"");
 
-		// 生产消息
+		// 生产广播消息
 		XxlMqProducer.broadcast(name, data);
 
 		return "SUCCESS";

@@ -1,16 +1,13 @@
 <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
 <body>
 
-    QUEUE (并行消费队列)= mqconsumer-01
-    <input type="button" class="send" consumer="mqconsumer-01" url="produce" mqtype="QUEUE" value="生产消息" />
+    <input type="button" class="send" consumer="mqconsumer-01" url="produce" mqtype="QUEUE" value="QUEUE (并行消费队列)= mqconsumer-01" />
     <br><br>
 
-    SERIAL_QUEUE (串行消费队列)= mqconsumer-02
-    <input type="button" class="send" consumer="mqconsumer-02" url="produce" mqtype="SERIAL_QUEUE" value="生产消息" />
+    <input type="button" class="send" consumer="mqconsumer-02" url="produce" mqtype="SERIAL_QUEUE" value="SERIAL_QUEUE (串行消费队列)= mqconsumer-02" />
     <br><br>
 
-    TOPIC (广播消息)= mqconsumer-03
-    <input type="button" class="send" consumer="mqconsumer-03" url="broadcast" mqtype="TOPIC" value="生产消息" />
+    <input type="button" class="send" consumer="mqconsumer-03" url="broadcast" mqtype="TOPIC" value="TOPIC (广播消息)= mqconsumer-03" />
 
     <hr>
     <div id="console"></div>

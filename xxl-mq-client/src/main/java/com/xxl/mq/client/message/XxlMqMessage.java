@@ -16,7 +16,7 @@ public class XxlMqMessage implements Serializable {
 	private Date delayTime;		// 延迟执行的时间, new Date()立即执行, 否则在延迟时间点之后开始执行;
 	private Date addTime;		// 创建时间
 	private Date updateTime;	// 更新时间
-	private String status;		// 消息状态: NEW=新消息、ING=消费中、SUCCESS=消费成功、FAIL=消费失败、TIMEOUT=超时
+	private String status;		// 消息状态: NEW=新消息、ING=消费中、SUCCESS=消费成功、FAIL=消费失败
 	private String msg;			// 历史流转日志
 	private int retryCount;		// 剩余重试次数, 默认0不重试
 
