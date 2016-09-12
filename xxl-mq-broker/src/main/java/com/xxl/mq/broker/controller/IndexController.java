@@ -1,9 +1,9 @@
 package com.xxl.mq.broker.controller;
 
-import com.xxl.mq.broker.controller.interceptor.PermissionInterceptor;
 import com.xxl.mq.broker.controller.annotation.PermessionLimit;
+import com.xxl.mq.broker.controller.interceptor.PermissionInterceptor;
 import com.xxl.mq.broker.core.result.ReturnT;
-import com.xxl.rpc.admin.core.util.PropertiesUtil;
+import com.xxl.mq.client.rpc.util.PropertiesUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +21,7 @@ import java.util.Properties;
  */
 @Controller
 public class IndexController {
+	public static final String CONFIG_FILE = "config.properties";
 
 	@RequestMapping("/")
 	@PermessionLimit(limit=false)
@@ -45,7 +46,7 @@ public class IndexController {
 	@PermessionLimit(limit=false)
 	public ReturnT<String> loginDo(HttpServletRequest request, HttpServletResponse response, String userName, String password, String ifRemember){
 		if (!PermissionInterceptor.ifLogin(request)) {
-			Properties prop = PropertiesUtil.loadProperties(PropertiesUtil.CONFIG_FILE);
+			Properties prop = PropertiesUtil.loadProperties(CONFIG_FILE);
 			if (StringUtils.isNotBlank(userName) && StringUtils.isNotBlank(password)
 					&& PropertiesUtil.getString(prop, "login.username").equals(userName)
 					&& PropertiesUtil.getString(prop, "login.password").equals(password)) {

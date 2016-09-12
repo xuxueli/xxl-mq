@@ -1,7 +1,7 @@
 package com.xxl.mq.broker.controller.resolver;
 
 import com.xxl.mq.broker.core.result.ReturnT;
-import com.xxl.rpc.admin.core.util.JacksonUtil;
+import com.xxl.mq.client.rpc.util.JacksonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ResponseBody;
