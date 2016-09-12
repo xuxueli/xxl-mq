@@ -37,19 +37,13 @@ public class XxlMqBroker implements IXxlMqBroker {
     }
 
     // ---------------------- broker init ----------------------
-    public void init() throws Exception {
-        Map<String, Object> serviceMap = new HashMap<String, Object>();
-        serviceMap.put(IXxlMqBroker.class.getName(), this);
-        new NetComServerFactory(port, serviceMap);
-    }
-    public void destroy(){
-    }
-
-    // ---------------------- broker proxy ----------------------
     private static LinkedBlockingQueue<XxlMqMessage> newMessageQueue = new LinkedBlockingQueue<XxlMqMessage>();
     private static LinkedBlockingQueue<XxlMqMessage> consumeCallbackMessageQueue = new LinkedBlockingQueue<XxlMqMessage>();
     private static Executor executor = Executors.newCachedThreadPool();
-    static {
+
+    public void init() throws Exception {
+
+        // init base broker biz
         /**
          * async save message
          */
@@ -114,8 +108,16 @@ public class XxlMqBroker implements IXxlMqBroker {
             }
         });
 
+        // registry broker rpc service
+        Map<String, Object> serviceMap = new HashMap<String, Object>();
+        serviceMap.put(IXxlMqBroker.class.getName(), this);
+        new NetComServerFactory(port, serviceMap);
+
+    }
+    public void destroy(){
     }
 
+    // ---------------------- broker proxy ----------------------
     @Override
     public int saveMessage(XxlMqMessage message) {
         return newMessageQueue.add(message)?1:-1;

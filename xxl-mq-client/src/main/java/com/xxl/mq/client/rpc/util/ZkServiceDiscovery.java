@@ -149,6 +149,5 @@ public class ZkServiceDiscovery {
 	public static void main(String[] args) throws KeeperException, InterruptedException {
 		serviceAddress.put("path2", new HashSet<String>());
 		System.out.println(discover("path1"));
-
 	}
 }

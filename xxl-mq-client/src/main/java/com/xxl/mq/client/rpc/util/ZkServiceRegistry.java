@@ -26,6 +26,8 @@ public class ZkServiceRegistry {
 		if (zooKeeper==null) {
 			try {
 				if (INSTANCE_INIT_LOCK.tryLock(5, TimeUnit.SECONDS)) {
+
+					// init zookeeper
 					/*final CountDownLatch countDownLatch = new CountDownLatch(1);
 					countDownLatch.countDown();
 					countDownLatch.await();*/
@@ -46,11 +48,25 @@ public class ZkServiceRegistry {
 						}
 					});
 
+					// init base path
+					Stat baseStat = zooKeeper.exists(Environment.ZK_BASE_PATH, false);
+					if (baseStat == null) {
+						zooKeeper.create(Environment.ZK_BASE_PATH, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+					}
+
+					// init service path
+					Stat serviceStat = zooKeeper.exists(Environment.ZK_SERVICES_PATH, false);
+					if (serviceStat == null) {
+						zooKeeper.create(Environment.ZK_SERVICES_PATH, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+					}
+
 					logger.info(">>>>>>>>> xxl-rpc zookeeper connnect success.");
 				}
 			} catch (InterruptedException e) {
 				logger.error("", e);
 			} catch (IOException e) {
+				logger.error("", e);
+			} catch (KeeperException e) {
 				logger.error("", e);
 			}
 		}
@@ -73,12 +89,6 @@ public class ZkServiceRegistry {
 
     	// address
 		String address = IpUtil.getAddress(port);
-
-		// "base" path : /xxl-rpc
-		Stat stat = getInstance().exists(Environment.ZK_SERVICES_PATH, false);
-		if (stat == null) {
-			getInstance().create(Environment.ZK_SERVICES_PATH, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-		}
 
 		// muit registry
 		for (String registryKey : registryKeyList) {

@@ -8,16 +8,17 @@ import java.util.Properties;
  */
 public class Environment {
 
+	public static final String ZK_BASE_PATH = "/xxl-mq";
 
 	/**
 	 * rpc service address on zookeeper, service path : /xxl-mq/rpc/registrykey01/address01
      */
-	public static final String ZK_SERVICES_PATH = "/xxl-mq/rpc";
+	public static final String ZK_SERVICES_PATH = ZK_BASE_PATH.concat("/rpc");
 
 	/**
 	 * consumer name on zookeepr, consumerpath : /xxl-mq/consumer01/address01
      */
-	public static final String ZK_CONSUMER_PATH = "/xxl-mq/consumer";
+	public static final String ZK_CONSUMER_PATH = ZK_BASE_PATH.concat("/consumer");
 
 	/**
 	 * zk config file

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.xxl</groupId>
 	<artifactId>xxl-mq</artifactId>
-	<version>${xxl.mq.version}</version>
+	<version>1.1.0</version>
 	<packaging>pom</packaging>
 
 	<modules>
@@ -11,11 +11,6 @@
 		<module>xxl-mq-client</module>
 		<module>xxl-mq-example</module>
 	</modules>
-
-	<properties>
-		<xxl.mq.version>1.1.0</xxl.mq.version>
-		<spring.version>3.2.13.RELEASE</spring.version>
-	</properties>
 
 	<build>
 		<plugins>
