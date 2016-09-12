@@ -62,7 +62,7 @@ public class QueueConsumerThread extends Thread {
                             String tim = DateFormatUtil.formatDateTime(new Date());
 
                             // lock message
-                            String lockAddMsg = MessageFormat.format("<hr>》》》时间: {0} <br>》》》 消息锁定(status>>>ING)<br>》》》操作: 注册信息: {1}", tim, checkConsume.toString());
+                            String lockAddMsg = MessageFormat.format("<hr>》》》时间: {0} <br>》》》操作: 消息锁定(status>>>ING)<br>》》》注册信息: {1}", tim, checkConsume.toString());
                             int lockRet = XxlMqClient.getXxlMqService().lockMessage(msg.getId(), lockAddMsg);
                             if (lockRet < 1) {
                                 continue;
