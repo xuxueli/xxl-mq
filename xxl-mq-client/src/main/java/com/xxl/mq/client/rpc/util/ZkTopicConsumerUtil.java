@@ -143,10 +143,10 @@ public class ZkTopicConsumerUtil {
 			String topicKeyPath = Environment.ZK_CONSUMER_PATH.concat("/").concat(name);
 
 			// watch
-			Stat topicKeyPathStat = getInstance().exists(topicKeyPath, true);
+			Stat topicKeyPathStat = getInstance().exists(topicKeyPath, false);
 			if (topicKeyPathStat == null) {
 				getInstance().create(topicKeyPath, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-				topicKeyPathStat = getInstance().exists(topicKeyPath, true);
+				topicKeyPathStat = getInstance().exists(topicKeyPath, false);
 			}
 
 			Stat ret = zooKeeper.setData(topicKeyPath, data.getBytes(), topicKeyPathStat.getVersion());
