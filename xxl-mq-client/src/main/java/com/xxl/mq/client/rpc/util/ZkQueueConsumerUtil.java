@@ -29,52 +29,55 @@ public class ZkQueueConsumerUtil {
 		if (zooKeeper==null) {
 			try {
 				if (INSTANCE_INIT_LOCK.tryLock(5, TimeUnit.SECONDS)) {
+					try {
+						// init zookeeper
+						/*final CountDownLatch countDownLatch = new CountDownLatch(1);
+						countDownLatch.countDown();
+						countDownLatch.await();*/
+						zooKeeper = new ZooKeeper(Environment.ZK_ADDRESS, 10000, new Watcher() {
+							@Override
+							public void process(WatchedEvent event) {
 
-					// init zookeeper
-					/*final CountDownLatch countDownLatch = new CountDownLatch(1);
-					countDownLatch.countDown();
-					countDownLatch.await();*/
-					zooKeeper = new ZooKeeper(Environment.ZK_ADDRESS, 10000, new Watcher() {
-						@Override
-						public void process(WatchedEvent event) {
-
-							// session expire, close old and create new
-							if (event.getState() == Event.KeeperState.Expired) {
-								try {
-									zooKeeper.close();
-								} catch (InterruptedException e) {
-									logger.error("", e);
+								// session expire, close old and create new
+								if (event.getState() == Event.KeeperState.Expired) {
+									try {
+										zooKeeper.close();
+									} catch (InterruptedException e) {
+										logger.error("", e);
+									}
+									zooKeeper = null;
 								}
-								zooKeeper = null;
-							}
 
-							// refresh service address
-							logger.info("" + event);
-							if ((event.getType() == Event.EventType.NodeChildrenChanged && event.getPath()!=null && event.getPath().startsWith(Environment.ZK_CONSUMER_PATH)) ||
-									event.getType() == Event.EventType.None) {
-								try {
-									discoverConsumers();
-								} catch (Exception e) {
-									logger.error("", e);
+								// refresh service address
+								logger.info("" + event);
+								if ((event.getType() == Event.EventType.NodeChildrenChanged && event.getPath()!=null && event.getPath().startsWith(Environment.ZK_CONSUMER_PATH)) ||
+										event.getType() == Event.EventType.None) {
+									try {
+										discoverConsumers();
+									} catch (Exception e) {
+										logger.error("", e);
+									}
 								}
-							}
 
+							}
+						});
+
+						// init base path
+						Stat baseStat = zooKeeper.exists(Environment.ZK_BASE_PATH, false);
+						if (baseStat == null) {
+							zooKeeper.create(Environment.ZK_BASE_PATH, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
 						}
-					});
 
-					// init base path
-					Stat baseStat = zooKeeper.exists(Environment.ZK_BASE_PATH, false);
-					if (baseStat == null) {
-						zooKeeper.create(Environment.ZK_BASE_PATH, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+						// init consumer path
+						Stat stat = zooKeeper.exists(Environment.ZK_CONSUMER_PATH, false);
+						if (stat == null) {
+							zooKeeper.create(Environment.ZK_CONSUMER_PATH, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+						}
+
+						logger.info(">>>>>>>>> xxl-rpc zookeeper connnect success.");
+					} finally {
+						INSTANCE_INIT_LOCK.unlock();
 					}
-
-					// init consumer path
-					Stat stat = zooKeeper.exists(Environment.ZK_CONSUMER_PATH, false);
-					if (stat == null) {
-						zooKeeper.create(Environment.ZK_CONSUMER_PATH, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-					}
-
-					logger.info(">>>>>>>>> xxl-rpc zookeeper connnect success.");
 				}
 			} catch (InterruptedException e) {
 				logger.error("", e);

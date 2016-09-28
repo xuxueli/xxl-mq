@@ -27,40 +27,44 @@ public class ZkServiceRegistry {
 			try {
 				if (INSTANCE_INIT_LOCK.tryLock(5, TimeUnit.SECONDS)) {
 
-					// init zookeeper
-					/*final CountDownLatch countDownLatch = new CountDownLatch(1);
-					countDownLatch.countDown();
-					countDownLatch.await();*/
-					zooKeeper = new ZooKeeper(Environment.ZK_ADDRESS, 10000, new Watcher() {
-						@Override
-						public void process(WatchedEvent event) {
+					try {
+						// init zookeeper
+						/*final CountDownLatch countDownLatch = new CountDownLatch(1);
+						countDownLatch.countDown();
+						countDownLatch.await();*/
+						zooKeeper = new ZooKeeper(Environment.ZK_ADDRESS, 10000, new Watcher() {
+							@Override
+							public void process(WatchedEvent event) {
 
-							// session expire, close old and create new
-							if (event.getState() == Event.KeeperState.Expired) {
-								try {
-									zooKeeper.close();
-								} catch (InterruptedException e) {
-									logger.error("", e);
+								// session expire, close old and create new
+								if (event.getState() == Event.KeeperState.Expired) {
+									try {
+										zooKeeper.close();
+									} catch (InterruptedException e) {
+										logger.error("", e);
+									}
+									zooKeeper = null;
 								}
-								zooKeeper = null;
+
 							}
+						});
 
+						// init base path
+						Stat baseStat = zooKeeper.exists(Environment.ZK_BASE_PATH, false);
+						if (baseStat == null) {
+							zooKeeper.create(Environment.ZK_BASE_PATH, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
 						}
-					});
 
-					// init base path
-					Stat baseStat = zooKeeper.exists(Environment.ZK_BASE_PATH, false);
-					if (baseStat == null) {
-						zooKeeper.create(Environment.ZK_BASE_PATH, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+						// init service path
+						Stat serviceStat = zooKeeper.exists(Environment.ZK_SERVICES_PATH, false);
+						if (serviceStat == null) {
+							zooKeeper.create(Environment.ZK_SERVICES_PATH, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+						}
+
+						logger.info(">>>>>>>>> xxl-rpc zookeeper connnect success.");
+					} finally {
+						INSTANCE_INIT_LOCK.unlock();
 					}
-
-					// init service path
-					Stat serviceStat = zooKeeper.exists(Environment.ZK_SERVICES_PATH, false);
-					if (serviceStat == null) {
-						zooKeeper.create(Environment.ZK_SERVICES_PATH, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-					}
-
-					logger.info(">>>>>>>>> xxl-rpc zookeeper connnect success.");
 				}
 			} catch (InterruptedException e) {
 				logger.error("", e);

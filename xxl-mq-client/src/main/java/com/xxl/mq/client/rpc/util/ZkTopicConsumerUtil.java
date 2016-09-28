@@ -26,65 +26,69 @@ public class ZkTopicConsumerUtil {
 			try {
 				if (INSTANCE_INIT_LOCK.tryLock(5, TimeUnit.SECONDS)) {
 
-					// init zookeeper
+					try {
+						// init zookeeper
 					/*final CountDownLatch countDownLatch = new CountDownLatch(1);
 					countDownLatch.countDown();
 					countDownLatch.await();*/
-					zooKeeper = new ZooKeeper(Environment.ZK_ADDRESS, 10000, new Watcher() {
-						@Override
-						public void process(WatchedEvent event) {
+						zooKeeper = new ZooKeeper(Environment.ZK_ADDRESS, 10000, new Watcher() {
+							@Override
+							public void process(WatchedEvent event) {
 
-							// session expire, close old and create new
-							if (event.getState() == Event.KeeperState.Expired) {
-								try {
-									zooKeeper.close();
-								} catch (InterruptedException e) {
-									logger.error("", e);
-								}
-								zooKeeper = null;
-							}
-
-							// refresh service address
-							if (event.getType() == Event.EventType.NodeDataChanged){
-								String path = event.getPath();
-								if (path!=null && path.startsWith(Environment.ZK_CONSUMER_PATH)) {
-									// add one-time watch
+								// session expire, close old and create new
+								if (event.getState() == Event.KeeperState.Expired) {
 									try {
-										zooKeeper.exists(path, true);
-									} catch (Exception e) {
+										zooKeeper.close();
+									} catch (InterruptedException e) {
 										logger.error("", e);
 									}
-									// broadcase message
-									String name = path.substring(Environment.ZK_CONSUMER_PATH.length()+1, path.length());
-									String data = null;
-									try {
-										byte[] resultData = zooKeeper.getData(path, true, null);
-										if (resultData != null) {
-											data = new String(resultData);
+									zooKeeper = null;
+								}
+
+								// refresh service address
+								if (event.getType() == Event.EventType.NodeDataChanged){
+									String path = event.getPath();
+									if (path!=null && path.startsWith(Environment.ZK_CONSUMER_PATH)) {
+										// add one-time watch
+										try {
+											zooKeeper.exists(path, true);
+										} catch (Exception e) {
+											logger.error("", e);
 										}
-									} catch (Exception e) {
-										logger.error("", e);
+										// broadcase message
+										String name = path.substring(Environment.ZK_CONSUMER_PATH.length()+1, path.length());
+										String data = null;
+										try {
+											byte[] resultData = zooKeeper.getData(path, true, null);
+											if (resultData != null) {
+												data = new String(resultData);
+											}
+										} catch (Exception e) {
+											logger.error("", e);
+										}
+										XxlMqConsumer.pushTopicMessage(name, data);
 									}
-									XxlMqConsumer.pushTopicMessage(name, data);
 								}
+
 							}
+						});
 
+						// init base path
+						Stat baseStat = zooKeeper.exists(Environment.ZK_BASE_PATH, false);
+						if (baseStat == null) {
+							zooKeeper.create(Environment.ZK_BASE_PATH, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
 						}
-					});
 
-					// init base path
-					Stat baseStat = zooKeeper.exists(Environment.ZK_BASE_PATH, false);
-					if (baseStat == null) {
-						zooKeeper.create(Environment.ZK_BASE_PATH, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+						// init consumer path
+						Stat stat =zooKeeper.exists(Environment.ZK_CONSUMER_PATH, false);
+						if (stat == null) {
+							zooKeeper.create(Environment.ZK_CONSUMER_PATH, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+						}
+
+						logger.info(">>>>>>>>> xxl-rpc zookeeper connnect success.");
+					} finally {
+						INSTANCE_INIT_LOCK.unlock();
 					}
-
-					// init consumer path
-					Stat stat =zooKeeper.exists(Environment.ZK_CONSUMER_PATH, false);
-					if (stat == null) {
-						zooKeeper.create(Environment.ZK_CONSUMER_PATH, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-					}
-
-					logger.info(">>>>>>>>> xxl-rpc zookeeper connnect success.");
 				}
 			} catch (InterruptedException e) {
 				logger.error("", e);
