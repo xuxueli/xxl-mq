@@ -5,14 +5,14 @@
     <parent>
         <artifactId>xxl-mq</artifactId>
         <groupId>com.xxl</groupId>
-        <version>1.1.0</version>
+        <version>1.1.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>xxl-mq-broker</artifactId>
     <packaging>war</packaging>
 
     <properties>
-        <xxl.mq.version>1.1.0</xxl.mq.version>
+        <xxl.mq.version>1.1.1</xxl.mq.version>
         <spring.version>3.2.13.RELEASE</spring.version>
     </properties>
 
