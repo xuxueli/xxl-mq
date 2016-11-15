@@ -334,6 +334,8 @@ XxlMqProducer.produce("消息主题", "消息数据, Map<String, String>格式")
 - Queue模型Consumer路径, 和 Topic模型消息广播节点路径, 进行拆分, 避免相互耦合的可能;
 - Broker中过期消息自动清理: 新增参数cache_day, 单位/天, 含义: 针对消费成功的消息, Broker缓存时间为cache_day天, 超过cache_day的消费成功的消息, 将会被删除;
 - 消息堆积报警: 新增参数alarm_num: 消息堆积报警, 30分钟统计一次消息情况, 将会根据topic分组, 堆积超过阈值的topic将会在报警邮件报表中进行记录;
+- Client端，LocalQueue，max=50条/批次，批量push；Server端，LocalQueue，max=50条/批次，批量入库；
+- LocalQueue消息可能丢失，考虑LocalFile；
 
 ## 五、其他
 
