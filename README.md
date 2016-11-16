@@ -50,6 +50,16 @@ SERIAL_QUEUE(串行队列)模型 | 点对点模式, 消息进去队列之后, �
 - [github地址](https://github.com/xuxueli/xxl-mq)
 - [git.osc地址](http://git.oschina.net/xuxueli0323/xxl-mq)
 
+##### 中央仓库地址 (最新Release版本)
+
+```
+<dependency>
+    <groupId>com.xuxueli</groupId>
+    <artifactId>xxl-mq-client</artifactId>
+    <version>1.1.1</version>
+</dependency>
+```
+
 ##### 博客地址 (将会在两个博客同步更新文档)
 
 - [oschina地址](http://my.oschina.net/xuxueli/blog/738918)
@@ -330,11 +340,13 @@ XxlMqProducer.produce("消息主题", "消息数据, Map<String, String>格式")
 - 9、消息重试: 支持设置消息的重试次数, 在消息执行失败后将会按照设置的值进行消息重试执行,直至重试次数耗尽或者执行成功;
 
 #### 4.2 版本V1.1.1 特性
-- 1、底层系统优化，CleanCode等；
-- 2、修复confirm和alert弹框冲突导致消息列表错乱的问题；
-- 3、优化ZK注册逻辑,ZK注册基础路径提前初始化；
-- 4、broadcast 广播消息时ZK 发送方不进行watch, 否则发送方也会监听到；
-- 5、修复一处因ReentrantLock导致可能死锁的问题；
+- 1、项目groupId改为com.xuxueli，为推送maven中央仓库做准备；
+- 2、项目推送Maven中央仓库；
+- 3、底层系统优化，CleanCode等；
+- 4、修复confirm和alert弹框冲突导致消息列表错乱的问题；
+- 5、优化ZK注册逻辑,ZK注册基础路径提前初始化；
+- 6、broadcast 广播消息时ZK 发送方不进行watch, 否则发送方也会监听到；
+- 7、修复一处因ReentrantLock导致可能死锁的问题；
 
 
 #### 规划中
