@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>xxl-mq</artifactId>
-        <groupId>com.xxl</groupId>
+        <groupId>com.xuxueli</groupId>
         <version>1.1.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -144,7 +144,7 @@
 
         <!-- xxl-mq-client -->
         <dependency>
-            <groupId>com.xxl</groupId>
+            <groupId>com.xuxueli</groupId>
             <artifactId>xxl-mq-client</artifactId>
             <version>${xxl.mq.version}</version>
         </dependency>
