@@ -358,6 +358,8 @@ XxlMqProducer.produce("消息主题", "消息数据, Map<String, String>格式")
 - 消息堆积报警: 新增参数alarm_num: 消息堆积报警, 30分钟统计一次消息情况, 将会根据topic分组, 堆积超过阈值的topic将会在报警邮件报表中进行记录;
 - Client端，LocalQueue，max=50条/批次，批量push；Server端，LocalQueue，max=50条/批次，批量入库；
 - LocalQueue消息可能丢失，考虑LocalFile；
+- producer消息，推送broker失败，先缓存本次文件；
+- producer消息，生成UUID，推送失败重复推送，同时避免重复；
 
 ## 五、其他
 
