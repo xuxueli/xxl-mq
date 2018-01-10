@@ -6,7 +6,7 @@
     <p align="center">
         XXL-MQ, A lightweight distributed message queue framework.
         <br>
-        <a href="http://www.xuxueli.com/xxl-mq/"><strong>-- Browse website. --</strong></a>
+        <a href="http://www.xuxueli.com/xxl-mq/"><strong>-- Home Page --</strong></a>
         <br>
         <br>
         <a href="https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-mq/">
