@@ -27,4 +27,6 @@ public interface IXxlMqMessageDao {
     public List<Integer> retryMessageIds(int pagesize, String failStatus);
 
     public int retryStatusFresh(int id, String addMsg, String failStatus, String newStatus);
+    
+    public int deleteExpiredMsg(Date expiredTime,String status);
 }

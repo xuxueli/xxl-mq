@@ -2,7 +2,9 @@ package com.xxl.mq.client.rpc.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+
 
 /**
  * 日期格式化，日期解析
@@ -89,11 +91,20 @@ public class DateFormatUtil {
 		return date;
 	}
 	
+	public static Date getNowOrOffset(int offset){
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, offset);
+		Date dateoffset = cal.getTime();
+		return dateoffset;
+	}
+	
 	public static void main(String[] args) throws ParseException {
 		String temp = DateFormatUtil.formatDateTime(new Date());
 		System.out.println(temp);
 		Date temp2 = DateFormatUtil.parseDateTime(temp);
 		System.out.println(temp2);
+		Date temp3=DateFormatUtil.getNowOrOffset(-1);
+		System.out.println(temp3);
 	}
 
 }

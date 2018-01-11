@@ -148,5 +148,10 @@
 			AND status =  #{failStatus}
 			AND (retry_count -1) <![CDATA[ >= ]]> 0
 	</update>
+	
+	<delete id="deleteExpired" parameterType="java.util.HashMap">
+		DELETE FROM XXL_MQ_MESSAGE
+		WHERE status = #{status} AND update_time<![CDATA[ < ]]>#{expiredTime}
+	</delete>
 
 </mapper>

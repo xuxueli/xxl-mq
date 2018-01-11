@@ -9,9 +9,37 @@
 	<bean id="xxlMqMessageDao" class="com.xxl.mq.broker.dao.impl.XxlMqMessageDaoImpl" />
 
 	<!-- broker server -->
-	<bean class="com.xxl.mq.client.broker.XxlMqBroker" init-method="init" destroy-method="destroy" >
+	<bean name="xxlMqBroker" class="com.xxl.mq.client.broker.XxlMqBroker" init-method="init" destroy-method="destroy">
 		<property name="port" value="6080" />
 		<property name="xxlMqMessageDao" ref="xxlMqMessageDao" />
+		<property name="expiredDay" value="3" />
+		<property name="cleanExpiredData" value="on" /> 
 	</bean>
+	
+	<bean id="cleanExpiredDataJob"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="xxlMqBroker" />
+		<property name="targetMethod" value="cleanExpiredData" />
+	</bean> 
+
+ 	<bean id="cronTrigger"  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">  
+    	<property name="jobDetail" ref="cleanExpiredDataJob" />  
+    	<property name="cronExpression" value="0 */1 * * * ?" />
+    	<!-- <property name="cronExpression" value="0 */2 * * * " />   -->
+	</bean>  
+	
+	<bean  class="org.springframework.scheduling.quartz.SchedulerFactoryBean">  
+	    <property name="jobDetails">  
+	        <list>  
+	            <ref bean="cleanExpiredDataJob" />  
+	        </list>  
+	    </property>  
+	    	  
+	    <property name="triggers">  
+	        <list>   
+	            <ref bean="cronTrigger" />  
+	        </list>  
+	    </property>  
+	</bean> 
 
 </beans>

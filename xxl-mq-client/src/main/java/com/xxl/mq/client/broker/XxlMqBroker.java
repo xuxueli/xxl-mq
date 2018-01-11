@@ -26,17 +26,28 @@ public class XxlMqBroker implements IXxlMqBroker {
     private final static Logger logger = LoggerFactory.getLogger(XxlMqBroker.class);
 
     // ---------------------- broker config ----------------------
-    private static int port = 6080;
-    private static IXxlMqMessageDao xxlMqMessageDao;
+    private  static int port = 6080;
+    private  static IXxlMqMessageDao xxlMqMessageDao;
+    private  static int expiredDay=3;
+    private  static boolean cleanExpiredData=true;
 
     public void setPort(int port) {
-        this.port = port;
+    	XxlMqBroker.port = port;
     }
+    
     public void setXxlMqMessageDao(IXxlMqMessageDao xxlMqMessageDao) {
         XxlMqBroker.xxlMqMessageDao = xxlMqMessageDao;
     }
 
-    // ---------------------- broker init ----------------------
+    public void setExpiredDay(int expiredDay) {
+    	XxlMqBroker.expiredDay = expiredDay;
+	}
+
+	public void setCleanExpiredData(boolean cleanExpiredData) {
+		XxlMqBroker.cleanExpiredData = cleanExpiredData;
+	}
+
+	// ---------------------- broker init ----------------------
     private static LinkedBlockingQueue<XxlMqMessage> newMessageQueue = new LinkedBlockingQueue<XxlMqMessage>();
     private static LinkedBlockingQueue<XxlMqMessage> consumeCallbackMessageQueue = new LinkedBlockingQueue<XxlMqMessage>();
     private static Executor executor = Executors.newCachedThreadPool();
@@ -115,6 +126,14 @@ public class XxlMqBroker implements IXxlMqBroker {
 
     }
     public void destroy(){
+    }
+    
+    //----------------------clean expired data-----------------
+    public void cleanExpiredData(){
+		if (cleanExpiredData && expiredDay >= 1) {
+			Date expiredDate=DateFormatUtil.getNowOrOffset(-1*expiredDay);
+			xxlMqMessageDao.deleteExpiredMsg(expiredDate, MessageStatus.SUCCESS.name());
+		}
     }
 
     // ---------------------- broker proxy ----------------------

@@ -119,5 +119,16 @@ public class XxlMqMessageDaoImpl implements IXxlMqMessageDao {
         return sqlSessionTemplate.update("XxlMqMessageMapper.retryStatusFresh", params);
     }
 
+	@Override
+	public int deleteExpiredMsg(Date expiredTime,String status) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("expiredTime", expiredTime);
+		params.put("status", status);
+		
+		return sqlSessionTemplate.update("XxlMqMessageMapper.deleteExpired", params);
+	}
+    
+    
+
 
 }
