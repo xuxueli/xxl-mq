@@ -133,7 +133,7 @@ public class XxlMqConsumer implements ApplicationContextAware {
                     // registry
                     try {
                         TimeUnit.SECONDS.sleep(60);
-                        ZkQueueConsumerUtil.registerConsumers(queueConsumerRespository.keySet());
+                        ZkTopicConsumerUtil.watchTopic(topicConsumerRespository.keySet());
                     } catch (Exception e) {
                         logger.error("", e);
                     }
