@@ -23,9 +23,8 @@
 	</bean> 
 
  	<bean id="cronTrigger"  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">  
-    	<property name="jobDetail" ref="cleanExpiredDataJob" />  
-    	<property name="cronExpression" value="0 */1 * * * ?" />
-    	<!-- <property name="cronExpression" value="0 */2 * * * " />   -->
+    		<property name="jobDetail" ref="cleanExpiredDataJob" />  
+    		<property name="cronExpression" value="0 */30 * * * ?" />
 	</bean>  
 	
 	<bean  class="org.springframework.scheduling.quartz.SchedulerFactoryBean">  
