@@ -19,6 +19,7 @@ public interface IXxlMqMessageDao {
 
     // for broker
     public int save(XxlMqMessage xxlMqMessage);
+    public int saveMsgList(List<XxlMqMessage> xxlMqMessagesList);
     public List<XxlMqMessage> pullNewMessage(String name, String newStatus, int pagesize, int consumerRank, int consumerTotal);
 
     public int lockMessage(int id, String addMsg, String fromStatus, String toStatus);
