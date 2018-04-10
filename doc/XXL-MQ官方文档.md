@@ -89,7 +89,7 @@ SERIAL_QUEUE(串行队列)模型 | 点对点模式, 消息进去队列之后, �
 
 ### 2.1 系统架构图
 
-![输入图片说明](https://static.oschina.net/uploads/img/201609/10214138_SKhG.jpg "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_SKhG.jpg "在这里输入图片标题")
 
 #### 角色解释:
 
@@ -193,7 +193,7 @@ Delay : 支持设置消息的延迟生效时间, 到达设置的Delay执行时�
 ## 三、快速入门
 
 ### 3.1 编译项目
-![输入图片说明](https://static.oschina.net/uploads/img/201609/11210919_0UU2.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_0UU2.png "在这里输入图片标题")
 
 源码目录介绍：
 - /db
@@ -223,17 +223,17 @@ zkserver=127.0.0.1:2181
 
 #### 配置JDBC连接
 
-![输入图片说明](https://static.oschina.net/uploads/img/201609/11211811_Nsu5.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_Nsu5.png "在这里输入图片标题")
 
 #### 配置登录账号密码
 
-![输入图片说明](https://static.oschina.net/uploads/img/201609/11211638_b8OS.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_b8OS.png "在这里输入图片标题")
 
 ### 3.5 接入XXL-MQ并使用 (以示例项目"xxl-mq-example"为例,进行讲解)
 
 #### 加入XXL-MQ的maven依赖
 
-![输入图片说明](https://static.oschina.net/uploads/img/201609/11212448_dYNJ.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_dYNJ.png "在这里输入图片标题")
 
 #### 生产消息
 
@@ -242,14 +242,14 @@ zkserver=127.0.0.1:2181
 XxlMqProducer.broadcast("消息主题", "消息数据, Map<String, String>格式");
 ```
 
-![输入图片说明](https://static.oschina.net/uploads/img/201609/11214345_VZb0.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_VZb0.png "在这里输入图片标题")
 
 - 2、生产QUEUE、SERIAL_QUEUE消息 (QUEUE和SERIAL_QUEUE两种消息格式完全一样, 生产消息的方式相同; 不同之处在于Consumer测配置不同)
 ```
 XxlMqProducer.produce("消息主题", "消息数据, Map<String, String>格式");
 ```
 
-![输入图片说明](https://static.oschina.net/uploads/img/201609/11214051_uCkR.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_uCkR.png "在这里输入图片标题")
 
 #### 消费消息 
 
@@ -257,7 +257,7 @@ XxlMqProducer.produce("消息主题", "消息数据, Map<String, String>格式")
 
 - 1、配置Consumer工厂, 扫描 "MqConsumer" 目录
 
-![输入图片说明](https://static.oschina.net/uploads/img/201609/11215050_S4ql.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_S4ql.png "在这里输入图片标题")
 
 - 2、开发 "MqConsumer"
  
@@ -272,15 +272,15 @@ XxlMqProducer.produce("消息主题", "消息数据, Map<String, String>格式")
 
 "QUEUE并发消息队列" 模式的Consumer开发示例: 
 
-![输入图片说明](https://static.oschina.net/uploads/img/201609/11220216_wmvO.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_wmvO.png "在这里输入图片标题")
 
 "SERIAL_QUEUE串行消息队列" 模式的Consumer开发示例: 
 
-![输入图片说明](https://static.oschina.net/uploads/img/201609/11220520_VnqX.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_VnqX.png "在这里输入图片标题")
 
 "TOPIC广播消息" 模式的Consumer开发示例: 
 
-![输入图片说明](https://static.oschina.net/uploads/img/201609/11220713_k49L.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_k49L.png "在这里输入图片标题")
 
 #### 测试
 
@@ -290,11 +290,11 @@ XxlMqProducer.produce("消息主题", "消息数据, Map<String, String>格式")
 
 "xxl-mq-example 消息生产和消费示例项目" 部署在根路径下, 访问地址为: http://localhost:8080/ , 可以在线查看消息 QUEUE和ERIAL_QUEUE 消息记录,并且可以对消息进行 "查询(统计某个消息主题下消息堆积情况,消费情况)"、"新增"、"编辑(失败消息修改重试次数进行重试, 修改消息数据, 修改消息Delay执行时间从而让消息在指定时间后才执行)"和"删除"等操作;
 
-![输入图片说明](https://static.oschina.net/uploads/img/201609/11224914_qvEC.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_qvEC.png "在这里输入图片标题")
 
 "xxl-mq-broker 消息代理中心项目" 部署在二级路径 "/example" 下, 访问地址 http://localhost:8080/example/  可进入示例项目提供的三种消息的发送界面, 在界面上点击按钮,即可生成三种消息, 可以跟踪消费方消费日志跟踪消息消费情况;
 
-![输入图片说明](https://static.oschina.net/uploads/img/201609/11224752_9fgb.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_9fgb.png "在这里输入图片标题")
 
 
 **1、测试 "QUEUE (并行消费队列)" : **
@@ -303,9 +303,9 @@ XxlMqProducer.produce("消息主题", "消息数据, Map<String, String>格式")
 
 现象: 进入 "消息代理中心", 如下图点击每条消息对应的 "历史流转日志" 按钮, 可查看每一条消息的流转信息;
 
-![输入图片说明](https://static.oschina.net/uploads/img/201609/11225032_xnyN.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_xnyN.png "在这里输入图片标题")
 
-![输入图片说明](https://static.oschina.net/uploads/img/201609/11225136_6xjZ.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_6xjZ.png "在这里输入图片标题")
 
 说明: 上图所示, 第一: 消息状态为SUCCESS, 说明消费成功; 第二: 消息ID=903, "rank=1, total=2", 意思是当前该消息队列存在两个Consumer, 该消息被排序为1(排名从0开始)的的Consumer消费掉; 通过上文 "QUEUE" 消息分片逻辑可知, 该消息ID对总consumer取模余数为1, 可消费该消息的Consumer的排名一致,说明消息分片成功;
 
@@ -316,9 +316,9 @@ XxlMqProducer.produce("消息主题", "消息数据, Map<String, String>格式")
 
 现象: 进入 "消息代理中心", 如下图点击每条消息对应的 "历史流转日志" 按钮, 可查看每一条消息的流转信息;
 
-![输入图片说明](https://static.oschina.net/uploads/img/201609/11231241_JNbP.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_JNbP.png "在这里输入图片标题")
 
-![输入图片说明](https://static.oschina.net/uploads/img/201609/11231319_SB97.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_SB97.png "在这里输入图片标题")
 
 说明: 上图所示, 第一: 消息状态为SUCCESS, 说明消费成功; 第二: 消息ID=910, "rank=0, total=1", 意思是当前该消息队列存在1个存活的Consumer, 该消息被排序为0(排名从0开始)的的Consumer消费掉; 通过上文 "SERIAL_QUEUE" 消费逻辑可知, 该类型消息对应的Consumer只有一个处于存活状态, 虽然两个Tomcat集群部署,但是只有一个处于存活状态, 它将串行消费掉队列中所有消息, 说明串行消费成功;
 
