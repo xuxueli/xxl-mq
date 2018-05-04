@@ -369,6 +369,7 @@ XxlMqProducer.produce("消息主题", "消息数据, Map<String, String>格式")
 - producer消息，推送broker失败，先缓存本次文件；
 - producer消息，生成UUID，推送失败重复推送，同时避免重复；
 - 延迟消息方案优化：增加时间轮算法；
+- 消息批量操作功能：如批量删除等；
 
 ## 五、其他
 
