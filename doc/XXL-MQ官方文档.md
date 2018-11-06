@@ -358,6 +358,8 @@ XxlMqProducer.produce("消息主题", "消息数据, Map<String, String>格式")
 
 ### 4.3 版本V1.1.2 [迭代中]
 - 1、client端与Broker长链初始化优化，防止重复创建连接。
+- 2、【ING】通讯迁移至 xxl-rpc；
+- 3、【ING】注册中心迁移至DB，基于 "long polling" 实现注册机器实时感知；
 
 ### TODO
 - Queue消息分组：每个主题可对应多个分组，topic》group1、group2》，每个分组下对应多个消费者，consumer01、consumer02；Queue消息生产时，将会群发给在线的所有主题下的分组列表，consumer只消费自己分组下的；不同分相互隔离；
