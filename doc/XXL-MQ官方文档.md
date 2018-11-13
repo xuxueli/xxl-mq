@@ -363,6 +363,7 @@ XxlMqProducer.produce("消息主题", "消息数据, Map<String, String>格式")
 - 4、【ING】轻量级改造，移除对ZK依赖，仅依赖DB即可完整集群方式提供服务；
 
 ### TODO
+- 会考虑移除 mysql 强依赖的，迁移 jpa 进一步提升通用型。
 - Queue消息分组：每个主题可对应多个分组，topic》group1、group2》，每个分组下对应多个消费者，consumer01、consumer02；Queue消息生产时，将会群发给在线的所有主题下的分组列表，consumer只消费自己分组下的；不同分相互隔离；
 - Queue模型Consumer路径, 和 Topic模型消息广播节点路径, 进行拆分, 避免相互耦合的可能;
 - Broker中过期消息自动清理: 新增参数cache_day, 单位/天, 含义: 针对消费成功的消息, Broker缓存时间为cache_day天, 超过cache_day的消费成功的消息, 将会被删除;
@@ -373,6 +374,33 @@ XxlMqProducer.produce("消息主题", "消息数据, Map<String, String>格式")
 - producer消息，生成UUID，推送失败重复推送，同时避免重复；
 - 延迟消息方案优化：增加时间轮算法；
 - 消息批量操作功能：如批量删除等；
+- 底层重构：
+    - 消息主题：topic，消费者(group，ip_name)，消息量，成功率，min告警。
+    - 消息日志：筛选，
+    - 底层：自动回收废弃 topic，废弃 group，
+        - env/appname.demo_topic/
+            - group01 (据g，单点、广播)
+            - group02
+                - ip name 01 (据排序+，串行，广播)
+                - ip name 02
+    - 消息：topic+group，partition，effecttime，
+    - producer：在线展示；
+    - consumer：topic+group；在线展示；
+    - 消费模型：
+        - 串行：zk 锁 》单 group，单 hashkey 机器取模
+        - 并行：zk 注册分片 》单group，多 hashkey 机器取模
+        - 广播：zk广播 》 多 group。
+    - 返回，成功，失败，重试-重试次数+1-延迟1分钟后触发。
+    - 底层只是依靠 rpc 负载均衡分摊流量压力，消息的负载均衡是基于数据分片的。消息存储考虑分表，不过存储暂时选择db ，数据迁移和部署更方便一些。
+    - mq中zk作用：
+        - broker：服务注册（add消息 + 消息pull）
+            - zk>http：无影响；
+        - producer：服务发现-add消息
+            - zk>http：无影响；
+        - consumer：服务发现-"锁 + 排序 + 消息pull"
+            - zk>http："锁（废弃，无影响） + 排序（实时性底，分片冲突概率提升） + 消息pull（无影响）"
+        
+    
 
 ## 五、其他
 
