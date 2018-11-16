@@ -11,12 +11,17 @@
     <artifactId>xxl-mq-example</artifactId>
     <packaging>war</packaging>
 
-    <properties>
-        <xxl.mq.version>1.1.2-SNAPSHOT</xxl.mq.version>
-        <spring.version>3.2.13.RELEASE</spring.version>
-    </properties>
 
     <dependencies>
+
+        <!-- xxl-mq-client -->
+        <dependency>
+            <groupId>com.xuxueli</groupId>
+            <artifactId>xxl-mq-client</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+
+
 
         <!-- springframe start -->
         <dependency>
@@ -52,12 +57,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- xxl-mq-client -->
-        <dependency>
-            <groupId>com.xuxueli</groupId>
-            <artifactId>xxl-mq-client</artifactId>
-            <version>${xxl.mq.version}</version>
-        </dependency>
 
     </dependencies>
 

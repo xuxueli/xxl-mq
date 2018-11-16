@@ -8,7 +8,6 @@ import com.xxl.mq.client.consumer.thread.TopicConsumerThread;
 import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.rpc.util.ZkQueueConsumerUtil;
 import com.xxl.mq.client.rpc.util.ZkTopicConsumerUtil;
-import org.jboss.netty.util.internal.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -17,6 +16,7 @@ import org.springframework.context.ApplicationContextAware;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;

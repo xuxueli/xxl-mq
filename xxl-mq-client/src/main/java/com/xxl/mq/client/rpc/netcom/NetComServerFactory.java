@@ -4,11 +4,10 @@ import com.xxl.mq.client.rpc.netcom.codec.model.RpcRequest;
 import com.xxl.mq.client.rpc.netcom.codec.model.RpcResponse;
 import com.xxl.mq.client.rpc.netcom.server.NettyServer;
 import com.xxl.mq.client.rpc.util.ZkServiceRegistry;
-import net.sf.cglib.reflect.FastClass;
-import net.sf.cglib.reflect.FastMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -78,14 +77,9 @@ public class NetComServerFactory {
 			Class<?>[] parameterTypes = request.getParameterTypes();
 			Object[] parameters = request.getParameters();
 
-            /*Method method = serviceClass.getMethod(methodName, parameterTypes);
+            Method method = serviceClass.getMethod(methodName, parameterTypes);
             method.setAccessible(true);
-            return method.invoke(serviceBean, parameters);*/
-
-			FastClass serviceFastClass = FastClass.create(serviceClass);
-			FastMethod serviceFastMethod = serviceFastClass.getMethod(methodName, parameterTypes);
-
-			Object result = serviceFastMethod.invoke(serviceBean, parameters);
+			Object result = method.invoke(serviceBean, parameters);
 
 			response.setResult(result);
 		} catch (Throwable t) {
