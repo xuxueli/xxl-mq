@@ -2,7 +2,7 @@
 <html>
 <head>
   	<title>分布式消息队列</title>
-  	<#import "/common/common.macro.ftl" as netCommon>
+  	<#import "../common/common.macro.ftl" as netCommon>
 	<@netCommon.commonStyle />
 	<!-- DataTables -->
   	<link rel="stylesheet" href="${request.contextPath}/static/adminlte/plugins/datatables/dataTables.bootstrap.css">

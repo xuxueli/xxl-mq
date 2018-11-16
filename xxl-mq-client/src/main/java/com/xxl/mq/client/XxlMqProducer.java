@@ -3,8 +3,8 @@ package com.xxl.mq.client;
 import com.xxl.mq.client.consumer.remote.XxlMqClient;
 import com.xxl.mq.client.message.MessageStatus;
 import com.xxl.mq.client.message.XxlMqMessage;
-import com.xxl.mq.client.rpc.util.JacksonUtil;
 import com.xxl.mq.client.rpc.util.ZkTopicConsumerUtil;
+import com.xxl.mq.client.util.JacksonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,7 +1,7 @@
 package com.xxl.mq.broker.service.impl;
 
 import com.xxl.mq.broker.core.result.ReturnT;
-import com.xxl.mq.client.broker.remote.IXxlMqMessageDao;
+import com.xxl.mq.broker.dao.IXxlMqMessageDao;
 import com.xxl.mq.broker.service.IXxlMqMessageService;
 import com.xxl.mq.client.message.MessageStatus;
 import com.xxl.mq.client.message.XxlMqMessage;

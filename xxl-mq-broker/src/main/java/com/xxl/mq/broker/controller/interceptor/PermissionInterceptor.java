@@ -1,8 +1,9 @@
 package com.xxl.mq.broker.controller.interceptor;
 
-import com.xxl.mq.broker.conf.XxlMqBrokerConfig;
 import com.xxl.mq.broker.controller.annotation.PermessionLimit;
 import com.xxl.mq.broker.core.util.CookieUtil;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.method.HandlerMethod;
@@ -18,25 +19,37 @@ import java.math.BigInteger;
  * @author xuxueli 2015-12-12 18:09:04
  */
 @Component
-public class PermissionInterceptor extends HandlerInterceptorAdapter {
+public class PermissionInterceptor extends HandlerInterceptorAdapter implements InitializingBean {
 
+
+    // ---------------------- init ----------------------
+
+    @Value("${xxl.mq.login.username}")
+    private String username;
+    @Value("${xxl.mq.login.password}")
+    private String password;
+    @Override
+    public void afterPropertiesSet() throws Exception {
+
+        // valid
+        if (username==null || username.trim().length()==0 || password==null || password.trim().length()==0) {
+            throw new RuntimeException("权限账号密码不可为空");
+        }
+
+        // login token
+        String tokenTmp = DigestUtils.md5DigestAsHex(String.valueOf(username + "_" + password).getBytes());		//.getBytes("UTF-8")
+        tokenTmp = new BigInteger(1, tokenTmp.getBytes()).toString(16);
+
+        LOGIN_IDENTITY_TOKEN = tokenTmp;
+    }
+
+    // ---------------------- tool ----------------------
 
 	public static final String LOGIN_IDENTITY_KEY = "XXL_MQ_LOGIN_IDENTITY";
-	public static final String LOGIN_IDENTITY_VAL = "sdf!121sdf$78sd!8";
-
 	private static String LOGIN_IDENTITY_TOKEN;
+
 	public static String getLoginIdentityToken() {
-		if (LOGIN_IDENTITY_TOKEN == null) {
-			String username = XxlMqBrokerConfig.getBrokerConfig().getLoginUsername();
-			String password = XxlMqBrokerConfig.getBrokerConfig().getLoginPassword();
-
-			// login token
-			String tokenTmp = DigestUtils.md5DigestAsHex(String.valueOf(username + "_" + password).getBytes());		//.getBytes("UTF-8")
-			tokenTmp = new BigInteger(1, tokenTmp.getBytes()).toString(16);
-
-			LOGIN_IDENTITY_TOKEN = tokenTmp;
-		}
-		return LOGIN_IDENTITY_TOKEN;
+        return LOGIN_IDENTITY_TOKEN;
 	}
 
 	public static boolean login(HttpServletResponse response, String username, String password, boolean ifRemember){
