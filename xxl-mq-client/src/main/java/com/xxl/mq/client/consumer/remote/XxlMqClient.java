@@ -1,6 +1,6 @@
 package com.xxl.mq.client.consumer.remote;
 
-import com.xxl.mq.client.broker.remote.IXxlMqBroker;
+import com.xxl.mq.client.broker.IXxlMqBroker;
 import com.xxl.mq.client.rpc.netcom.NetComClientProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

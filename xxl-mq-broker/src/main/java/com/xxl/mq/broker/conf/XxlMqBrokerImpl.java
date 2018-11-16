@@ -1,7 +1,7 @@
 package com.xxl.mq.broker.conf;
 
 import com.xxl.mq.broker.dao.IXxlMqMessageDao;
-import com.xxl.mq.client.broker.remote.IXxlMqBroker;
+import com.xxl.mq.client.broker.IXxlMqBroker;
 import com.xxl.mq.client.message.MessageStatus;
 import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.util.DateFormatUtil;
@@ -69,7 +69,7 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
         }});
 
         // server add
-        providerFactory.addService(IXxlMqBroker.class.getName(), null, this);
+        providerFactory.addService(IXxlMqBroker.class.getName(), "xxl-mq", this);
 
         // server start
         providerFactory.start();

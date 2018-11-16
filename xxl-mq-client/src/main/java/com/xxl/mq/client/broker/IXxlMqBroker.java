@@ -1,4 +1,4 @@
-package com.xxl.mq.client.broker.remote;
+package com.xxl.mq.client.broker;
 
 import com.xxl.mq.client.message.XxlMqMessage;
 
