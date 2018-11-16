@@ -7,7 +7,6 @@ import com.xxl.mq.client.message.MessageStatus;
 import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.rpc.util.DateFormatUtil;
 import com.xxl.mq.client.rpc.util.JacksonUtil;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -52,7 +51,7 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
             return new ReturnT<String>(500, "参数非法");
         }
         // data
-        if (StringUtils.isNotBlank(data)){
+        if (data!=null && data.trim().length()>0){
             Map<String,String> dataMap = JacksonUtil.readValue(data, Map.class);
             if (dataMap==null) {
                 return new ReturnT<String>(500, "消息数据格式不合法");
@@ -99,7 +98,7 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
             return new ReturnT<String>(500, "消息主题长度超长");
         }
         // data
-        if (StringUtils.isNotBlank(data)){
+        if (data!=null && data.trim().length()>0){
             Map<String,String> dataMap = JacksonUtil.readValue(data, Map.class);
             if (dataMap==null) {
                 return new ReturnT<String>(500, "消息数据格式不合法");

@@ -3,6 +3,7 @@ package com.xxl.mq.broker.dao.impl;
 import com.xxl.mq.client.broker.remote.IXxlMqMessageDao;
 import com.xxl.mq.client.message.XxlMqMessage;
 import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -13,6 +14,7 @@ import java.util.Map;
 /**
  * Created by xuxueli on 16/8/28.
  */
+@Service
 public class XxlMqMessageDaoImpl implements IXxlMqMessageDao {
 
     @Resource
