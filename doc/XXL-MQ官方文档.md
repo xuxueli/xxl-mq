@@ -356,7 +356,7 @@ XxlMqProducer.produce("消息主题", "消息数据, Map<String, String>格式")
 - 6、broadcast 广播消息时ZK 发送方不进行watch, 否则发送方也会监听到；
 - 7、修复一处因ReentrantLock导致可能死锁的问题；
 
-### 4.3 版本V1.1.2 [迭代中]
+### 4.3 版本V1.2.0 [迭代中]
 - 1、client端与Broker长链初始化优化，防止重复创建连接。
 - 2、【ING】通讯迁移至 xxl-rpc；
 - 3、【ING】注册中心迁移至DB，基于 "long polling" 实现注册机器实时感知；
