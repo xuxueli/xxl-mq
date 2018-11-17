@@ -5,8 +5,8 @@ import com.xxl.mq.broker.dao.IXxlMqMessageDao;
 import com.xxl.mq.broker.service.IXxlMqMessageService;
 import com.xxl.mq.client.message.MessageStatus;
 import com.xxl.mq.client.message.XxlMqMessage;
-import com.xxl.mq.client.rpc.util.DateFormatUtil;
-import com.xxl.mq.client.rpc.util.JacksonUtil;
+import com.xxl.mq.client.util.DateFormatUtil;
+import com.xxl.mq.client.util.JacksonUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

@@ -1,14 +1,15 @@
-package com.xxl.mq.client;
+package com.xxl.mq.client.producer;
 
-import com.xxl.mq.client.consumer.remote.XxlMqClient;
+import com.xxl.mq.client.factory.XxlMqClientFactory;
 import com.xxl.mq.client.message.MessageStatus;
 import com.xxl.mq.client.message.XxlMqMessage;
-import com.xxl.mq.client.rpc.util.ZkTopicConsumerUtil;
+import com.xxl.mq.client.topic.TopicHelper;
 import com.xxl.mq.client.util.JacksonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -59,7 +60,7 @@ public class XxlMqProducer {
         message.setStatus(MessageStatus.NEW.name());
         message.setRetryCount(retryCount);
 
-        XxlMqClient.getXxlMqService().saveMessage(message);
+        XxlMqClientFactory.getXxlMqBroker().saveMessage(message);
     }
 
     /**
@@ -94,8 +95,14 @@ public class XxlMqProducer {
                 throw new IllegalArgumentException(">>>>>>>>>>> xxl-mq, message data length over limit 2048");
             }
         }
-        // broadcast
-        ZkTopicConsumerUtil.broadcast(name, dataJson);
+
+        // TODO，废弃ZK广播，统一Queue方式；
+
+        List<String> groupList = TopicHelper.getTotalGroupList(name);
+        for (String group: groupList) {
+            produce(name, dataMap);
+        }
+
     }
 
 }

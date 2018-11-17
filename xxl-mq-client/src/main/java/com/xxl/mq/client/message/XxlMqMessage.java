@@ -21,6 +21,9 @@ public class XxlMqMessage implements Serializable {
 	private int retryCount;		// 剩余重试次数, 默认0不重试
 
 
+	// TODO
+	private String group;
+
 	public int getId() {
 		return id;
 	}

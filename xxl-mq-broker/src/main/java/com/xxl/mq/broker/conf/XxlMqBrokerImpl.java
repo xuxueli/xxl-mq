@@ -37,16 +37,16 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
 
     // ---------------------- param ----------------------
 
-    @Value("${xxl-rpc.remoting.port:0}")
+    @Value("${xxl-mq.rpc.remoting.port}")
     private int port;
 
-    @Value("${xxl-rpc.registry.zk.zkaddress:}")
+    @Value("${xxl-mq.rpc.registry.zk.zkaddress}")
     private String zkaddress;
 
-    @Value("${xxl-rpc.registry.zk.zkdigest:}")
+    @Value("${xxl-mq.rpc.registry.zk.zkdigest}")
     private String zkdigest;
 
-    @Value("${xxl-rpc.env:}")
+    @Value("${xxl-mq.rpc.registry.zk.env}")
     private String env;
 
 
@@ -55,37 +55,23 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
 
 
     // ---------------------- broker server ----------------------
-    private XxlRpcProviderFactory providerFactory;
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        // init server
+        initServer();
 
-        // server init
-        providerFactory = new XxlRpcProviderFactory();
-        providerFactory.initConfig(NetEnum.NETTY, Serializer.SerializeEnum.HESSIAN.getSerializer(), null, port, null, ZkServiceRegistry.class, new HashMap<String, String>(){{
-            put(Environment.ZK_ADDRESS, zkaddress);
-            put(Environment.ZK_DIGEST, zkdigest);
-            put(Environment.ENV, env);
-        }});
-
-        // server add
-        providerFactory.addService(IXxlMqBroker.class.getName(), "xxl-mq", this);
-
-        // server start
-        providerFactory.start();
-
-        // broker thread
+        // init thread
         initThead();
     }
 
     @Override
     public void destroy() throws Exception {
 
-        // server stop
-        providerFactory.stop();
+        // destory server
+        destoryServer();
 
-
-        // broker thread
+        // destory thread
         destroyThread();
     }
 
@@ -175,6 +161,33 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
     }
     public void destroyThread(){
         executorService.shutdown();
+    }
+
+
+    // ---------------------- broker server ----------------------
+
+    private XxlRpcProviderFactory providerFactory;
+
+    public void initServer() throws Exception {
+        // init server
+        providerFactory = new XxlRpcProviderFactory();
+        providerFactory.initConfig(NetEnum.NETTY, Serializer.SerializeEnum.HESSIAN.getSerializer(), null, port, null, ZkServiceRegistry.class, new HashMap<String, String>(){{
+            put(Environment.ZK_ADDRESS, zkaddress);
+            put(Environment.ZK_DIGEST, zkdigest);
+            put(Environment.ENV, "xxl-mq#"+env);
+        }});
+
+        // add server
+        providerFactory.addService(IXxlMqBroker.class.getName(), null, this);
+
+        // start server
+        providerFactory.start();
+    }
+    public void destoryServer() throws Exception {
+        // stop server
+        if (providerFactory != null) {
+            providerFactory.stop();
+        }
     }
 
 

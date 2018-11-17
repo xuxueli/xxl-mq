@@ -1,5 +1,7 @@
 package com.xxl.mq.client.consumer.annotation;
 
+import com.xxl.mq.client.topic.TopicHelper;
+
 import java.lang.annotation.*;
 
 /**
@@ -11,15 +13,15 @@ import java.lang.annotation.*;
 public @interface MqConsumer {
 
     /**
+     *
+     * @return
+     */
+    String group() default TopicHelper.DEFAULT_GROUP;
+
+    /**
      * 主题
      * @return
      */
     String value();
-
-    /**
-     * 类型
-     * @return
-     */
-    MqConsumerType type() default MqConsumerType.QUEUE;
 
 }

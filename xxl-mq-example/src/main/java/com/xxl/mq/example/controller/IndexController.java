@@ -1,6 +1,6 @@
 package com.xxl.mq.example.controller;
 
-import com.xxl.mq.client.XxlMqProducer;
+import com.xxl.mq.client.producer.XxlMqProducer;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -14,6 +14,12 @@ import java.util.Map;
  */
 @Controller
 public class IndexController {
+
+	@RequestMapping("/")
+	@ResponseBody
+	public String index(){
+		return "index";
+	}
 
 	@RequestMapping("/produce")
 	@ResponseBody

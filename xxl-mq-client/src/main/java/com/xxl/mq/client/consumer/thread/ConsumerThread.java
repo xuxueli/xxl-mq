@@ -2,12 +2,12 @@ package com.xxl.mq.client.consumer.thread;
 
 import com.xxl.mq.client.consumer.IMqConsumer;
 import com.xxl.mq.client.consumer.annotation.MqConsumer;
-import com.xxl.mq.client.consumer.remote.XxlMqClient;
+import com.xxl.mq.client.factory.XxlMqClientFactory;
 import com.xxl.mq.client.message.MessageStatus;
 import com.xxl.mq.client.message.XxlMqMessage;
-import com.xxl.mq.client.rpc.util.DateFormatUtil;
-import com.xxl.mq.client.rpc.util.JacksonUtil;
-import com.xxl.mq.client.rpc.util.ZkQueueConsumerUtil;
+import com.xxl.mq.client.topic.TopicHelper;
+import com.xxl.mq.client.util.DateFormatUtil;
+import com.xxl.mq.client.util.JacksonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,18 +20,20 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by xuxueli on 16/9/10.
  */ // consumer thread
-public class QueueConsumerThread extends Thread {
-    private final static Logger logger = LoggerFactory.getLogger(QueueConsumerThread.class);
+public class ConsumerThread extends Thread {
+    private final static Logger logger = LoggerFactory.getLogger(ConsumerThread.class);
     
     private IMqConsumer consumerHandler;
 
-    public QueueConsumerThread(IMqConsumer consumerHandler) {
+    public ConsumerThread(IMqConsumer consumerHandler) {
         this.consumerHandler = consumerHandler;
     }
 
     public IMqConsumer getConsumerHandler() {
         return consumerHandler;
     }
+
+    // TODO，线程销毁优化
 
     @Override
     public void run() {
@@ -43,18 +45,18 @@ public class QueueConsumerThread extends Thread {
         while (true) {
             try {
                 // check load
-                ZkQueueConsumerUtil.ActiveInfo checkPull = ZkQueueConsumerUtil.isActice(annotation);
+                TopicHelper.ActiveInfo checkPull = TopicHelper.isActice(annotation);
                 if (checkPull != null) {
                     logger.info(">>>>>>>>>>> xxl-mq, isActice: consumer={}, ActiveInfo={}", annotation, checkPull.toString());
 
                     // load
-                    List<XxlMqMessage> messageList = XxlMqClient.getXxlMqService().pullNewMessage(annotation.value(), pagesize, checkPull.rank, checkPull.total);
+                    List<XxlMqMessage> messageList = XxlMqClientFactory.getXxlMqBroker().pullNewMessage(annotation.value(), pagesize, checkPull.rank, checkPull.total);
                     if (messageList != null && messageList.size() > 0) {
                         waitTim = 0;
                         for (XxlMqMessage msg : messageList) {
 
                             // check consumer
-                            ZkQueueConsumerUtil.ActiveInfo checkConsume = ZkQueueConsumerUtil.isActice(annotation);
+                            TopicHelper.ActiveInfo checkConsume = TopicHelper.isActice(annotation);
                             if (!(checkConsume != null && checkConsume.rank == checkPull.rank && checkConsume.total == checkPull.total)) {
                                 break;
                             }
@@ -63,7 +65,7 @@ public class QueueConsumerThread extends Thread {
 
                             // lock message
                             String lockAddMsg = MessageFormat.format("<hr>》》》时间: {0} <br>》》》操作: 消息锁定(status>>>ING)<br>》》》注册信息: {1}", tim, checkConsume.toString());
-                            int lockRet = XxlMqClient.getXxlMqService().lockMessage(msg.getId(), lockAddMsg);
+                            int lockRet = XxlMqClientFactory.getXxlMqBroker().lockMessage(msg.getId(), lockAddMsg);
                             if (lockRet < 1) {
                                 continue;
                             }
@@ -86,7 +88,7 @@ public class QueueConsumerThread extends Thread {
                                 msg.setStatus(MessageStatus.FAIL.name());
                                 msg.setMsg(MessageFormat.format("<hr>》》》时间: {0} <br>》》》操作: 消息消费失败(status>>>FAIL) <br>》》》注册信息: {1} <br>》》》日志:{2}", tim, checkConsume.toString(), e.getMessage()));
                             } finally {
-                                XxlMqClient.getXxlMqService().consumeCallbackMessage(msg);
+                                XxlMqClientFactory.getXxlMqBroker().consumeCallbackMessage(msg);
                                 logger.info(">>>>>>>>>> xxl-mq, consumer message: {}", msg);
                             }
 
