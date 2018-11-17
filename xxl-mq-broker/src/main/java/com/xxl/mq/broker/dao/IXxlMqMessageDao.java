@@ -16,43 +16,37 @@ public interface IXxlMqMessageDao {
     // for admin
     public List<XxlMqMessage> pageList(@Param("offset") int offset,
                                        @Param("pagesize") int pagesize,
-                                       @Param("name") String name,
+                                       @Param("topic") String topic,
                                        @Param("status") String status);
     public int pageListCount(@Param("offset") int offset,
                              @Param("pagesize") int pagesize,
-                             @Param("name") String name,
+                             @Param("topic") String topic,
                              @Param("status") String status);
 
     public int delete(@Param("id") int id);
-    public int update(@Param("id") int id,
-                      @Param("data") String data,
-                      @Param("delayTime") Date delayTime,
-                      @Param("status") String status,
-                      @Param("addMsg") String addMsg,
-                      @Param("retryCount") int retryCount);
+
+    public int update(@Param("message") XxlMqMessage message);
 
     // for broker
-    public int save(@Param("xxlMqMessage") XxlMqMessage xxlMqMessage);
-    public List<XxlMqMessage> pullNewMessage(@Param("name") String name,
-                                             @Param("newStatus") String newStatus,
-                                             @Param("pagesize") int pagesize,
+    public int save(@Param("messageList") List<XxlMqMessage> messageList);
+
+    public List<XxlMqMessage> pullNewMessage(@Param("newStatus") String newStatus,
+                                             @Param("topic") String topic,
+                                             @Param("group") String group,
                                              @Param("consumerRank") int consumerRank,
-                                             @Param("consumerTotal") int consumerTotal);
+                                             @Param("consumerTotal") int consumerTotal,
+                                             @Param("pagesize") int pagesize);
 
-    public int lockMessage(@Param("id") int id,
-                           @Param("addMsg") String addMsg,
+    public int lockMessage(@Param("id") long id,
                            @Param("fromStatus") String fromStatus,
-                           @Param("toStatus") String toStatus);
-    public int updateStatus(@Param("id") int id,
-                            @Param("status") String status,
-                            @Param("addMsg") String addMsg);
+                           @Param("toStatus") String toStatus,
+                           @Param("appendLog") String appendLog);
 
-    public List<Integer> retryMessageIds(@Param("pagesize") int pagesize,
-                                         @Param("failStatus") String failStatus);
+    public int updateStatus(@Param("messageList") List<XxlMqMessage> messageList);
 
-    public int retryStatusFresh(@Param("id") int id,
-                                @Param("addMsg") String addMsg,
-                                @Param("failStatus") String failStatus,
-                                @Param("newStatus") String newStatus);
+    public int updateRetryCount(@Param("failStatus") String failStatus,
+                                @Param("newStatus") String newStatus,
+                                @Param("appendLog") String appendLog,
+                                @Param("pagesize") int pagesize);
 
 }

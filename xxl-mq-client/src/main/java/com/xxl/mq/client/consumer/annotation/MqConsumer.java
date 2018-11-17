@@ -1,6 +1,6 @@
 package com.xxl.mq.client.consumer.annotation;
 
-import com.xxl.mq.client.topic.TopicHelper;
+import com.xxl.mq.client.consumer.registry.ConsumerRegistryHelper;
 
 import java.lang.annotation.*;
 
@@ -13,15 +13,13 @@ import java.lang.annotation.*;
 public @interface MqConsumer {
 
     /**
-     *
      * @return
      */
-    String group() default TopicHelper.DEFAULT_GROUP;
+    String group() default ConsumerRegistryHelper.DEFAULT_GROUP;
 
     /**
-     * 主题
      * @return
      */
-    String value();
+    String topic();
 
 }

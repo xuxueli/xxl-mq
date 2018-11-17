@@ -5,40 +5,42 @@
 	
 	<resultMap id="XxlMqMessage" type="com.xxl.mq.client.message.XxlMqMessage" >
 		<result column="id" property="id" />
-		<result column="name" property="name" />
+		<result column="topic" property="topic" />
+	    <result column="group" property="group" />
 	    <result column="data" property="data" />
-	    <result column="delay_time" property="delayTime" />
-	    <result column="add_time" property="addTime" />
-	    <result column="update_time" property="updateTime" />
 	    <result column="status" property="status" />
-		<result column="msg" property="msg" />
-		<result column="retry_count" property="retryCount" />
+	    <result column="retryCount" property="retryCount" />
+	    <result column="shardingId" property="shardingId" />
+		<result column="effectTime" property="effectTime" />
+		<result column="addTime" property="addTime" />
+		<result column="log" property="log" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		t.id,
-		t.name ,
-		t.data ,
-		t.delay_time ,
-		t.add_time ,
-		t.update_time ,
-		t.status ,
-		t.msg,
-		t.retry_count
+		t.`id`,
+		t.`topic`,
+		t.`group`,
+		t.`data`,
+		t.`status`,
+		t.`retryCount`,
+		t.`shardingId`,
+		t.`effectTime`,
+		t.`addTime`,
+		t.`log`
 	</sql>
 	
 	<select id="pageList" parameterType="java.util.HashMap" resultMap="XxlMqMessage">
 		SELECT <include refid="Base_Column_List" />
 		FROM XXL_MQ_MESSAGE AS t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
-			<if test="name != null and name != ''">
-				AND t.name like CONCAT(CONCAT('%', #{name}), '%')
+			<if test="topic != null and topic != ''">
+				AND t.topic like CONCAT(CONCAT('%', #{topic}), '%')
 			</if>
 			<if test="status != null and status != ''">
 				AND t.status = #{status}
 			</if>
 		</trim>
-		ORDER BY t.add_time DESC
+		ORDER BY t.id DESC
 		LIMIT #{offset}, #{pagesize}
 	</select>
 	
@@ -46,14 +48,13 @@
 		SELECT count(1)
 		FROM XXL_MQ_MESSAGE AS t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
-			<if test="name != null and name != ''">
-				AND t.name like CONCAT(CONCAT('%', #{name}), '%')
+			<if test="topic != null and topic != ''">
+				AND t.topic like CONCAT(CONCAT('%', #{topic}), '%')
 			</if>
 			<if test="status != null and status != ''">
 				AND t.status = #{status}
 			</if>
 		</trim>
-		ORDER BY t.add_time DESC
 	</select>
 
 	<delete id="delete" parameterType="java.lang.Integer">
@@ -62,37 +63,41 @@
 	</delete>
 
 	<update id="update" parameterType="java.util.HashMap" >
-		UPDATE XXL_MQ_MESSAGE
+		UPDATE XXL_MQ_MESSAGE AS t
 		SET
-			data = #{data},
-			delay_time = #{delayTime},
-			status = #{status},
-			update_time = NOW(),
-			msg = CONCAT( IFNULL(msg, ''), #{addMsg}),
-			retry_count = #{retryCount}
-		WHERE id = #{id}
+			t.`data` = #{message.data},
+			t.`status` = #{message.status},
+			t.`retryCount` = #{message.retryCount},
+			t.`effectTime` = #{message.effectTime},
+			t.`log` = CONCAT(t.`log`, #{message.log})
+		WHERE t.`id` = #{message.id}
 	</update>
 
 	<insert id="save" parameterType="com.xxl.mq.client.message.XxlMqMessage" useGeneratedKeys="true" keyProperty="id" >
 		INSERT INTO XXL_MQ_MESSAGE (
-		`name` ,
-		`data` ,
-		`delay_time` ,
-		`add_time` ,
-		`update_time` ,
-		`status` ,
-		`msg`,
-		`retry_count`
-		) VALUES (
-		#{name},
-		#{data},
-		#{delayTime},
-		NOW(),
-		NOW(),
-		#{status},
-		#{msg},
-		#{retryCount}
-		);
+			`topic`,
+			`group`,
+			`data`,
+			`status`,
+			`retryCount`,
+			`shardingId`,
+			`effectTime`,
+			`addTime`,
+			`log`
+		) VALUES
+		<foreach collection ="messageList" item="messageItem" index= "index" separator =",">
+			(
+				#{messageItem.topic},
+				#{messageItem.group},
+				#{messageItem.data},
+				#{messageItem.status},
+				#{messageItem.retryCount},
+				#{messageItem.shardingId},
+				#{messageItem.effectTime},
+				NOW(),
+				#{messageItem.log}
+			)
+		</foreach >
 		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
 			SELECT LAST_INSERT_ID()
 		</selectKey>
@@ -101,52 +106,63 @@
 	<select id="pullNewMessage" parameterType="java.util.HashMap" resultMap="XxlMqMessage">
 		SELECT <include refid="Base_Column_List" />
 		FROM XXL_MQ_MESSAGE AS t
-		WHERE t.name = #{name}
-		AND t.status = #{newStatus}
-		AND t.delay_time <![CDATA[ < ]]> NOW()
-		<if test="consumerTotal > 1">
-			AND MOD(t.id, #{consumerTotal}) = #{consumerRank}
-		</if>
-		ORDER BY t.add_time DESC
+		WHERE 	t.topic = #{topic}
+			AND t.group = #{group}
+			AND t.status = #{newStatus}
+			AND t.effectTime <![CDATA[ < ]]> NOW()
+			<if test="consumerTotal > 1">
+				AND (
+					(
+						t.shardingId <![CDATA[ = ]]> 0
+						AND
+						MOD(t.id, #{consumerTotal}) = #{consumerRank}
+					)
+					OR
+					(
+						t.shardingId <![CDATA[ > ]]> 0
+						AND
+						MOD(t.shardingId, #{consumerTotal}) = #{consumerRank}
+					)
+				)
+			</if>
+		ORDER BY t.id DESC
 		LIMIT #{pagesize}
 	</select>
 
 	<update id="lockMessage" parameterType="java.util.HashMap" >
-		UPDATE XXL_MQ_MESSAGE
+		UPDATE XXL_MQ_MESSAGE AS t
 		SET
-		update_time = NOW(),
-		status = #{toStatus},
-		msg = CONCAT( IFNULL(msg, ''), #{addMsg})
-		WHERE id = #{id} AND status =  #{fromStatus}
+			t.status = #{toStatus},
+			t.`log` = CONCAT(t.`log`, #{appendLog})
+		WHERE id = #{id} AND t.status =  #{fromStatus}
 	</update>
 
 	<update id="updateStatus" parameterType="java.util.HashMap" >
 		UPDATE XXL_MQ_MESSAGE
 		SET
-			update_time = NOW(),
-			status = #{status},
-		 	msg = CONCAT( IFNULL(msg, ''), #{addMsg})
-		WHERE id = #{id}
+			status =
+				<foreach collection="messageList" item="messageItem" index="index" separator=" " open="case id" close="end">
+					when #{messageItem.id} then #{messageItem.status}
+				</foreach>
+			,
+			log =
+				<foreach collection="messageList" item="messageItem" index="index" separator=" " open="case id" close="end">
+					when #{messageItem.id} then CONCAT(log, #{messageItem.log})
+				</foreach>
+		WHERE id IN
+			<foreach collection="messageList" item="messageItem"  index="index" separator="," open="(" close=")">
+				#{messageItem.id}
+			</foreach>
 	</update>
 
-	<select id="pagelistRetryMessage" parameterType="java.util.HashMap" resultType="java.lang.Integer" >
-		SELECT t.id
-		FROM XXL_MQ_MESSAGE AS t
-		WHERE t.status = #{failStatus} AND t.retry_count <![CDATA[ > ]]> 0
-		ORDER BY t.add_time ASC
-		LIMIT #{pagesize}
-	</select>
-
-	<update id="retryStatusFresh" parameterType="java.util.HashMap" >
+	<update id="updateRetryCount" parameterType="java.util.HashMap" >
 		UPDATE XXL_MQ_MESSAGE
 		SET
-			update_time = NOW(),
 			status = #{newStatus},
-			retry_count = retry_count-1 ,
-			msg = CONCAT( IFNULL(msg, ''), #{addMsg})
-		WHERE id = #{id}
-			AND status =  #{failStatus}
-			AND (retry_count -1) <![CDATA[ >= ]]> 0
+			retryCount = retryCount - 1 ,
+			log = CONCAT(log, #{appendLog})
+		WHERE status =  #{failStatus}
+			AND retryCount <![CDATA[ > ]]> 0
 	</update>
 
 </mapper>

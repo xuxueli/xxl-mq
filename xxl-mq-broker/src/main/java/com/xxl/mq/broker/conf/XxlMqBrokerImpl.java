@@ -2,7 +2,7 @@ package com.xxl.mq.broker.conf;
 
 import com.xxl.mq.broker.dao.IXxlMqMessageDao;
 import com.xxl.mq.client.broker.IXxlMqBroker;
-import com.xxl.mq.client.message.MessageStatus;
+import com.xxl.mq.client.message.XxlMqMessageStatus;
 import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.util.DateFormatUtil;
 import com.xxl.rpc.registry.impl.ZkServiceRegistry;
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -78,57 +79,97 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
     // ---------------------- broker thread ----------------------
 
     private LinkedBlockingQueue<XxlMqMessage> newMessageQueue = new LinkedBlockingQueue<XxlMqMessage>();
-    private LinkedBlockingQueue<XxlMqMessage> consumeCallbackMessageQueue = new LinkedBlockingQueue<XxlMqMessage>();
+    private LinkedBlockingQueue<XxlMqMessage> callbackMessageQueue = new LinkedBlockingQueue<XxlMqMessage>();
 
     private ExecutorService executorService = Executors.newCachedThreadPool();
     private volatile boolean executorStoped = false;
 
     public void initThead() throws Exception {
 
-        // init base broker biz
         /**
-         * async save message
+         * async save message, mult thread
          */
-        // TODO, mult thread
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                while (!executorStoped) {
-                    try {
-                        XxlMqMessage msg = newMessageQueue.take();
-                        xxlMqMessageDao.save(msg);
-                    } catch (Exception e) {
-                        logger.error("", e);
+        for (int i = 0; i < 3; i++) {
+            executorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    while (!executorStoped) {
+                        try {
+                            XxlMqMessage message = newMessageQueue.take();
+                            if (message != null) {
+                                // load
+                                List<XxlMqMessage> messageList = new ArrayList<>();
+                                messageList.add(message);
+
+                                List<XxlMqMessage> otherMessageList = new ArrayList<>();
+                                int drainToNum = newMessageQueue.drainTo(otherMessageList, 100);
+                                if (drainToNum > 0) {
+                                    messageList.addAll(otherMessageList);
+                                }
+
+                                // save
+                                xxlMqMessageDao.save(messageList);
+                            }
+                        } catch (Exception e) {
+                            logger.error(e.getMessage(), e);
+                        }
                     }
+
+                    // end save
+                    List<XxlMqMessage> otherMessageList = new ArrayList<>();
+                    int drainToNum = newMessageQueue.drainTo(otherMessageList);
+                    if (drainToNum> 0) {
+                        xxlMqMessageDao.save(otherMessageList);
+                    }
+
                 }
+            });
+        }
 
-                // TODO, mult clean msg
-
-            }
-        });
         /**
-         * async consume message callback process
+         * async callback message, mult thread
          */
-        // TODO, mult thread
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                while (!executorStoped) {
-                    try {
-                        XxlMqMessage message = consumeCallbackMessageQueue.take();
-                        xxlMqMessageDao.updateStatus(message.getId(), message.getStatus(), message.getMsg());
-                    } catch (Exception e) {
-                        logger.error("", e);
+        for (int i = 0; i < 3; i++) {
+            executorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    while (!executorStoped) {
+                        try {
+                            XxlMqMessage message = callbackMessageQueue.take();
+                            if (message!=null) {
+                                // load
+                                List<XxlMqMessage> messageList = new ArrayList<>();
+                                messageList.add(message);
+
+                                List<XxlMqMessage> otherMessageList = new ArrayList<>();
+                                int drainToNum = callbackMessageQueue.drainTo(otherMessageList, 100);
+                                if (drainToNum > 0) {
+                                    messageList.addAll(otherMessageList);
+                                }
+
+                                // save
+                                xxlMqMessageDao.updateStatus(messageList);
+                            }
+
+                        } catch (Exception e) {
+                            logger.error(e.getMessage(), e);
+                        }
                     }
+
+                    // end save
+                    List<XxlMqMessage> otherMessageList = new ArrayList<>();
+                    int drainToNum = callbackMessageQueue.drainTo(otherMessageList);
+                    if (drainToNum > 0) {
+                        xxlMqMessageDao.updateStatus(otherMessageList);
+                    }
+
                 }
+            });
+        }
 
-                // TODO, mult clean msg
-
-            }
-        });
 
         /**
-         * 重试消息处理
+         * async retry message
          */
         executorService.execute(new Runnable() {
             @Override
@@ -136,31 +177,36 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                 int waitTim = 5;
                 while (!executorStoped) {
                     try {
-                        List<Integer> msgIds = xxlMqMessageDao.retryMessageIds(100, MessageStatus.FAIL.name());
-                        if (msgIds!=null && msgIds.size()>0) {
-                            waitTim = 5;
-                            for (int id: msgIds) {
-                                String addMsg = MessageFormat.format("<hr>》》》时间: {0} <br>》》》操作: 失败消息触发重试,状态自动还原,剩余重试次数-1(status>>>NEW)", DateFormatUtil.formatDateTime(new Date()));
-                                xxlMqMessageDao.retryStatusFresh(id, addMsg, MessageStatus.FAIL.name(), MessageStatus.NEW.name());
-                            }
+
+                        // sleep
+                        TimeUnit.SECONDS.sleep(waitTim);
+
+                        // mult fresh retry count
+                        String appendLog = MessageFormat.format("<hr>》》》时间: {0} <br>》》》操作: 失败消息触发重试,状态自动还原,剩余重试次数-1(status>>>NEW)", DateFormatUtil.formatDateTime(new Date()));
+                        int retCount = xxlMqMessageDao.updateRetryCount(XxlMqMessageStatus.NEW.name(), XxlMqMessageStatus.FAIL.name(), appendLog, 1000);
+
+
+                        // auto incr
+                        if (retCount > 0) {
+                            waitTim = 10;
                         } else {
-                            waitTim += 5;
-                            if (waitTim>60) {
+                            waitTim += 10;
+                            if (waitTim > 60) {
                                 waitTim = 60;
                             }
                         }
-
-                        TimeUnit.SECONDS.sleep(waitTim);
                     } catch (Exception e) {
-                        logger.error("", e);
+                        logger.error(e.getMessage(), e);
                     }
                 }
             }
         });
 
+        // TODO，超时标记失败，默认2H
+
     }
     public void destroyThread(){
-        executorService.shutdown();
+        executorService.shutdownNow();
     }
 
 
@@ -194,23 +240,26 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
     // ---------------------- broker api ----------------------
 
     @Override
-    public int saveMessage(XxlMqMessage message) {
-        return newMessageQueue.add(message)?1:-1;
+    public int addMessages(List<XxlMqMessage> messages) {
+        newMessageQueue.addAll(messages);
+        return messages.size();
     }
 
     @Override
-    public List<XxlMqMessage> pullNewMessage(String name, int pagesize, int consumerRank, int consumerTotal) {
-        List<XxlMqMessage> list = xxlMqMessageDao.pullNewMessage(name, MessageStatus.NEW.name(), pagesize, consumerRank, consumerTotal);
+    public List<XxlMqMessage> pullNewMessage(String topic, String group, int consumerRank, int consumerTotal, int pagesize) {
+        List<XxlMqMessage> list = xxlMqMessageDao.pullNewMessage(XxlMqMessageStatus.NEW.name(), topic, group, consumerRank, consumerTotal, pagesize);
         return list;
     }
 
     @Override
-    public int lockMessage(int id, String addMsg) {
-        return xxlMqMessageDao.lockMessage(id, addMsg, MessageStatus.NEW.name(), MessageStatus.ING.name());
+    public int lockMessage(long id, String appendLog) {
+        return xxlMqMessageDao.lockMessage(id, appendLog, XxlMqMessageStatus.NEW.name(), XxlMqMessageStatus.ING.name());
     }
 
-    public int consumeCallbackMessage(XxlMqMessage message) {
-        return consumeCallbackMessageQueue.add(message)?1:-1;
+    @Override
+    public int callbackMessages(List<XxlMqMessage> messages) {
+        callbackMessageQueue.addAll(messages);
+        return messages.size();
     }
 
 }

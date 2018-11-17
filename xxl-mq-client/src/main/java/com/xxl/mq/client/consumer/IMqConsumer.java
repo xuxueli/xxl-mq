@@ -7,6 +7,6 @@ import java.util.Map;
  */
 public interface IMqConsumer {
 
-    public void consume(Map<String, String> dataMap) throws Exception;
+    public MqResult consume(Map<String, String> dataMap) throws Exception;
 
 }

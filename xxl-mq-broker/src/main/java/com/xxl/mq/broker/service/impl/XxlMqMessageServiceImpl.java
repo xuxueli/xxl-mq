@@ -3,7 +3,7 @@ package com.xxl.mq.broker.service.impl;
 import com.xxl.mq.broker.core.result.ReturnT;
 import com.xxl.mq.broker.dao.IXxlMqMessageDao;
 import com.xxl.mq.broker.service.IXxlMqMessageService;
-import com.xxl.mq.client.message.MessageStatus;
+import com.xxl.mq.client.message.XxlMqMessageStatus;
 import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.util.DateFormatUtil;
 import com.xxl.mq.client.util.JacksonUtil;
@@ -11,10 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.text.ParseException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by xuxueli on 16/8/28.
@@ -68,7 +65,7 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
             return new ReturnT<String>(500, "消息数据格式不合法");
         }
         // status
-        if (MessageStatus.valueOf(status)==null) {
+        if (XxlMqMessageStatus.valueOf(status)==null) {
             return new ReturnT<String>(500, "消息状态不合法");
         }
         // retryCount
@@ -84,7 +81,10 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
         }
         String addMsg = "<hr>》》》时间:{"+ tim +"}<br>》》》操作:人工手工修改";
 
-        int ret = xxlMqMessageDao.update(id ,data, delayTime, status, addMsg, retryCount);
+        // TODO
+        XxlMqMessage mqMessage = new XxlMqMessage();
+
+        int ret = xxlMqMessageDao.update(mqMessage);
         return ret>0 ? ReturnT.SUCCESS : ReturnT.FAIL;
     }
 
@@ -115,7 +115,7 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
             return new ReturnT<String>(500, "消息数据格式不合法");
         }
         // status
-        if (MessageStatus.valueOf(status)==null) {
+        if (XxlMqMessageStatus.valueOf(status)==null) {
             return new ReturnT<String>(500, "消息状态不合法");
         }
         // retryCount
@@ -133,14 +133,16 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
 
 
         XxlMqMessage msg = new XxlMqMessage();
-        msg.setName(name);
+        /*msg.setName(name);
         msg.setData(data);
         msg.setDelayTime(delayTime);
         msg.setStatus(status);
         msg.setMsg(addMsg);
-        msg.setRetryCount(retryCount);
+        msg.setRetryCount(retryCount);*/
 
-        xxlMqMessageDao.save(msg);
+        // TODO
+
+        xxlMqMessageDao.save(Arrays.asList(msg));
         return ReturnT.SUCCESS;
     }
 }

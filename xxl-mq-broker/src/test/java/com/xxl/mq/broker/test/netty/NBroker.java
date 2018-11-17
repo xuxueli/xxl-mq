@@ -1,3 +1,5 @@
+package com.xxl.mq.broker.test.netty;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.group.ChannelGroup;

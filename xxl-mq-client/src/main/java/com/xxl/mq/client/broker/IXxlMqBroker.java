@@ -9,26 +9,34 @@ import java.util.List;
  */
 public interface IXxlMqBroker {
 
-    public int saveMessage(XxlMqMessage message);
-
     /**
-     * 分布式获取分配给自己的数据: MOD(id, #{consumerTotal}) = #{consumerRank}, 当值为 consumerTotal>1 时生效
-     */
-    public List<XxlMqMessage> pullNewMessage(String name, int pagesize, int consumerRank, int consumerTotal);
-
-    /**
-     * 消费者,锁定一条消息 (NEW >>> ING)
-     * @param id
-     * @param addMsg
+     * 新增消息，批量
+     *
+     * @param messages
      * @return
      */
-    public int lockMessage(int id, String addMsg);
+    public int addMessages(List<XxlMqMessage> messages);
 
     /**
-     * 消费者,消费结果回调 (ING >>> SUCCESS/FAIL)
-     * @param message
+     * 分片数据，批量： MOD( "分片ID", #{consumerTotal}) = #{consumerRank}, 值 consumerTotal>1 时生效
+     */
+    public List<XxlMqMessage> pullNewMessage(String topic, String group, int consumerRank, int consumerTotal, int pagesize);
+
+    /**
+     *  锁定消息，单个；XxlMqMessageStatus：NEW >>> ING
+     *
+     *  @param id
+     *  @param appendLog
+     *  @return
+     */
+    public int lockMessage(long id, String appendLog);
+
+    /**
+     *  回调消息，批量；XxlMqMessageStatus：ING >>> SUCCESS/FAIL
+     *
+     * @param messages
      * @return
      */
-    public int consumeCallbackMessage(XxlMqMessage message);
+    public int callbackMessages(List<XxlMqMessage> messages);
 
 }

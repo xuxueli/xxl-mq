@@ -3,7 +3,7 @@ package com.xxl.mq.broker.controller;
 import com.xxl.mq.broker.controller.annotation.PermessionLimit;
 import com.xxl.mq.broker.core.result.ReturnT;
 import com.xxl.mq.broker.service.IXxlMqMessageService;
-import com.xxl.mq.client.message.MessageStatus;
+import com.xxl.mq.client.message.XxlMqMessageStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +27,7 @@ public class MqController {
 	@RequestMapping("")
 	@PermessionLimit
 	public String index(Model model){
-		model.addAttribute("status", MessageStatus.values());
+		model.addAttribute("status", XxlMqMessageStatus.values());
 		return "mq/mq.index";
 	}
 	
