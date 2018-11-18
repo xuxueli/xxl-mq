@@ -119,8 +119,4 @@ public class XxlMqMessageDaoImpl implements IXxlMqMessageDao {
         return sqlSessionTemplate.update("XxlMqMessageMapper.retryStatusFresh", params);
     }
 
-    @Override
-    public int saveMsgList(List<XxlMqMessage> xxlMqMessagesList) {
-        return sqlSessionTemplate.insert("XxlMqMessageMapper.saveMsgList", xxlMqMessagesList);
-    }
 }
