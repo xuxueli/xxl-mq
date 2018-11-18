@@ -11,11 +11,39 @@ public class ConsumerRegistryHelper {
 
     public static final String DEFAULT_GROUP = "DEFAULT";
 
+
     private ServiceRegistry serviceRegistry;
     public ConsumerRegistryHelper(ServiceRegistry serviceRegistry) {
         this.serviceRegistry = serviceRegistry;
     }
 
+
+    // ---------------------- util ----------------------
+    private static final String SpaceMark = "#CONSUMER#";
+
+    private static String makeRegistryKey(String topic){
+        String registryKey = SpaceMark.concat(topic);
+        return registryKey;
+    }
+    private static String makeRegistryValPrefix(String group){
+        String registryValPrefix = group.concat(SpaceMark);
+        return registryValPrefix;
+    }
+    private static String makeRegistryVal(String group, String consumerUuid){
+        String registryValPrefix = makeRegistryValPrefix(group);
+        String registryVal = registryValPrefix.concat(consumerUuid);
+        return registryVal;
+    }
+    private static String parseGroupFromRegistryVal(String registryVal){
+        String[] onlineConsumerItemArr = registryVal.split(SpaceMark);
+        if (onlineConsumerItemArr!=null && onlineConsumerItemArr.length>1) {
+            String group = onlineConsumerItemArr[0];
+            return group;
+        }
+        return null;
+    }
+
+    // ---------------------- api ----------------------
 
     /**
      * consumer registry
@@ -31,9 +59,8 @@ public class ConsumerRegistryHelper {
      */
     public void registerConsumer(ConsumerThread consumerThread) {
         // init data
-        String registryKey = consumerThread.getMqConsumer().topic();
-        String registryValPrefix = consumerThread.getMqConsumer().group().concat("[CONSUMER]");
-        String registryVal = registryValPrefix.concat(consumerThread.getUuid());
+        String registryKey = makeRegistryKey(consumerThread.getMqConsumer().topic());
+        String registryVal = makeRegistryVal(consumerThread.getMqConsumer().group(), consumerThread.getUuid());
 
         // registry consumer
         serviceRegistry.registry(registryKey, registryVal);
@@ -47,9 +74,9 @@ public class ConsumerRegistryHelper {
      */
     public ActiveInfo isActice(ConsumerThread consumerThread){
         // init data
-        String registryKey = consumerThread.getMqConsumer().topic();
-        String registryValPrefix = consumerThread.getMqConsumer().group().concat("[CONSUMER]");
-        String registryVal = registryValPrefix.concat(consumerThread.getUuid());
+        String registryKey = makeRegistryKey(consumerThread.getMqConsumer().topic());
+        String registryValPrefix = makeRegistryValPrefix(consumerThread.getMqConsumer().group());
+        String registryVal = makeRegistryVal(consumerThread.getMqConsumer().group(), consumerThread.getUuid());
 
         // load all consumer
         TreeSet<String> onlineConsumerSet = serviceRegistry.discovery(registryKey);
@@ -88,28 +115,26 @@ public class ConsumerRegistryHelper {
      */
     public Set<String> getTotalGroupList(String topic){
         // init data
-        String registryKey = topic;
-        String registryValGropSplice = "[CONSUMER]";
+        String registryKey = makeRegistryKey(topic);
 
 
         // load all consumer, find all groups
-        Set<String> stringSet = new HashSet<>();
-        TreeSet<String> onlineConsumerSet = serviceRegistry.discovery(registryKey);
+        Set<String> groupSet = new HashSet<>();
+        TreeSet<String> onlineConsumerRegistryValList = serviceRegistry.discovery(registryKey);
 
-        if (onlineConsumerSet!=null && onlineConsumerSet.size()>0) {
-            for (String onlineConsumerItem : onlineConsumerSet) {
-                    String[] onlineConsumerItemArr = onlineConsumerItem.split(registryValGropSplice);
-                    if (onlineConsumerItemArr!=null && onlineConsumerItemArr.length>1) {
-                        String groupItem = onlineConsumerItemArr[0];
-                        stringSet.add(groupItem);
-                    }
+        if (onlineConsumerRegistryValList!=null && onlineConsumerRegistryValList.size()>0) {
+            for (String onlineConsumerRegistryValItem : onlineConsumerRegistryValList) {
+                String groupItem = parseGroupFromRegistryVal(onlineConsumerRegistryValItem);
+                if (groupItem!=null && groupItem.length()>1) {
+                    groupSet.add(groupItem);
+                }
             }
         }
 
-        if (!stringSet.contains(DEFAULT_GROUP)) {
-            stringSet.add(DEFAULT_GROUP);
+        if (!groupSet.contains(DEFAULT_GROUP)) {
+            groupSet.add(DEFAULT_GROUP);
         }
-        return stringSet;
+        return groupSet;
     }
 
     public static class ActiveInfo{

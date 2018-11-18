@@ -22,6 +22,24 @@ public class XxlMqMessage implements Serializable {
 	private String log;			// 消息流转日志
 
 
+	public XxlMqMessage() {
+	}
+
+	public XxlMqMessage(XxlMqMessage xxlMqMessage) {
+		this.id = xxlMqMessage.id;
+		this.topic = xxlMqMessage.topic;
+		this.group = xxlMqMessage.group;
+		this.data = xxlMqMessage.data;
+		this.status = xxlMqMessage.status;
+		this.retryCount = xxlMqMessage.retryCount;
+		this.shardingId = xxlMqMessage.shardingId;
+		this.effectTime = xxlMqMessage.effectTime;
+		this.timeout = xxlMqMessage.timeout;
+		this.addTime = xxlMqMessage.addTime;
+		this.log = xxlMqMessage.log;
+	}
+
+
 	public long getId() {
 		return id;
 	}

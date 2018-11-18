@@ -126,8 +126,13 @@ public class XxlMqProducer {
 
         // broud total online group
         for (String group: groupList) {
-            mqMessage.setGroup(group);
-            produce(mqMessage);
+
+            // clone msg
+            XxlMqMessage cloneMsg = new XxlMqMessage(mqMessage);
+            cloneMsg.setGroup(group);
+
+            // produce clone msg
+            produce(cloneMsg);
         }
     }
 
