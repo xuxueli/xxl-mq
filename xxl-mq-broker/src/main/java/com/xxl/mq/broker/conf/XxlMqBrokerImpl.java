@@ -10,6 +10,7 @@ import com.xxl.rpc.remoting.net.NetEnum;
 import com.xxl.rpc.remoting.provider.XxlRpcProviderFactory;
 import com.xxl.rpc.serialize.Serializer;
 import com.xxl.rpc.util.Environment;
+import com.xxl.rpc.util.IpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -181,7 +182,9 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                         // mult retry message
                         String appendLog = MessageFormat.format("<hr>》》》时间: {0} <br>》》》操作: 失败消息触发重试,状态自动还原,剩余重试次数减一", DateFormatUtil.formatDateTime(new Date()));
                         int count = xxlMqMessageDao.updateRetryCount(XxlMqMessageStatus.FAIL.name(), XxlMqMessageStatus.NEW.name(), appendLog);
-                        logger.info("xxl-mq, retry message, count:{}", count);
+                        if (count > 0) {
+                            logger.info("xxl-mq, retry message, count:{}", count);
+                        }
                     } catch (Exception e) {
                         logger.error(e.getMessage(), e);
                     }
@@ -232,7 +235,7 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
     public void initServer() throws Exception {
         // init server
         providerFactory = new XxlRpcProviderFactory();
-        providerFactory.initConfig(NetEnum.NETTY, Serializer.SerializeEnum.HESSIAN.getSerializer(), null, port, null, ZkServiceRegistry.class, new HashMap<String, String>(){{
+        providerFactory.initConfig(NetEnum.NETTY, Serializer.SerializeEnum.HESSIAN.getSerializer(), IpUtil.getIp(), port, null, ZkServiceRegistry.class, new HashMap<String, String>(){{
             put(Environment.ZK_ADDRESS, zkaddress);
             put(Environment.ZK_DIGEST, zkdigest);
             put(Environment.ENV, "xxl-mq#"+env);
