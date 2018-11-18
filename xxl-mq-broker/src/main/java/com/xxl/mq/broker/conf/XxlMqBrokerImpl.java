@@ -202,8 +202,6 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
             }
         });
 
-        // TODO，超时标记失败，默认2H
-
     }
     public void destroyThread(){
         executorService.shutdownNow();

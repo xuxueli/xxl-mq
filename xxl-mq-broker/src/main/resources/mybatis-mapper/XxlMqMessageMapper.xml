@@ -12,6 +12,7 @@
 	    <result column="retryCount" property="retryCount" />
 	    <result column="shardingId" property="shardingId" />
 		<result column="effectTime" property="effectTime" />
+		<result column="timeout" property="timeout" />
 		<result column="addTime" property="addTime" />
 		<result column="log" property="log" />
 	</resultMap>
@@ -25,6 +26,7 @@
 		t.`retryCount`,
 		t.`shardingId`,
 		t.`effectTime`,
+		t.`timeout`,
 		t.`addTime`,
 		t.`log`
 	</sql>
@@ -68,7 +70,9 @@
 			t.`data` = #{message.data},
 			t.`status` = #{message.status},
 			t.`retryCount` = #{message.retryCount},
+			t.`shardingId` = #{message.shardingId},
 			t.`effectTime` = #{message.effectTime},
+			t.`timeout` = #{message.timeout},
 			t.`log` = CONCAT(t.`log`, #{message.log})
 		WHERE t.`id` = #{message.id}
 	</update>
@@ -82,6 +86,7 @@
 			`retryCount`,
 			`shardingId`,
 			`effectTime`,
+			`timeout`,
 			`addTime`,
 			`log`
 		) VALUES
@@ -94,6 +99,7 @@
 				#{messageItem.retryCount},
 				#{messageItem.shardingId},
 				#{messageItem.effectTime},
+				#{messageItem.timeout},
 				NOW(),
 				#{messageItem.log}
 			)

@@ -17,10 +17,10 @@ public class XxlMqMessage implements Serializable {
 	private int retryCount;		// 剩余重试次数, 执行失败且大于0时生效，每重试一次减一；
 	private long shardingId;		// 分片Id, 大于0时启用，否则使用消息ID；消费者通过该参数进行消息分片消费；分片ID取模或数值不一致时分片【并发消费】、一致时【串行消费】；
 	private Date effectTime;		// 生效事件, new Date()立即执行, 否则在生效时间点之后开始执行;
+	private int timeout;			// 超时时间，单位秒；大于0时生效，处于锁定运行状态且运行超时时，将主动标记运行失败；
 	private Date addTime;			// 创建时间
 	private String log;			// 消息流转日志
 
-	// TODO, 超时时间
 
 	public long getId() {
 		return id;
@@ -70,6 +70,14 @@ public class XxlMqMessage implements Serializable {
 		this.retryCount = retryCount;
 	}
 
+	public long getShardingId() {
+		return shardingId;
+	}
+
+	public void setShardingId(long shardingId) {
+		this.shardingId = shardingId;
+	}
+
 	public Date getEffectTime() {
 		return effectTime;
 	}
@@ -78,12 +86,12 @@ public class XxlMqMessage implements Serializable {
 		this.effectTime = effectTime;
 	}
 
-	public long getShardingId() {
-		return shardingId;
+	public int getTimeout() {
+		return timeout;
 	}
 
-	public void setShardingId(long shardingId) {
-		this.shardingId = shardingId;
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
 	}
 
 	public Date getAddTime() {
@@ -101,4 +109,5 @@ public class XxlMqMessage implements Serializable {
 	public void setLog(String log) {
 		this.log = log;
 	}
+
 }

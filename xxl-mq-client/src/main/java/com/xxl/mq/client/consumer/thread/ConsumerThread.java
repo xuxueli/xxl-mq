@@ -14,7 +14,10 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by xuxueli on 16/9/10.
@@ -52,7 +55,7 @@ public class ConsumerThread extends Thread {
                     if (messageList != null && messageList.size() > 0) {
                         waitTim = 0;
 
-                        for (XxlMqMessage msg : messageList) {
+                        for (final XxlMqMessage msg : messageList) {
 
                             // check active twice
                             ConsumerRegistryHelper.ActiveInfo newActiveInfo = ConsumerRegistryHelper.isActice(mqConsumer);
@@ -72,7 +75,32 @@ public class ConsumerThread extends Thread {
                             MqResult mqResult = null;
                             try {
                                 // consume data
-                                mqResult = consumerHandler.consume(msg.getData());
+
+                                if (msg.getTimeout() > 0) {
+                                    // limit timeout
+                                    Thread futureThread = null;
+                                    try {
+                                        FutureTask<MqResult> futureTask = new FutureTask<MqResult>(new Callable<MqResult>() {
+                                            @Override
+                                            public MqResult call() throws Exception {
+                                                return consumerHandler.consume(msg.getData());
+                                            }
+                                        });
+                                        futureThread = new Thread(futureTask);
+                                        futureThread.start();
+
+                                        mqResult = futureTask.get(msg.getTimeout(), TimeUnit.SECONDS);
+                                    } catch (TimeoutException e) {
+                                        logger.error(e.getMessage(), e);
+                                        mqResult = new MqResult(MqResult.FAIL_CODE, "Timeout:" + e.getMessage());
+                                    } finally {
+                                        futureThread.interrupt();
+                                    }
+                                } else {
+                                    // direct run
+                                    mqResult = consumerHandler.consume(msg.getData());
+                                }
+
                                 if (mqResult == null) {
                                     mqResult = MqResult.FAIL;
                                 }
