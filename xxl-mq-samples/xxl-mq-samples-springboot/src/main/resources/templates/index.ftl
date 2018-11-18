@@ -1,13 +1,13 @@
-<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script src="${request.contextPath}/static/jquery/jquery.min.js"></script>
 <body>
 
-    <input type="button" class="send" consumer="mqconsumer-01" url="produce" mqtype="QUEUE" value="QUEUE (并行消费队列)= mqconsumer-01" />
+    <input type="button" class="send" _type="0" value="并行消费：Topic分组内多节点并行分片方式消费消息；" />
     <br><br>
 
-    <input type="button" class="send" consumer="mqconsumer-02" url="produce" mqtype="SERIAL_QUEUE" value="SERIAL_QUEUE (串行消费队列)= mqconsumer-02" />
+    <input type="button" class="send" _type="1" value="串行消费：Topic分组内固定一台机器节点消费消息；" />
     <br><br>
 
-    <input type="button" class="send" consumer="mqconsumer-03" url="broadcast" mqtype="TOPIC" value="TOPIC (广播消息)= mqconsumer-03" />
+    <input type="button" class="send" _type="2" value="广播消息：Topic不同分组同时消费消息，单个分组仅消费一次；" />
 
     <hr>
     <div id="console"></div>
@@ -15,10 +15,10 @@
     <script>
         $(function(){
             $(".send").click(function () {
-                var mqtype = $(this).attr("mqtype");
-                $.post($(this).attr("url"), {'name':$(this).attr("consumer")}, function(data,status){
+                var _type = $(this).attr("_type");
+                $.post( '${request.contextPath}/produce', {'type':_type}, function(data,status){
                     var temp = "<br>" + new Date().format("yyyy-MM-dd HH:mm:ss") + ":";
-                    temp += ("SUCCESS" == data)?('成功发送一条'+ mqtype +'消息'):data;
+                    temp += ("SUCCESS" == data)?('成功发送一条消息！'):data;
                     $("#console").prepend(temp);
                 });
             });

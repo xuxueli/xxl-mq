@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public class XxlMqProducer {
 
-    // ---------------------- produce message ----------------------
+    // ---------------------- valid message ----------------------
 
     /**
      * create message
@@ -23,6 +23,9 @@ public class XxlMqProducer {
      * @return
      */
     public static void validMessage(XxlMqMessage mqMessage){
+        if (mqMessage == null) {
+            throw new IllegalArgumentException("xxl-mq, XxlMqMessage can not be null.");
+        }
 
         // topic
         if (mqMessage.getTopic()==null || mqMessage.getTopic().trim().length()==0 || mqMessage.getTopic().length()>512) {
@@ -70,11 +73,21 @@ public class XxlMqProducer {
         mqMessage.setLog(appendLog);
     }
 
-    /**
-     * produce message
-     */
-    public static void produce(String topic, String group, String data, int retryCount, long shardingId, Date effectTime){
 
+    // ---------------------- produce message ----------------------
+
+    /**
+     * produce produce
+     */
+    public static void produce(XxlMqMessage mqMessage){
+        // valid
+        validMessage(mqMessage);
+
+        // send
+        XxlMqClientFactory.addMessages(mqMessage);
+    }
+
+    public static void produce(String topic, String group, String data, int retryCount, long shardingId, Date effectTime){
         // make
         XxlMqMessage mqMessage = new XxlMqMessage();
         mqMessage.setTopic(topic);
@@ -84,26 +97,37 @@ public class XxlMqProducer {
         mqMessage.setShardingId(shardingId);
         mqMessage.setEffectTime(effectTime);
 
-        // valid
-        validMessage(mqMessage);
-
-        // send
-        XxlMqClientFactory.addMessages(mqMessage);
+        // produce
+        produce(mqMessage);
     }
 
     public static void produce(String topic, String data){
-        produce(topic, null, data, 0, 0, null);
+        // make
+        XxlMqMessage mqMessage = new XxlMqMessage();
+        mqMessage.setTopic(topic);
+        mqMessage.setData(data);
+
+        // produce
+        produce(mqMessage);
     }
+
 
     // ---------------------- broadcast message ----------------------
 
     /**
      * broadcast produce
      */
-    public static void broadcast(String topic, String data){
-        Set<String> groupList = XxlMqClientFactory.getConsumerRegistryHelper().getTotalGroupList(topic);
+    public static void broadcast(XxlMqMessage mqMessage){
+        // valid
+        validMessage(mqMessage);
+
+        // find online group
+        Set<String> groupList = XxlMqClientFactory.getConsumerRegistryHelper().getTotalGroupList(mqMessage.getTopic());
+
+        // broud total online group
         for (String group: groupList) {
-            produce(topic, group, data, 0, 0, null);
+            mqMessage.setGroup(group);
+            produce(mqMessage);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.xxl.mq.example.controller;
 
+import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.producer.XxlMqProducer;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,33 +17,44 @@ import java.util.Map;
 public class IndexController {
 
 	@RequestMapping("/")
-	@ResponseBody
 	public String index(){
 		return "index";
 	}
 
 	@RequestMapping("/produce")
 	@ResponseBody
-	public String produce(String name){
+	public String produce(int type){
 
-		// 消息数据
+		String topic = "topic_1";
 		String data = "时间戳:" + System.currentTimeMillis();
 
-		// 生产队列消息
-		XxlMqProducer.produce(name, data);
+		if (type == 0) {
+			/**
+			 * 并行消费
+			 */
+			XxlMqProducer.produce(topic, data);
+		} else if (type == 1) {
+			/**
+			 * 串行消费
+			 */
+			XxlMqMessage mqMessage = new XxlMqMessage();
+			mqMessage.setTopic(topic);
+			mqMessage.setData(data);
+			mqMessage.setShardingId(1);
 
-		return "SUCCESS";
-	}
+			XxlMqProducer.produce(mqMessage);
+		} else if (type == 2) {
+			/**
+			 * 广播消费
+			 */
+			XxlMqMessage mqMessage = new XxlMqMessage();
+			mqMessage.setTopic(topic);
+			mqMessage.setData(data);
 
-	@RequestMapping("/broadcast")
-	@ResponseBody
-	public String broadcast(String name){
-
-		// 消息数据
-		String data = "时间戳:" + System.currentTimeMillis();
-
-		// 生产广播消息
-		XxlMqProducer.broadcast(name, data);
+			XxlMqProducer.broadcast(mqMessage);
+		} else {
+			return "Type Error.";
+		}
 
 		return "SUCCESS";
 	}

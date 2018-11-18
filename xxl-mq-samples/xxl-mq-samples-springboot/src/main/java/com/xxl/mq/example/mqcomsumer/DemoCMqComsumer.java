@@ -8,19 +8,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
- * 消息模型 3/3 : TOPIC = 广播消息 : 发布/订阅模式, 一条消息将会广播发送给所有在线的Consumer
  * Created by xuxueli on 16/8/28.
  */
-@MqConsumer(topic = "mqconsumer-03")
+@MqConsumer(topic = "topic01", group = "DEFAULT_2")
 @Service
 public class DemoCMqComsumer implements IMqConsumer {
     private Logger logger = LoggerFactory.getLogger(DemoCMqComsumer.class);
 
     @Override
     public MqResult consume(String data) throws Exception {
-        logger.info("TOPIC(广播消息): {}消费一条消息:{}", "mqconsumer-02",  data);
-
-        return null;
+        logger.info("[DemoCMqComsumer] 消费一条消息:{}", data);
+        return MqResult.SUCCESS;
     }
 
 }
