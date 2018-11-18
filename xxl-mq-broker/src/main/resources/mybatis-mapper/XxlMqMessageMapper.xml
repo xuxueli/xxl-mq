@@ -98,29 +98,6 @@
 		</selectKey>
 	</insert>
 
-	<insert id="saveMsgList" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO XXL_MQ_MESSAGE (
-        `name` ,
-        `data` ,
-        `delay_time` ,
-        `add_time` ,
-        `update_time` ,
-        `status` ,
-        `msg`,
-        `retry_count`
-        )VALUES
-		<foreach collection="list" item="item" index="index" separator="," >(
-            #{item.name},
-            #{item.data},
-            #{item.delayTime},
-            NOW(),
-            NOW(),
-            #{item.status},
-            #{item.msg},
-            #{item.retryCount}
-            )
-		</foreach>
-	</insert>
 
 	<select id="pullNewMessage" parameterType="java.util.HashMap" resultMap="XxlMqMessage">
 		SELECT <include refid="Base_Column_List" />
