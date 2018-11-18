@@ -21,7 +21,7 @@ public class IXxlMqMessageDaoTest {
     private IXxlMqMessageDao xxlMqMessageDao;
 
     @Test
-    public void test(){
+    public void saveTest(){
 
         List<XxlMqMessage> messageList = new ArrayList<>();
 
@@ -53,5 +53,12 @@ public class IXxlMqMessageDaoTest {
 
         int ret = xxlMqMessageDao.save(messageList);
     }
+
+
+    @Test
+    public void pullNewMessageTest(){
+        List<XxlMqMessage> messageList = xxlMqMessageDao.pullNewMessage(XxlMqMessageStatus.NEW.name(), "t1", null, 1, 2, 10);
+    }
+
 
 }

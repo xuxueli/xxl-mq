@@ -50,6 +50,8 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
     @Value("${xxl-mq.rpc.registry.zk.env}")
     private String env;
 
+    @Value("${xxl-mq.log.logretentiondays}")
+    private int logretentiondays;
 
     @Resource
     private IXxlMqMessageDao xxlMqMessageDao;
@@ -174,33 +176,48 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                int waitTim = 5;
                 while (!executorStoped) {
                     try {
-
+                        // mult retry message
+                        String appendLog = MessageFormat.format("<hr>》》》时间: {0} <br>》》》操作: 失败消息触发重试,状态自动还原,剩余重试次数减一", DateFormatUtil.formatDateTime(new Date()));
+                        int count = xxlMqMessageDao.updateRetryCount(XxlMqMessageStatus.NEW.name(), XxlMqMessageStatus.FAIL.name(), appendLog, 1000);
+                        logger.info("xxl-mq, retry message, count:{}", count);
+                    } catch (Exception e) {
+                        logger.error(e.getMessage(), e);
+                    }
+                    try {
                         // sleep
-                        TimeUnit.SECONDS.sleep(waitTim);
-
-                        // mult fresh retry count
-                        String appendLog = MessageFormat.format("<hr>》》》时间: {0} <br>》》》操作: 失败消息触发重试,状态自动还原,剩余重试次数-1(status>>>NEW)", DateFormatUtil.formatDateTime(new Date()));
-                        int retCount = xxlMqMessageDao.updateRetryCount(XxlMqMessageStatus.NEW.name(), XxlMqMessageStatus.FAIL.name(), appendLog, 1000);
-
-
-                        // auto incr
-                        if (retCount > 0) {
-                            waitTim = 10;
-                        } else {
-                            waitTim += 10;
-                            if (waitTim > 60) {
-                                waitTim = 60;
-                            }
-                        }
+                        TimeUnit.SECONDS.sleep(30);
                     } catch (Exception e) {
                         logger.error(e.getMessage(), e);
                     }
                 }
             }
         });
+
+        /**
+         * async clean success message
+         */
+        if (logretentiondays >= 3) {
+            executorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    while (!executorStoped) {
+                        try {
+                            int count = xxlMqMessageDao.cleanSuccessMessage(XxlMqMessageStatus.SUCCESS.name(), logretentiondays);
+                            logger.info("xxl-mq, clean success message, count:{}", count);
+                        } catch (Exception e) {
+                            logger.error(e.getMessage(), e);
+                        }
+                        try {
+                            TimeUnit.DAYS.sleep(logretentiondays);
+                        } catch (Exception e) {
+                            logger.error(e.getMessage(), e);
+                        }
+                    }
+                }
+            });
+        }
 
     }
     public void destroyThread(){

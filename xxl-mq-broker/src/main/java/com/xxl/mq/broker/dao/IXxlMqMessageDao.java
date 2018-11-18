@@ -49,4 +49,6 @@ public interface IXxlMqMessageDao {
                                 @Param("appendLog") String appendLog,
                                 @Param("pagesize") int pagesize);
 
+    public int cleanSuccessMessage(@Param("successStatus") String successStatus, @Param("logretentiondays") int logretentiondays);
+
 }
