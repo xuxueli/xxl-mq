@@ -65,5 +65,25 @@ public class IXxlMqMessageDaoTest {
         int ret = xxlMqMessageDao.lockMessage(1, "appendLog", XxlMqMessageStatus.NEW.name(), XxlMqMessageStatus.ING.name());
     }
 
+    @Test
+    public void updateStatusest(){
+        List<XxlMqMessage> messageList = xxlMqMessageDao.pullNewMessage(XxlMqMessageStatus.NEW.name(), "t", "g", 1, 0, 10);
+
+        for (XxlMqMessage message:messageList) {
+            message.setStatus(XxlMqMessageStatus.FAIL.name());
+            message.setLog("+updateStatus");
+        }
+        int ret = xxlMqMessageDao.updateStatus(messageList);
+    }
+
+    @Test
+    public void updateRetryCountTest(){
+        int ret = xxlMqMessageDao.updateRetryCount(XxlMqMessageStatus.FAIL.name(), XxlMqMessageStatus.NEW.name(), "+updateRetryCount");
+    }
+
+    @Test
+    public void cleanSuccessMessageTest(){
+        int ret = xxlMqMessageDao.cleanSuccessMessage(XxlMqMessageStatus.SUCCESS.name(), 3);
+    }
 
 }

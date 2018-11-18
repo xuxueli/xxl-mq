@@ -13,7 +13,8 @@ import java.util.List;
 @Mapper
 public interface IXxlMqMessageDao {
 
-    // for admin
+    // ---------------------- admin api ----------------------
+
     public List<XxlMqMessage> pageList(@Param("offset") int offset,
                                        @Param("pagesize") int pagesize,
                                        @Param("topic") String topic,
@@ -27,7 +28,9 @@ public interface IXxlMqMessageDao {
 
     public int update(@Param("message") XxlMqMessage message);
 
-    // for broker
+
+    // ---------------------- broker api ----------------------
+
     public int save(@Param("messageList") List<XxlMqMessage> messageList);
 
     public List<XxlMqMessage> pullNewMessage(@Param("newStatus") String newStatus,
@@ -46,8 +49,7 @@ public interface IXxlMqMessageDao {
 
     public int updateRetryCount(@Param("failStatus") String failStatus,
                                 @Param("newStatus") String newStatus,
-                                @Param("appendLog") String appendLog,
-                                @Param("pagesize") int pagesize);
+                                @Param("appendLog") String appendLog);
 
     public int cleanSuccessMessage(@Param("successStatus") String successStatus, @Param("logretentiondays") int logretentiondays);
 

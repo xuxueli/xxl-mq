@@ -180,7 +180,7 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                     try {
                         // mult retry message
                         String appendLog = MessageFormat.format("<hr>》》》时间: {0} <br>》》》操作: 失败消息触发重试,状态自动还原,剩余重试次数减一", DateFormatUtil.formatDateTime(new Date()));
-                        int count = xxlMqMessageDao.updateRetryCount(XxlMqMessageStatus.NEW.name(), XxlMqMessageStatus.FAIL.name(), appendLog, 1000);
+                        int count = xxlMqMessageDao.updateRetryCount(XxlMqMessageStatus.FAIL.name(), XxlMqMessageStatus.NEW.name(), appendLog);
                         logger.info("xxl-mq, retry message, count:{}", count);
                     } catch (Exception e) {
                         logger.error(e.getMessage(), e);
