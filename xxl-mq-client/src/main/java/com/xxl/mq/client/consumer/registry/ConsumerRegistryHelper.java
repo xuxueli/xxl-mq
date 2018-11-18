@@ -1,20 +1,15 @@
 package com.xxl.mq.client.consumer.registry;
 
-import com.xxl.mq.client.consumer.annotation.MqConsumer;
+import com.xxl.mq.client.consumer.thread.ConsumerThread;
 import com.xxl.rpc.registry.ServiceRegistry;
-import com.xxl.rpc.util.IpUtil;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class ConsumerRegistryHelper {
 
     public static final String DEFAULT_GROUP = "DEFAULT";
-    public static final String CONSUMER_REGISTRY_RAMDOM_VALUE = IpUtil.getIp()
-            .concat("_")
-            .concat(String.valueOf(System.currentTimeMillis()))
-            .concat("_")
-            .concat(String.valueOf(10000 + new Random().nextInt(40000)));
-
 
     private ServiceRegistry serviceRegistry;
     public ConsumerRegistryHelper(ServiceRegistry serviceRegistry) {
@@ -32,13 +27,13 @@ public class ConsumerRegistryHelper {
      *      /topic2/
      *             /group1/ip-xxx02
      *
-     * @param mqConsumer
+     * @param consumerThread
      */
-    public void registerConsumer(MqConsumer mqConsumer) {
+    public void registerConsumer(ConsumerThread consumerThread) {
         // init data
-        String registryKey = mqConsumer.topic();
-        String registryValPrefix = mqConsumer.group().concat("____");
-        String registryVal = registryValPrefix.concat(CONSUMER_REGISTRY_RAMDOM_VALUE);
+        String registryKey = consumerThread.getMqConsumer().topic();
+        String registryValPrefix = consumerThread.getMqConsumer().group().concat("[CONSUMER]");
+        String registryVal = registryValPrefix.concat(consumerThread.getUuid());
 
         // registry consumer
         serviceRegistry.registry(registryKey, registryVal);
@@ -47,14 +42,14 @@ public class ConsumerRegistryHelper {
     /**
      * isActice
      *
-     * @param mqConsumer
+     * @param consumerThread
      * @return
      */
-    public ActiveInfo isActice(MqConsumer mqConsumer){
+    public ActiveInfo isActice(ConsumerThread consumerThread){
         // init data
-        String registryKey = mqConsumer.topic();
-        String registryValPrefix = mqConsumer.group().concat("____");
-        String registryVal = registryValPrefix.concat(CONSUMER_REGISTRY_RAMDOM_VALUE);
+        String registryKey = consumerThread.getMqConsumer().topic();
+        String registryValPrefix = consumerThread.getMqConsumer().group().concat("[CONSUMER]");
+        String registryVal = registryValPrefix.concat(consumerThread.getUuid());
 
         // load all consumer
         TreeSet<String> onlineConsumerSet = serviceRegistry.discovery(registryKey);
@@ -88,15 +83,22 @@ public class ConsumerRegistryHelper {
         return new ActiveInfo(rank, onlineConsumerSet_group.size(), onlineConsumerSet_group.toString());
     }
 
+    /**
+     * get total group list
+     */
     public Set<String> getTotalGroupList(String topic){
-        Set<String> stringSet = new HashSet<>();
+        // init data
+        String registryKey = topic;
+        String registryValGropSplice = "[CONSUMER]";
+
 
         // load all consumer, find all groups
-        String registryKey = topic;
+        Set<String> stringSet = new HashSet<>();
         TreeSet<String> onlineConsumerSet = serviceRegistry.discovery(registryKey);
+
         if (onlineConsumerSet!=null && onlineConsumerSet.size()>0) {
             for (String onlineConsumerItem : onlineConsumerSet) {
-                    String[] onlineConsumerItemArr = onlineConsumerItem.split("____");
+                    String[] onlineConsumerItemArr = onlineConsumerItem.split(registryValGropSplice);
                     if (onlineConsumerItemArr!=null && onlineConsumerItemArr.length>1) {
                         String groupItem = onlineConsumerItemArr[0];
                         stringSet.add(groupItem);

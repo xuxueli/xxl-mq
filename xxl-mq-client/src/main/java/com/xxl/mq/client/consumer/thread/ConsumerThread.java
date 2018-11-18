@@ -8,11 +8,13 @@ import com.xxl.mq.client.factory.XxlMqClientFactory;
 import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.message.XxlMqMessageStatus;
 import com.xxl.mq.client.util.DateFormatUtil;
+import com.xxl.rpc.util.IpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
@@ -27,13 +29,20 @@ public class ConsumerThread extends Thread {
     private IMqConsumer consumerHandler;
     private MqConsumer mqConsumer;
 
+    private String uuid;
+
     public ConsumerThread(IMqConsumer consumerHandler) {
         this.consumerHandler = consumerHandler;
-        mqConsumer = consumerHandler.getClass().getAnnotation(MqConsumer.class);
+        this.mqConsumer = consumerHandler.getClass().getAnnotation(MqConsumer.class);
+
+        uuid = IpUtil.getIp().concat("_").concat(String.valueOf(System.currentTimeMillis())).concat("_").concat(String.valueOf(this.hashCode()));
     }
 
     public MqConsumer getMqConsumer() {
         return mqConsumer;
+    }
+    public String getUuid() {
+        return uuid;
     }
 
     @Override
@@ -44,7 +53,7 @@ public class ConsumerThread extends Thread {
         while (!XxlMqClientFactory.clientFactoryPoolStoped) {
             try {
                 // check active
-                ConsumerRegistryHelper.ActiveInfo activeInfo = XxlMqClientFactory.getConsumerRegistryHelper().isActice(mqConsumer);
+                ConsumerRegistryHelper.ActiveInfo activeInfo = XxlMqClientFactory.getConsumerRegistryHelper().isActice(this);
                 logger.info(">>>>>>>>>>> xxl-mq, consumer active check, topic:{}, group:{}, ActiveInfo={}", mqConsumer.topic(), mqConsumer.group(), activeInfo.toString());
 
                 if (activeInfo != null) {
@@ -57,7 +66,7 @@ public class ConsumerThread extends Thread {
                         for (final XxlMqMessage msg : messageList) {
 
                             // check active twice
-                            ConsumerRegistryHelper.ActiveInfo newActiveInfo = XxlMqClientFactory.getConsumerRegistryHelper().isActice(mqConsumer);
+                            ConsumerRegistryHelper.ActiveInfo newActiveInfo = XxlMqClientFactory.getConsumerRegistryHelper().isActice(this);
                             if (!(newActiveInfo != null && newActiveInfo.rank == activeInfo.rank && newActiveInfo.total == activeInfo.total)) {
                                 break;
                             }

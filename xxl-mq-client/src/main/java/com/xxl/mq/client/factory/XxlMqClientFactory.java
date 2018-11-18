@@ -211,7 +211,7 @@ public class XxlMqClientFactory  {
 
         // registry
         for (ConsumerThread item: consumerRespository) {
-            getConsumerRegistryHelper().registerConsumer(item.getMqConsumer());
+            getConsumerRegistryHelper().registerConsumer(item);
         }
 
         // consumer
