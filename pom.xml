@@ -12,8 +12,8 @@
 
 	<modules>
 		<module>xxl-mq-client</module>
-		<module>xxl-mq-broker</module>
-		<module>xxl-mq-example</module>
+		<module>xxl-mq-admin</module>
+		<module>xxl-mq-samples</module>
 	</modules>
 
 	<properties>

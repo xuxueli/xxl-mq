@@ -198,9 +198,10 @@ Delay : 支持设置消息的延迟生效时间, 到达设置的Delay执行时�
 源码目录介绍：
 - /db
 - /doc
-- /xxl-mq-broker        (消息代理中心, 同时提供消息在线管理功能)
+- /xxl-mq-admin        (消息代理中心, 同时提供消息在线管理功能)
 - /xxl-mq-client        (公共依赖, 提供API开发Producer和Consumer)
-- /xxl-mq-example       (消息生产和消费example示例项目, 项目中开发了三种经典的消息模型, 可自行参考学习并使用）
+- /xxl-mq-samples       (消息生产和消费example示例项目, 项目中开发了三种经典的消息模型, 可自行参考学习并使用）
+    - /xxl-mq-samples-springboot    ：springboot版本示例；
 
 ### 3.2 初始化数据库
 
@@ -229,7 +230,7 @@ zkserver=127.0.0.1:2181
 
 ![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_b8OS.png "在这里输入图片标题")
 
-### 3.5 接入XXL-MQ并使用 (以示例项目"xxl-mq-example"为例,进行讲解)
+### 3.5 接入XXL-MQ并使用 (以示例项目"xxl-mq-samples-springboot"为例,进行讲解)
 
 #### 加入XXL-MQ的maven依赖
 
@@ -284,22 +285,22 @@ XxlMqProducer.produce("消息主题", "消息数据, Map<String, String>格式")
 
 #### 测试
 
-示例项目(xxl-mq-example)已经提供了三种格式消息的 "消息生成示例代码" 和 "消息消费示例代码", 本次测试在此基础上进行;
+示例项目(xxl-mq-samples-springboot)已经提供了三种格式消息的 "消息生成示例代码" 和 "消息消费示例代码", 本次测试在此基础上进行;
 
-我在本地测试时: 启动两台Tomcat-8080和Tomcat-8081, 端口分别为8080和8081, 各自都部署 "xxl-mq-example 消息生产和消费示例项目" 和 "xxl-mq-broker 消息代理中心项目";
+我在本地测试时: 启动两台Tomcat-8080和Tomcat-8081, 端口分别为8080和8081, 各自都部署 "xxl-mq-samples-springboot 消息生产和消费示例项目" 和 "xxl-mq-admin 消息代理中心项目";
 
-"xxl-mq-example 消息生产和消费示例项目" 部署在根路径下, 访问地址为: http://localhost:8080/ , 可以在线查看消息 QUEUE和ERIAL_QUEUE 消息记录,并且可以对消息进行 "查询(统计某个消息主题下消息堆积情况,消费情况)"、"新增"、"编辑(失败消息修改重试次数进行重试, 修改消息数据, 修改消息Delay执行时间从而让消息在指定时间后才执行)"和"删除"等操作;
+"xxl-mq-samples-springboot 消息生产和消费示例项目" 部署在根路径下, 访问地址为: http://localhost:8080/ , 可以在线查看消息 QUEUE和ERIAL_QUEUE 消息记录,并且可以对消息进行 "查询(统计某个消息主题下消息堆积情况,消费情况)"、"新增"、"编辑(失败消息修改重试次数进行重试, 修改消息数据, 修改消息Delay执行时间从而让消息在指定时间后才执行)"和"删除"等操作;
 
 ![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_qvEC.png "在这里输入图片标题")
 
-"xxl-mq-broker 消息代理中心项目" 部署在二级路径 "/example" 下, 访问地址 http://localhost:8080/example/  可进入示例项目提供的三种消息的发送界面, 在界面上点击按钮,即可生成三种消息, 可以跟踪消费方消费日志跟踪消息消费情况;
+"xxl-mq-admin 消息代理中心项目" 部署在二级路径 "/example" 下, 访问地址 http://localhost:8080/example/  可进入示例项目提供的三种消息的发送界面, 在界面上点击按钮,即可生成三种消息, 可以跟踪消费方消费日志跟踪消息消费情况;
 
 ![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_9fgb.png "在这里输入图片标题")
 
 
 **1、测试 "QUEUE (并行消费队列)" : **
 
-操作: 访问 "xxl-mq-broker 消息代理中心项目" 进入提供的消息生产测试页面, 点击 "QUEUE (并行消费队列)= mqconsumer-01" 按钮
+操作: 访问 "xxl-mq-admin 消息代理中心项目" 进入提供的消息生产测试页面, 点击 "QUEUE (并行消费队列)= mqconsumer-01" 按钮
 
 现象: 进入 "消息代理中心", 如下图点击每条消息对应的 "历史流转日志" 按钮, 可查看每一条消息的流转信息;
 
@@ -312,7 +313,7 @@ XxlMqProducer.produce("消息主题", "消息数据, Map<String, String>格式")
 
 **2、测试 "SERIAL_QUEUE (串行消费队列)" : **
 
-操作: 访问 "xxl-mq-broker 消息代理中心项目" 进入提供的消息生产测试页面, 点击 "SERIAL_QUEUE (串行消费队列)= mqconsumer-02" 按钮
+操作: 访问 "xxl-mq-admin 消息代理中心项目" 进入提供的消息生产测试页面, 点击 "SERIAL_QUEUE (串行消费队列)= mqconsumer-02" 按钮
 
 现象: 进入 "消息代理中心", 如下图点击每条消息对应的 "历史流转日志" 按钮, 可查看每一条消息的流转信息;
 
@@ -328,7 +329,7 @@ XxlMqProducer.produce("消息主题", "消息数据, Map<String, String>格式")
 
 现象: 两台Tomcat-8080和Tomcat-8081下, 都打印了以下日志, 
 ```
-2016-09-11 22:37:10 xxl-mq-example [com.xxl.mq.example.mqcomsumer.DemoCMqComsumer]-[Thread-18]-[consume]-[25]-[INFO] TOPIC(广播消息): mqconsumer-02消费一条消息:{"时间戳":"1473604630889"}
+2016-09-11 22:37:10 xxl-mq-samples-springboot [com.xxl.mq.example.mqcomsumer.DemoCMqComsumer]-[Thread-18]-[consume]-[25]-[INFO] TOPIC(广播消息): mqconsumer-02消费一条消息:{"时间戳":"1473604630889"}
 ```
 
 说明: "TOPIC (广播消息)" 发送成功, 监听该消息主题 "mqconsumer-03" 的 "DemoCMqComsumer" 都收到了广播消息并执行成功, 说明测试成功;
@@ -358,9 +359,12 @@ XxlMqProducer.produce("消息主题", "消息数据, Map<String, String>格式")
 
 ### 4.3 版本V1.2.0 [迭代中]
 - 1、client端与Broker长链初始化优化，防止重复创建连接。
-- 2、【ING】通讯迁移至 xxl-rpc；
-- 3、【ING】注册中心迁移至DB，基于 "long polling" 实现注册机器实时感知；
-- 4、【ING】轻量级改造，移除对ZK依赖，仅依赖DB即可完整集群方式提供服务；
+- 2、POM多项依赖升级；
+- 3、UI组件升级；
+- 4、规范项目目录结构；
+- 5、【ING】通讯迁移至 xxl-rpc；
+- 6、【ING】注册中心迁移至DB，基于 "long polling" 实现注册机器实时感知；
+- 7、【ING】轻量级改造，移除对ZK依赖，仅依赖DB即可完整集群方式提供服务；
 
 ### TODO
 - 会考虑移除 mysql 强依赖的，迁移 jpa 进一步提升通用型。
