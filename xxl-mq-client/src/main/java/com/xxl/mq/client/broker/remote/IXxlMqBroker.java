@@ -11,7 +11,6 @@ public interface IXxlMqBroker {
 
     public int saveMessage(XxlMqMessage message);
 
-    public int saveMessageBatch(List<XxlMqMessage> messages);
 
     /**
      * 分布式获取分配给自己的数据: MOD(id, #{consumerTotal}) = #{consumerRank}, 当值为 consumerTotal>1 时生效
