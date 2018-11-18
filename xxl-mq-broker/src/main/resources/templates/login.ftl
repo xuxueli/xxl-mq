@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-  	<title>分布式消息队列</title>
-  	<#import "common/common.macro.ftl" as netCommon>
+	<#import "./common/common.macro.ftl" as netCommon>
+  	<title>消息队列中心</title>
 	<@netCommon.commonStyle />
-    <link rel="stylesheet" href="${request.contextPath}/static/plugins/iCheck/square/blue.css">
+	<link rel="stylesheet" href="${request.contextPath}/static/adminlte/plugins/iCheck/square/blue.css">
 </head>
 <body class="hold-transition login-page">
 	<div class="login-box">
 		<div class="login-logo">
-			<a>XXL<b>MQ</b></a>
+            <a><b>XXL</b></a>MQ
 		</div>
 		<form id="loginForm" method="post" >
 			<div class="login-box-body">
-				<p class="login-box-msg">分布式消息队列</p>
+				<p class="login-box-msg">消息队列中心</p>
 				<div class="form-group has-feedback">
-	            	<input type="text" name="userName" class="form-control" placeholder="请输入登陆账号" value="admin" >
+	            	<input type="text" name="userName" class="form-control" placeholder="请输入登陆账号" value="admin" maxlength="18" >
 	            	<span class="glyphicon glyphicon-envelope form-control-feedback"></span>
 				</div>
 	          	<div class="form-group has-feedback">
-	            	<input type="password" name="password" class="form-control" placeholder="请输入登陆密码" value="123456" >
+	            	<input type="password" name="password" class="form-control" placeholder="请输入登陆密码" value="123456" maxlength="18" >
 	            	<span class="glyphicon glyphicon-lock form-control-feedback"></span>
 	          	</div>
 				<div class="row">
@@ -39,7 +39,7 @@
 	</div>
 <@netCommon.commonScript />
 <script src="${request.contextPath}/static/plugins/jquery/jquery.validate.min.js"></script>
-<script src="${request.contextPath}/static/plugins/iCheck/icheck.min.js"></script>
+<script src="${request.contextPath}/static/adminlte/plugins/iCheck/icheck.min.js"></script>
 <script src="${request.contextPath}/static/js/login.1.js"></script>
 
 </body>

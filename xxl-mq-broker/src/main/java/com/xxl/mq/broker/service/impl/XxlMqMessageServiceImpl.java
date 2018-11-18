@@ -97,7 +97,7 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
             mqMessage.setShardingId(0);
         }
 
-        // delayTime
+        // effectTime
         if (mqMessage.getEffectTime() == null) {
             mqMessage.setEffectTime(new Date());
         }
