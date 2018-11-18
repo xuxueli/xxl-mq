@@ -171,4 +171,10 @@
 			AND retryCount <![CDATA[ > ]]> 0
 	</update>
 
+	<delete id="cleanSuccessMessage" >
+		DELETE FROM XXL_MQ_MESSAGE
+		WHERE status =  #{successStatus}
+			AND addTime <![CDATA[ < ]]> DATE_SUB(NOW(), Interval #{logretentiondays} DAY)
+	</delete>
+
 </mapper>
