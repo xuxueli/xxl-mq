@@ -3,11 +3,9 @@ package com.xxl.mq.example.controller;
 import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.producer.XxlMqProducer;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * index controller
@@ -58,5 +56,11 @@ public class IndexController {
 
 		return "SUCCESS";
 	}
+
+	@ExceptionHandler({Exception.class})
+     public String exception(Exception e) {
+         e.printStackTrace();
+         return e.getMessage();
+     }
 
 }

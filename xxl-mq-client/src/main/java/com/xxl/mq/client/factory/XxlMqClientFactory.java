@@ -129,24 +129,27 @@ public class XxlMqClientFactory  {
             clientFactoryThreadPool.submit(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        XxlMqMessage message = newMessageQueue.take();
-                        if (message != null) {
-                            // load
-                            List<XxlMqMessage> messageList = new ArrayList<>();
-                            messageList.add(message);
 
-                            List<XxlMqMessage> otherMessageList = new ArrayList<>();
-                            int drainToNum = newMessageQueue.drainTo(otherMessageList, 100);
-                            if (drainToNum > 0) {
-                                messageList.addAll(otherMessageList);
+                    while (XxlMqClientFactory.clientFactoryPoolStoped) {
+                        try {
+                            XxlMqMessage message = newMessageQueue.take();
+                            if (message != null) {
+                                // load
+                                List<XxlMqMessage> messageList = new ArrayList<>();
+                                messageList.add(message);
+
+                                List<XxlMqMessage> otherMessageList = new ArrayList<>();
+                                int drainToNum = newMessageQueue.drainTo(otherMessageList, 100);
+                                if (drainToNum > 0) {
+                                    messageList.addAll(otherMessageList);
+                                }
+
+                                // save
+                                xxlMqBroker.addMessages(messageList);
                             }
-
-                            // save
-                            xxlMqBroker.addMessages(messageList);
+                        } catch (Exception e) {
+                            logger.error(e.getMessage(), e);
                         }
-                    } catch (InterruptedException e) {
-                        logger.error(e.getMessage(), e);
                     }
                 }
             });
