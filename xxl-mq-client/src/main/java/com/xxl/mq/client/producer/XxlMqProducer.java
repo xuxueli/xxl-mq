@@ -6,7 +6,6 @@ import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.message.XxlMqMessageStatus;
 import com.xxl.rpc.util.IpUtil;
 
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Set;
@@ -47,11 +46,11 @@ public class XxlMqProducer {
         // status
         mqMessage.setStatus(XxlMqMessageStatus.NEW.name());
 
-
         // retryCount
         if (mqMessage.getRetryCount() < 0) {
             mqMessage.setRetryCount(0);
         }
+
         // shardingId
         if (mqMessage.getShardingId() < 0) {
             mqMessage.setShardingId(0);
@@ -68,7 +67,7 @@ public class XxlMqProducer {
         }
 
         // log
-        String appendLog = MessageFormat.format("<hr>操作: 消息新增<br>》》》消息生产者: {0}", IpUtil.getIp());
+        String appendLog = "<hr>操作: 消息新增<br>》》》消息生产者: " + IpUtil.getIp();
         mqMessage.setLog(appendLog);
     }
 

@@ -3,6 +3,7 @@ package com.xxl.mq.broker.controller;
 import com.xxl.mq.broker.controller.annotation.PermessionLimit;
 import com.xxl.mq.broker.core.result.ReturnT;
 import com.xxl.mq.broker.service.IXxlMqMessageService;
+import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.message.XxlMqMessageStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,9 +36,9 @@ public class MqController {
 	@ResponseBody
 	@PermessionLimit
 	public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start,
-		@RequestParam(required = false, defaultValue = "10") int length, String name, String status){
+		@RequestParam(required = false, defaultValue = "10") int length, String topic, String status){
 
-		return xxlMqMessageService.pageList(start, length, name, status);
+		return xxlMqMessageService.pageList(start, length, topic, status);
 	}
 	
 	@RequestMapping("/delete")
@@ -50,15 +51,15 @@ public class MqController {
 	@RequestMapping("/update")
 	@ResponseBody
 	@PermessionLimit
-	public ReturnT<String> update(int id, String data, String delayTime, String status, int retryCount){
-		return xxlMqMessageService.update(id, data, delayTime, status, retryCount);
+	public ReturnT<String> update(XxlMqMessage message){
+		return xxlMqMessageService.update(message);
 	}
 
 	@RequestMapping("/add")
 	@ResponseBody
 	@PermessionLimit
-	public ReturnT<String> add(String name, String data, String delayTime, String status, int retryCount){
-		return xxlMqMessageService.add(name, data, delayTime, status, retryCount);
+	public ReturnT<String> add(XxlMqMessage message){
+		return xxlMqMessageService.add(message);
 	}
 
 }

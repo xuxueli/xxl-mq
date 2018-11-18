@@ -88,7 +88,16 @@ public class DateFormatUtil {
 		Date date = bartDateFormat.parse(dateString);
 		return date;
 	}
-	
+
+	public static String getNowTime(){
+		try {
+			String tim = DateFormatUtil.formatDateTime(new Date());
+			return tim;
+		} catch (ParseException e) {
+			return "";
+		}
+	}
+
 	public static void main(String[] args) throws ParseException {
 		String temp = DateFormatUtil.formatDateTime(new Date());
 		System.out.println(temp);

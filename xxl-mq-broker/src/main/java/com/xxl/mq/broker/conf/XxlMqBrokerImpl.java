@@ -2,8 +2,8 @@ package com.xxl.mq.broker.conf;
 
 import com.xxl.mq.broker.dao.IXxlMqMessageDao;
 import com.xxl.mq.client.broker.IXxlMqBroker;
-import com.xxl.mq.client.message.XxlMqMessageStatus;
 import com.xxl.mq.client.message.XxlMqMessage;
+import com.xxl.mq.client.message.XxlMqMessageStatus;
 import com.xxl.mq.client.util.DateFormatUtil;
 import com.xxl.rpc.registry.impl.ZkServiceRegistry;
 import com.xxl.rpc.remoting.net.NetEnum;
@@ -19,9 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -180,7 +178,7 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                 while (!executorStoped) {
                     try {
                         // mult retry message
-                        String appendLog = MessageFormat.format("<hr>》》》时间: {0} <br>》》》操作: 失败消息触发重试,状态自动还原,剩余重试次数减一", DateFormatUtil.formatDateTime(new Date()));
+                        String appendLog = "<hr>》》》时间: "+ DateFormatUtil.getNowTime() +" <br>》》》操作: 失败消息触发重试,状态自动还原,剩余重试次数减一";
                         int count = xxlMqMessageDao.updateRetryCount(XxlMqMessageStatus.FAIL.name(), XxlMqMessageStatus.NEW.name(), appendLog);
                         if (count > 0) {
                             logger.info("xxl-mq, retry message, count:{}", count);
