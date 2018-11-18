@@ -126,7 +126,7 @@ public class XxlMqClientFactory  {
 
         //
         for (int i = 0; i < 10; i++) {
-            clientFactoryThreadPool.submit(new Runnable() {
+            clientFactoryThreadPool.execute(new Runnable() {
                 @Override
                 public void run() {
 
@@ -216,7 +216,7 @@ public class XxlMqClientFactory  {
 
         // consumer
         for (ConsumerThread item: consumerRespository) {
-            clientFactoryThreadPool.submit(item);
+            clientFactoryThreadPool.execute(item);
             logger.info(">>>>>>>>>>> xxl-mq, consumer init success, , topic:{}, group:{}", item.getMqConsumer().topic(), item.getMqConsumer().group());
         }
     }

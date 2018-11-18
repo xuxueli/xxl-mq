@@ -6,6 +6,7 @@ import com.xxl.mq.client.consumer.annotation.MqConsumer;
 import com.xxl.mq.client.consumer.registry.ConsumerRegistryHelper;
 import com.xxl.mq.client.factory.XxlMqClientFactory;
 import com.xxl.mq.client.message.XxlMqMessage;
+import com.xxl.mq.client.message.XxlMqMessageStatus;
 import com.xxl.mq.client.util.DateFormatUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,6 +108,7 @@ public class ConsumerThread extends Thread {
                             String appendLog_consume = "<hr>》》》时间: "+ DateFormatUtil.getNowTime() +" <br>》》》操作: 消息消费"+ (mqResult.isSuccess()?"成功":"失败") +"<br>》》》<br>》》》日志:"+mqResult.getLog();
 
                             // callback
+                            msg.setStatus(mqResult.isSuccess()? XxlMqMessageStatus.SUCCESS.name():XxlMqMessageStatus.FAIL.name());
                             msg.setLog(appendLog_consume);
                             XxlMqClientFactory.getXxlMqBroker().callbackMessages(Arrays.asList(msg));
 
