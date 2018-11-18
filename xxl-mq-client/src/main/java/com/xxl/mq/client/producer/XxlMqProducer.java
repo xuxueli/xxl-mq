@@ -1,5 +1,6 @@
 package com.xxl.mq.client.producer;
 
+import com.xxl.mq.client.consumer.annotation.MqConsumer;
 import com.xxl.mq.client.consumer.registry.ConsumerRegistryHelper;
 import com.xxl.mq.client.factory.XxlMqClientFactory;
 import com.xxl.mq.client.message.XxlMqMessage;
@@ -34,7 +35,7 @@ public class XxlMqProducer {
 
         // group
         if (mqMessage.getGroup()==null || mqMessage.getGroup().trim().length()==0) {
-            mqMessage.setGroup(ConsumerRegistryHelper.DEFAULT_GROUP);
+            mqMessage.setGroup(MqConsumer.DEFAULT_GROUP);
         }
         if (mqMessage.getGroup().length() > 256) {
             throw new IllegalArgumentException("xxl-mq, group invalid.");

@@ -24,6 +24,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * @author xuxueli 2018-11-18 21:18:10
+ */
 public class XxlMqClientFactory  {
     private final static Logger logger = LoggerFactory.getLogger(XxlMqClientFactory.class);
 

@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author xuxueli 2018-11-18 21:18:10
+ */
 public class XxlMqSpringClientFactory implements ApplicationContextAware, DisposableBean {
 
     // ---------------------- param  ----------------------

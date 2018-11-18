@@ -12,10 +12,12 @@ import java.lang.annotation.*;
 @Inherited
 public @interface MqConsumer {
 
+    public static final String DEFAULT_GROUP = "DEFAULT";
+
     /**
      * @return
      */
-    String group() default ConsumerRegistryHelper.DEFAULT_GROUP;
+    String group() default DEFAULT_GROUP;
 
     /**
      * @return

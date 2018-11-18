@@ -1,5 +1,6 @@
 package com.xxl.mq.client.consumer.registry;
 
+import com.xxl.mq.client.consumer.annotation.MqConsumer;
 import com.xxl.mq.client.consumer.thread.ConsumerThread;
 import com.xxl.rpc.registry.ServiceRegistry;
 
@@ -7,10 +8,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * @author xuxueli 2018-11-18 21:18:10
+ */
 public class ConsumerRegistryHelper {
-
-    public static final String DEFAULT_GROUP = "DEFAULT";
-
 
     private ServiceRegistry serviceRegistry;
     public ConsumerRegistryHelper(ServiceRegistry serviceRegistry) {
@@ -131,8 +132,8 @@ public class ConsumerRegistryHelper {
             }
         }
 
-        if (!groupSet.contains(DEFAULT_GROUP)) {
-            groupSet.add(DEFAULT_GROUP);
+        if (!groupSet.contains(MqConsumer.DEFAULT_GROUP)) {
+            groupSet.add(MqConsumer.DEFAULT_GROUP);
         }
         return groupSet;
     }
