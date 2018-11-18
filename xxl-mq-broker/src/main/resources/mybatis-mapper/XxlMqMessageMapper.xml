@@ -131,7 +131,7 @@
 					)
 				)
 			</if>
-		ORDER BY t.id DESC
+		ORDER BY t.id ASC
 		LIMIT #{pagesize}
 	</select>
 
