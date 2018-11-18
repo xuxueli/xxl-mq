@@ -3,6 +3,7 @@ package com.xxl.mq.client.producer;
 import com.xxl.mq.client.consumer.registry.ConsumerRegistryHelper;
 import com.xxl.mq.client.factory.XxlMqClientFactory;
 import com.xxl.mq.client.message.XxlMqMessage;
+import com.xxl.mq.client.message.XxlMqMessageStatus;
 import com.xxl.rpc.util.IpUtil;
 
 import java.text.MessageFormat;
@@ -43,6 +44,10 @@ public class XxlMqProducer {
             mqMessage.setData("");
         }
 
+        // status
+        mqMessage.setStatus(XxlMqMessageStatus.NEW.name());
+
+
         // retryCount
         if (mqMessage.getRetryCount() < 0) {
             mqMessage.setRetryCount(0);
@@ -55,6 +60,11 @@ public class XxlMqProducer {
         // delayTime
         if (mqMessage.getEffectTime() == null) {
             mqMessage.setEffectTime(new Date());
+        }
+
+        // timeout
+        if (mqMessage.getTimeout() < 0) {
+            mqMessage.setTimeout(0);
         }
 
         // log
@@ -81,6 +91,8 @@ public class XxlMqProducer {
 
         // send
         XxlMqClientFactory.getXxlMqBroker().addMessages(Arrays.asList(mqMessage));
+
+        // TODO，多线程异步发送
     }
 
     public static void produce(String topic, String data){

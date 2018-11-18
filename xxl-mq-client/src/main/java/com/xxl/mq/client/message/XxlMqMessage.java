@@ -12,7 +12,7 @@ public class XxlMqMessage implements Serializable {
 	private long id;				// 消息ID,
 	private String topic;			// 消息主题
 	private String group;			// 消息分组, 分组一致时消息仅消费一次；存在多个分组时，多个分组时【广播消费】；
-	private String data;			// 消息数据, Map<String, String> 对象系列化的JSON字符串
+	private String data;			// 消息数据
 	private String status;		// 消息状态, @sae XxlMqMessageStatus
 	private int retryCount;		// 剩余重试次数, 执行失败且大于0时生效，每重试一次减一；
 	private long shardingId;		// 分片Id, 大于0时启用，否则使用消息ID；消费者通过该参数进行消息分片消费；分片ID取模或数值不一致时分片【并发消费】、一致时【串行消费】；
