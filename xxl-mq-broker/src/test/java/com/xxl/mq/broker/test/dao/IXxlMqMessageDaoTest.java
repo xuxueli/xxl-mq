@@ -20,6 +20,29 @@ public class IXxlMqMessageDaoTest {
     @Resource
     private IXxlMqMessageDao xxlMqMessageDao;
 
+    // admin
+    @Test
+    public void adminTest(){
+        List<XxlMqMessage> pagelist = xxlMqMessageDao.pageList(0, 10, "t", XxlMqMessageStatus.NEW.name());
+        int pagecount = xxlMqMessageDao.pageListCount(0, 10, "t", XxlMqMessageStatus.NEW.name());
+
+        XxlMqMessage message = pagelist.get(0);
+        message.setData("d5");
+        message.setStatus(XxlMqMessageStatus.FAIL.name());
+        message.setRetryCount(5);
+        message.setShardingId(5);
+        message.setEffectTime(new Date());
+        message.setTimeout(5);
+        message.setLog("555");
+
+        int updateRet = xxlMqMessageDao.update(message);
+
+        int delRet = xxlMqMessageDao.delete(1);
+    }
+
+
+    // broker
+
     @Test
     public void saveTest(){
 
