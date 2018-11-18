@@ -6,7 +6,6 @@ import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.message.XxlMqMessageStatus;
 import com.xxl.rpc.util.IpUtil;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Set;
 
@@ -89,9 +88,7 @@ public class XxlMqProducer {
         validMessage(mqMessage);
 
         // send
-        XxlMqClientFactory.getXxlMqBroker().addMessages(Arrays.asList(mqMessage));
-
-        // TODO，多线程异步发送
+        XxlMqClientFactory.addMessages(mqMessage);
     }
 
     public static void produce(String topic, String data){

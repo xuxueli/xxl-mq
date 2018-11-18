@@ -5,6 +5,7 @@ import com.xxl.mq.client.consumer.IMqConsumer;
 import com.xxl.mq.client.consumer.annotation.MqConsumer;
 import com.xxl.mq.client.consumer.registry.ConsumerRegistryHelper;
 import com.xxl.mq.client.consumer.thread.ConsumerThread;
+import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.rpc.registry.ServiceRegistry;
 import com.xxl.rpc.registry.impl.ZkServiceRegistry;
 import com.xxl.rpc.remoting.invoker.XxlRpcInvokerFactory;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class XxlMqClientFactory  {
     private final static Logger logger = LoggerFactory.getLogger(XxlMqClientFactory.class);
@@ -49,23 +51,37 @@ public class XxlMqClientFactory  {
     // ---------------------- init destroy  ----------------------
 
     public void init() {
-        // init ConsumerThread
-        initConsumerThread();
+        // valid ConsumerThread
+        validConsumerThread();
 
         // start BrokerService
         startBrokerService();
 
-        // start ConsumerThread
-        startConsumerThread();
+        // submit ConsumerThread
+        submitConsumerThread();
     }
 
     public void destroy() throws Exception {
 
-        // destory ConsumerThread
-        destoryConsumerThread();
+        // destory ClientFactoryThreadPool
+        destoryClientFactoryThreadPool();
 
         // destory BrokerService
         destoryBrokerService();
+    }
+
+
+    // ---------------------- thread pool ----------------------
+
+    private ExecutorService clientFactoryThreadPool = Executors.newCachedThreadPool();
+    public static volatile boolean clientFactoryPoolStoped = false;
+
+    /**
+     * destory consumer thread
+     */
+    private void destoryClientFactoryThreadPool(){
+        clientFactoryPoolStoped = true;
+        clientFactoryThreadPool.shutdownNow();
     }
 
 
@@ -75,11 +91,16 @@ public class XxlMqClientFactory  {
 
     private static IXxlMqBroker xxlMqBroker;
     private static ConsumerRegistryHelper consumerRegistryHelper = null;
+    private static LinkedBlockingQueue<XxlMqMessage> newMessageQueue = new LinkedBlockingQueue<>();
+
     public static IXxlMqBroker getXxlMqBroker() {
         return xxlMqBroker;
     }
     public static ConsumerRegistryHelper getConsumerRegistryHelper() {
         return consumerRegistryHelper;
+    }
+    public static void addMessages(XxlMqMessage mqMessage){
+        newMessageQueue.add(mqMessage);
     }
 
     public void startBrokerService() {
@@ -103,6 +124,34 @@ public class XxlMqClientFactory  {
         xxlMqBroker = (IXxlMqBroker) new XxlRpcReferenceBean(NetEnum.NETTY, Serializer.SerializeEnum.HESSIAN.getSerializer(), CallType.SYNC,
                 IXxlMqBroker.class, null, 10000, null, null, null).getObject();
 
+        //
+        for (int i = 0; i < 10; i++) {
+            clientFactoryThreadPool.submit(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        XxlMqMessage message = newMessageQueue.take();
+                        if (message != null) {
+                            // load
+                            List<XxlMqMessage> messageList = new ArrayList<>();
+                            messageList.add(message);
+
+                            List<XxlMqMessage> otherMessageList = new ArrayList<>();
+                            int drainToNum = newMessageQueue.drainTo(otherMessageList, 100);
+                            if (drainToNum > 0) {
+                                messageList.addAll(otherMessageList);
+                            }
+
+                            // save
+                            xxlMqBroker.addMessages(messageList);
+                        }
+                    } catch (InterruptedException e) {
+                        logger.error(e.getMessage(), e);
+                    }
+                }
+            });
+        }
+
     }
     public void destoryBrokerService() throws Exception {
         // stop invoker factory
@@ -112,21 +161,23 @@ public class XxlMqClientFactory  {
     }
 
 
+
     // ---------------------- queue consumer ----------------------
 
-    public static volatile boolean consumerExecutorStoped = false;
-    private static ExecutorService consumerExecutorService = Executors.newCachedThreadPool();
-
     // queue consumer respository
-    private static List<ConsumerThread> consumerRespository = new ArrayList<ConsumerThread>();
+    private List<ConsumerThread> consumerRespository = new ArrayList<ConsumerThread>();
 
     /**
-     * init consumer
+     * valid ConsumerThread
      */
-    private void initConsumerThread(){
+    private void validConsumerThread(){
+
+        // valid
         if (consumerList==null || consumerList.size()==0) {
             throw new RuntimeException("xxl-mq, MqConsumer not found.");
         }
+
+        // valid data
         for (IMqConsumer consumer : consumerList) {
             // valid annotation
             MqConsumer annotation = consumer.getClass().getAnnotation(MqConsumer.class);
@@ -146,36 +197,27 @@ public class XxlMqClientFactory  {
     }
 
     /**
-     * start consumer thread
+     * submit ConsumerThread
      */
-    private void startConsumerThread(){
+    private void submitConsumerThread(){
+
+        // valid
         if (consumerRespository ==null || consumerRespository.size()==0) {
             return;
         }
 
-        // registry consumer, use xxl-job registry
+        // registry
         for (ConsumerThread item: consumerRespository) {
             getConsumerRegistryHelper().registerConsumer(item.getMqConsumer());
         }
 
-        // consumer thread start
-
+        // consumer
         for (ConsumerThread item: consumerRespository) {
-            consumerExecutorService.submit(item);
+            clientFactoryThreadPool.submit(item);
             logger.info(">>>>>>>>>>> xxl-mq, consumer init success, , topic:{}, group:{}", item.getMqConsumer().topic(), item.getMqConsumer().group());
         }
     }
 
-    /**
-     * destory consumer thread
-     */
-    private void destoryConsumerThread(){
-        if (consumerRespository ==null || consumerRespository.size()==0) {
-            return;
-        }
 
-        consumerExecutorStoped = true;
-        consumerExecutorService.shutdownNow();
-    }
 
 }

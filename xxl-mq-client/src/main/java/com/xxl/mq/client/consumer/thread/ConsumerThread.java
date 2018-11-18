@@ -40,7 +40,7 @@ public class ConsumerThread extends Thread {
 
         int waitTim = 5;
 
-        while (XxlMqClientFactory.consumerExecutorStoped) {
+        while (XxlMqClientFactory.clientFactoryPoolStoped) {
             try {
                 // check active
                 ConsumerRegistryHelper.ActiveInfo activeInfo = XxlMqClientFactory.getConsumerRegistryHelper().isActice(mqConsumer);
@@ -49,7 +49,7 @@ public class ConsumerThread extends Thread {
                 if (activeInfo != null) {
 
                     // pullNewMessage
-                    List<XxlMqMessage> messageList = XxlMqClientFactory.getXxlMqBroker().pullNewMessage(mqConsumer.topic(), mqConsumer.group(), activeInfo.rank, activeInfo.total, 50);
+                    List<XxlMqMessage> messageList = XxlMqClientFactory.getXxlMqBroker().pullNewMessage(mqConsumer.topic(), mqConsumer.group(), activeInfo.rank, activeInfo.total, 100);
                     if (messageList != null && messageList.size() > 0) {
                         waitTim = 0;
 
