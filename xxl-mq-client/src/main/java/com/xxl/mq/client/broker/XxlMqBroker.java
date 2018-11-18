@@ -138,8 +138,4 @@ public class XxlMqBroker implements IXxlMqBroker {
         return consumeCallbackMessageQueue.add(message)?1:-1;
     }
 
-    @Override
-    public int saveMessageBatch(List<XxlMqMessage> messages) {
-        return newMessageQueue.addAll(messages)?1:-1;
-    }
 }
