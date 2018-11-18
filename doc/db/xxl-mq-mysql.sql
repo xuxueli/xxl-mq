@@ -9,6 +9,7 @@ CREATE TABLE `XXL_MQ_MESSAGE`  (
   `status` varchar(32) NOT NULL,
   `retryCount` int(11) NOT NULL DEFAULT 0,
   `shardingId` bigint(11) NOT NULL DEFAULT 0,
+  `timeout` int(11) NOT NULL DEFAULT 0,
   `effectTime` datetime DEFAULT NULL,
   `addTime` datetime DEFAULT NULL,
   `log` text NOT NULL,
