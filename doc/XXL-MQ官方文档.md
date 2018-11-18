@@ -362,9 +362,12 @@ XxlMqProducer.produce("消息主题", "消息数据, Map<String, String>格式")
 - 2、POM多项依赖升级；
 - 3、UI组件升级；
 - 4、规范项目目录结构；
-- 5、【ING】通讯迁移至 xxl-rpc；
-- 6、【ING】注册中心迁移至DB，基于 "long polling" 实现注册机器实时感知；
-- 7、【ING】轻量级改造，移除对ZK依赖，仅依赖DB即可完整集群方式提供服务；
+- 6、超时控制；
+- 5、通讯迁移至 xxl-rpc；
+- 移除 spring 强依赖；
+- 【ING】提供 framwless 示例；
+- 【ING】消息发送改为多线程、异步方式；
+- 【ING】左侧菜单规范：运行报表 + 消息主题 + 消息日志 + 使用教程；
 
 ### TODO
 - 会考虑移除 mysql 强依赖的，迁移 jpa 进一步提升通用型。
@@ -403,10 +406,11 @@ XxlMqProducer.produce("消息主题", "消息数据, Map<String, String>格式")
             - zk>http：无影响；
         - consumer：服务发现-"锁 + 排序 + 消息pull"
             - zk>http："锁（废弃，无影响） + 排序（实时性底，分片冲突概率提升） + 消息pull（无影响）"
-- 移除spring强依赖；提供 framwless 示例；
 - 单机部署不需要ZK，集群部署依赖ZK；
 - 消息写磁盘，避免敏感消息丢失；
-    
+- 注册中心迁移至DB，基于 "long polling" 实现注册机器实时感知；
+- 轻量级改造，移除对ZK依赖，仅依赖DB即可完整集群方式提供服务；缺点，非强一致性可能导致重复消费，待确定；
+
 
 ## 五、其他
 

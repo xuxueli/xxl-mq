@@ -1,7 +1,7 @@
 package com.xxl.mq.client.consumer.registry;
 
 import com.xxl.mq.client.consumer.annotation.MqConsumer;
-import com.xxl.mq.client.factory.XxlMqClientFactory;
+import com.xxl.rpc.registry.ServiceRegistry;
 import com.xxl.rpc.util.IpUtil;
 
 import java.util.*;
@@ -15,6 +15,13 @@ public class ConsumerRegistryHelper {
             .concat("_")
             .concat(String.valueOf(10000 + new Random().nextInt(40000)));
 
+
+    private ServiceRegistry serviceRegistry;
+    public ConsumerRegistryHelper(ServiceRegistry serviceRegistry) {
+        this.serviceRegistry = serviceRegistry;
+    }
+
+
     /**
      * consumer registry
      *
@@ -27,14 +34,14 @@ public class ConsumerRegistryHelper {
      *
      * @param mqConsumer
      */
-    public static void registerConsumer(MqConsumer mqConsumer) {
+    public void registerConsumer(MqConsumer mqConsumer) {
         // init data
         String registryKey = mqConsumer.topic();
         String registryValPrefix = mqConsumer.group().concat("____");
         String registryVal = registryValPrefix.concat(CONSUMER_REGISTRY_RAMDOM_VALUE);
 
         // registry consumer
-        XxlMqClientFactory.getServiceRegistry().registry(registryKey, registryVal);
+        serviceRegistry.registry(registryKey, registryVal);
     }
 
     /**
@@ -43,14 +50,14 @@ public class ConsumerRegistryHelper {
      * @param mqConsumer
      * @return
      */
-    public static ActiveInfo isActice(MqConsumer mqConsumer){
+    public ActiveInfo isActice(MqConsumer mqConsumer){
         // init data
         String registryKey = mqConsumer.topic();
         String registryValPrefix = mqConsumer.group().concat("____");
         String registryVal = registryValPrefix.concat(CONSUMER_REGISTRY_RAMDOM_VALUE);
 
         // load all consumer
-        TreeSet<String> onlineConsumerSet = XxlMqClientFactory.getServiceRegistry().discovery(registryKey);
+        TreeSet<String> onlineConsumerSet = serviceRegistry.discovery(registryKey);
         if (onlineConsumerSet==null || onlineConsumerSet.size()==0) {
             return null;
         }
@@ -81,12 +88,12 @@ public class ConsumerRegistryHelper {
         return new ActiveInfo(rank, onlineConsumerSet_group.size(), onlineConsumerSet_group.toString());
     }
 
-    public static Set<String> getTotalGroupList(String topic){
+    public Set<String> getTotalGroupList(String topic){
         Set<String> stringSet = new HashSet<>();
 
         // load all consumer, find all groups
         String registryKey = topic;
-        TreeSet<String> onlineConsumerSet = XxlMqClientFactory.getServiceRegistry().discovery(registryKey);
+        TreeSet<String> onlineConsumerSet = serviceRegistry.discovery(registryKey);
         if (onlineConsumerSet!=null && onlineConsumerSet.size()>0) {
             for (String onlineConsumerItem : onlineConsumerSet) {
                     String[] onlineConsumerItemArr = onlineConsumerItem.split("____");

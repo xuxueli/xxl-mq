@@ -220,6 +220,30 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
             });
         }
 
+        /**
+         * topic auto find
+         */
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                while (!executorStoped) {
+                    try {
+
+                        // TODO, auto find topic
+
+
+                    } catch (Exception e) {
+                        logger.error(e.getMessage(), e);
+                    }
+                    try {
+                        TimeUnit.SECONDS.sleep(60);
+                    } catch (Exception e) {
+                        logger.error(e.getMessage(), e);
+                    }
+                }
+            }
+        });
+
     }
     public void destroyThread(){
         executorService.shutdownNow();

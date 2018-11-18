@@ -3,8 +3,8 @@ package com.xxl.mq.client.factory;
 import com.xxl.mq.client.broker.IXxlMqBroker;
 import com.xxl.mq.client.consumer.IMqConsumer;
 import com.xxl.mq.client.consumer.annotation.MqConsumer;
-import com.xxl.mq.client.consumer.thread.ConsumerThread;
 import com.xxl.mq.client.consumer.registry.ConsumerRegistryHelper;
+import com.xxl.mq.client.consumer.thread.ConsumerThread;
 import com.xxl.rpc.registry.ServiceRegistry;
 import com.xxl.rpc.registry.impl.ZkServiceRegistry;
 import com.xxl.rpc.remoting.invoker.XxlRpcInvokerFactory;
@@ -15,49 +15,23 @@ import com.xxl.rpc.serialize.Serializer;
 import com.xxl.rpc.util.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class XxlMqClientFactory implements ApplicationContextAware, DisposableBean {
+public class XxlMqClientFactory  {
     private final static Logger logger = LoggerFactory.getLogger(XxlMqClientFactory.class);
 
 
-    // ---------------------- init destroy  ----------------------
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-
-        // init Broker
-        initBrokerService();
-
-        // init queue consumer
-        initConsumer(applicationContext);
-    }
-
-    @Override
-    public void destroy() throws Exception {
-
-        // init queue consumer
-        destoryConsumer();
-
-        // destory Broker
-        destoryBrokerService();
-    }
-
-    // ---------------------- broker service ----------------------
+    // ---------------------- param  ----------------------
 
     private String zkaddress;
     private String zkdigest;
     private String env;
+    private List<IMqConsumer> consumerList;
 
     public void setZkaddress(String zkaddress) {
         this.zkaddress = zkaddress;
@@ -68,20 +42,48 @@ public class XxlMqClientFactory implements ApplicationContextAware, DisposableBe
     public void setEnv(String env) {
         this.env = env;
     }
+    public void setConsumerList(List<IMqConsumer> consumerList) {
+        this.consumerList = consumerList;
+    }
+
+    // ---------------------- init destroy  ----------------------
+
+    public void init() {
+        // init ConsumerThread
+        initConsumerThread();
+
+        // start BrokerService
+        startBrokerService();
+
+        // start ConsumerThread
+        startConsumerThread();
+    }
+
+    public void destroy() throws Exception {
+
+        // destory ConsumerThread
+        destoryConsumerThread();
+
+        // destory BrokerService
+        destoryBrokerService();
+    }
+
+
+    // ---------------------- broker service ----------------------
 
     private XxlRpcInvokerFactory xxlRpcInvokerFactory = null;
 
-    private static ServiceRegistry serviceRegistry = null;
     private static IXxlMqBroker xxlMqBroker;
-    public static ServiceRegistry getServiceRegistry() {
-        return serviceRegistry;
-    }
+    private static ConsumerRegistryHelper consumerRegistryHelper = null;
     public static IXxlMqBroker getXxlMqBroker() {
         return xxlMqBroker;
     }
+    public static ConsumerRegistryHelper getConsumerRegistryHelper() {
+        return consumerRegistryHelper;
+    }
 
-    public void initBrokerService() {
-        // init invoker factory
+    public void startBrokerService() {
+        // init XxlRpcInvokerFactory
         xxlRpcInvokerFactory = new XxlRpcInvokerFactory(ZkServiceRegistry.class, new HashMap<String, String>(){{
             put(Environment.ZK_ADDRESS, zkaddress);
             put(Environment.ZK_DIGEST, zkdigest);
@@ -92,9 +94,12 @@ public class XxlMqClientFactory implements ApplicationContextAware, DisposableBe
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        serviceRegistry = XxlRpcInvokerFactory.getServiceRegistry();
 
-        // init service reference
+        // init ConsumerRegistryHelper
+        ServiceRegistry serviceRegistry = XxlRpcInvokerFactory.getServiceRegistry();
+        consumerRegistryHelper = new ConsumerRegistryHelper(serviceRegistry);
+
+        // init IXxlMqBroker
         xxlMqBroker = (IXxlMqBroker) new XxlRpcReferenceBean(NetEnum.NETTY, Serializer.SerializeEnum.HESSIAN.getSerializer(), CallType.SYNC,
                 IXxlMqBroker.class, null, 10000, null, null, null).getObject();
 
@@ -118,36 +123,39 @@ public class XxlMqClientFactory implements ApplicationContextAware, DisposableBe
     /**
      * init consumer
      */
-    private static void initConsumer(ApplicationContext applicationContext){
-
-        // load consumer from spring
-        Map<String, Object> serviceMap = applicationContext.getBeansWithAnnotation(MqConsumer.class);
-        if (serviceMap!=null && serviceMap.size()>0) {
-            for (Object serviceBean : serviceMap.values()) {
-                if (serviceBean instanceof IMqConsumer) {
-
-                    // valid annotation
-                    MqConsumer annotation = serviceBean.getClass().getAnnotation(MqConsumer.class);
-                    if (annotation.group()==null || annotation.group().trim().length()==0) {
-                        throw new RuntimeException("xxl-mq, MqConsumer("+ serviceBean.getClass() +"),group is empty.");
-                    }
-                    if (annotation.topic()==null || annotation.topic().trim().length()==0) {
-                        throw new RuntimeException("xxl-mq, MqConsumer("+ serviceBean.getClass() +"),topic is empty.");
-                    }
-
-                    // consumer map
-                    consumerRespository.add(new ConsumerThread((IMqConsumer) serviceBean));
-                }
-            }
+    private void initConsumerThread(){
+        if (consumerList==null || consumerList.size()==0) {
+            throw new RuntimeException("xxl-mq, MqConsumer not found.");
         }
+        for (IMqConsumer consumer : consumerList) {
+            // valid annotation
+            MqConsumer annotation = consumer.getClass().getAnnotation(MqConsumer.class);
+            if (annotation == null) {
+                throw new RuntimeException("xxl-mq, MqConsumer("+ consumer.getClass() +"),annotation is not exists.");
+            }
+            if (annotation.group()==null || annotation.group().trim().length()==0) {
+                throw new RuntimeException("xxl-mq, MqConsumer("+ consumer.getClass() +"),group is empty.");
+            }
+            if (annotation.topic()==null || annotation.topic().trim().length()==0) {
+                throw new RuntimeException("xxl-mq, MqConsumer("+ consumer.getClass() +"),topic is empty.");
+            }
 
+            // consumer map
+            consumerRespository.add(new ConsumerThread(consumer));
+        }
+    }
+
+    /**
+     * start consumer thread
+     */
+    private void startConsumerThread(){
         if (consumerRespository ==null || consumerRespository.size()==0) {
             return;
         }
 
         // registry consumer, use xxl-job registry
         for (ConsumerThread item: consumerRespository) {
-            ConsumerRegistryHelper.registerConsumer(item.getMqConsumer());
+            getConsumerRegistryHelper().registerConsumer(item.getMqConsumer());
         }
 
         // consumer thread start
@@ -159,9 +167,9 @@ public class XxlMqClientFactory implements ApplicationContextAware, DisposableBe
     }
 
     /**
-     * destory consumer
+     * destory consumer thread
      */
-    private void destoryConsumer(){
+    private void destoryConsumerThread(){
         if (consumerRespository ==null || consumerRespository.size()==0) {
             return;
         }

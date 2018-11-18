@@ -104,7 +104,7 @@ public class XxlMqProducer {
      * broadcast produce
      */
     public static void broadcast(String topic, String data){
-        Set<String> groupList = ConsumerRegistryHelper.getTotalGroupList(topic);
+        Set<String> groupList = XxlMqClientFactory.getConsumerRegistryHelper().getTotalGroupList(topic);
         for (String group: groupList) {
             produce(topic, group, data, 0, 0, null);
         }

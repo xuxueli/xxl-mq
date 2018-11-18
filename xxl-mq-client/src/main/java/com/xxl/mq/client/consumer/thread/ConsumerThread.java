@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
@@ -29,7 +28,7 @@ public class ConsumerThread extends Thread {
 
     public ConsumerThread(IMqConsumer consumerHandler) {
         this.consumerHandler = consumerHandler;
-        MqConsumer annotation = consumerHandler.getClass().getAnnotation(MqConsumer.class);
+        mqConsumer = consumerHandler.getClass().getAnnotation(MqConsumer.class);
     }
 
     public MqConsumer getMqConsumer() {
@@ -44,7 +43,7 @@ public class ConsumerThread extends Thread {
         while (XxlMqClientFactory.consumerExecutorStoped) {
             try {
                 // check active
-                ConsumerRegistryHelper.ActiveInfo activeInfo = ConsumerRegistryHelper.isActice(mqConsumer);
+                ConsumerRegistryHelper.ActiveInfo activeInfo = XxlMqClientFactory.getConsumerRegistryHelper().isActice(mqConsumer);
                 logger.info(">>>>>>>>>>> xxl-mq, consumer active check, topic:{}, group:{}, ActiveInfo={}", mqConsumer.topic(), mqConsumer.group(), activeInfo.toString());
 
                 if (activeInfo != null) {
@@ -57,12 +56,10 @@ public class ConsumerThread extends Thread {
                         for (final XxlMqMessage msg : messageList) {
 
                             // check active twice
-                            ConsumerRegistryHelper.ActiveInfo newActiveInfo = ConsumerRegistryHelper.isActice(mqConsumer);
+                            ConsumerRegistryHelper.ActiveInfo newActiveInfo = XxlMqClientFactory.getConsumerRegistryHelper().isActice(mqConsumer);
                             if (!(newActiveInfo != null && newActiveInfo.rank == activeInfo.rank && newActiveInfo.total == activeInfo.total)) {
                                 break;
                             }
-
-                            String tim = DateFormatUtil.formatDateTime(new Date());
 
                             // lock message
                             String appendLog_lock = "<hr>》》》时间: "+ DateFormatUtil.getNowTime() +" <br>》》》操作: 消息锁定<br>》》》注册信息: " + newActiveInfo.toString();

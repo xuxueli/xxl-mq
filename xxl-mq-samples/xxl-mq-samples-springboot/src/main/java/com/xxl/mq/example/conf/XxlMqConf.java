@@ -1,6 +1,6 @@
 package com.xxl.mq.example.conf;
 
-import com.xxl.mq.client.factory.XxlMqClientFactory;
+import com.xxl.mq.client.factory.impl.XxlMqSpringClientFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -20,13 +20,13 @@ public class XxlMqConf {
     private String env;
 
     @Bean
-    public XxlMqClientFactory getXxlMqConsumer(){
-        XxlMqClientFactory xxlMqClientFactory = new XxlMqClientFactory();
-        xxlMqClientFactory.setZkaddress(zkaddress);
-        xxlMqClientFactory.setZkdigest(zkdigest);
-        xxlMqClientFactory.setEnv(env);
+    public XxlMqSpringClientFactory getXxlMqConsumer(){
+        XxlMqSpringClientFactory xxlMqSpringClientFactory = new XxlMqSpringClientFactory();
+        xxlMqSpringClientFactory.setZkaddress(zkaddress);
+        xxlMqSpringClientFactory.setZkdigest(zkdigest);
+        xxlMqSpringClientFactory.setEnv(env);
 
-        return xxlMqClientFactory;
+        return xxlMqSpringClientFactory;
     }
 
 }
