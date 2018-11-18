@@ -115,7 +115,7 @@
 		WHERE 	t.topic = #{topic}
 			AND t.group = #{group}
 			AND t.status = #{newStatus}
-			AND t.effectTime <![CDATA[ >= ]]> NOW()
+			AND t.effectTime <![CDATA[ < ]]> NOW()
 			<if test="consumerTotal > 1">
 				AND (
 					(
