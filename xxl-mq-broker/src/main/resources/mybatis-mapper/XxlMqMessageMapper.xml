@@ -138,9 +138,9 @@
 	<update id="lockMessage" parameterType="java.util.HashMap" >
 		UPDATE XXL_MQ_MESSAGE AS t
 		SET
-			t.status = #{toStatus},
+			t.status = #{ingStatus},
 			t.`log` = CONCAT(t.`log`, #{appendLog})
-		WHERE id = #{id} AND t.status =  #{fromStatus}
+		WHERE id = #{id} AND t.status =  #{newStatus}
 	</update>
 
 	<update id="updateStatus" parameterType="java.util.HashMap" >

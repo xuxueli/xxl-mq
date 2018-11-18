@@ -38,9 +38,9 @@ public interface IXxlMqMessageDao {
                                              @Param("pagesize") int pagesize);
 
     public int lockMessage(@Param("id") long id,
-                           @Param("fromStatus") String fromStatus,
-                           @Param("toStatus") String toStatus,
-                           @Param("appendLog") String appendLog);
+                           @Param("appendLog") String appendLog,
+                           @Param("newStatus") String newStatus,
+                           @Param("ingStatus") String ingStatus);
 
     public int updateStatus(@Param("messageList") List<XxlMqMessage> messageList);
 

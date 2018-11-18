@@ -60,5 +60,10 @@ public class IXxlMqMessageDaoTest {
         List<XxlMqMessage> messageList = xxlMqMessageDao.pullNewMessage(XxlMqMessageStatus.NEW.name(), "t1", null, 1, 2, 10);
     }
 
+    @Test
+    public void lockMessageTest(){
+        int ret = xxlMqMessageDao.lockMessage(1, "appendLog", XxlMqMessageStatus.NEW.name(), XxlMqMessageStatus.ING.name());
+    }
+
 
 }
