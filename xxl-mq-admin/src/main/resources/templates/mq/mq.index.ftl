@@ -61,13 +61,13 @@
 				                <thead>
 					            	<tr>
 					                	<th name="id" >ID</th>
-					                  	<th name="name" >主题</th>
-                                        <th name="data" >消息数据</th>
-                                        <th name="effectTime" >Delay执行时间</th>
-                                        <th name="addTime/updateTime" >创建时间/更新时间</th>
-                                        <th name="status" >消息状态</th>
-                                        <th name="msg" >历史流转日志</th>
-                                        <th name="retryCount" >剩余重试次数</th>
+					                  	<th name="topic" >主题</th>
+                                        <th name="group" >分组</th>
+                                        <th name="data" >数据</th>
+                                        <th name="status" >状态</th>
+                                        <th name="effectTime" >生效时间</th>
+                                        <th name="addTime" >创建时间</th>
+                                        <th name="log" >流转日志</th>
 					                  	<th>操作</th>
 					                </tr>
 				                </thead>

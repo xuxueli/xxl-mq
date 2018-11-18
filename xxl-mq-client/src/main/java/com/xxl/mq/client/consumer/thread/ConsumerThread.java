@@ -40,7 +40,7 @@ public class ConsumerThread extends Thread {
 
         int waitTim = 5;
 
-        while (XxlMqClientFactory.clientFactoryPoolStoped) {
+        while (!XxlMqClientFactory.clientFactoryPoolStoped) {
             try {
                 // check active
                 ConsumerRegistryHelper.ActiveInfo activeInfo = XxlMqClientFactory.getConsumerRegistryHelper().isActice(mqConsumer);

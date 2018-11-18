@@ -33,10 +33,10 @@ public class XxlMqProducer {
         }
 
         // group
-        if (mqMessage.getTopic()==null || mqMessage.getTopic().trim().length()==0) {
-            mqMessage.setTopic(ConsumerRegistryHelper.DEFAULT_GROUP);
+        if (mqMessage.getGroup()==null || mqMessage.getGroup().trim().length()==0) {
+            mqMessage.setGroup(ConsumerRegistryHelper.DEFAULT_GROUP);
         }
-        if (mqMessage.getTopic().length() > 256) {
+        if (mqMessage.getGroup().length() > 256) {
             throw new IllegalArgumentException("xxl-mq, group invalid.");
         }
 

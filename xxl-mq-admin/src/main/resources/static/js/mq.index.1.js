@@ -21,7 +21,8 @@ $(function() {
 	    //"scrollX": true,	// X轴滚动条，取消自适应
 	    "columns": [
 	                { data: 'id', visible: true},
-					{ data: 'name'},
+					{ data: 'topic'},
+            		{ data: 'group'},
 					{
 						data: 'data',
 						render : function ( data, type, row ) {
@@ -32,6 +33,7 @@ $(function() {
 							}
 						}
 					},
+            		{ data: 'status'},
 					{
 						data: 'effectTime',
 						render : function ( data, type, row ) {
@@ -42,13 +44,9 @@ $(function() {
 						data: 'addTime',
 						render : function ( data, type, row ) {
 							var temp = data?moment(new Date(data)).format("YYYY-MM-DD HH:mm:ss"):"";
-							temp += "<br>";
-							temp += data?moment(new Date(row.updateTime)).format("YYYY-MM-DD HH:mm:ss"):"";
 							return temp;
 						}
 					},
-					//{ data: 'updateTime'},
-					{ data: 'status'},
 					{
 						data: 'log',
 						render : function ( data, type, row ) {
@@ -59,8 +57,7 @@ $(function() {
 							}
 						}
 					},
-					{ data: 'retryCount'},
-	                { data: 'msg' ,
+	                { data: 'opt' ,
 	                	"render": function ( data, type, row ) {
 	                		return function(){
 

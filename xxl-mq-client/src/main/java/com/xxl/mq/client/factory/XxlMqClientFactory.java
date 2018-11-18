@@ -130,7 +130,7 @@ public class XxlMqClientFactory  {
                 @Override
                 public void run() {
 
-                    while (XxlMqClientFactory.clientFactoryPoolStoped) {
+                    while (!XxlMqClientFactory.clientFactoryPoolStoped) {
                         try {
                             XxlMqMessage message = newMessageQueue.take();
                             if (message != null) {
