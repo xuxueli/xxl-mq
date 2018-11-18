@@ -1,7 +1,6 @@
 package com.xxl.mq.broker.controller.resolver;
 
 import com.xxl.mq.broker.core.result.ReturnT;
-import com.xxl.mq.client.util.JacksonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -44,7 +43,7 @@ public class WebExceptionResolver implements HandlerExceptionResolver {
 		if (isJson) {
 			try {
 				response.setContentType("application/json;charset=utf-8");
-				response.getWriter().print(JacksonUtil.writeValueAsString(errorResult));
+				response.getWriter().print("{\"code\":"+errorResult.getCode()+", \"msg\":\""+ errorResult.getMsg() +"\"}");
 			} catch (IOException e) {
 				logger.error(e.getMessage(), e);
 			}

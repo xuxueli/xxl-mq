@@ -400,6 +400,8 @@ XxlMqProducer.produce("消息主题", "消息数据, Map<String, String>格式")
         - consumer：服务发现-"锁 + 排序 + 消息pull"
             - zk>http："锁（废弃，无影响） + 排序（实时性底，分片冲突概率提升） + 消息pull（无影响）"
 - 移除spring强依赖；提供 framwless 示例；
+- 单机部署不需要ZK，集群部署依赖ZK；
+- 消息写磁盘，避免敏感消息丢失；
     
 
 ## 五、其他

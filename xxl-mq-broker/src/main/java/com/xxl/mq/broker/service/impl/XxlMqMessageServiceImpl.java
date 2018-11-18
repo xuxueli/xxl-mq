@@ -3,10 +3,9 @@ package com.xxl.mq.broker.service.impl;
 import com.xxl.mq.broker.core.result.ReturnT;
 import com.xxl.mq.broker.dao.IXxlMqMessageDao;
 import com.xxl.mq.broker.service.IXxlMqMessageService;
-import com.xxl.mq.client.message.XxlMqMessageStatus;
 import com.xxl.mq.client.message.XxlMqMessage;
+import com.xxl.mq.client.message.XxlMqMessageStatus;
 import com.xxl.mq.client.util.DateFormatUtil;
-import com.xxl.mq.client.util.JacksonUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -48,11 +47,8 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
             return new ReturnT<String>(500, "参数非法");
         }
         // data
-        if (data!=null && data.trim().length()>0){
-            Map<String,String> dataMap = JacksonUtil.readValue(data, Map.class);
-            if (dataMap==null) {
-                return new ReturnT<String>(500, "消息数据格式不合法");
-            }
+        if (data == null){
+            data = "";
         }
         // delayTime
         Date delayTime = null;
@@ -90,6 +86,7 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
 
     @Override
     public ReturnT<String> add(String name, String data, String delayTimeStr, String status, int retryCount) {
+
         // name
         if (name==null || name.trim().length()==0) {
             return new ReturnT<String>(500, "消息主题不可为空");
@@ -98,11 +95,8 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
             return new ReturnT<String>(500, "消息主题长度超长");
         }
         // data
-        if (data!=null && data.trim().length()>0){
-            Map<String,String> dataMap = JacksonUtil.readValue(data, Map.class);
-            if (dataMap==null) {
-                return new ReturnT<String>(500, "消息数据格式不合法");
-            }
+        if (data == null){
+            data = "";
         }
         // delayTime
         Date delayTime = null;
@@ -139,6 +133,7 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
         msg.setStatus(status);
         msg.setMsg(addMsg);
         msg.setRetryCount(retryCount);*/
+
 
         // TODO
 

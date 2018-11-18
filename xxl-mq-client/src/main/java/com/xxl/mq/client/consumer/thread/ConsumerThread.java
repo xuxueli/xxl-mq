@@ -3,11 +3,10 @@ package com.xxl.mq.client.consumer.thread;
 import com.xxl.mq.client.consumer.IMqConsumer;
 import com.xxl.mq.client.consumer.MqResult;
 import com.xxl.mq.client.consumer.annotation.MqConsumer;
+import com.xxl.mq.client.consumer.registry.ConsumerRegistryHelper;
 import com.xxl.mq.client.factory.XxlMqClientFactory;
 import com.xxl.mq.client.message.XxlMqMessage;
-import com.xxl.mq.client.consumer.registry.ConsumerRegistryHelper;
 import com.xxl.mq.client.util.DateFormatUtil;
-import com.xxl.mq.client.util.JacksonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +14,6 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -74,8 +72,7 @@ public class ConsumerThread extends Thread {
                             MqResult mqResult = null;
                             try {
                                 // consume data
-                                Map<String, String> data = JacksonUtil.readValue(msg.getData(), Map.class);
-                                mqResult = consumerHandler.consume(data);
+                                mqResult = consumerHandler.consume(msg.getData());
                                 if (mqResult == null) {
                                     mqResult = MqResult.FAIL;
                                 }
