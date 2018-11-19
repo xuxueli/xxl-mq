@@ -4,7 +4,6 @@ import com.xxl.mq.broker.core.result.ReturnT;
 import com.xxl.mq.broker.dao.IXxlMqMessageDao;
 import com.xxl.mq.broker.service.IXxlMqMessageService;
 import com.xxl.mq.client.consumer.annotation.MqConsumer;
-import com.xxl.mq.client.consumer.registry.ConsumerRegistryHelper;
 import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.message.XxlMqMessageStatus;
 import com.xxl.mq.client.util.DateFormatUtil;
@@ -65,7 +64,7 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
 
         if (mqMessage.getId() > 0) {
             // topic
-            if (mqMessage.getTopic()==null || mqMessage.getTopic().trim().length()==0 || mqMessage.getTopic().length()>512) {
+            if (mqMessage.getTopic()==null || mqMessage.getTopic().trim().length()==0 || mqMessage.getTopic().length()>255) {
                 return new ReturnT<String>(ReturnT.FAIL_CODE, "topic 格式非法." );
             }
 
@@ -73,7 +72,7 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
             if (mqMessage.getTopic()==null || mqMessage.getTopic().trim().length()==0) {
                 mqMessage.setTopic(MqConsumer.DEFAULT_GROUP);
             }
-            if (mqMessage.getTopic().length() > 256) {
+            if (mqMessage.getTopic().length() > 255) {
                 return new ReturnT<String>(ReturnT.FAIL_CODE, "group 格式非法." );
             }
         }
