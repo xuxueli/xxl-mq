@@ -1,7 +1,6 @@
 package com.xxl.mq.client.producer;
 
 import com.xxl.mq.client.consumer.annotation.MqConsumer;
-import com.xxl.mq.client.consumer.registry.ConsumerRegistryHelper;
 import com.xxl.mq.client.factory.XxlMqClientFactory;
 import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.message.XxlMqMessageStatus;
@@ -18,7 +17,7 @@ public class XxlMqProducer {
     // ---------------------- valid message ----------------------
 
     /**
-     * create message
+     * valid message
      *
      * @param mqMessage
      * @return
@@ -80,36 +79,16 @@ public class XxlMqProducer {
     /**
      * produce produce
      */
-    public static void produce(XxlMqMessage mqMessage){
+    public static void produce(XxlMqMessage mqMessage, boolean async){
         // valid
         validMessage(mqMessage);
 
         // send
-        XxlMqClientFactory.addMessages(mqMessage);
+        XxlMqClientFactory.addMessages(mqMessage, async);
     }
 
-    public static void produce(String topic, String group, String data, int retryCount, long shardingId, Date effectTime){
-        // make
-        XxlMqMessage mqMessage = new XxlMqMessage();
-        mqMessage.setTopic(topic);
-        mqMessage.setGroup(group);
-        mqMessage.setData(data);
-        mqMessage.setRetryCount(retryCount);
-        mqMessage.setShardingId(shardingId);
-        mqMessage.setEffectTime(effectTime);
-
-        // produce
-        produce(mqMessage);
-    }
-
-    public static void produce(String topic, String data){
-        // make
-        XxlMqMessage mqMessage = new XxlMqMessage();
-        mqMessage.setTopic(topic);
-        mqMessage.setData(data);
-
-        // produce
-        produce(mqMessage);
+    public static void produce(XxlMqMessage mqMessage){
+        produce(mqMessage, true);
     }
 
 
@@ -118,7 +97,7 @@ public class XxlMqProducer {
     /**
      * broadcast produce
      */
-    public static void broadcast(XxlMqMessage mqMessage){
+    public static void broadcast(XxlMqMessage mqMessage, boolean async){
         // valid
         validMessage(mqMessage);
 
@@ -133,8 +112,12 @@ public class XxlMqProducer {
             cloneMsg.setGroup(group);
 
             // produce clone msg
-            produce(cloneMsg);
+            produce(cloneMsg, true);
         }
+    }
+
+    public static void broadcast(XxlMqMessage mqMessage){
+        broadcast(mqMessage, true);
     }
 
 }

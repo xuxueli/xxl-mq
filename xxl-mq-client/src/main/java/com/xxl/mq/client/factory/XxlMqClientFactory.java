@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -102,8 +103,15 @@ public class XxlMqClientFactory  {
     public static ConsumerRegistryHelper getConsumerRegistryHelper() {
         return consumerRegistryHelper;
     }
-    public static void addMessages(XxlMqMessage mqMessage){
-        newMessageQueue.add(mqMessage);
+    public static void addMessages(XxlMqMessage mqMessage, boolean async){
+        if (async) {
+            // async queue, mult send
+            newMessageQueue.add(mqMessage);
+        } else {
+            // sync rpc, one send
+            xxlMqBroker.addMessages(Arrays.asList(mqMessage));
+        }
+
     }
 
     public void startBrokerService() {

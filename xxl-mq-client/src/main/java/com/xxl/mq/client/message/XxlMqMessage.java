@@ -25,6 +25,11 @@ public class XxlMqMessage implements Serializable {
 	public XxlMqMessage() {
 	}
 
+	public XxlMqMessage(String topic, String data) {
+		this.topic = topic;
+		this.data = data;
+	}
+
 	public XxlMqMessage(XxlMqMessage xxlMqMessage) {
 		this.id = xxlMqMessage.id;
 		this.topic = xxlMqMessage.topic;

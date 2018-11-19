@@ -30,7 +30,7 @@ public class IndexController {
 			/**
 			 * 并行消费
 			 */
-			XxlMqProducer.produce(topic, data);
+			XxlMqProducer.produce(new XxlMqMessage(topic, data));
 		} else if (type == 1) {
 			/**
 			 * 串行消费
@@ -45,11 +45,7 @@ public class IndexController {
 			/**
 			 * 广播消费
 			 */
-			XxlMqMessage mqMessage = new XxlMqMessage();
-			mqMessage.setTopic(topic);
-			mqMessage.setData(data);
-
-			XxlMqProducer.broadcast(mqMessage);
+			XxlMqProducer.broadcast(new XxlMqMessage(topic, data));
 		} else {
 			return "Type Error.";
 		}
