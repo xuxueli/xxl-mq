@@ -1,7 +1,5 @@
 package com.xxl.mq.broker.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xxl.mq.broker.core.model.MessageInfoVo;
 import com.xxl.mq.broker.core.model.XxlMqTopic;
 import com.xxl.mq.broker.core.result.ReturnT;
@@ -68,28 +66,10 @@ public class XxlMqTopicServiceImpl implements IXxlMqTopicService {
         }
 
 
-        // findMessageInfo
-        String messageInfo = findMessageInfo(xxlMqTopic.getTopic());
-        xxlMqTopic.setMessageInfo(messageInfo);
-
-
         int ret = xxlMqTopicDao.add(xxlMqTopic);
         return ret>0?ReturnT.SUCCESS:ReturnT.FAIL;
     }
 
-    private String findMessageInfo(String topic){
-        MessageInfoVo messageInfoVo = xxlMqMessageDao.findMessageInfo(topic);
-        if (messageInfoVo==null) {
-            messageInfoVo = new MessageInfoVo();
-        }
-        try {
-            String messageInfoJson = new ObjectMapper().writeValueAsString(messageInfoVo);
-            return messageInfoJson;
-        } catch (JsonProcessingException e) {
-            logger.error(e.getMessage(), e);
-            return "";
-        }
-    }
 
     @Override
     public ReturnT<String> update(XxlMqTopic xxlMqTopic) {
@@ -101,12 +81,6 @@ public class XxlMqTopicServiceImpl implements IXxlMqTopicService {
         if (xxlMqTopic.getTopic().length()>255) {
             return new ReturnT<>(ReturnT.FAIL_CODE, "消息主题长度非法[<255]");
         }
-
-
-        // findMessageInfo
-        String messageInfo = findMessageInfo(xxlMqTopic.getTopic());
-        xxlMqTopic.setMessageInfo(messageInfo);
-
 
         int ret = xxlMqTopicDao.update(xxlMqTopic);
         return ret>0?ReturnT.SUCCESS:ReturnT.FAIL;

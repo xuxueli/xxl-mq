@@ -6,7 +6,6 @@
 	<resultMap id="xxlMqTopic" type="com.xxl.mq.broker.core.model.XxlMqTopic" >
 		<result column="topic" property="topic" />
 		<result column="bizId" property="bizId" />
-	    <result column="messageInfo" property="messageInfo" />
 		<result column="author" property="author" />
 		<result column="alarmEmails" property="alarmEmails" />
 	</resultMap>
@@ -14,7 +13,6 @@
 	<sql id="Base_Column_List">
 		t.`topic`,
 		t.`bizId`,
-		t.`messageInfo`,
 		t.`author`,
 		t.`alarmEmails`
 	</sql>
@@ -57,14 +55,12 @@
 		INSERT INTO XXL_MQ_TOPIC (
 			`topic`,
 			`bizId`,
-			`messageInfo`,
 			`author`,
 			`alarmEmails`
 		) VALUES
 		(
 			#{xxlMqTopic.topic},
 			#{xxlMqTopic.bizId},
-			#{xxlMqTopic.messageInfo},
 			#{xxlMqTopic.author},
 			#{xxlMqTopic.alarmEmails}
 		)
@@ -74,7 +70,6 @@
 		UPDATE XXL_MQ_TOPIC AS t
 		SET
 			t.`bizId` = #{xxlMqTopic.bizId},
-			t.`messageInfo` = #{xxlMqTopic.messageInfo},
 			t.`author` = #{xxlMqTopic.author},
 			t.`alarmEmails` = #{xxlMqTopic.alarmEmails}
 		WHERE t.`topic` = #{xxlMqTopic.topic}

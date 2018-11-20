@@ -14,7 +14,6 @@ CREATE TABLE `XXL_MQ_BIZ` (
 CREATE TABLE `XXL_MQ_TOPIC` (
   `topic` varchar(255) NOT NULL,
   `bizId` int(11) NOT NULL DEFAULT '0',
-  `messageInfo` varchar(255) NOT NULL,
   `author` varchar(64) DEFAULT NULL,
   `alarmEmails` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`topic`)

@@ -2,7 +2,6 @@ package com.xxl.mq.broker.conf;
 
 import com.xxl.mq.broker.core.model.XxlMqTopic;
 import com.xxl.mq.broker.dao.IXxlMqMessageDao;
-import com.xxl.mq.broker.dao.IXxlMqTopicDao;
 import com.xxl.mq.broker.service.IXxlMqTopicService;
 import com.xxl.mq.client.broker.IXxlMqBroker;
 import com.xxl.mq.client.message.XxlMqMessage;
@@ -60,8 +59,6 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
     private IXxlMqMessageDao xxlMqMessageDao;
     @Resource
     private IXxlMqTopicService xxlMqTopicService;
-    @Resource
-    private IXxlMqTopicDao xxlMqTopicDao;
 
 
     // ---------------------- broker server ----------------------
@@ -96,7 +93,7 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
     public void initThead() throws Exception {
 
         /**
-         * async save message, mult thread
+         * async save message, mult thread  (by event)
          */
         for (int i = 0; i < 3; i++) {
             executorService.execute(new Runnable() {
@@ -136,7 +133,7 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
         }
 
         /**
-         * async callback message, mult thread
+         * async callback message, mult thread  (by event)
          */
         for (int i = 0; i < 3; i++) {
             executorService.execute(new Runnable() {
@@ -178,7 +175,7 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
 
 
         /**
-         * async retry message
+         * async retry message  (by cycle, 1/30s)
          */
         executorService.execute(new Runnable() {
             @Override
@@ -205,7 +202,7 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
         });
 
         /**
-         * async clean success message
+         * async clean success message  (by cycle, 1/>=3day)
          */
         if (logretentiondays >= 3) {
             executorService.execute(new Runnable() {
@@ -229,28 +226,13 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
         }
 
         /**
-         * auto find new topic from message
+         * auto find new topic from message  (by cycle, 1+N/1min)
          */
         executorService.execute(new Runnable() {
             @Override
             public void run() {
                 while (!executorStoped) {
                     try {
-
-                        // fresh old topic messageInfo
-                        int offset = 0;
-                        List<XxlMqTopic> xxlMqTopicList = xxlMqTopicDao.pageList(offset, 1000, -1, null);
-                        while (xxlMqTopicList!=null && xxlMqTopicList.size()>0) {
-                            // fill
-                            for (XxlMqTopic xxlMqTopic: xxlMqTopicList) {
-                                xxlMqTopicService.update(xxlMqTopic);
-                            }
-
-                            // cycle
-                            offset += 1000;
-                            xxlMqTopicList = xxlMqTopicDao.pageList(offset, 1000, -1, null);
-                        }
-
                         // find new topic, set messageInfo
                         List<String> topicList = xxlMqMessageDao.findNewTopicList();
                         if (topicList!=null && topicList.size()>0) {
