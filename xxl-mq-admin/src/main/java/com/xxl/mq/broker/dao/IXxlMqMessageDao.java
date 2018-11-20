@@ -55,4 +55,6 @@ public interface IXxlMqMessageDao {
 
     public MessageInfoVo findMessageInfo(@Param("topic") String topic);
 
+    public List<String> findNewTopicList(@Param("topic") int lateMinites);
+
 }

@@ -188,4 +188,13 @@
 		WHERE topic = #{topic}
 	</select>
 
+	<select id="findNewTopicList" parameterType="java.util.HashMap" >
+		select distinct topic
+		from XXL_MQ_MESSAGE
+		where topic not in (
+				select topic from XXL_MQ_TOPIC
+			)
+			and addTime <![CDATA[ >= ]]> DATE_SUB(NOW(), Interval #{logretentiondays} MINUTE )
+	</select>
+
 </mapper>

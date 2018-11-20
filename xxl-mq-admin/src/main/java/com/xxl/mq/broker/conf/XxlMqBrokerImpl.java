@@ -1,6 +1,8 @@
 package com.xxl.mq.broker.conf;
 
+import com.xxl.mq.broker.core.model.XxlMqTopic;
 import com.xxl.mq.broker.dao.IXxlMqMessageDao;
+import com.xxl.mq.broker.service.IXxlMqTopicService;
 import com.xxl.mq.client.broker.IXxlMqBroker;
 import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.message.XxlMqMessageStatus;
@@ -52,8 +54,11 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
     @Value("${xxl-mq.log.logretentiondays}")
     private int logretentiondays;
 
+
     @Resource
     private IXxlMqMessageDao xxlMqMessageDao;
+    @Resource
+    private IXxlMqTopicService xxlMqTopicService;
 
 
     // ---------------------- broker server ----------------------
@@ -221,7 +226,7 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
         }
 
         /**
-         * topic auto find
+         * auto find new topic from message
          */
         executorService.execute(new Runnable() {
             @Override
@@ -229,14 +234,20 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                 while (!executorStoped) {
                     try {
 
-                        // TODO, auto find topic
-
+                        List<String> topicList = xxlMqMessageDao.findNewTopicList(10);
+                        if (topicList!=null && topicList.size()>0) {
+                            for (String topic:topicList) {
+                                XxlMqTopic newTopic = new XxlMqTopic();
+                                newTopic.setTopic(topic);
+                                xxlMqTopicService.add(newTopic);
+                            }
+                        }
 
                     } catch (Exception e) {
                         logger.error(e.getMessage(), e);
                     }
                     try {
-                        TimeUnit.SECONDS.sleep(60);
+                        TimeUnit.MINUTES.sleep(1);
                     } catch (Exception e) {
                         logger.error(e.getMessage(), e);
                     }
