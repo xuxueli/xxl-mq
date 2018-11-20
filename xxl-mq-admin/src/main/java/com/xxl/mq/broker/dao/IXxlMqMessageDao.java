@@ -5,7 +5,9 @@ import com.xxl.mq.client.message.XxlMqMessage;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by xuxueli on 16/8/28.
@@ -55,6 +57,8 @@ public interface IXxlMqMessageDao {
 
     public MessageInfoVo findMessageInfo(@Param("topic") String topic);
 
-    public List<String> findNewTopicList(@Param("topic") int lateMinites);
+    public List<String> findNewTopicList();
+
+    public List<Map<String,Object>> messageCountByDay(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
 }

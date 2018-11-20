@@ -3,14 +3,22 @@ package com.xxl.mq.broker.controller;
 import com.xxl.mq.broker.controller.annotation.PermessionLimit;
 import com.xxl.mq.broker.controller.interceptor.PermissionInterceptor;
 import com.xxl.mq.broker.core.result.ReturnT;
+import com.xxl.mq.broker.service.IXxlMqMessageService;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
 
 /**
  * index controller
@@ -18,15 +26,28 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller
 public class IndexController {
-	public static final String CONFIG_FILE = "config.properties";
+
+
+	@Resource
+	private IXxlMqMessageService xxlMqMessageService;
+
 
 	@RequestMapping("/")
 	public String index(Model model, HttpServletRequest request) {
 
-		// TODO, dashboard
+		Map<String, Object> dashboardMap = xxlMqMessageService.dashboardInfo();
+		model.addAllAttributes(dashboardMap);
 
-		return "redirect:/mq";
+		return "index";
 	}
+
+	@RequestMapping("/chartInfo")
+	@ResponseBody
+	public ReturnT<Map<String, Object>> chartInfo(Date startDate, Date endDate) {
+		ReturnT<Map<String, Object>> chartInfo = xxlMqMessageService.chartInfo(startDate, endDate);
+		return chartInfo;
+	}
+
 
 	@RequestMapping("/toLogin")
 	@PermessionLimit(limit=false)
@@ -74,5 +95,13 @@ public class IndexController {
 	public String help() {
 		return "help";
 	}
-	
+
+
+	@InitBinder
+	public void initBinder(WebDataBinder binder) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		dateFormat.setLenient(false);
+		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
+	}
+
 }
