@@ -6,7 +6,6 @@ import com.xxl.mq.broker.core.result.ReturnT;
 import java.util.Map;
 
 /**
- * core job action for xxl-job
  * @author xuxueli 2016-5-28 15:30:33
  */
 public interface IXxlMqTopicService {

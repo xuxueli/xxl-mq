@@ -39,7 +39,7 @@ public class XxlMqBizServiceImpl implements IXxlMqBizService {
         if (xxlMqBiz.getBizName()==null || xxlMqBiz.getBizName().trim().length()==0) {
             return new ReturnT<>(ReturnT.FAIL_CODE, "业务线名称不可为空");
         }
-        if (!(xxlMqBiz.getBizName().trim().length()>=2 && xxlMqBiz.getBizName().trim().length()<=64)) {
+        if (!(xxlMqBiz.getBizName().trim().length()>=4 && xxlMqBiz.getBizName().trim().length()<=64)) {
             return new ReturnT<>(ReturnT.FAIL_CODE, "业务线名称长度非法[2-64]");
         }
 
@@ -64,7 +64,7 @@ public class XxlMqBizServiceImpl implements IXxlMqBizService {
         if (xxlMqBiz.getBizName()==null || xxlMqBiz.getBizName().trim().length()==0) {
             return new ReturnT<>(ReturnT.FAIL_CODE, "业务线名称不可为空");
         }
-        if (!(xxlMqBiz.getBizName().trim().length()>=2 && xxlMqBiz.getBizName().trim().length()<=64)) {
+        if (!(xxlMqBiz.getBizName().trim().length()>=4 && xxlMqBiz.getBizName().trim().length()<=64)) {
             return new ReturnT<>(ReturnT.FAIL_CODE, "业务线名称长度非法[2-64]");
         }
 
