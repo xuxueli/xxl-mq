@@ -59,7 +59,7 @@
 		</trim>
 	</select>
 
-	<delete id="delete" parameterType="java.lang.Integer">
+	<delete id="delete" parameterType="java.util.HashMap" >
 		DELETE FROM XXL_MQ_MESSAGE
 		WHERE id = #{id}
 	</delete>
@@ -176,5 +176,16 @@
 		WHERE status =  #{successStatus}
 			AND addTime <![CDATA[ < ]]> DATE_SUB(NOW(), Interval #{logretentiondays} DAY)
 	</delete>
+
+	<select id="findMessageInfo" resultType="com.xxl.mq.broker.core.model.MessageInfoVo" >
+		SELECT
+			COUNT(topic) as totalNum,
+			SUM(CASE WHEN (status = 'NEW' ) then 1 else 0 end) as newNum,
+			SUM(CASE WHEN (status = 'ING' ) then 1 else 0 end) as ingNum,
+			SUM(CASE WHEN (status = 'SUCCESS' ) then 1 else 0 end) as successNum,
+			SUM(CASE WHEN (status = 'FAIL' ) then 1 else 0 end) as failNum
+		FROM XXL_MQ_MESSAGE
+		WHERE topic = #{topic}
+	</select>
 
 </mapper>

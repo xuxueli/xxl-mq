@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.mq.broker.dao.IXxlMqBizDao" >
+	
+	<resultMap id="xxlMqBiz" type="com.xxl.mq.broker.core.model.XxlMqBiz" >
+		<result column="id" property="id" />
+		<result column="bizName" property="bizName" />
+	    <result column="order" property="order" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		t.`id`,
+		t.`bizName`,
+		t.`order`
+	</sql>
+	
+	<select id="findAll" parameterType="java.util.HashMap" resultMap="xxlMqBiz">
+		SELECT <include refid="Base_Column_List" />
+		FROM XXL_MQ_BIZ AS t
+		ORDER BY t.`order` ASC
+	</select>
+
+	<select id="load" parameterType="java.util.HashMap" resultMap="xxlMqBiz">
+		SELECT <include refid="Base_Column_List" />
+		FROM XXL_MQ_BIZ AS t
+		WHERE t.`id` = #{id}
+	</select>
+
+	<!-- "useGeneratedKeys" cannot work with "@Param" -->
+	<insert id="add" parameterType="com.xxl.mq.broker.core.model.XxlMqBiz" useGeneratedKeys="true" keyProperty="id" >
+		INSERT INTO XXL_MQ_BIZ (
+			`bizName`,
+			`order`
+		) VALUES
+		(
+			#{bizName},
+			#{order}
+		);
+	</insert>
+
+	<update id="update" parameterType="java.util.HashMap"  >
+		UPDATE XXL_MQ_BIZ AS t
+		SET
+			t.`bizName` = #{xxlMqBiz.bizName},
+			t.`order` = #{xxlMqBiz.order}
+		WHERE t.`id` = #{xxlMqBiz.id}
+	</update>
+
+	<delete id="delete" parameterType="java.util.HashMap" >
+		DELETE FROM XXL_MQ_BIZ
+		WHERE id = #{id}
+	</delete>
+
+</mapper>

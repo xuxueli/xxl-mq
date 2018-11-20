@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.mq.broker.dao.IXxlMqTopicDao" >
+	
+	<resultMap id="xxlMqTopic" type="com.xxl.mq.broker.core.model.XxlMqTopic" >
+		<result column="topic" property="topic" />
+		<result column="bizId" property="bizId" />
+	    <result column="messageInfo" property="messageInfo" />
+		<result column="author" property="author" />
+		<result column="alarmEmails" property="alarmEmails" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		t.`topic`,
+		t.`bizId`,
+		t.`messageInfo`,
+		t.`author`,
+		t.`alarmEmails`
+	</sql>
+
+	<select id="pageList" parameterType="java.util.HashMap" resultMap="xxlMqTopic">
+		SELECT <include refid="Base_Column_List" />
+		FROM XXL_MQ_TOPIC AS t
+		<trim prefix="WHERE" prefixOverrides="AND | OR" >
+			<if test="bizId gte 0">
+				AND t.bizId = #{bizId}
+			</if>
+			<if test="topic != null and topic != ''">
+				AND t.topic like CONCAT(CONCAT('%', #{topic}), '%')
+			</if>
+		</trim>
+		ORDER BY t.topic ASC
+		LIMIT #{offset}, #{pagesize}
+	</select>
+
+	<select id="pageListCount" parameterType="java.util.HashMap" resultType="int">
+		SELECT count(1)
+		FROM XXL_MQ_TOPIC AS t
+		<trim prefix="WHERE" prefixOverrides="AND | OR" >
+			<if test="bizId gte 0">
+				AND t.bizId = #{bizId}
+			</if>
+			<if test="topic != null and topic != ''">
+				AND t.topic like CONCAT(CONCAT('%', #{topic}), '%')
+			</if>
+		</trim>
+	</select>
+
+	<select id="load" parameterType="java.util.HashMap" resultMap="xxlMqTopic">
+		SELECT <include refid="Base_Column_List" />
+		FROM XXL_MQ_TOPIC AS t
+		WHERE t.`topic` = #{topic}
+	</select>
+
+	<insert id="add" parameterType="com.xxl.mq.broker.core.model.XxlMqBiz" >
+		INSERT INTO XXL_MQ_TOPIC (
+			`topic`,
+			`bizId`,
+			`messageInfo`,
+			`author`,
+			`alarmEmails`
+		) VALUES
+		(
+			#{xxlMqTopic.topic},
+			#{xxlMqTopic.bizId},
+			#{xxlMqTopic.messageInfo},
+			#{xxlMqTopic.author},
+			#{xxlMqTopic.alarmEmails}
+		)
+	</insert>
+
+	<update id="update" parameterType="com.xxl.mq.broker.core.model.XxlMqBiz"  >
+		UPDATE XXL_MQ_TOPIC AS t
+		SET
+			t.`bizId` = #{xxlMqTopic.bizId},
+			t.`messageInfo` = #{xxlMqTopic.messageInfo},
+			t.`author` = #{xxlMqTopic.author},
+			t.`alarmEmails` = #{xxlMqTopic.alarmEmails}
+		WHERE t.`topic` = #{xxlMqTopic.topic}
+	</update>
+
+	<delete id="delete" parameterType="java.util.HashMap" >
+		DELETE FROM XXL_MQ_TOPIC
+		WHERE topic = #{topic}
+	</delete>
+
+</mapper>

@@ -1,10 +1,10 @@
 package com.xxl.mq.broker.dao;
 
+import com.xxl.mq.broker.core.model.MessageInfoVo;
 import com.xxl.mq.client.message.XxlMqMessage;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -52,5 +52,7 @@ public interface IXxlMqMessageDao {
                                 @Param("appendLog") String appendLog);
 
     public int cleanSuccessMessage(@Param("successStatus") String successStatus, @Param("logretentiondays") int logretentiondays);
+
+    public MessageInfoVo findMessageInfo(@Param("topic") String topic);
 
 }
