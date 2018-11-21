@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public interface IXxlMqMessageService {
 
-    public Map<String,Object> pageList(int offset, int pagesize, String topic, String status);
+    public Map<String,Object> pageList(int offset, int pagesize, String topic, String status, Date addTimeStart, Date addTimeEnd);
 
     public ReturnT<String> delete(int id);
 

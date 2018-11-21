@@ -20,11 +20,15 @@ public interface IXxlMqMessageDao {
     public List<XxlMqMessage> pageList(@Param("offset") int offset,
                                        @Param("pagesize") int pagesize,
                                        @Param("topic") String topic,
-                                       @Param("status") String status);
+                                       @Param("status") String status,
+                                       @Param("addTimeStart") Date addTimeStart,
+                                       @Param("addTimeEnd") Date addTimeEnd);
     public int pageListCount(@Param("offset") int offset,
                              @Param("pagesize") int pagesize,
                              @Param("topic") String topic,
-                             @Param("status") String status);
+                             @Param("status") String status,
+                             @Param("addTimeStart") Date addTimeStart,
+                             @Param("addTimeEnd") Date addTimeEnd);
 
     public int delete(@Param("id") int id);
 

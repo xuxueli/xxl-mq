@@ -6,6 +6,8 @@
 	<@netCommon.commonStyle />
     <!-- DataTables -->
     <link rel="stylesheet" href="${request.contextPath}/static/adminlte/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+    <!-- daterangepicker -->
+    <link rel="stylesheet" href="${request.contextPath}/static/adminlte/bower_components/bootstrap-daterangepicker/daterangepicker.css">
 </head>
 <body class="hold-transition skin-blue sidebar-mini <#if cookieMap?exists && cookieMap["xxlmq_adminlte_settings"]?exists && "off" == cookieMap["xxlmq_adminlte_settings"].value >sidebar-collapse</#if>">
 <div class="wrapper">
@@ -25,13 +27,7 @@
 	    <section class="content">
 	    
 	    	<div class="row">
-	            <div class="col-xs-4">
-	              	<div class="input-group">
-	                	<span class="input-group-addon">主题</span>
-	                	<input type="text" class="form-control" id="topic" autocomplete="on" value="${topic!''}" placeholder="请输入消息主题，精确匹配" >
-	              	</div>
-	            </div>
-                <div class="col-xs-4">
+                <div class="col-xs-2">
                     <div class="input-group">
                         <span class="input-group-addon">状态</span>
                         <select class="form-control" id="status" >
@@ -42,11 +38,23 @@
                         </select>
                     </div>
                 </div>
-	            <div class="col-xs-2">
+                <div class="col-xs-4">
+                    <div class="input-group">
+                		<span class="input-group-addon">创建时间</span>
+                        <input type="text" class="form-control" id="filterTime" readonly >
+                    </div>
+                </div>
+                <div class="col-xs-3">
+                    <input type="text" class="form-control" id="topic" autocomplete="on" value="${topic!''}" placeholder="请输入消息主题，精确匹配" >
+                </div>
+	            <div class="col-xs-1">
 	            	<button class="btn btn-block btn-info" id="searchBtn">搜索</button>
 	            </div>
-                <div class="col-xs-2">
-                    <button class="btn btn-block btn-default" id="msg_add">+新增消息</button>
+                <div class="col-xs-2 pull-right">
+                    <div class="btn-group">
+                        <button class="btn btn-default pull-left" id="msg_add">添加</button>
+                        <button class="btn btn-default pull-left" id="msg_clean">清理</button>
+                    </div>
                 </div>
           	</div>
 	    	
@@ -185,8 +193,11 @@
 <script src="${request.contextPath}/static/plugins/jquery/jquery.validate.min.js"></script>
 <!-- moment -->
 <script src="${request.contextPath}/static/adminlte/bower_components/moment/moment.min.js"></script>
+<#-- inputmask -->
 <script src="${request.contextPath}/static/adminlte/plugins/input-mask/jquery.inputmask.js"></script>
 <script src="${request.contextPath}/static/adminlte/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+<!-- daterangepicker -->
+<script src="${request.contextPath}/static/adminlte/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
 
 <script src="${request.contextPath}/static/js/message.index.1.js"></script>
 

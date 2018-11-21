@@ -23,8 +23,8 @@ public class IXxlMqMessageDaoTest {
     // admin
     @Test
     public void adminTest(){
-        List<XxlMqMessage> pagelist = xxlMqMessageDao.pageList(0, 10, "t", XxlMqMessageStatus.NEW.name());
-        int pagecount = xxlMqMessageDao.pageListCount(0, 10, "t", XxlMqMessageStatus.NEW.name());
+        List<XxlMqMessage> pagelist = xxlMqMessageDao.pageList(0, 10, "t", XxlMqMessageStatus.NEW.name(), null, null);
+        int pagecount = xxlMqMessageDao.pageListCount(0, 10, "t", XxlMqMessageStatus.NEW.name(), null, null);
 
         XxlMqMessage message = pagelist.get(0);
         message.setData("d5");

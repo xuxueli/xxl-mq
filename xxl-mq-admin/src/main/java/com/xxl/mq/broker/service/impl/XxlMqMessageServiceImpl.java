@@ -32,10 +32,10 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
 
 
     @Override
-    public Map<String, Object> pageList(int offset, int pagesize, String topic, String status) {
+    public Map<String, Object> pageList(int offset, int pagesize, String topic, String status, Date addTimeStart, Date addTimeEnd) {
 
-        List<XxlMqMessage> list = xxlMqMessageDao.pageList(offset, pagesize, topic, status);
-        int total = xxlMqMessageDao.pageListCount(offset, pagesize, topic, status);
+        List<XxlMqMessage> list = xxlMqMessageDao.pageList(offset, pagesize, topic, status, addTimeStart, addTimeEnd);
+        int total = xxlMqMessageDao.pageListCount(offset, pagesize, topic, status, addTimeStart, addTimeEnd);
 
         Map<String, Object> maps = new HashMap<String, Object>();
         maps.put("data", list);
@@ -147,7 +147,7 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
         List<XxlMqBiz> bizList = xxlMqBizService.findAll();
         bizCount = bizList!=null?bizList.size():0;
         topicCount = xxlMqTopicDao.pageListCount(0, 1, -1, null);
-        messageCount = xxlMqMessageDao.pageListCount(0, 1, null, null);
+        messageCount = xxlMqMessageDao.pageListCount(0, 1, null, null, null, null);
 
         Map<String, Object> dashboardMap = new HashMap<String, Object>();
         dashboardMap.put("bizCount", bizCount);

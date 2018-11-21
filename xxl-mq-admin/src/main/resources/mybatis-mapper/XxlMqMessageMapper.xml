@@ -41,6 +41,12 @@
 			<if test="status != null and status != ''">
 				AND t.status = #{status}
 			</if>
+			<if test="addTimeStart != null">
+				AND t.addTime <![CDATA[ >= ]]> #{addTimeStart}
+			</if>
+			<if test="addTimeEnd != null">
+				AND t.addTime <![CDATA[ <= ]]> #{addTimeEnd}
+			</if>
 		</trim>
 		ORDER BY t.id DESC
 		LIMIT #{offset}, #{pagesize}
@@ -55,6 +61,12 @@
 			</if>
 			<if test="status != null and status != ''">
 				AND t.status = #{status}
+			</if>
+			<if test="addTimeStart != null">
+				AND t.addTime <![CDATA[ >= ]]> #{addTimeStart}
+			</if>
+			<if test="addTimeEnd != null">
+				AND t.addTime <![CDATA[ <= ]]> #{addTimeEnd}
 			</if>
 		</trim>
 	</select>

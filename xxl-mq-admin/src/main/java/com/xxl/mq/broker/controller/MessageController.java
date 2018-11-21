@@ -5,6 +5,7 @@ import com.xxl.mq.broker.core.result.ReturnT;
 import com.xxl.mq.broker.service.IXxlMqMessageService;
 import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.message.XxlMqMessageStatus;
+import com.xxl.mq.client.util.DateFormatUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -24,7 +27,7 @@ public class MessageController {
 
 	@Resource
 	private IXxlMqMessageService xxlMqMessageService;
-	
+
 	@RequestMapping("")
 	@PermessionLimit
 	public String index(Model model, String topic){
@@ -41,9 +44,24 @@ public class MessageController {
 	public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start,
 										@RequestParam(required = false, defaultValue = "10") int length,
 										String topic,
-										String status){
+										String status,
+										String filterTime){
 
-		return xxlMqMessageService.pageList(start, length, topic, status);
+		// parse param
+		Date addTimeStart = null;
+		Date addTimeEnd = null;
+		if (filterTime!=null && filterTime.trim().length()>0) {
+			String[] temp = filterTime.split(" - ");
+			if (temp!=null && temp.length == 2) {
+				try {
+					addTimeStart = DateFormatUtil.parseDateTime(temp[0]);
+					addTimeEnd = DateFormatUtil.parseDateTime(temp[1]);
+				} catch (ParseException e) {	}
+			}
+		}
+
+
+		return xxlMqMessageService.pageList(start, length, topic, status, addTimeStart, addTimeEnd);
 	}
 	
 	@RequestMapping("/delete")
