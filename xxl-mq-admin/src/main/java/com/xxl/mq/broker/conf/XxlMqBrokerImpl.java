@@ -175,7 +175,9 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
 
 
         /**
-         * async retry message  (by cycle, 1/30s)
+         * auto retry message  (by cycle, 1/30s)
+         *
+         * auto reset block timeout message   (by cycle, 1/30s)
          */
         executorService.execute(new Runnable() {
             @Override
@@ -192,6 +194,13 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                         logger.error(e.getMessage(), e);
                     }
                     try {
+                        // mult reset block message
+                        String appendLog = "<hr>》》》时间: "+ DateFormatUtil.getNowTime() +" <br>》》》操作: 消息阻塞，状态自动标记失败";
+                        xxlMqMessageDao.resetBlockTimeoutMessage(XxlMqMessageStatus.ING.name(), XxlMqMessageStatus.FAIL.name(), appendLog);
+                    } catch (Exception e) {
+                        logger.error(e.getMessage(), e);
+                    }
+                    try {
                         // sleep
                         TimeUnit.SECONDS.sleep(30);
                     } catch (Exception e) {
@@ -202,7 +211,7 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
         });
 
         /**
-         * async clean success message  (by cycle, 1/>=3day)
+         * auto clean success message  (by cycle, 1/>=3day)
          */
         if (logretentiondays >= 3) {
             executorService.execute(new Runnable() {

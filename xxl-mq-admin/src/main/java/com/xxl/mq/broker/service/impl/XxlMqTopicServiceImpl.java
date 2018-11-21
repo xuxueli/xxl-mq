@@ -1,6 +1,5 @@
 package com.xxl.mq.broker.service.impl;
 
-import com.xxl.mq.broker.core.model.MessageInfoVo;
 import com.xxl.mq.broker.core.model.XxlMqTopic;
 import com.xxl.mq.broker.core.result.ReturnT;
 import com.xxl.mq.broker.dao.IXxlMqMessageDao;
@@ -90,8 +89,8 @@ public class XxlMqTopicServiceImpl implements IXxlMqTopicService {
     public ReturnT<String> delete(String topic) {
 
         // valid, limit use
-        MessageInfoVo messageInfoVo = xxlMqMessageDao.findMessageInfo(topic);
-        if (messageInfoVo.getTotalNum()>0) {
+        int count = xxlMqMessageDao.pageListCount(0, 1, topic, null, null, null);
+        if (count > 0) {
             return new ReturnT<>(ReturnT.FAIL_CODE, "禁止删除，该Topic下存在消息");
         }
 
