@@ -6,7 +6,7 @@ import com.xxl.mq.broker.service.IXxlMqTopicService;
 import com.xxl.mq.client.broker.IXxlMqBroker;
 import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.message.XxlMqMessageStatus;
-import com.xxl.mq.client.util.DateFormatUtil;
+import com.xxl.mq.client.util.LogHelper;
 import com.xxl.rpc.registry.impl.ZkServiceRegistry;
 import com.xxl.rpc.remoting.net.NetEnum;
 import com.xxl.rpc.remoting.provider.XxlRpcProviderFactory;
@@ -185,7 +185,7 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                 while (!executorStoped) {
                     try {
                         // mult retry message
-                        String appendLog = "<hr>》》》时间: "+ DateFormatUtil.getNowTime() +" <br>》》》操作: 失败消息触发重试,状态自动还原,剩余重试次数减一";
+                        String appendLog = LogHelper.makeLog("失败重试", "状态自动还原,剩余重试次数减一");
                         int count = xxlMqMessageDao.updateRetryCount(XxlMqMessageStatus.FAIL.name(), XxlMqMessageStatus.NEW.name(), appendLog);
                         if (count > 0) {
                             logger.info("xxl-mq, retry message, count:{}", count);
@@ -195,7 +195,7 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                     }
                     try {
                         // mult reset block message
-                        String appendLog = "<hr>》》》时间: "+ DateFormatUtil.getNowTime() +" <br>》》》操作: 消息阻塞，状态自动标记失败";
+                        String appendLog = LogHelper.makeLog("阻塞清理", "状态自动标记失败");
                         int count = xxlMqMessageDao.resetBlockTimeoutMessage(XxlMqMessageStatus.RUNNING.name(), XxlMqMessageStatus.FAIL.name(), appendLog);
                         if (count > 0) {
                             logger.info("xxl-mq, retry block message, count:{}", count);

@@ -10,6 +10,7 @@ import com.xxl.mq.client.consumer.annotation.MqConsumer;
 import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.message.XxlMqMessageStatus;
 import com.xxl.mq.client.util.DateFormatUtil;
+import com.xxl.mq.client.util.LogHelper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -60,7 +61,8 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
         }
 
         // valid message
-        message.setLog("<hr>》》》时间:{"+ DateFormatUtil.getNowTime() +"}<br>》》》操作:人工手工修改");
+        String appendLog = LogHelper.makeLog("人工修改", "");
+        message.setLog(appendLog);
         ReturnT<String> validRet = validMessage(message);
         if (validRet != null) {
             return validRet;
@@ -133,7 +135,6 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
         }
 
         // log
-        //String appendLog = "<hr>操作: 消息新增<br>》》》消息生产者: " + IpUtil.getIp();
 
         return null;
     }
@@ -142,7 +143,8 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
     public ReturnT<String> add(XxlMqMessage message) {
 
         // valid message
-        message.setLog("<hr>》》》时间:{"+ DateFormatUtil.getNowTime() +"}<br>》》》操作:人工手工录入");
+        String appendLog = LogHelper.makeLog("人工录入", "");
+        message.setLog(appendLog);
         ReturnT<String> validRet = validMessage(message);
         if (validRet != null) {
             return validRet;

@@ -4,6 +4,7 @@ import com.xxl.mq.client.consumer.annotation.MqConsumer;
 import com.xxl.mq.client.factory.XxlMqClientFactory;
 import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.message.XxlMqMessageStatus;
+import com.xxl.mq.client.util.LogHelper;
 import com.xxl.rpc.util.IpUtil;
 
 import java.io.UnsupportedEncodingException;
@@ -82,7 +83,7 @@ public class XxlMqProducer {
         }
 
         // log
-        String appendLog = "<hr>操作: 消息新增<br>》》》消息生产者: " + IpUtil.getIp();
+        String appendLog = LogHelper.makeLog("生产消息", "消息生产者IP=" + IpUtil.getIp() );
         mqMessage.setLog(appendLog);
     }
 

@@ -7,14 +7,13 @@ import com.xxl.mq.client.consumer.registry.ConsumerRegistryHelper;
 import com.xxl.mq.client.factory.XxlMqClientFactory;
 import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.message.XxlMqMessageStatus;
-import com.xxl.mq.client.util.DateFormatUtil;
+import com.xxl.mq.client.util.LogHelper;
 import com.xxl.rpc.util.IpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
@@ -72,7 +71,7 @@ public class ConsumerThread extends Thread {
                             }
 
                             // lock message
-                            String appendLog_lock = "<hr>》》》时间: "+ DateFormatUtil.getNowTime() +" <br>》》》操作: 消息锁定<br>》》》注册信息: " + newActiveInfo.toString();
+                            String appendLog_lock = LogHelper.makeLog("锁定消息", ("消费者信息="+newActiveInfo.toString() ) );
                             int lockRet = XxlMqClientFactory.getXxlMqBroker().lockMessage(msg.getId(), appendLog_lock);
                             if (lockRet < 1) {
                                 continue;
@@ -114,7 +113,8 @@ public class ConsumerThread extends Thread {
                                 logger.error(e.getMessage(), e);
                                 mqResult = new MqResult(MqResult.FAIL_CODE, e.getMessage());
                             }
-                            String appendLog_consume = "<hr>》》》时间: "+ DateFormatUtil.getNowTime() +" <br>》》》操作: 消息消费"+ (mqResult.isSuccess()?"成功":"失败") +"<br>》》》<br>》》》日志:"+mqResult.getLog();
+
+                            String appendLog_consume = LogHelper.makeLog("消费消息", ("消费结果="+(mqResult.isSuccess()?"成功":"失败")+"；消费日志="+mqResult.getLog() ) );
 
                             // callback
                             msg.setStatus(mqResult.isSuccess()? XxlMqMessageStatus.SUCCESS.name():XxlMqMessageStatus.FAIL.name());
