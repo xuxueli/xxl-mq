@@ -204,7 +204,7 @@
 			DATE_FORMAT(addTime,'%Y-%m-%d') messageDay,
 			COUNT(id) as totalNum,
 			SUM(CASE WHEN (status = 'NEW' ) then 1 else 0 end) as newNum,
-			SUM(CASE WHEN (status = 'ING' ) then 1 else 0 end) as ingNum,
+			SUM(CASE WHEN (status = 'RUNNING' ) then 1 else 0 end) as ingNum,
 			SUM(CASE WHEN (status = 'SUCCESS' ) then 1 else 0 end) as successNum,
 			SUM(CASE WHEN (status = 'FAIL' ) then 1 else 0 end) as failNum
 		FROM XXL_MQ_MESSAGE

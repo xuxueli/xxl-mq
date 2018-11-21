@@ -5,7 +5,7 @@ package com.xxl.mq.client.message;
  */
 public enum XxlMqMessageStatus {
     NEW,
-    ING,
+    RUNNING,
     SUCCESS,
     FAIL;
 }

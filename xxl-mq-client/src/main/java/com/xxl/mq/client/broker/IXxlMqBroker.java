@@ -23,7 +23,7 @@ public interface IXxlMqBroker {
     public List<XxlMqMessage> pullNewMessage(String topic, String group, int consumerRank, int consumerTotal, int pagesize);
 
     /**
-     *  锁定消息，单个；XxlMqMessageStatus：NEW >>> ING
+     *  锁定消息，单个；XxlMqMessageStatus：NEW >>> RUNNING
      *
      *  @param id
      *  @param appendLog
@@ -32,7 +32,7 @@ public interface IXxlMqBroker {
     public int lockMessage(long id, String appendLog);
 
     /**
-     *  回调消息，批量；XxlMqMessageStatus：ING >>> SUCCESS/FAIL
+     *  回调消息，批量；XxlMqMessageStatus：RUNNING >>> SUCCESS/FAIL
      *
      * @param messages
      * @return

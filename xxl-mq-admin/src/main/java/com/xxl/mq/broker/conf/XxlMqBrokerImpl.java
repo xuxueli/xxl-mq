@@ -196,7 +196,7 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                     try {
                         // mult reset block message
                         String appendLog = "<hr>》》》时间: "+ DateFormatUtil.getNowTime() +" <br>》》》操作: 消息阻塞，状态自动标记失败";
-                        int count = xxlMqMessageDao.resetBlockTimeoutMessage(XxlMqMessageStatus.ING.name(), XxlMqMessageStatus.FAIL.name(), appendLog);
+                        int count = xxlMqMessageDao.resetBlockTimeoutMessage(XxlMqMessageStatus.RUNNING.name(), XxlMqMessageStatus.FAIL.name(), appendLog);
                         if (count > 0) {
                             logger.info("xxl-mq, retry block message, count:{}", count);
                         }
@@ -316,7 +316,7 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
 
     @Override
     public int lockMessage(long id, String appendLog) {
-        return xxlMqMessageDao.lockMessage(id, appendLog, XxlMqMessageStatus.NEW.name(), XxlMqMessageStatus.ING.name());
+        return xxlMqMessageDao.lockMessage(id, appendLog, XxlMqMessageStatus.NEW.name(), XxlMqMessageStatus.RUNNING.name());
     }
 
     @Override

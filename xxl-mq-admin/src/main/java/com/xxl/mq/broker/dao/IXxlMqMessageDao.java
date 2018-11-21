@@ -85,7 +85,7 @@ public interface IXxlMqMessageDao {
     public int clearMessage(@Param("topic") String topic, @Param("status") String status, @Param("type") int type);
 
     /**
-     * reset block timeout message, reset status from ING to FAIL
+     * reset block timeout message, reset status from RUNNING to FAIL
      */
     public int resetBlockTimeoutMessage(@Param("ingStatus") String ingStatus, @Param("failStatus") String failStatus, @Param("appendLog") String appendLog);
 

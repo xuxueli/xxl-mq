@@ -85,7 +85,7 @@ public class IXxlMqMessageDaoTest {
 
     @Test
     public void lockMessageTest(){
-        int ret = xxlMqMessageDao.lockMessage(1, "appendLog", XxlMqMessageStatus.NEW.name(), XxlMqMessageStatus.ING.name());
+        int ret = xxlMqMessageDao.lockMessage(1, "appendLog", XxlMqMessageStatus.NEW.name(), XxlMqMessageStatus.RUNNING.name());
     }
 
     @Test
