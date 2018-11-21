@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xxl.mq.broker.dao.IXxlMqBizDao" >
+<mapper namespace="com.xxl.mq.admin.dao.IXxlMqBizDao" >
 	
-	<resultMap id="xxlMqBiz" type="com.xxl.mq.broker.core.model.XxlMqBiz" >
+	<resultMap id="xxlMqBiz" type="com.xxl.mq.admin.core.model.XxlMqBiz" >
 		<result column="id" property="id" />
 		<result column="bizName" property="bizName" />
 	    <result column="order" property="order" />
@@ -28,7 +28,7 @@
 	</select>
 
 	<!-- "useGeneratedKeys" cannot work with "@Param" -->
-	<insert id="add" parameterType="com.xxl.mq.broker.core.model.XxlMqBiz" useGeneratedKeys="true" keyProperty="id" >
+	<insert id="add" parameterType="com.xxl.mq.admin.core.model.XxlMqBiz" useGeneratedKeys="true" keyProperty="id" >
 		INSERT INTO XXL_MQ_BIZ (
 			`bizName`,
 			`order`

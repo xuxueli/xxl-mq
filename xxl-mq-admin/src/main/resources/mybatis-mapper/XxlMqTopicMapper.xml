@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xxl.mq.broker.dao.IXxlMqTopicDao" >
+<mapper namespace="com.xxl.mq.admin.dao.IXxlMqTopicDao" >
 	
-	<resultMap id="xxlMqTopic" type="com.xxl.mq.broker.core.model.XxlMqTopic" >
+	<resultMap id="xxlMqTopic" type="com.xxl.mq.admin.core.model.XxlMqTopic" >
 		<result column="topic" property="topic" />
 		<result column="bizId" property="bizId" />
 		<result column="author" property="author" />
@@ -51,7 +51,7 @@
 		WHERE t.`topic` = #{topic}
 	</select>
 
-	<insert id="add" parameterType="com.xxl.mq.broker.core.model.XxlMqBiz" >
+	<insert id="add" parameterType="com.xxl.mq.admin.core.model.XxlMqBiz" >
 		INSERT INTO XXL_MQ_TOPIC (
 			`topic`,
 			`bizId`,
@@ -66,7 +66,7 @@
 		)
 	</insert>
 
-	<update id="update" parameterType="com.xxl.mq.broker.core.model.XxlMqBiz"  >
+	<update id="update" parameterType="com.xxl.mq.admin.core.model.XxlMqBiz"  >
 		UPDATE XXL_MQ_TOPIC AS t
 		SET
 			t.`bizId` = #{xxlMqTopic.bizId},
