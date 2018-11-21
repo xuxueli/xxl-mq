@@ -40,7 +40,7 @@
                 <div class="col-xs-4">
                     <div class="input-group">
                         <span class="input-group-addon">消息主题</span>
-                        <input type="text" class="form-control" id="topic" autocomplete="on" >
+                        <input type="text" class="form-control" id="topic" autocomplete="on" placeholder="请输入消息主题，模糊匹配" >
                     </div>
                 </div>
 	            <div class="col-xs-2">

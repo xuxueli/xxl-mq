@@ -19,24 +19,29 @@ import java.util.Map;
  * @author xuxueli 2016-3-19 13:56:28
  */
 @Controller
-@RequestMapping("/mq")
-public class MqController {
+@RequestMapping("/message")
+public class MessageController {
 
 	@Resource
 	private IXxlMqMessageService xxlMqMessageService;
 	
 	@RequestMapping("")
 	@PermessionLimit
-	public String index(Model model){
+	public String index(Model model, String topic){
+
 		model.addAttribute("status", XxlMqMessageStatus.values());
-		return "mq/mq.index";
+		model.addAttribute("topic", topic);
+
+		return "message/message.index";
 	}
 	
 	@RequestMapping("/pageList")
 	@ResponseBody
 	@PermessionLimit
 	public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start,
-		@RequestParam(required = false, defaultValue = "10") int length, String topic, String status){
+										@RequestParam(required = false, defaultValue = "10") int length,
+										String topic,
+										String status){
 
 		return xxlMqMessageService.pageList(start, length, topic, status);
 	}

@@ -6,7 +6,7 @@ $(function() {
 		"processing" : true, 
 	    "serverSide": true,
 		"ajax": {
-			url: base_url + "/mq/pageList",
+			url: base_url + "/message/pageList",
 	        data : function ( d ) {
 				var obj = {};
 				obj.start = d.start;
@@ -134,7 +134,7 @@ $(function() {
 
             $.ajax({
                 type : 'POST',
-                url : base_url + "/mq/delete",
+                url : base_url + "/message/delete",
                 data : {
                     "id"  : id
                 },
@@ -207,7 +207,7 @@ $(function() {
 			element.parent('div').append(error);
 		},
 		submitHandler : function(form) {
-			$.post(base_url + "/mq/add", $("#addModal .form").serialize(), function(data, status) {
+			$.post(base_url + "/message/add", $("#addModal .form").serialize(), function(data, status) {
 				if (data.code == "200") {
 					$('#addModal').modal('hide');
 
@@ -283,7 +283,7 @@ $(function() {
 			element.parent('div').append(error);
 		},
 		submitHandler : function(form) {
-			$.post(base_url + "/mq/update", $("#updateModal .form").serialize(), function(data, status) {
+			$.post(base_url + "/message/update", $("#updateModal .form").serialize(), function(data, status) {
 				if (data.code == "200") {
 					$('#updateModal').modal('hide');
 

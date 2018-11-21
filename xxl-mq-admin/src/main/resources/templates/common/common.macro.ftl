@@ -103,8 +103,8 @@
 				<li class="header">导航</li>
                 <li class="nav-click <#if pageName == "index">active</#if>" ><a href="${request.contextPath}/"><i class="fa fa-circle-o text-aqua"></i><span>运行报表</span></a></li>
                 <li class="nav-click <#if pageName == "topic">active</#if>" ><a href="${request.contextPath}/topic"><i class="fa fa-circle-o text-yellow"></i><span>消息主题</span></a></li>
-				<li class="nav-click <#if pageName == "mq">active</#if>" ><a href="${request.contextPath}/mq"><i class="fa fa-circle-o text-green"></i><span>消息记录</span></a></li>
-                <li class="nav-click <#if pageName == "biz">active</#if>" ><a href="${request.contextPath}/biz"><i class="fa fa-circle-o text-red"></i><span>业务线管理</span></a></li>
+				<li class="nav-click <#if pageName == "message">active</#if>" ><a href="${request.contextPath}/message"><i class="fa fa-circle-o text-green"></i><span>消息记录</span></a></li>
+                <li class="nav-click <#if pageName == "biz">active</#if>" ><a href="${request.contextPath}/biz"><i class="fa fa-circle-o text-red"></i><span>业务线</span></a></li>
                 <li class="nav-click <#if pageName == "help">active</#if>" ><a href="${request.contextPath}/help"><i class="fa fa-circle-o text-gray"></i><span>使用教程</span></a></li>
 			</ul>
 		</section>

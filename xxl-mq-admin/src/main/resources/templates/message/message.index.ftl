@@ -12,7 +12,7 @@
 	<!-- header -->
 	<@netCommon.commonHeader />
 	<!-- left -->
-	<@netCommon.commonLeft "mq" />
+	<@netCommon.commonLeft "message" />
 	
 	<!-- Content Wrapper. Contains page content -->
 	<div class="content-wrapper">
@@ -28,7 +28,7 @@
 	            <div class="col-xs-4">
 	              	<div class="input-group">
 	                	<span class="input-group-addon">主题</span>
-	                	<input type="text" class="form-control" id="topic" autocomplete="on" >
+	                	<input type="text" class="form-control" id="topic" autocomplete="on" value="${topic!''}" placeholder="请输入消息主题，精确匹配" >
 	              	</div>
 	            </div>
                 <div class="col-xs-4">
@@ -53,9 +53,6 @@
 			<div class="row">
 				<div class="col-xs-12">
 					<div class="box">
-			            <div class="box-header">
-			            	<h3 class="box-title">消息列表</h3>
-			            </div>
 			            <div class="box-body">
 			              	<table id="data_list" class="table table-bordered table-striped" width="100%" >
 				                <thead>
@@ -191,7 +188,7 @@
 <script src="${request.contextPath}/static/adminlte/plugins/input-mask/jquery.inputmask.js"></script>
 <script src="${request.contextPath}/static/adminlte/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
 
-<script src="${request.contextPath}/static/js/mq.index.1.js"></script>
+<script src="${request.contextPath}/static/js/message.index.1.js"></script>
 
 </body>
 </html>

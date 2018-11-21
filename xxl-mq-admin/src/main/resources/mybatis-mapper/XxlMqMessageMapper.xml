@@ -36,7 +36,7 @@
 		FROM XXL_MQ_MESSAGE AS t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
 			<if test="topic != null and topic != ''">
-				AND t.topic like CONCAT(CONCAT('%', #{topic}), '%')
+				AND t.topic = #{topic}
 			</if>
 			<if test="status != null and status != ''">
 				AND t.status = #{status}
@@ -51,7 +51,7 @@
 		FROM XXL_MQ_MESSAGE AS t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
 			<if test="topic != null and topic != ''">
-				AND t.topic like CONCAT(CONCAT('%', #{topic}), '%')
+				AND t.topic = #{topic}
 			</if>
 			<if test="status != null and status != ''">
 				AND t.status = #{status}

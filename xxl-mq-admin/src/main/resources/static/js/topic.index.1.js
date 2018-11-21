@@ -39,9 +39,13 @@ $(function() {
 	                			// data
                                 tableData['key'+row.topic] = row;
 
+                                var messageUrl = base_url + "/message?topic=" + row.topic;
+                                var messageBtn = '<button class="btn btn-info btn-xs" type="button" onclick="javascript:window.open(\'' + messageUrl + '\')" >消息</button>  ';
+
                                 // opt
 	                			var html = '<p topic="'+ row.topic +'" >'+
-										'<button class="btn btn-info btn-xs topic_update" type="button">编辑</button>  '+
+                                        messageBtn +
+                                        '<button class="btn btn-warning btn-xs topic_update" type="button">编辑</button>  '+
 										'<button class="btn btn-danger btn-xs topic_remove" type="button">删除</button>  '+
 								  		'</p>';
 	                			return html;
