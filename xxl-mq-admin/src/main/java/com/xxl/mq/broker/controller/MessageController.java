@@ -8,14 +8,11 @@ import com.xxl.mq.client.message.XxlMqMessageStatus;
 import com.xxl.mq.client.util.DateFormatUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
@@ -77,10 +74,37 @@ public class MessageController {
 	@RequestMapping("/update")
 	@ResponseBody
 	@PermessionLimit
-	public ReturnT<String> update(XxlMqMessage message, HttpServletRequest request, BindingResult bindingResult){
+	public ReturnT<String> update(long id,
+                                  String topic,
+                                  String group,
+                                  String data,
+                                  String status,
+                                  @RequestParam(required = false, defaultValue = "0") int retryCount,
+                                  @RequestParam(required = false, defaultValue = "0") long shardingId,
+                                  @RequestParam(required = false, defaultValue = "0") int timeout,
+                                  String effectTime){
 
-		// fillBindData
-		fillBindData(message, request, bindingResult);
+	    // effectTime
+	    Date effectTimeObj = null;
+        try {
+            if (effectTime!=null && effectTime.trim().length()>0) {
+                effectTimeObj = DateFormatUtil.parseDateTime(effectTime);
+            }
+        } catch (ParseException e) {
+            return new ReturnT<String>(ReturnT.FAIL_CODE, "生效时间格式非法");
+        }
+
+        // message
+        XxlMqMessage message = new XxlMqMessage();
+        message.setId(id);
+        message.setTopic(topic);
+        message.setGroup(group);
+        message.setData(data);
+        message.setStatus(status);
+        message.setRetryCount(retryCount);
+        message.setShardingId(shardingId);
+        message.setTimeout(timeout);
+        message.setEffectTime(effectTimeObj);
 
 		return xxlMqMessageService.update(message);
 	}
@@ -88,28 +112,38 @@ public class MessageController {
 	@RequestMapping("/add")
 	@ResponseBody
 	@PermessionLimit
-	public ReturnT<String> add(XxlMqMessage message, HttpServletRequest request, BindingResult bindingResult){
+	public ReturnT<String> add(String topic,
+                               String group,
+                               String data,
+                               String status,
+                               @RequestParam(required = false, defaultValue = "0") int retryCount,
+                               @RequestParam(required = false, defaultValue = "0") long shardingId,
+                               @RequestParam(required = false, defaultValue = "0") int timeout,
+                               String effectTime){
 
-		// fillBindData
-		fillBindData(message, request, bindingResult);
+        // effectTime
+        Date effectTimeObj = null;
+        try {
+            if (effectTime!=null && effectTime.trim().length()>0) {
+                effectTimeObj = DateFormatUtil.parseDateTime(effectTime);
+            }
+        } catch (ParseException e) {
+            return new ReturnT<String>(ReturnT.FAIL_CODE, "生效时间格式非法");
+        }
+
+        // message
+        XxlMqMessage message = new XxlMqMessage();
+        message.setTopic(topic);
+        message.setGroup(group);
+        message.setData(data);
+        message.setStatus(status);
+        message.setRetryCount(retryCount);
+        message.setShardingId(shardingId);
+        message.setTimeout(timeout);
+        message.setEffectTime(effectTimeObj);
 
 		return xxlMqMessageService.add(message);
 	}
 
-	private void fillBindData(XxlMqMessage message, HttpServletRequest request, BindingResult bindingResult){
-
-		if (bindingResult!=null && bindingResult.hasErrors()) {
-			// effectTime
-			FieldError effectTimeError = bindingResult.getFieldError("effectTime");
-			if (effectTimeError!=null
-					&& effectTimeError.getRejectedValue()!=null
-					&& effectTimeError.getRejectedValue().toString().trim().length()>0) {
-				try {
-					Date effectTime = DateFormatUtil.parseDateTime(effectTimeError.getRejectedValue().toString());
-					message.setEffectTime(effectTime);
-				} catch (ParseException e) { }
-			}
-		}
-	}
 
 }

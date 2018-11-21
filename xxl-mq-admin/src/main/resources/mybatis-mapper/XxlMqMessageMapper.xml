@@ -11,8 +11,8 @@
 	    <result column="status" property="status" />
 	    <result column="retryCount" property="retryCount" />
 	    <result column="shardingId" property="shardingId" />
-		<result column="effectTime" property="effectTime" />
 		<result column="timeout" property="timeout" />
+		<result column="effectTime" property="effectTime" />
 		<result column="addTime" property="addTime" />
 		<result column="log" property="log" />
 	</resultMap>
@@ -25,8 +25,8 @@
 		t.`status`,
 		t.`retryCount`,
 		t.`shardingId`,
-		t.`effectTime`,
 		t.`timeout`,
+		t.`effectTime`,
 		t.`addTime`,
 		t.`log`
 	</sql>
@@ -98,8 +98,8 @@
 			`status`,
 			`retryCount`,
 			`shardingId`,
-			`effectTime`,
 			`timeout`,
+			`effectTime`,
 			`addTime`,
 			`log`
 		) VALUES
@@ -111,8 +111,8 @@
 				#{messageItem.status},
 				#{messageItem.retryCount},
 				#{messageItem.shardingId},
-				#{messageItem.effectTime},
 				#{messageItem.timeout},
+				#{messageItem.effectTime},
 				NOW(),
 				#{messageItem.log}
 			)

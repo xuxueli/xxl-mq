@@ -70,7 +70,7 @@
                                         <th name="group" >分组</th>
                                         <th name="data" >数据</th>
                                         <th name="status" >状态</th>
-                                        <th name="retryCount" >剩余重试次数</th>
+                                        <th name="retryCount" >重试次数</th>
                                         <th name="shardingId" >分片ID</th>
                                         <th name="timeout" >超时时间</th>
                                         <th name="effectTime" >生效时间</th>

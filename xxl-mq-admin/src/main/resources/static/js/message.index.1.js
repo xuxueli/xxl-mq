@@ -62,25 +62,17 @@ $(function() {
 	    "ordering": false,
 	    //"scrollX": true,	// X轴滚动条，取消自适应
 	    "columns": [
-	                { data: 'id', visible: true},
+	                { data: 'id'},
 					{ data: 'topic'},
             		{ data: 'group'},
-					{
-						data: 'data',
-						render : function ( data, type, row ) {
-							if (data) {
-								return '<a href="javascript:;" class="showData" _id="'+ row.id +'" >查看<span style="display: none;">'+ data +'</span></spam></a>';
-							} else {
-								return '空';
-							}
-						}
-					},
+					{ data: 'data', visible: false},
             		{ data: 'status'},
             		{ data: 'retryCount'},
 					{ data: 'shardingId'},
 					{ data: 'timeout'},
 					{
 						data: 'effectTime',
+                        ordering: true,
 						render : function ( data, type, row ) {
 							var temp = data?moment(new Date(data)).format("YYYY-MM-DD HH:mm:ss"):"";
 							return temp;
@@ -95,6 +87,7 @@ $(function() {
 					},
 					{
 						data: 'log',
+                        ordering: true,
 						render : function ( data, type, row ) {
 							if (data) {
 								return '<a href="javascript:;" class="showLog" _id="'+ row.id +'">查看</spam></a>';
@@ -150,11 +143,6 @@ $(function() {
     var tableData = {};
 
 	// msg 弹框
-	$("#data_list").on('click', '.showData',function() {
-		var _id = $(this).attr('_id');
-		var row = tableData['key' + _id ];
-        ComAlertTec.show(row.data);
-	});
     $("#data_list").on('click', '.showLog',function() {
         var _id = $(this).attr('_id');
         var row = tableData['key' + _id ];
