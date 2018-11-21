@@ -295,15 +295,15 @@ $(function() {
 	// msg_update
 	$("#data_list").on('click', '.msg_update',function() {
 		var id = $(this).parent('p').attr("id");
-        var row = tableData['key' + _id ];
+        var row = tableData['key' + id ];
 
 		$("#updateModal .form input[name='id']").val( id );
 		$("#updateModal .form input[name='topic']").val( row.topic );
         $("#updateModal .form input[name='group']").val( row.group );
         $("#updateModal .form textarea[name='data']").val( row.data );
         $("#updateModal .form select[name='status']").find("option[value='" + row.status + "']").prop("selected",true);
-        $("#updateModal .form input[name='retryCount']").val( row.retryCount );retryCount
-        $("#updateModal .form input[name='shardingId']").val( row.shardingId );shardingId
+        $("#updateModal .form input[name='retryCount']").val( row.retryCount );
+        $("#updateModal .form input[name='shardingId']").val( row.shardingId );
         $("#updateModal .form input[name='timeout']").val( row.timeout );
         $("#updateModal .form input[name='effectTime']").val( moment(new Date(Number( row.effectTime ))).format("YYYY-MM-DD HH:mm:ss") );
 

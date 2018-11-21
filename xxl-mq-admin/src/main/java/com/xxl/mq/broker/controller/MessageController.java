@@ -9,11 +9,13 @@ import com.xxl.mq.client.util.DateFormatUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
@@ -75,15 +77,39 @@ public class MessageController {
 	@RequestMapping("/update")
 	@ResponseBody
 	@PermessionLimit
-	public ReturnT<String> update(XxlMqMessage message, BindingResult bindingResult){
+	public ReturnT<String> update(XxlMqMessage message, HttpServletRequest request, BindingResult bindingResult){
+
+		// fillBindData
+		fillBindData(message, request, bindingResult);
+
 		return xxlMqMessageService.update(message);
 	}
 
 	@RequestMapping("/add")
 	@ResponseBody
 	@PermessionLimit
-	public ReturnT<String> add(XxlMqMessage message, BindingResult bindingResult){
+	public ReturnT<String> add(XxlMqMessage message, HttpServletRequest request, BindingResult bindingResult){
+
+		// fillBindData
+		fillBindData(message, request, bindingResult);
+
 		return xxlMqMessageService.add(message);
+	}
+
+	private void fillBindData(XxlMqMessage message, HttpServletRequest request, BindingResult bindingResult){
+
+		if (bindingResult!=null && bindingResult.hasErrors()) {
+			// effectTime
+			FieldError effectTimeError = bindingResult.getFieldError("effectTime");
+			if (effectTimeError!=null
+					&& effectTimeError.getRejectedValue()!=null
+					&& effectTimeError.getRejectedValue().toString().trim().length()>0) {
+				try {
+					Date effectTime = DateFormatUtil.parseDateTime(effectTimeError.getRejectedValue().toString());
+					message.setEffectTime(effectTime);
+				} catch (ParseException e) { }
+			}
+		}
 	}
 
 }
