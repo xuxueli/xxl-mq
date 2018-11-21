@@ -15,6 +15,12 @@ public class LogHelper {
      */
     public static String makeLog(String logTitle, String logContent){
         String log = MessageFormat.format(LOG_TEMPLATE, DateFormatUtil.getNowTime(), logTitle, logContent);
+
+        // sub
+        if (log.length() > 20000) {
+            log = log.substring(0, 20000) + "...";
+        }
+
         return log;
     }
 

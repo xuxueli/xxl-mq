@@ -14,7 +14,6 @@ import com.xxl.mq.client.util.LogHelper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.*;
 
@@ -98,13 +97,7 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
         if (mqMessage.getData() == null) {
             mqMessage.setData("");
         }
-        int dataLength = 0;
-        try {
-            dataLength = mqMessage.getData().getBytes("UTF-8").length;
-        } catch (UnsupportedEncodingException e) {
-            dataLength = mqMessage.getData().length();
-        }
-        if (dataLength > 60000) {
+        if (mqMessage.getData().length() > 20000) {
             throw new IllegalArgumentException("xxl-mq, data length invalid[0~60000].");
         }
 

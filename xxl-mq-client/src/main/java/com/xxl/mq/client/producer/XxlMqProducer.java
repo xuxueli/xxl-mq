@@ -7,7 +7,6 @@ import com.xxl.mq.client.message.XxlMqMessageStatus;
 import com.xxl.mq.client.util.LogHelper;
 import com.xxl.rpc.util.IpUtil;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Set;
 
@@ -49,13 +48,7 @@ public class XxlMqProducer {
         if (mqMessage.getData() == null) {
             mqMessage.setData("");
         }
-        int dataLength = 0;
-        try {
-            dataLength = mqMessage.getData().getBytes("UTF-8").length;
-        } catch (UnsupportedEncodingException e) {
-            dataLength = mqMessage.getData().length();
-        }
-        if (dataLength > 60000) {
+        if (mqMessage.getData().length() > 20000) {
             throw new IllegalArgumentException("xxl-mq, data length invalid[0~60000].");
         }
 

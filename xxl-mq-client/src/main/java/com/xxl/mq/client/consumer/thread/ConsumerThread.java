@@ -8,6 +8,7 @@ import com.xxl.mq.client.factory.XxlMqClientFactory;
 import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.message.XxlMqMessageStatus;
 import com.xxl.mq.client.util.LogHelper;
+import com.xxl.mq.client.util.ThrowableUtil;
 import com.xxl.rpc.util.IpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,7 +112,8 @@ public class ConsumerThread extends Thread {
                                 }
                             } catch (Exception e) {
                                 logger.error(e.getMessage(), e);
-                                mqResult = new MqResult(MqResult.FAIL_CODE, e.getMessage());
+                                String errorMsg = ThrowableUtil.toString(e);
+                                mqResult = new MqResult(MqResult.FAIL_CODE, errorMsg);
                             }
 
                             String appendLog_consume = LogHelper.makeLog("消费消息", ("消费结果="+(mqResult.isSuccess()?"成功":"失败")+"；消费日志="+mqResult.getLog() ) );
