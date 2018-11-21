@@ -79,12 +79,13 @@
 	<update id="update" parameterType="java.util.HashMap" >
 		UPDATE XXL_MQ_MESSAGE AS t
 		SET
+			t.`group` = #{message.group},
 			t.`data` = #{message.data},
 			t.`status` = #{message.status},
 			t.`retryCount` = #{message.retryCount},
 			t.`shardingId` = #{message.shardingId},
-			t.`effectTime` = #{message.effectTime},
 			t.`timeout` = #{message.timeout},
+			t.`effectTime` = #{message.effectTime},
 			t.`log` = CONCAT(t.`log`, #{message.log})
 		WHERE t.`id` = #{message.id}
 	</update>

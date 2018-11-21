@@ -34,6 +34,12 @@ $(function() {
         endDate: rangesConf['最近一月'][1]
     });
 
+	// 时间格式化
+    $(".inputmask").inputmask({
+        mask: "y-m-d h:s:s",
+        hourFormat: "24",
+        placeholder: "yyyy-mm-dd hh:mm:ss"
+    });
 
 	// init date tables
 	var dataTable = $("#data_list").dataTable({
@@ -185,7 +191,7 @@ $(function() {
                         layer.open({
                             title: "系统提示",
                             btn: [ "确认" ],
-                            content: "消息删除成功" ,
+                            content: "删除成功" ,
                             icon: '1',
                             end: function(layero, index){
                                 dataTable.fnDraw(false);
@@ -195,7 +201,7 @@ $(function() {
                         layer.open({
                             title: "系统提示",
                             btn: [ "确认" ],
-                            content: (data.msg || "消息删除失败" ),
+                            content: (data.msg || "删除失败" ),
                             icon: '2'
                         });
                     }
@@ -207,7 +213,7 @@ $(function() {
 
 	// msg_add
 	$('#msg_add').on('click', function(){
-		$("#addModal .form input[name='effectTime']").val( moment(new Date()).format("YYYY-MM-DD HH:mm:ss") );
+		//$("#addModal .form input[name='effectTime']").val( moment(new Date()).format("YYYY-MM-DD HH:mm:ss") );
 		$('#addModal').modal({backdrop: false, keyboard: false}).modal('show');
 	});
 	var addModalValidate = $("#addModal .form").validate({
@@ -215,24 +221,20 @@ $(function() {
 		errorClass : 'help-block',
 		focusInvalid : true,
 		rules : {
-			name : {
-				required : true ,
-				minlength: 10,
-				maxlength: 250
-			},
+            topic : {
+                required : true ,
+                rangelength:[4,255]
+            },
 			retryCount : {
-				required:true,
 				digits : true
 			}
 		},
 		messages : {
-			name : {
-				required :'请输入"消息主题".'  ,
-				minlength:'"消息主题"不应低于4位',
-				maxlength:'"消息主题"不应超过250位'
-			},
+            topic : {
+                required :'请输入"消息主题".'  ,
+                rangelength: '消息主题长度限制为[4~255]'
+            },
 			retryCount : {
-				required:"请输入重试次数",
 				digits :'请输入"正整数".'
 			}
 		},
@@ -273,14 +275,8 @@ $(function() {
 	});
 	$("#addModal").on('hide.bs.modal', function () {
 		$("#addModal .form")[0].reset();
-	});
-
-
-	// 时间格式化
-	$("[data-mask]").inputmask({
-		mask: "y-m-d h:s:s",
-		placeholder: "yyyy-mm-dd hh:mm:ss",
-		hourFormat: "24"
+		addModalValidate.resetForm();
+		$("#addModal .form .form-group").removeClass("has-error");
 	});
 
 	// msg_update
@@ -349,6 +345,8 @@ $(function() {
 	});
 	$("#updateModal").on('hide.bs.modal', function () {
 		$("#updateModal .form")[0].reset();
+		updateModalValidate.resetForm();
+		$("#updateModal .form .form-group").removeClass("has-error");
 	});
 	
 });

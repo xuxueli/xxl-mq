@@ -8,6 +8,7 @@ import com.xxl.mq.client.message.XxlMqMessageStatus;
 import com.xxl.mq.client.util.DateFormatUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -81,7 +82,7 @@ public class MessageController {
 	@RequestMapping("/add")
 	@ResponseBody
 	@PermessionLimit
-	public ReturnT<String> add(XxlMqMessage message){
+	public ReturnT<String> add(XxlMqMessage message, BindingResult bindingResult){
 		return xxlMqMessageService.add(message);
 	}
 

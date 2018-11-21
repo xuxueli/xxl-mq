@@ -100,25 +100,21 @@
                 <div class="modal-body">
                     <form class="form-horizontal form" role="form" >
                         <div class="form-group">
-                            <label for="lastname" class="col-sm-3 control-label">消息主题</label>
+                            <label for="lastname" class="col-sm-3 control-label">消息主题 <font color="red">*</font></label>
                             <div class="col-sm-9"><input type="text" class="form-control" name="topic" placeholder="请输入消息主题" ></div>
                         </div>
                         <div class="form-group">
-                            <label for="lastname" class="col-sm-3 control-label">消息分组</label>
+                            <label for="lastname" class="col-sm-3 control-label">消息分组 *</label>
                             <div class="col-sm-9"><input type="text" class="form-control" name="group" placeholder="请输入消息分组，为空则为默认分组" ></div>
                         </div>
                         <div class="form-group">
-                            <label for="lastname" class="col-sm-3 control-label">消息数据</label>
+                            <label for="lastname" class="col-sm-3 control-label">消息数据 *</label>
                             <div class="col-sm-9">
-                                <textarea class="textarea" name="data" maxlength="1024" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                                <textarea class="textarea" name="data" maxlength="60000" placeholder="请输入消息数据" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="lastname" class="col-sm-3 control-label">Delay</label>
-                            <div class="col-sm-9"><input type="text" class="form-control" name="effectTime" data-inputmask="'alias': 'dd/mm/yyyy hh:mm xm'" data-mask ></div>
-                        </div>
-                        <div class="form-group">
-                            <label for="lastname" class="col-sm-3 control-label">状态</label>
+                            <label for="lastname" class="col-sm-3 control-label">状态 *</label>
                             <div class="col-sm-9">
                                 <select class="form-control" name="status">
                                 <#list status as item>
@@ -128,12 +124,25 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="lastname" class="col-sm-3 control-label">剩余重试次数</label>
-                            <div class="col-sm-9"><input type="text" class="form-control" name="retryCount" value="0" ></div>
+                            <label for="lastname" class="col-sm-3 control-label">重试次数 *</label>
+                            <div class="col-sm-9"><input type="text" class="form-control" name="retryCount" placeholder="请输入重试次数，大于零时生效" ></div>
                         </div>
                         <div class="form-group">
+                            <label for="lastname" class="col-sm-3 control-label">分片ID *</label>
+                            <div class="col-sm-9"><input type="text" class="form-control" name="shardingId" placeholder="请输入分片ID，大于零时生效" ></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-3 control-label">超时时间 *</label>
+                            <div class="col-sm-9"><input type="text" class="form-control" name="timeout" placeholder="请输入超时时间，单位秒，大于零时生效" ></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-3 control-label">生效时间 *</label>
+                            <div class="col-sm-9"><input type="text" class="form-control inputmask" name="effectTime" placeholder="请输入生效时间，为空则立即执行" ></div>
+                        </div>
+
+                        <div class="form-group">
                             <div class="col-sm-offset-3 col-sm-9">
-                                <button type="submit" class="btn btn-primary"  >更新</button>
+                                <button type="submit" class="btn btn-primary"  >保存</button>
                                 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
                             </div>
                         </div>
@@ -153,28 +162,44 @@
                 <div class="modal-body">
                     <form class="form-horizontal form" role="form" >
                         <div class="form-group">
-                            <label for="lastname" class="col-sm-3 control-label">数据</label>
+                            <label for="lastname" class="col-sm-3 control-label">消息主题 <font color="red">*</font></label>
+                            <div class="col-sm-9"><input type="text" class="form-control" name="topic" maxlength="255" placeholder="请输入消息主题" readonly ></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-3 control-label">消息分组 *</label>
+                            <div class="col-sm-9"><input type="text" class="form-control" name="group" maxlength="255" placeholder="请输入消息分组，为空则为默认分组" ></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-3 control-label">消息数据 *</label>
                             <div class="col-sm-9">
-                                <textarea class="textarea" name="data" maxlength="2048" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                                <textarea class="textarea" name="data" maxlength="60000" placeholder="请输入消息数据" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="lastname" class="col-sm-3 control-label">Delay</label>
-                            <div class="col-sm-9"><input type="text" class="form-control" name="effectTime" data-inputmask="'alias': 'dd/mm/yyyy hh:mm xm'" data-mask ></div>
-                        </div>
-                        <div class="form-group">
-                            <label for="lastname" class="col-sm-3 control-label">状态</label>
+                            <label for="lastname" class="col-sm-3 control-label">状态 *</label>
                             <div class="col-sm-9">
                                 <select class="form-control" name="status">
-									<#list status as item>
+                                <#list status as item>
                                     <option value="${item}">${item}</option>
-									</#list>
+                                </#list>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="lastname" class="col-sm-3 control-label">剩余重试次数</label>
-                            <div class="col-sm-9"><input type="text" class="form-control" name="retryCount" value="0" ></div>
+                            <label for="lastname" class="col-sm-3 control-label">重试次数 *</label>
+                            <div class="col-sm-9"><input type="text" class="form-control" name="retryCount" maxlength="4" placeholder="请输入重试次数，大于零时生效" ></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-3 control-label">分片ID *</label>
+                            <div class="col-sm-9"><input type="text" class="form-control" name="shardingId" placeholder="请输入分片ID，大于零时生效" ></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-3 control-label">超时时间 *</label>
+                            <div class="col-sm-9"><input type="text" class="form-control" name="timeout" placeholder="请输入超时时间，单位秒，大于零时生效" ></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-3 control-label">生效时间 *</label>
+                            <div class="col-sm-9"><input type="text" class="form-control inputmask" name="effectTime" placeholder="请输入生效时间，为空则立即执行" ></div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-3 col-sm-9">
