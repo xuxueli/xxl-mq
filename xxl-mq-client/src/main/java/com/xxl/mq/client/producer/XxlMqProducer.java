@@ -28,16 +28,19 @@ public class XxlMqProducer {
         }
 
         // topic
-        if (mqMessage.getTopic()==null || mqMessage.getTopic().trim().length()==0 || mqMessage.getTopic().length()>255) {
-            throw new IllegalArgumentException("xxl-mq, topic invalid.");
+        if (mqMessage.getTopic()==null || mqMessage.getTopic().trim().length()==0) {
+            throw new IllegalArgumentException("xxl-mq, topic empty.");
+        }
+        if (!(mqMessage.getTopic().length()>=4 && mqMessage.getTopic().length()<=255)) {
+            throw new IllegalArgumentException("xxl-mq, topic length invalid[4~255].");
         }
 
         // group
         if (mqMessage.getGroup()==null || mqMessage.getGroup().trim().length()==0) {
             mqMessage.setGroup(MqConsumer.DEFAULT_GROUP);
         }
-        if (mqMessage.getGroup().length() > 255) {
-            throw new IllegalArgumentException("xxl-mq, group invalid.");
+        if (!(mqMessage.getGroup().length()>=4 && mqMessage.getGroup().length()<=255)) {
+            throw new IllegalArgumentException("xxl-mq, group length invalid[4~255].");
         }
 
         // data

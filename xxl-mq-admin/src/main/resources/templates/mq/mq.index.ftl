@@ -57,7 +57,7 @@
 			            	<h3 class="box-title">消息列表</h3>
 			            </div>
 			            <div class="box-body">
-			              	<table id="data_list" class="table table-bordered table-striped">
+			              	<table id="data_list" class="table table-bordered table-striped" width="100%" >
 				                <thead>
 					            	<tr>
 					                	<th name="id" >ID</th>

@@ -55,8 +55,8 @@ public class XxlMqTopicServiceImpl implements IXxlMqTopicService {
         if (xxlMqTopic.getTopic()==null || xxlMqTopic.getTopic().trim().length()==0) {
             return new ReturnT<>(ReturnT.FAIL_CODE, "消息主题不可为空");
         }
-        if (xxlMqTopic.getTopic().length()>255) {
-            return new ReturnT<>(ReturnT.FAIL_CODE, "消息主题长度非法[<255]");
+        if (!(xxlMqTopic.getTopic().length()>=4 && xxlMqTopic.getTopic().length()<=255)) {
+            return new ReturnT<>(ReturnT.FAIL_CODE, "消息主题长度非法[4~255]");
         }
 
         // exist
@@ -78,8 +78,8 @@ public class XxlMqTopicServiceImpl implements IXxlMqTopicService {
         if (xxlMqTopic.getTopic()==null || xxlMqTopic.getTopic().trim().length()==0) {
             return new ReturnT<>(ReturnT.FAIL_CODE, "消息主题不可为空");
         }
-        if (xxlMqTopic.getTopic().length()>255) {
-            return new ReturnT<>(ReturnT.FAIL_CODE, "消息主题长度非法[<255]");
+        if (!(xxlMqTopic.getTopic().length()>=4 && xxlMqTopic.getTopic().length()<=255)) {
+            return new ReturnT<>(ReturnT.FAIL_CODE, "消息主题长度非法[4~255]");
         }
 
         int ret = xxlMqTopicDao.update(xxlMqTopic);
