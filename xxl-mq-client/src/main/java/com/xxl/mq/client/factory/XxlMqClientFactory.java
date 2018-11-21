@@ -96,6 +96,7 @@ public class XxlMqClientFactory  {
     private static IXxlMqBroker xxlMqBroker;
     private static ConsumerRegistryHelper consumerRegistryHelper = null;
     private static LinkedBlockingQueue<XxlMqMessage> newMessageQueue = new LinkedBlockingQueue<>();
+    private static LinkedBlockingQueue<XxlMqMessage> callbackMessageQueue = new LinkedBlockingQueue<>();
 
     public static IXxlMqBroker getXxlMqBroker() {
         return xxlMqBroker;
@@ -112,6 +113,9 @@ public class XxlMqClientFactory  {
             xxlMqBroker.addMessages(Arrays.asList(mqMessage));
         }
 
+    }
+    public static void callbackMessage(XxlMqMessage mqMessage){
+        callbackMessageQueue.add(mqMessage);
     }
 
     public void startBrokerService() {
@@ -135,8 +139,8 @@ public class XxlMqClientFactory  {
         xxlMqBroker = (IXxlMqBroker) new XxlRpcReferenceBean(NetEnum.NETTY, Serializer.SerializeEnum.HESSIAN.getSerializer(), CallType.SYNC,
                 IXxlMqBroker.class, null, 10000, null, null, null).getObject();
 
-        //
-        for (int i = 0; i < 10; i++) {
+        // async + mult, addMessages
+        for (int i = 0; i < 3; i++) {
             clientFactoryThreadPool.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -165,6 +169,38 @@ public class XxlMqClientFactory  {
                 }
             });
         }
+
+        // async + mult, addMessages
+        for (int i = 0; i < 3; i++) {
+            clientFactoryThreadPool.execute(new Runnable() {
+                @Override
+                public void run() {
+
+                    while (!XxlMqClientFactory.clientFactoryPoolStoped) {
+                        try {
+                            XxlMqMessage message = callbackMessageQueue.take();
+                            if (message != null) {
+                                // load
+                                List<XxlMqMessage> messageList = new ArrayList<>();
+                                messageList.add(message);
+
+                                List<XxlMqMessage> otherMessageList = new ArrayList<>();
+                                int drainToNum = callbackMessageQueue.drainTo(otherMessageList, 100);
+                                if (drainToNum > 0) {
+                                    messageList.addAll(otherMessageList);
+                                }
+
+                                // save
+                                xxlMqBroker.callbackMessages(messageList);
+                            }
+                        } catch (Exception e) {
+                            logger.error(e.getMessage(), e);
+                        }
+                    }
+                }
+            });
+        }
+
 
     }
     public void destoryBrokerService() throws Exception {

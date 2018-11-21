@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -59,6 +60,8 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
     private IXxlMqMessageDao xxlMqMessageDao;
     @Resource
     private IXxlMqTopicService xxlMqTopicService;
+    @Resource
+    private JavaMailSender mailSender;  // TODO, alarm by callback queue
 
 
     // ---------------------- broker server ----------------------

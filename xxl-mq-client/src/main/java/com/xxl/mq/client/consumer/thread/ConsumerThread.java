@@ -13,7 +13,6 @@ import com.xxl.rpc.util.IpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
@@ -121,7 +120,7 @@ public class ConsumerThread extends Thread {
                             // callback
                             msg.setStatus(mqResult.isSuccess()? XxlMqMessageStatus.SUCCESS.name():XxlMqMessageStatus.FAIL.name());
                             msg.setLog(appendLog_consume);
-                            XxlMqClientFactory.getXxlMqBroker().callbackMessages(Arrays.asList(msg));
+                            XxlMqClientFactory.callbackMessage(msg);
 
                             logger.info(">>>>>>>>>>> xxl-mq, consumer finish,  topic:{}, group:{}, ActiveInfo={}", mqConsumer.topic(), mqConsumer.group(), activeInfo.toString());
                         }
