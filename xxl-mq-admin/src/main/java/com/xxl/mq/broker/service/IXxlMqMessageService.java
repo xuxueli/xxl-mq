@@ -23,4 +23,6 @@ public interface IXxlMqMessageService {
 
     public ReturnT<Map<String,Object>> chartInfo(Date startDate, Date endDate);
 
+    public ReturnT<String> clearMessage(String topic, String status, int type);
+
 }

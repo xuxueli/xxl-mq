@@ -222,4 +222,50 @@
 		GROUP BY messageDay;
     </select>
 
+    <delete id="clearMessage" >
+        delete from XXL_MQ_MESSAGE
+        where topic = #{topic}
+            <if test="status != null and status != ''">
+                AND `status` = #{status}
+            </if>
+            <if test="type == 1" >
+                AND addTime <![CDATA[ <= ]]> DATE_SUB(NOW(), Interval 1 MONTH )
+            </if>
+            <if test="type == 2" >
+                AND addTime <![CDATA[ <= ]]> DATE_SUB(NOW(), Interval 3 MONTH )
+            </if>
+            <if test="type == 3" >
+                AND addTime <![CDATA[ <= ]]> DATE_SUB(NOW(), Interval 6 MONTH )
+            </if>
+            <if test="type == 4" >
+                AND addTime <![CDATA[ <= ]]> DATE_SUB(NOW(), Interval 12 MONTH )
+            </if>
+            <if test="type == 5 or type == 6 or type == 7" >
+                AND id NOT in(
+                    SELECT id FROM(
+                        SELECT t.id FROM XXL_MQ_MESSAGE AS t
+                        where t.topic = #{topic}
+                            <if test="status != null and status != ''">
+                                AND t.status = #{status}
+                            </if>
+                        ORDER BY t.id desc
+                        <if test="type == 5" >
+                            LIMIT 1000
+                        </if>
+                        <if test="type == 6" >
+                            LIMIT 10000
+                        </if>
+                        <if test="type == 7" >
+                            LIMIT 100000
+                        </if>
+                    ) t1
+                )
+            </if>
+            <!--
+            <if test="type == 8" >
+            </if>
+            -->
+
+    </delete>
+
 </mapper>

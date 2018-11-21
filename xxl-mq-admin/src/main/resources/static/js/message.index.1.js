@@ -202,6 +202,10 @@ $(function() {
 	// msg_add
 	$('#msg_add').on('click', function(){
 		//$("#addModal .form input[name='effectTime']").val( moment(new Date()).format("YYYY-MM-DD HH:mm:ss") );
+
+        var topic = $('#topic').val();
+        $("#addModal .form input[name='topic']").val( topic );
+
 		$('#addModal').modal({backdrop: false, keyboard: false}).modal('show');
 	});
 	var addModalValidate = $("#addModal .form").validate({
@@ -372,6 +376,43 @@ $(function() {
 		updateModalValidate.resetForm();
 		$("#updateModal .form .form-group").removeClass("has-error");
 	});
+
+
+	// clearMessage
+    $('#clearMessage').on('click', function(){
+
+        var topic = $('#topic').val();
+
+        $('#clearMessageModal input[name=topic]').val(topic);
+        $('#clearMessageModal').modal('show');
+
+    });
+    $("#clearMessageModal .ok").on('click', function(){
+        $.post(base_url + "/message/clearMessage",  $("#clearMessageModal .form").serialize(), function(data, status) {
+            if (data.code == "200") {
+                $('#clearMessageModal').modal('hide');
+                layer.open({
+                    title: "系统提示",
+                    btn: [ "确认" ],
+                    content: "操作成功" ,
+                    icon: '1',
+                    end: function(layero, index){
+                        dataTable.fnDraw(false);
+                    }
+                });
+            } else {
+                layer.open({
+                    title: "系统提示",
+                    btn: [ "确认" ],
+                    content: (data.msg || "操作失败" ),
+                    icon: '2'
+                });
+            }
+        });
+    });
+    $("#clearMessageModal").on('hide.bs.modal', function () {
+        $("#clearMessageModal .form")[0].reset();
+    });
 	
 });
 

@@ -1,6 +1,5 @@
 package com.xxl.mq.broker.controller;
 
-import com.xxl.mq.broker.controller.annotation.PermessionLimit;
 import com.xxl.mq.broker.core.model.XxlMqBiz;
 import com.xxl.mq.broker.core.result.ReturnT;
 import com.xxl.mq.broker.service.IXxlMqBizService;
@@ -23,7 +22,6 @@ public class BizController {
     private IXxlMqBizService xxlMqBizService;
 
     @RequestMapping("")
-    @PermessionLimit
     public String index(Model model){
 
         List<XxlMqBiz> bizList = xxlMqBizService.findAll();

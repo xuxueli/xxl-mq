@@ -30,7 +30,6 @@ public class TopicController {
 
 
     @RequestMapping("")
-    @PermessionLimit
     public String index(Model model){
 
         List<XxlMqBiz> bizList = xxlMqBizService.findAll();
@@ -41,7 +40,6 @@ public class TopicController {
 
     @RequestMapping("/pageList")
     @ResponseBody
-    @PermessionLimit
     public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start,
                                         @RequestParam(required = false, defaultValue = "10") int length,
                                         int bizId,
@@ -51,21 +49,18 @@ public class TopicController {
 
     @RequestMapping("/delete")
     @ResponseBody
-    @PermessionLimit
     public ReturnT<String> delete(String topic){
         return xxlMqTopicService.delete(topic);
     }
 
     @RequestMapping("/update")
     @ResponseBody
-    @PermessionLimit
     public ReturnT<String> update(XxlMqTopic xxlMqTopic){
         return xxlMqTopicService.update(xxlMqTopic);
     }
 
     @RequestMapping("/add")
     @ResponseBody
-    @PermessionLimit
     public ReturnT<String> add(XxlMqTopic xxlMqTopic){
         return xxlMqTopicService.add(xxlMqTopic);
     }

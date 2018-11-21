@@ -1,6 +1,5 @@
 package com.xxl.mq.broker.controller;
 
-import com.xxl.mq.broker.controller.annotation.PermessionLimit;
 import com.xxl.mq.broker.core.result.ReturnT;
 import com.xxl.mq.broker.service.IXxlMqMessageService;
 import com.xxl.mq.client.message.XxlMqMessage;
@@ -29,7 +28,6 @@ public class MessageController {
 	private IXxlMqMessageService xxlMqMessageService;
 
 	@RequestMapping("")
-	@PermessionLimit
 	public String index(Model model, String topic){
 
 		model.addAttribute("status", XxlMqMessageStatus.values());
@@ -40,7 +38,6 @@ public class MessageController {
 	
 	@RequestMapping("/pageList")
 	@ResponseBody
-	@PermessionLimit
 	public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start,
 										@RequestParam(required = false, defaultValue = "10") int length,
 										String topic,
@@ -66,14 +63,12 @@ public class MessageController {
 	
 	@RequestMapping("/delete")
 	@ResponseBody
-	@PermessionLimit
 	public ReturnT<String> delete(int id){
 		return xxlMqMessageService.delete(id);
 	}
 
 	@RequestMapping("/update")
 	@ResponseBody
-	@PermessionLimit
 	public ReturnT<String> update(long id,
                                   String topic,
                                   String group,
@@ -111,7 +106,6 @@ public class MessageController {
 
 	@RequestMapping("/add")
 	@ResponseBody
-	@PermessionLimit
 	public ReturnT<String> add(String topic,
                                String group,
                                String data,
@@ -145,5 +139,10 @@ public class MessageController {
 		return xxlMqMessageService.add(message);
 	}
 
+    @RequestMapping("/clearMessage")
+    @ResponseBody
+    public ReturnT<String> clearMessage(String topic, String status, int type){
+	    return xxlMqMessageService.clearMessage(topic, status, type);
+    }
 
 }

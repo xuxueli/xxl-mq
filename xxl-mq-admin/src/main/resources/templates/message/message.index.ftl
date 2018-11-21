@@ -53,7 +53,7 @@
                 <div class="col-xs-2 pull-right">
                     <div class="btn-group">
                         <button class="btn btn-default pull-left" id="msg_add">添加</button>
-                        <button class="btn btn-default pull-left" id="msg_clean">清理</button>
+                        <button class="btn btn-default pull-left" id="clearMessage">清理</button>
                     </div>
                 </div>
           	</div>
@@ -101,11 +101,11 @@
                     <form class="form-horizontal form" role="form" >
                         <div class="form-group">
                             <label for="lastname" class="col-sm-3 control-label">消息主题 <font color="red">*</font></label>
-                            <div class="col-sm-9"><input type="text" class="form-control" name="topic" placeholder="请输入消息主题" ></div>
+                            <div class="col-sm-9"><input type="text" class="form-control" name="topic" maxlength="255" placeholder="请输入消息主题" ></div>
                         </div>
                         <div class="form-group">
                             <label for="lastname" class="col-sm-3 control-label">消息分组 *</label>
-                            <div class="col-sm-9"><input type="text" class="form-control" name="group" placeholder="请输入消息分组，为空则为默认分组" ></div>
+                            <div class="col-sm-9"><input type="text" class="form-control" name="group" maxlength="255" placeholder="请输入消息分组，为空则为默认分组" ></div>
                         </div>
                         <div class="form-group">
                             <label for="lastname" class="col-sm-3 control-label">消息数据 *</label>
@@ -163,11 +163,11 @@
                     <form class="form-horizontal form" role="form" >
                         <div class="form-group">
                             <label for="lastname" class="col-sm-3 control-label">消息主题 <font color="red">*</font></label>
-                            <div class="col-sm-9"><input type="text" class="form-control" name="topic" placeholder="请输入消息主题" readonly ></div>
+                            <div class="col-sm-9"><input type="text" class="form-control" name="topic" maxlength="255" placeholder="请输入消息主题" readonly ></div>
                         </div>
                         <div class="form-group">
                             <label for="lastname" class="col-sm-3 control-label">消息分组 *</label>
-                            <div class="col-sm-9"><input type="text" class="form-control" name="group" placeholder="请输入消息分组，为空则为默认分组" ></div>
+                            <div class="col-sm-9"><input type="text" class="form-control" name="group" maxlength="255" placeholder="请输入消息分组，为空则为默认分组" ></div>
                         </div>
                         <div class="form-group">
                             <label for="lastname" class="col-sm-3 control-label">消息数据 *</label>
@@ -209,6 +209,63 @@
 								<input type="hidden" name="id">
                             </div>
                         </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 清理消息.模态框 -->
+    <div class="modal fade" id="clearMessageModal" tabindex="-1" role="dialog"  aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" >清理消息</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal form" role="form" >
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-3 control-label">消息主题<font color="red">*</font></label>
+                            <div class="col-sm-9"><input type="text" class="form-control" name="topic" maxlength="255" placeholder="请输入消息主题" ></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-3 control-label">状态 *</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" name="status">
+                                    <option value="">全部</option>
+                                    <#list status as item>
+                                        <option value="${item}" <#if item = 'SUCCESS'>selected</#if> >${item}</option>
+                                    </#list>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"">清理方式：</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" name="type" >
+                                    <option value="1" >清理一个月之前日志数据</option>
+                                    <option value="2" >清理三个月之前日志数据</option>
+                                    <option value="3" >清理六个月之前日志数据</option>
+                                    <option value="4" >清理一年之前日志数据</option>
+                                    <option value="5" >清理一千条以前日志数据</option>
+                                    <option value="6" >清理一万条以前日志数据</option>
+                                    <option value="7" >清理十万条以前日志数据</option>
+                                    <option value="8" >清理所有日志数据</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <hr>
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-6">
+                                <button type="button" class="btn btn-primary ok" >确定</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            </div>
+                        </div>
+
+                        <#--<p class="help-block">提示：仅清理 "SUCCESS" 状态消息.</p>-->
+
                     </form>
                 </div>
             </div>

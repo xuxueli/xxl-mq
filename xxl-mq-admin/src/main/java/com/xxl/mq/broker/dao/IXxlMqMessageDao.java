@@ -65,4 +65,6 @@ public interface IXxlMqMessageDao {
 
     public List<Map<String,Object>> messageCountByDay(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
+    public int clearMessage(@Param("topic") String topic, @Param("status") String status, @Param("type") int type);
+
 }
