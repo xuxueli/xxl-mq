@@ -179,6 +179,7 @@
 		SET
 			status = #{newStatus},
 			retryCount = retryCount - 1 ,
+			effectTime = DATE_ADD(NOW(), Interval 1 minute ),
 			log = CONCAT(log, #{appendLog})
 		WHERE status =  #{failStatus}
 			AND retryCount <![CDATA[ > ]]> 0
