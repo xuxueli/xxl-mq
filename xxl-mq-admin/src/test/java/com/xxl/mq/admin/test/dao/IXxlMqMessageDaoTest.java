@@ -1,6 +1,6 @@
-package com.xxl.mq.broker.test.dao;
+package com.xxl.mq.admin.test.dao;
 
-import com.xxl.mq.broker.dao.IXxlMqMessageDao;
+import com.xxl.mq.admin.dao.IXxlMqMessageDao;
 import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.message.XxlMqMessageStatus;
 import org.junit.Test;

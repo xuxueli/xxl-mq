@@ -1,4 +1,4 @@
-package com.xxl.mq.broker.test.netty;
+package com.xxl.mq.admin.test.netty;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -10,12 +10,10 @@ import io.netty.handler.codec.string.StringEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * Created by xuxueli on 16/8/29.
  */
-public class NPruducer {
+public class NConsumer {
     private static Logger logger = LoggerFactory.getLogger(NPruducer.class);
 
     static Channel channel;
@@ -38,8 +36,7 @@ public class NPruducer {
 
                                             @Override
                                             protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-                                                Channel incoming = ctx.channel();
-                                                System.out.println("接受消息:"+msg);
+                                                System.out.println("接受消息:" + msg);
                                             }
 
                                         });
@@ -55,14 +52,5 @@ public class NPruducer {
                 }
             }
         }).start();
-
-
-        while (true){
-            if (channel!=null) {
-                System.out.println("发送一条消息");
-                channel.writeAndFlush("666");
-            }
-            TimeUnit.SECONDS.sleep(1);
-        }
     }
 }

@@ -1,4 +1,4 @@
-package com.xxl.mq.example.mqcomsumer;
+package com.xxl.mq.sample.springboot.mqcomsumer;
 
 import com.xxl.mq.client.consumer.IMqConsumer;
 import com.xxl.mq.client.consumer.MqResult;

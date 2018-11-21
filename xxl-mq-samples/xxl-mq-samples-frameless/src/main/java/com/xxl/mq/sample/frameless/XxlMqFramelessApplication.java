@@ -1,0 +1,36 @@
+package com.xxl.mq.sample.frameless;
+
+
+import com.xxl.mq.client.consumer.IMqConsumer;
+import com.xxl.mq.sample.frameless.conf.XxlMqConf;
+import com.xxl.mq.sample.frameless.mqconsumer.DemoMqComsumer;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * @author xuxueli 2018-11-21
+ */
+public class XxlMqFramelessApplication {
+
+    public static void main(String[] args) throws Exception {
+
+        // consumer list
+        List<IMqConsumer> consumerList = new ArrayList<>();
+        consumerList.add(new DemoMqComsumer());
+
+
+        // start
+        XxlMqConf.getInstance().start(consumerList);
+
+        while (!Thread.currentThread().isInterrupted()) {
+            TimeUnit.HOURS.sleep(1);
+        }
+
+        // stop
+        XxlMqConf.getInstance().stop();
+
+    }
+
+}

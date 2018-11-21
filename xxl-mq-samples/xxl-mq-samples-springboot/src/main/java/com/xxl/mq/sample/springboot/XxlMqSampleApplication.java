@@ -1,4 +1,4 @@
-package com.xxl.mq.example;
+package com.xxl.mq.sample.springboot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

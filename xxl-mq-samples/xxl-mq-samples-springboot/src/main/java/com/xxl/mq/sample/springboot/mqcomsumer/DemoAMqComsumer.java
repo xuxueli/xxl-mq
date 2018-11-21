@@ -1,4 +1,4 @@
-package com.xxl.mq.example.mqcomsumer;
+package com.xxl.mq.sample.springboot.mqcomsumer;
 
 import com.xxl.mq.client.consumer.IMqConsumer;
 import com.xxl.mq.client.consumer.MqResult;
@@ -10,14 +10,14 @@ import org.springframework.stereotype.Service;
 /**
  * Created by xuxueli on 16/8/28.
  */
-@MqConsumer(topic = "topic_1", group = "DEFAULT_2")
+@MqConsumer(topic = "topic_1")
 @Service
-public class DemoCMqComsumer implements IMqConsumer {
-    private Logger logger = LoggerFactory.getLogger(DemoCMqComsumer.class);
+public class DemoAMqComsumer implements IMqConsumer {
+    private Logger logger = LoggerFactory.getLogger(DemoAMqComsumer.class);
 
     @Override
     public MqResult consume(String data) throws Exception {
-        logger.info("[DemoCMqComsumer] 消费一条消息:{}", data);
+        logger.info("[DemoAMqComsumer] 消费一条消息:{}", data);
         return MqResult.SUCCESS;
     }
 

@@ -1,4 +1,4 @@
-package com.xxl.mq.broker.test.rpc;
+package com.xxl.mq.admin.test.rpc;
 
 import com.xxl.mq.client.broker.IXxlMqBroker;
 import com.xxl.rpc.remoting.invoker.call.CallType;

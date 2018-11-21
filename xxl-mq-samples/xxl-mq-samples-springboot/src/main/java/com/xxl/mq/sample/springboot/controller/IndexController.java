@@ -1,4 +1,4 @@
-package com.xxl.mq.example.controller;
+package com.xxl.mq.sample.springboot.controller;
 
 import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.producer.XxlMqProducer;

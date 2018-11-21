@@ -1,4 +1,4 @@
-package com.xxl.mq.broker.test.netty;
+package com.xxl.mq.admin.test.netty;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;

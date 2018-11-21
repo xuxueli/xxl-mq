@@ -1,4 +1,4 @@
-package com.xxl.mq.example.conf;
+package com.xxl.mq.sample.springboot.conf;
 
 import com.xxl.mq.client.factory.impl.XxlMqSpringClientFactory;
 import org.springframework.beans.factory.annotation.Value;

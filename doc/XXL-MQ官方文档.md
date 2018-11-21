@@ -383,9 +383,9 @@ XxlMqProducer.produce("消息主题", "消息数据, Map<String, String>格式")
 - 自动重试优化，任务重试时，生效时间重置为1min之后；
 - 消息日志格式统一；
 - 记住密码功能优化，选中时永久记住；非选中时关闭浏览器即登出；
+- 新增无框架Sample示例项目 "xxl-mq-samples-frameless"。不依赖第三方框架，只需main方法即可启动运行；
 - 【ING】示例完善，包括：并发消息、串行消息、广播消息、延迟消息、失败重试消息、超时控制消息等；
 - 【ING】告警功能，1min告警一次，以Topic为粒度；
-- 【ING】提供 framwless 示例；
 
 
 ### TODO

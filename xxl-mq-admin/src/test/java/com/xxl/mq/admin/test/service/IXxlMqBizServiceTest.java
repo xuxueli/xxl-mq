@@ -1,8 +1,8 @@
-package com.xxl.mq.broker.test.service;
+package com.xxl.mq.admin.test.service;
 
-import com.xxl.mq.broker.core.model.XxlMqBiz;
-import com.xxl.mq.broker.core.result.ReturnT;
-import com.xxl.mq.broker.service.IXxlMqBizService;
+import com.xxl.mq.admin.core.model.XxlMqBiz;
+import com.xxl.mq.admin.core.result.ReturnT;
+import com.xxl.mq.admin.service.IXxlMqBizService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
