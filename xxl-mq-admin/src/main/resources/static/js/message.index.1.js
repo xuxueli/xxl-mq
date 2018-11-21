@@ -227,7 +227,14 @@ $(function() {
             },
 			retryCount : {
 				digits : true
-			}
+			},
+            shardingId : {
+                digits : true
+            },
+            timeout : {
+                digits : true
+            }
+			
 		},
 		messages : {
             topic : {
@@ -236,7 +243,13 @@ $(function() {
             },
 			retryCount : {
 				digits :'请输入"正整数".'
-			}
+			},
+            shardingId : {
+                digits :'请输入"正整数".'
+            },
+            timeout : {
+                digits :'请输入"正整数".'
+            }
 		},
 		highlight : function(element) {
 			$(element).closest('.form-group').addClass('has-error');
@@ -285,10 +298,14 @@ $(function() {
         var row = tableData['key' + _id ];
 
 		$("#updateModal .form input[name='id']").val( id );
-		$("#updateModal .form textarea[name='data']").val( row.data );
-		$("#updateModal .form input[name='effectTime']").val( moment(new Date(Number( row.effectTime ))).format("YYYY-MM-DD HH:mm:ss") );
-		$("#updateModal .form select[name='status']").find("option[value='" + row.status + "']").prop("selected",true);
-		$("#updateModal .form input[name='retryCount']").val( row.retryCount );
+		$("#updateModal .form input[name='topic']").val( row.topic );
+        $("#updateModal .form input[name='group']").val( row.group );
+        $("#updateModal .form textarea[name='data']").val( row.data );
+        $("#updateModal .form select[name='status']").find("option[value='" + row.status + "']").prop("selected",true);
+        $("#updateModal .form input[name='retryCount']").val( row.retryCount );retryCount
+        $("#updateModal .form input[name='shardingId']").val( row.shardingId );shardingId
+        $("#updateModal .form input[name='timeout']").val( row.timeout );
+        $("#updateModal .form input[name='effectTime']").val( moment(new Date(Number( row.effectTime ))).format("YYYY-MM-DD HH:mm:ss") );
 
 		$('#updateModal').modal({backdrop: false, keyboard: false}).modal('show');
 	});
@@ -296,18 +313,37 @@ $(function() {
 		errorElement : 'span',
 		errorClass : 'help-block',
 		focusInvalid : true,
-		rules : {
-			retryCount : {
-				required:true,
-				digits : true
-			}
-		},
-		messages : {
-			retryCount : {
-				required:"请输入重试次数",
-				digits :'请输入"正整数".'
-			}
-		},
+        rules : {
+            topic : {
+                required : true ,
+                rangelength:[4,255]
+            },
+            retryCount : {
+                digits : true
+            },
+            shardingId : {
+                digits : true
+            },
+            timeout : {
+                digits : true
+            }
+
+        },
+        messages : {
+            topic : {
+                required :'请输入"消息主题".'  ,
+                rangelength: '消息主题长度限制为[4~255]'
+            },
+            retryCount : {
+                digits :'请输入"正整数".'
+            },
+            shardingId : {
+                digits :'请输入"正整数".'
+            },
+            timeout : {
+                digits :'请输入"正整数".'
+            }
+        },
 		highlight : function(element) {
 			$(element).closest('.form-group').addClass('has-error');
 		},
@@ -336,7 +372,7 @@ $(function() {
                     layer.open({
                         title: "系统提示",
                         btn: [ "确认" ],
-                        content: (data.msg || "操作失败" ),
+                        content: (data.msg || "更新失败" ),
                         icon: '2'
                     });
 				}

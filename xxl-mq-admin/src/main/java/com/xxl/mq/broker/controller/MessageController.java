@@ -75,7 +75,7 @@ public class MessageController {
 	@RequestMapping("/update")
 	@ResponseBody
 	@PermessionLimit
-	public ReturnT<String> update(XxlMqMessage message){
+	public ReturnT<String> update(XxlMqMessage message, BindingResult bindingResult){
 		return xxlMqMessageService.update(message);
 	}
 
