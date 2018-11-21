@@ -70,10 +70,14 @@ $(function() {
 						}
 					},
             		{ data: 'status'},
+            		{ data: 'retryCount'},
+					{ data: 'shardingId'},
+					{ data: 'timeout'},
 					{
 						data: 'effectTime',
 						render : function ( data, type, row ) {
-							return data?moment(new Date(data)).format("YYYY-MM-DD HH:mm:ss"):"";
+							var temp = data?moment(new Date(data)).format("YYYY-MM-DD HH:mm:ss"):"";
+							return temp;
 						}
 					},
 					{

@@ -70,6 +70,9 @@
                                         <th name="group" >分组</th>
                                         <th name="data" >数据</th>
                                         <th name="status" >状态</th>
+                                        <th name="retryCount" >剩余重试次数</th>
+                                        <th name="shardingId" >分片ID</th>
+                                        <th name="timeout" >超时时间</th>
                                         <th name="effectTime" >生效时间</th>
                                         <th name="addTime" >创建时间</th>
                                         <th name="log" >流转日志</th>
@@ -97,11 +100,15 @@
                 <div class="modal-body">
                     <form class="form-horizontal form" role="form" >
                         <div class="form-group">
-                            <label for="lastname" class="col-sm-3 control-label">主题</label>
-                            <div class="col-sm-9"><input type="text" class="form-control" name="name"  ></div>
+                            <label for="lastname" class="col-sm-3 control-label">消息主题</label>
+                            <div class="col-sm-9"><input type="text" class="form-control" name="topic" placeholder="请输入消息主题" ></div>
                         </div>
                         <div class="form-group">
-                            <label for="lastname" class="col-sm-3 control-label">数据</label>
+                            <label for="lastname" class="col-sm-3 control-label">消息分组</label>
+                            <div class="col-sm-9"><input type="text" class="form-control" name="group" placeholder="请输入消息分组，为空则为默认分组" ></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-3 control-label">消息数据</label>
                             <div class="col-sm-9">
                                 <textarea class="textarea" name="data" maxlength="1024" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
                             </div>

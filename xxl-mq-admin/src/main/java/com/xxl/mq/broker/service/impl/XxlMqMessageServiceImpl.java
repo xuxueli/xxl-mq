@@ -13,6 +13,7 @@ import com.xxl.mq.client.util.DateFormatUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.*;
 
@@ -72,18 +73,22 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
 
     private static ReturnT<String> validMessage(XxlMqMessage mqMessage){
 
-        if (mqMessage.getId() > 0) {
+        if (mqMessage.getId() < 1) {    // add
+
             // topic
-            if (mqMessage.getTopic()==null || mqMessage.getTopic().trim().length()==0 || mqMessage.getTopic().length()>255) {
-                return new ReturnT<String>(ReturnT.FAIL_CODE, "topic 格式非法." );
+            if (mqMessage.getTopic()==null || mqMessage.getTopic().trim().length()==0) {
+                return new ReturnT<String>(ReturnT.FAIL_CODE, "xxl-mq, topic empty.");
+            }
+            if (!(mqMessage.getTopic().length()>=4 && mqMessage.getTopic().length()<=255)) {
+                return new ReturnT<String>(ReturnT.FAIL_CODE, "xxl-mq, topic length invalid[4~255].");
             }
 
             // group
-            if (mqMessage.getTopic()==null || mqMessage.getTopic().trim().length()==0) {
-                mqMessage.setTopic(MqConsumer.DEFAULT_GROUP);
+            if (mqMessage.getGroup()==null || mqMessage.getGroup().trim().length()==0) {
+                mqMessage.setGroup(MqConsumer.DEFAULT_GROUP);
             }
-            if (mqMessage.getTopic().length() > 255) {
-                return new ReturnT<String>(ReturnT.FAIL_CODE, "group 格式非法." );
+            if (!(mqMessage.getGroup().length()>=4 && mqMessage.getGroup().length()<=255)) {
+                return new ReturnT<String>(ReturnT.FAIL_CODE, "xxl-mq, group length invalid[4~255].");
             }
         }
 
@@ -91,8 +96,18 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
         if (mqMessage.getData() == null) {
             mqMessage.setData("");
         }
+        int dataLength = 0;
+        try {
+            dataLength = mqMessage.getData().getBytes("UTF-8").length;
+        } catch (UnsupportedEncodingException e) {
+            dataLength = mqMessage.getData().length();
+        }
+        if (dataLength > 60000) {
+            throw new IllegalArgumentException("xxl-mq, data length invalid[0~60000].");
+        }
 
         // status
+        //mqMessage.setStatus(XxlMqMessageStatus.NEW.name());
         if (XxlMqMessageStatus.valueOf(mqMessage.getStatus()) == null) {
             return new ReturnT<String>(500, "消息状态非法");
         }
@@ -107,7 +122,7 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
             mqMessage.setShardingId(0);
         }
 
-        // effectTime
+        // delayTime
         if (mqMessage.getEffectTime() == null) {
             mqMessage.setEffectTime(new Date());
         }
@@ -118,6 +133,7 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
         }
 
         // log
+        //String appendLog = "<hr>操作: 消息新增<br>》》》消息生产者: " + IpUtil.getIp();
 
         return null;
     }
