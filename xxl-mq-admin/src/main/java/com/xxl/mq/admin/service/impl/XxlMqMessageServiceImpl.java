@@ -237,9 +237,6 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
 
     @Override
     public ReturnT<String> clearMessage(String topic, String status, int type) {
-        if (topic==null || topic.trim().length()==0) {
-            return new ReturnT<String>(ReturnT.FAIL_CODE, "消息主题不可为空");
-        }
         xxlMqMessageDao.clearMessage(topic, status, type);
         return ReturnT.SUCCESS;
     }
