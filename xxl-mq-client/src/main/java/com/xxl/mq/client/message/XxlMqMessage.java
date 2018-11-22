@@ -133,4 +133,21 @@ public class XxlMqMessage implements Serializable {
 		this.log = log;
 	}
 
+	@Override
+	public String toString() {
+		return "XxlMqMessage{" +
+				"id=" + id +
+				", topic='" + topic + '\'' +
+				", group='" + group + '\'' +
+				", data='" + data + '\'' +
+				", status='" + status + '\'' +
+				", retryCount=" + retryCount +
+				", shardingId=" + shardingId +
+				", timeout=" + timeout +
+				", effectTime=" + effectTime +
+				", addTime=" + addTime +
+				", log='" + log + '\'' +
+				'}';
+	}
+
 }

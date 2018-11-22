@@ -60,7 +60,7 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
         }
 
         // valid message
-        String appendLog = LogHelper.makeLog("人工修改", "");
+        String appendLog = LogHelper.makeLog("人工修改", message.toString());
         message.setLog(appendLog);
         ReturnT<String> validRet = validMessage(message);
         if (validRet != null) {
@@ -135,8 +135,9 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
     @Override
     public ReturnT<String> add(XxlMqMessage message) {
 
+        // message log
         // valid message
-        String appendLog = LogHelper.makeLog("人工录入", "");
+        String appendLog = LogHelper.makeLog("人工录入", message.toString());
         message.setLog(appendLog);
         ReturnT<String> validRet = validMessage(message);
         if (validRet != null) {
