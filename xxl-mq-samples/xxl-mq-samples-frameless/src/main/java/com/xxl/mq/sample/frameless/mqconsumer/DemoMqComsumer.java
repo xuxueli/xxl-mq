@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by xuxueli on 16/8/28.
  */
-@MqConsumer(topic = "topic_2")
+@MqConsumer(topic = "topic_2", transaction = false)
 public class DemoMqComsumer implements IMqConsumer {
     private Logger logger = LoggerFactory.getLogger(DemoMqComsumer.class);
 

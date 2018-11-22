@@ -29,4 +29,6 @@ public interface IXxlMqTopicDao {
 
     public int delete(@Param("topic") String topic);
 
+    public List<XxlMqTopic> findAlarmByTopic(@Param("topics") List<String> topics);
+
 }

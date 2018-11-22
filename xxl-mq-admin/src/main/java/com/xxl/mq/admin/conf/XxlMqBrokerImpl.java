@@ -2,6 +2,7 @@ package com.xxl.mq.admin.conf;
 
 import com.xxl.mq.admin.core.model.XxlMqTopic;
 import com.xxl.mq.admin.dao.IXxlMqMessageDao;
+import com.xxl.mq.admin.dao.IXxlMqTopicDao;
 import com.xxl.mq.admin.service.IXxlMqTopicService;
 import com.xxl.mq.client.broker.IXxlMqBroker;
 import com.xxl.mq.client.message.XxlMqMessage;
@@ -19,16 +20,17 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import javax.mail.internet.MimeMessage;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
+import java.util.concurrent.*;
 
 /**
  * Created by xuxueli on 16/8/28.
@@ -61,7 +63,12 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
     @Resource
     private IXxlMqTopicService xxlMqTopicService;
     @Resource
-    private JavaMailSender mailSender;  // TODO, alarm by callback queue
+    private IXxlMqTopicDao xxlMqTopicDao;
+
+    @Resource
+    private JavaMailSender mailSender;
+    @Value("${spring.mail.username}")
+    private String emailUserName;
 
 
     // ---------------------- broker server ----------------------
@@ -89,6 +96,7 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
 
     private LinkedBlockingQueue<XxlMqMessage> newMessageQueue = new LinkedBlockingQueue<XxlMqMessage>();
     private LinkedBlockingQueue<XxlMqMessage> callbackMessageQueue = new LinkedBlockingQueue<XxlMqMessage>();
+    private Map<String, Long> alarmMessageInfo = new ConcurrentHashMap<String, Long>();
 
     private ExecutorService executorService = Executors.newCachedThreadPool();
     private volatile boolean executorStoped = false;
@@ -158,6 +166,16 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
 
                                 // save
                                 xxlMqMessageDao.updateStatus(messageList);
+
+                                // fill alarm info
+                                for (XxlMqMessage alarmItem: messageList) {
+                                    if (XxlMqMessageStatus.FAIL.name().equals(alarmItem.getStatus())) {
+                                        Long failCount = alarmMessageInfo.get(alarmItem.getTopic());
+                                        failCount = failCount!=null?failCount++:1;
+                                        alarmMessageInfo.put(alarmItem.getTopic(), failCount);
+                                    }
+                                }
+
                             }
 
                         } catch (Exception e) {
@@ -209,6 +227,70 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                     try {
                         // sleep
                         TimeUnit.SECONDS.sleep(60);
+                    } catch (Exception e) {
+                        logger.error(e.getMessage(), e);
+                    }
+                }
+            }
+        });
+
+        /**
+         * auto alarm "check topic fail count, send alarm"  (by cycle, 1/60s)
+         */
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                while (!executorStoped) {
+                    try {
+                        // mult send alarm
+                        if (alarmMessageInfo.size() > 0) {
+
+                            // copy
+                            Map<String, Long> alarmMessageInfoTmp = new HashMap<String, Long>();
+                            alarmMessageInfoTmp.putAll(alarmMessageInfo);
+                            alarmMessageInfo.clear();
+
+                            // alarm
+                            List<XxlMqTopic> topicList = xxlMqTopicDao.findAlarmByTopic(new ArrayList<String>(alarmMessageInfoTmp.keySet()));
+                            if (topicList!=null && topicList.size()>0) {
+                                for (XxlMqTopic mqTopic: topicList) {
+                                    if (mqTopic.getAlarmEmails()!=null && mqTopic.getAlarmEmails().trim().length()>0) {
+                                        Long failCount = alarmMessageInfoTmp.get(mqTopic.getTopic());
+
+                                        String[] toEmailList = null;
+                                        if (mqTopic.getAlarmEmails().contains(",")) {
+                                            toEmailList = mqTopic.getAlarmEmails().split(",");
+                                        } else {
+                                            toEmailList = new String[]{mqTopic.getAlarmEmails()};
+                                        }
+                                        String emailContent = MessageFormat.format("告警类型：消息失败；<br>Topic：{0})；<br>备注：{1}",
+                                                mqTopic.getTopic(), "1min内失败消息数量=" + failCount);
+
+                                        // make mail
+                                        try {
+                                            MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+                                            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+                                            helper.setFrom(emailUserName, "分布式消息队列XXL-MQ");
+                                            helper.setTo(toEmailList);
+                                            helper.setSubject("消息队列中心监控报警");
+                                            helper.setText(emailContent, true);
+
+                                            //mailSender.send(mimeMessage);
+                                        } catch (Exception e) {
+                                            logger.error(">>>>>>>>>>> message monitor alarm email send error, topic:{}, failCount:{}", mqTopic.getTopic(), failCount);
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        logger.error(e.getMessage(), e);
+                    }
+                    try {
+                        // sleep
+                        TimeUnit.MINUTES.sleep(1);
                     } catch (Exception e) {
                         logger.error(e.getMessage(), e);
                     }

@@ -80,4 +80,14 @@
 		WHERE topic = #{topic}
 	</delete>
 
+	<select id="findAlarmByTopic" parameterType="java.util.HashMap" resultMap="xxlMqTopic">
+		SELECT <include refid="Base_Column_List" />
+		FROM XXL_MQ_TOPIC AS t
+		where LENGTH(t.alarmEmails) <![CDATA[ > ]]> 0
+			and t.topic in
+			<foreach collection="topics" item="topicItem"  index="index" separator="," open="(" close=")">
+				#{topicItem}
+			</foreach>
+	</select>
+
 </mapper>
