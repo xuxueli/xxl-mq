@@ -79,9 +79,9 @@ public class ConsumerThread extends Thread {
                                 }
                             }
 
+                            // consume message
                             MqResult mqResult = null;
                             try {
-                                // consume data
 
                                 if (msg.getTimeout() > 0) {
                                     // limit timeout
@@ -126,6 +126,7 @@ public class ConsumerThread extends Thread {
 
                             logger.info(">>>>>>>>>>> xxl-mq, consumer finish,  topic:{}, group:{}, ActiveInfo={}", mqConsumer.topic(), mqConsumer.group(), activeInfo.toString());
                         }
+
                     } else {
                         waitTim = (waitTim < 60) ? (waitTim + 10) : waitTim;
                     }
