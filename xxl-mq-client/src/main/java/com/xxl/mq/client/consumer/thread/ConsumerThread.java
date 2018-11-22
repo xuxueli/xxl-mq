@@ -63,9 +63,9 @@ public class ConsumerThread extends Thread {
 
                         // reset wait time
                         if (mqConsumer.transaction()) {
-                            waitTim = 0;    // status update timely by lock, will not repeat pull
+                            waitTim = 0;    // transaction message status timely updated by lock, will not repeat pull
                         } else {
-                            waitTim = 1;    // status update delay by callback, may be repeat, need wail for callback
+                            waitTim = 2;    // no-transaction message status delay updated by callback, may be repeat, need wail for callback
                         }
 
                         for (final XxlMqMessage msg : messageList) {
