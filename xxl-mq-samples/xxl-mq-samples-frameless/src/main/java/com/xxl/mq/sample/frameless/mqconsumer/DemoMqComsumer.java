@@ -16,7 +16,7 @@ public class DemoMqComsumer implements IMqConsumer {
     @Override
     public MqResult consume(String data) throws Exception {
         logger.info("[DemoMqComsumer] 消费一条消息:{}", data);
-        return MqResult.SUCCESS;
+        return MqResult.FAIL;
     }
 
 }

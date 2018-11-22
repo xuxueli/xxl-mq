@@ -263,7 +263,7 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                                         } else {
                                             toEmailList = new String[]{mqTopic.getAlarmEmails()};
                                         }
-                                        String emailContent = MessageFormat.format("告警类型：消息失败；<br>Topic：{0})；<br>备注：{1}",
+                                        String emailContent = MessageFormat.format("告警类型：消息失败；<br>Topic：{0}；<br>备注：{1}",
                                                 mqTopic.getTopic(), "1min内失败消息数量=" + failCount);
 
                                         // make mail
@@ -276,7 +276,7 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                                             helper.setSubject("消息队列中心监控报警");
                                             helper.setText(emailContent, true);
 
-                                            //mailSender.send(mimeMessage);
+                                            mailSender.send(mimeMessage);
                                         } catch (Exception e) {
                                             logger.error(">>>>>>>>>>> message monitor alarm email send error, topic:{}, failCount:{}", mqTopic.getTopic(), failCount);
                                         }
