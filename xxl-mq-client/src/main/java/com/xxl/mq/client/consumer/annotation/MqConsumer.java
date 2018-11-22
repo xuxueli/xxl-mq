@@ -1,7 +1,5 @@
 package com.xxl.mq.client.consumer.annotation;
 
-import com.xxl.mq.client.consumer.registry.ConsumerRegistryHelper;
-
 import java.lang.annotation.*;
 
 /**
@@ -23,5 +21,10 @@ public @interface MqConsumer {
      * @return
      */
     String topic();
+
+    /**
+     * @return
+     */
+    boolean transaction() default true;
 
 }

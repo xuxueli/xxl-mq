@@ -70,11 +70,13 @@ public class ConsumerThread extends Thread {
                                 break;
                             }
 
-                            // lock message
-                            String appendLog_lock = LogHelper.makeLog("锁定消息", ("消费者信息="+newActiveInfo.toString() ) );
-                            int lockRet = XxlMqClientFactory.getXxlMqBroker().lockMessage(msg.getId(), appendLog_lock);
-                            if (lockRet < 1) {
-                                continue;
+                            // lock message, for transaction
+                            if (mqConsumer.transaction()) {
+                                String appendLog_lock = LogHelper.makeLog("锁定消息", ("消费者信息="+newActiveInfo.toString() ) );
+                                int lockRet = XxlMqClientFactory.getXxlMqBroker().lockMessage(msg.getId(), appendLog_lock);
+                                if (lockRet < 1) {
+                                    continue;
+                                }
                             }
 
                             MqResult mqResult = null;
