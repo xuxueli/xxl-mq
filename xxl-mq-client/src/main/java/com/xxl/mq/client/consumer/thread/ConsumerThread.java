@@ -47,7 +47,7 @@ public class ConsumerThread extends Thread {
     @Override
     public void run() {
 
-        int waitTim = 5;
+        int waitTim = 10;
 
         while (!XxlMqClientFactory.clientFactoryPoolStoped) {
             try {
@@ -60,7 +60,13 @@ public class ConsumerThread extends Thread {
                     // pullNewMessage
                     List<XxlMqMessage> messageList = XxlMqClientFactory.getXxlMqBroker().pullNewMessage(mqConsumer.topic(), mqConsumer.group(), activeInfo.rank, activeInfo.total, 100);
                     if (messageList != null && messageList.size() > 0) {
-                        waitTim = 0;
+
+                        // reset wait time
+                        if (mqConsumer.transaction()) {
+                            waitTim = 0;    // status update timely by lock, will not repeat pull
+                        } else {
+                            waitTim = 1;    // status update delay by callback, may be repeat, need wail for callback
+                        }
 
                         for (final XxlMqMessage msg : messageList) {
 

@@ -244,14 +244,14 @@
                             <label class="col-sm-3 control-label"">清理方式：</label>
                             <div class="col-sm-9">
                                 <select class="form-control" name="type" >
-                                    <option value="1" >清理一个月之前日志数据</option>
-                                    <option value="2" >清理三个月之前日志数据</option>
-                                    <option value="3" >清理六个月之前日志数据</option>
-                                    <option value="4" >清理一年之前日志数据</option>
-                                    <option value="5" >清理一千条以前日志数据</option>
-                                    <option value="6" >清理一万条以前日志数据</option>
-                                    <option value="7" >清理十万条以前日志数据</option>
-                                    <option value="8" >清理所有日志数据</option>
+                                    <option value="1" >清理一个月之前消息数据</option>
+                                    <option value="2" >清理三个月之前消息数据</option>
+                                    <option value="3" >清理六个月之前消息数据</option>
+                                    <option value="4" >清理一年之前消息数据</option>
+                                    <option value="5" >清理一千条以前消息数据</option>
+                                    <option value="6" >清理一万条以前消息数据</option>
+                                    <option value="7" >清理十万条以前消息数据</option>
+                                    <option value="8" >清理所有消息数据</option>
                                 </select>
                             </div>
                         </div>
