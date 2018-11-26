@@ -21,7 +21,7 @@ public class ConsumerRegistryHelper {
 
 
     // ---------------------- util ----------------------
-    private static final String SpaceMark = "_CONSUMER_";
+    private static final String SpaceMark = "_consumer_";
 
     private static String makeRegistryKey(String topic){
         String registryKey = SpaceMark.concat(topic);
