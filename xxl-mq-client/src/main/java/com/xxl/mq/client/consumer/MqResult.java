@@ -51,7 +51,7 @@ public class MqResult {
 
     // tool
     public boolean isSuccess(){
-        return SUCCESS_CODE.equalsIgnoreCase(code);
+        return SUCCESS_CODE.equals(code);
     }
 
 }

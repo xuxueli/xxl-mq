@@ -348,13 +348,16 @@ public class XxlCommonRegistryServiceImpl implements XxlCommonRegistryService, I
                 while (!executorStoped) {
                     try {
 
-                        // static registry
+                        // + static registry
                         if (staticRegistryData != null) {
                             registryQueue.add(staticRegistryData);
                         }
 
                         // clean old registry-data in db
                         xxlCommonRegistryDataDao.cleanData(registryBeatTime * 3);
+
+                        // + clean old registry in db
+                        xxlCommonRegistryDao.cleanDead();
 
                         // sync registry-data, db + file
                         int offset = 0;

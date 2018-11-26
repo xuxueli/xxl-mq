@@ -20,6 +20,6 @@ public interface IXxlCommonRegistryDao {
 
     public int update(@Param("xxlCommonRegistry") XxlCommonRegistry xxlCommonRegistry);
 
-    public int delete(@Param("id") int id);
+    public int cleanDead();
 
 }

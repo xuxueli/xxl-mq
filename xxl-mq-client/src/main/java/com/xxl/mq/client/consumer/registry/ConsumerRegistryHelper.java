@@ -101,7 +101,7 @@ public class ConsumerRegistryHelper {
         int rank = -1;
         for (String onlineConsumerItem : onlineConsumerSet_group) {
             rank++;
-            if (onlineConsumerItem.equalsIgnoreCase(registryVal)) {
+            if (onlineConsumerItem.equals(registryVal)) {
                 break;
             }
         }

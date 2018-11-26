@@ -46,9 +46,12 @@
 		WHERE t.`id` = #{xxlCommonRegistry.id}
 	</update>
 
-	<delete id="delete" parameterType="java.util.HashMap" >
+	<delete id="cleanDead" parameterType="java.util.HashMap" >
 		DELETE FROM XXL_MQ_COMMON_REGISTRY
-		WHERE id = #{id}
+		WHERE `key` not in (
+			select distinct `key`
+			from XXL_MQ_COMMON_REGISTRY_DATA
+		)
 	</delete>
 
 </mapper>
