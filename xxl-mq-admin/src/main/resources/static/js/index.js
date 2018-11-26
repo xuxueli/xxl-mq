@@ -106,7 +106,7 @@ $(function () {
                    {
                        type : 'category',
                        boundaryGap : false,
-                       data : data.content.messageDay_list
+                       data : data.data.messageDay_list
                    }
                ],
                yAxis : [
@@ -120,7 +120,7 @@ $(function () {
                        type:'line',
                        stack: 'Total',
                        areaStyle: {normal: {}},
-                       data: data.content.newNum_list
+                       data: data.data.newNum_list
                    }, {
                        name:'消费中',
                        type:'line',
@@ -132,19 +132,19 @@ $(function () {
                            }
                        },
                        areaStyle: {normal: {}},
-                       data: data.content.ingNum_list
+                       data: data.data.ingNum_list
                    }, {
                        name:'消费成功',
                        type:'line',
                        stack: 'Total',
                        areaStyle: {normal: {}},
-                       data: data.content.successNum_list
+                       data: data.data.successNum_list
                    }, {
                        name:'消费失败',
                        type:'line',
                        stack: 'Total',
                        areaStyle: {normal: {}},
-                       data: data.content.failNum_list
+                       data: data.data.failNum_list
                    }
                ],
                 color : [ '#BFBFBF', '#F39C12', '#00A65A', '#C23632' ]
@@ -182,19 +182,19 @@ $(function () {
                     data:[
                         {
                             name:'未消费',
-                            value:data.content.newNum_total
+                            value:data.data.newNum_total
                         },
                         {
                             name:'消费中',
-                            value:data.content.ingNum_total
+                            value:data.data.ingNum_total
                         },
                         {
                             name:'消费成功',
-                            value:data.content.successNum_total
+                            value:data.data.successNum_total
                         },
                         {
                             name:'消费失败',
-                            value:data.content.failNum_total
+                            value:data.data.failNum_total
                         }
                     ],
                     itemStyle: {
