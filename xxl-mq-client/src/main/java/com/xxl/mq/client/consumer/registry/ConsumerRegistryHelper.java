@@ -4,6 +4,7 @@ import com.xxl.mq.client.consumer.annotation.MqConsumer;
 import com.xxl.mq.client.consumer.thread.ConsumerThread;
 import com.xxl.rpc.registry.ServiceRegistry;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
@@ -20,7 +21,7 @@ public class ConsumerRegistryHelper {
 
 
     // ---------------------- util ----------------------
-    private static final String SpaceMark = "#CONSUMER#";
+    private static final String SpaceMark = "_CONSUMER_";
 
     private static String makeRegistryKey(String topic){
         String registryKey = SpaceMark.concat(topic);
@@ -64,7 +65,7 @@ public class ConsumerRegistryHelper {
         String registryVal = makeRegistryVal(consumerThread.getMqConsumer().group(), consumerThread.getUuid());
 
         // registry consumer
-        serviceRegistry.registry(registryKey, registryVal);
+        serviceRegistry.registry(new HashSet<String>(Arrays.asList(registryKey)), registryVal);
     }
 
     /**

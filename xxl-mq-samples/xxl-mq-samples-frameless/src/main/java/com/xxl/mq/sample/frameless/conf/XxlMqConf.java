@@ -36,9 +36,7 @@ public class XxlMqConf {
         Properties xxlJobProp = loadProperties("xxl-mq.properties");
 
         xxlMqClientFactory = new XxlMqClientFactory();
-        xxlMqClientFactory.setZkaddress(xxlJobProp.getProperty("xxl-mq.rpc.registry.zk.zkaddress"));
-        xxlMqClientFactory.setZkdigest(xxlJobProp.getProperty("xxl-mq.rpc.registry.zk.zkdigest"));
-        xxlMqClientFactory.setEnv(xxlJobProp.getProperty("xxl-mq.rpc.registry.zk.env"));
+        xxlMqClientFactory.setAdminAddress(xxlJobProp.getProperty("xxl.mq.admin.address"));
         xxlMqClientFactory.setConsumerList(consumerList);
 
         xxlMqClientFactory.init();

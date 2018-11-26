@@ -1,18 +1,18 @@
 package com.xxl.mq.admin.conf;
 
+import com.xxl.mq.admin.core.model.XxlCommonRegistryData;
 import com.xxl.mq.admin.core.model.XxlMqTopic;
 import com.xxl.mq.admin.dao.IXxlMqMessageDao;
 import com.xxl.mq.admin.dao.IXxlMqTopicDao;
 import com.xxl.mq.admin.service.IXxlMqTopicService;
+import com.xxl.mq.admin.service.impl.XxlCommonRegistryServiceImpl;
 import com.xxl.mq.client.broker.IXxlMqBroker;
 import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.message.XxlMqMessageStatus;
 import com.xxl.mq.client.util.LogHelper;
-import com.xxl.rpc.registry.impl.ZkServiceRegistry;
 import com.xxl.rpc.remoting.net.NetEnum;
 import com.xxl.rpc.remoting.provider.XxlRpcProviderFactory;
 import com.xxl.rpc.serialize.Serializer;
-import com.xxl.rpc.util.Environment;
 import com.xxl.rpc.util.IpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,16 +45,7 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
     @Value("${xxl-mq.rpc.remoting.port}")
     private int port;
 
-    @Value("${xxl-mq.rpc.registry.zk.zkaddress}")
-    private String zkaddress;
-
-    @Value("${xxl-mq.rpc.registry.zk.zkdigest}")
-    private String zkdigest;
-
-    @Value("${xxl-mq.rpc.registry.zk.env}")
-    private String env;
-
-    @Value("${xxl-mq.log.logretentiondays}")
+    @Value("${xxl.mq.log.logretentiondays}")
     private int logretentiondays;
 
 
@@ -363,13 +354,19 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
     private XxlRpcProviderFactory providerFactory;
 
     public void initServer() throws Exception {
+
+        // address, static registry
+        String ip = IpUtil.getIp();
+        String address = IpUtil.getIpPort(ip, port);
+        XxlCommonRegistryData xxlCommonRegistryData = new XxlCommonRegistryData();
+        xxlCommonRegistryData.setKey(IXxlMqBroker.class.getName());
+        xxlCommonRegistryData.setValue(address);
+        XxlCommonRegistryServiceImpl.staticRegistryData = xxlCommonRegistryData;
+
+
         // init server
         providerFactory = new XxlRpcProviderFactory();
-        providerFactory.initConfig(NetEnum.NETTY, Serializer.SerializeEnum.HESSIAN.getSerializer(), IpUtil.getIp(), port, null, ZkServiceRegistry.class, new HashMap<String, String>(){{
-            put(Environment.ZK_ADDRESS, zkaddress);
-            put(Environment.ZK_DIGEST, zkdigest);
-            put(Environment.ENV, "xxl-mq#"+env);
-        }});
+        providerFactory.initConfig(NetEnum.NETTY, Serializer.SerializeEnum.HESSIAN.getSerializer(), ip, port, null, null, null);
 
         // add server
         providerFactory.addService(IXxlMqBroker.class.getName(), null, this);
@@ -377,6 +374,7 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
         // start server
         providerFactory.start();
     }
+
     public void destoryServer() throws Exception {
         // stop server
         if (providerFactory != null) {

@@ -12,7 +12,7 @@ public class MqBrokerTest {
         String address = "127.0.0.1:7080";
 
         IXxlMqBroker xxlMqBroker = (IXxlMqBroker) new XxlRpcReferenceBean(NetEnum.NETTY, Serializer.SerializeEnum.HESSIAN.getSerializer(), CallType.SYNC,
-                IXxlMqBroker.class, null, 10000, address, null, null).getObject();
+                IXxlMqBroker.class, null, 10000, address, null, null, null).getObject();
 
         // test
         xxlMqBroker.addMessages(null);

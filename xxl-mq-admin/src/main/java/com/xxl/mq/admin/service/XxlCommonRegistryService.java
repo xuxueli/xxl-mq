@@ -7,28 +7,30 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * xxl native regsitry, borrowed from "xxl-rpc"
+ *
  * @author xuxueli 2018-11-26
  */
-public interface XxlMqRegistryService {
+public interface XxlCommonRegistryService {
 
     /**
      * refresh registry-value, check update and broacase
      */
-    ReturnT<String> registry(String biz, String env, List<String> keys, String value);
+    ReturnT<String> registry(List<String> keys, String value);
 
     /**
      * remove registry-value, check update and broacase
      */
-    ReturnT<String> remove(String biz, String env, List<String> keys, String value);
+    ReturnT<String> remove(List<String> keys, String value);
 
     /**
      * discovery registry-data, read file
      */
-    ReturnT<Map<String, List<String>>> discovery(String biz, String env, List<String> keys);
+    ReturnT<Map<String, List<String>>> discovery(List<String> keys);
 
     /**
      * monitor update
      */
-    DeferredResult<ReturnT<String>> monitor(String biz, String env, List<String> keys);
+    DeferredResult<ReturnT<String>> monitor(List<String> keys);
 
 }

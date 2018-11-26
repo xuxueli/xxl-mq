@@ -10,21 +10,14 @@ public class XxlMqConf {
 
     // ---------------------- param ----------------------
 
-    @Value("${xxl-mq.rpc.registry.zk.zkaddress}")
-    private String zkaddress;
+    @Value("${xxl.mq.admin.address}")
+    private String adminAddress;
 
-    @Value("${xxl-mq.rpc.registry.zk.zkdigest}")
-    private String zkdigest;
-
-    @Value("${xxl-mq.rpc.registry.zk.env}")
-    private String env;
 
     @Bean
     public XxlMqSpringClientFactory getXxlMqConsumer(){
         XxlMqSpringClientFactory xxlMqSpringClientFactory = new XxlMqSpringClientFactory();
-        xxlMqSpringClientFactory.setZkaddress(zkaddress);
-        xxlMqSpringClientFactory.setZkdigest(zkdigest);
-        xxlMqSpringClientFactory.setEnv(env);
+        xxlMqSpringClientFactory.setAdminAddress(adminAddress);
 
         return xxlMqSpringClientFactory;
     }

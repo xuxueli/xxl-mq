@@ -19,18 +19,10 @@ public class XxlMqSpringClientFactory implements ApplicationContextAware, Dispos
 
     // ---------------------- param  ----------------------
 
-    private String zkaddress;
-    private String zkdigest;
-    private String env;
+    private String adminAddress;
 
-    public void setZkaddress(String zkaddress) {
-        this.zkaddress = zkaddress;
-    }
-    public void setZkdigest(String zkdigest) {
-        this.zkdigest = zkdigest;
-    }
-    public void setEnv(String env) {
-        this.env = env;
+    public void setAdminAddress(String adminAddress) {
+        this.adminAddress = adminAddress;
     }
 
     // XxlMqClientFactory
@@ -54,9 +46,7 @@ public class XxlMqSpringClientFactory implements ApplicationContextAware, Dispos
         // init
         xxlMqClientFactory = new XxlMqClientFactory();
 
-        xxlMqClientFactory.setZkaddress(zkaddress);
-        xxlMqClientFactory.setZkdigest(zkdigest);
-        xxlMqClientFactory.setEnv(env);
+        xxlMqClientFactory.setAdminAddress(adminAddress);
         xxlMqClientFactory.setConsumerList(consumerList);
 
         xxlMqClientFactory.init();

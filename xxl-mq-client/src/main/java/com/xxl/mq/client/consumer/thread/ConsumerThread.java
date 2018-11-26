@@ -9,11 +9,11 @@ import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.message.XxlMqMessageStatus;
 import com.xxl.mq.client.util.LogHelper;
 import com.xxl.mq.client.util.ThrowableUtil;
-import com.xxl.rpc.util.IpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +34,7 @@ public class ConsumerThread extends Thread {
         this.consumerHandler = consumerHandler;
         this.mqConsumer = consumerHandler.getClass().getAnnotation(MqConsumer.class);
 
-        uuid = IpUtil.getIp().concat("_").concat(String.valueOf(System.currentTimeMillis())).concat("_").concat(String.valueOf(this.hashCode()));
+        uuid = UUID.randomUUID().toString().replaceAll("-", "");
     }
 
     public MqConsumer getMqConsumer() {
@@ -53,7 +53,7 @@ public class ConsumerThread extends Thread {
             try {
                 // check active
                 ConsumerRegistryHelper.ActiveInfo activeInfo = XxlMqClientFactory.getConsumerRegistryHelper().isActice(this);
-                logger.info(">>>>>>>>>>> xxl-mq, consumer active check, topic:{}, group:{}, ActiveInfo={}", mqConsumer.topic(), mqConsumer.group(), activeInfo.toString());
+                logger.info(">>>>>>>>>>> xxl-mq, consumer active check, topic:{}, group:{}, ActiveInfo={}", mqConsumer.topic(), mqConsumer.group(), activeInfo);
 
                 if (activeInfo != null) {
 

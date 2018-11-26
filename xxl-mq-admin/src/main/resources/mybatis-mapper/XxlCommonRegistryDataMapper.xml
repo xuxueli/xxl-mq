@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.mq.admin.dao.IXxlCommonRegistryDataDao" >
+	
+	<resultMap id="xxlCommonRegistryData" type="com.xxl.mq.admin.core.model.XxlCommonRegistryData" >
+		<result column="id" property="id" />
+		<result column="key" property="key" />
+		<result column="value" property="value" />
+		<result column="updateTime" property="updateTime" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		t.`id`,
+		t.`key`,
+		t.`value`,
+		t.`updateTime`
+	</sql>
+
+	<update id="refresh" parameterType="com.xxl.mq.admin.core.model.XxlCommonRegistryData"  >
+		UPDATE XXL_MQ_COMMON_REGISTRY_DATA AS t
+		SET
+			t.`updateTime` = now()
+		WHERE t.`key` = #{xxlCommonRegistryData.key}
+			and t.`value` = #{xxlCommonRegistryData.value}
+	</update>
+
+	<insert id="add" parameterType="com.xxl.mq.admin.core.model.XxlCommonRegistryData" >
+		INSERT INTO XXL_MQ_COMMON_REGISTRY_DATA (
+			`key`,
+			`value`,
+			`updateTime`
+		) VALUES
+		(
+			#{xxlCommonRegistryData.key},
+			#{xxlCommonRegistryData.value},
+			now()
+		)
+	</insert>
+
+	<select id="findData" parameterType="java.util.HashMap" resultMap="xxlCommonRegistryData">
+		SELECT <include refid="Base_Column_List" />
+		FROM XXL_MQ_COMMON_REGISTRY_DATA AS t
+		where t.key = #{key}
+		ORDER BY t.value ASC
+	</select>
+
+	<delete id="cleanData" parameterType="java.util.HashMap" >
+		DELETE FROM XXL_MQ_COMMON_REGISTRY_DATA
+		WHERE NOW() <![CDATA[ > ]]> DATE_ADD(updateTime, Interval #{timeout} SECOND)
+	</delete>
+
+	<delete id="deleteDataValue" parameterType="java.util.HashMap" >
+		DELETE FROM XXL_MQ_COMMON_REGISTRY_DATA
+		WHERE `key` = #{key}
+			and `value` = #{value}
+	</delete>
+
+	<select id="count" resultType="java.lang.Integer" >
+		SELECT count(1)
+		FROM XXL_MQ_COMMON_REGISTRY_DATA
+	</select>
+
+</mapper>

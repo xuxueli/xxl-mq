@@ -24,10 +24,7 @@
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<maven.test.skip>true</maven.test.skip>
 
-		<xxl-rpc.version>1.2.1</xxl-rpc.version>
-		<zookeeper.version>3.4.13</zookeeper.version>
-		<netty.version>4.1.29.Final</netty.version>
-		<commons-pool2.version>2.6.0</commons-pool2.version>
+		<xxl-rpc.version>1.2.2</xxl-rpc.version>
 
 		<spring.version>4.3.20.RELEASE</spring.version>
 
