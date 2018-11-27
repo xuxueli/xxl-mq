@@ -9,6 +9,7 @@ import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.message.XxlMqMessageStatus;
 import com.xxl.mq.client.util.LogHelper;
 import com.xxl.mq.client.util.ThrowableUtil;
+import com.xxl.rpc.util.IpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +79,11 @@ public class ConsumerThread extends Thread {
 
                             // lock message, for transaction
                             if (mqConsumer.transaction()) {
-                                String appendLog_lock = LogHelper.makeLog("锁定消息", ("消费者信息="+newActiveInfo.toString() ) );
+                                String appendLog_lock = LogHelper.makeLog(
+                                        "锁定消息",
+                                        ("消费者信息="+newActiveInfo.toString()
+                                                +"；<br>消费者IP="+IpUtil.getIp())
+                                );
                                 int lockRet = XxlMqClientFactory.getXxlMqBroker().lockMessage(msg.getId(), appendLog_lock);
                                 if (lockRet < 1) {
                                     continue;
@@ -123,12 +128,23 @@ public class ConsumerThread extends Thread {
                                 mqResult = new MqResult(MqResult.FAIL_CODE, errorMsg);
                             }
 
-                            String appendLog_consume = LogHelper.makeLog(
-                                    "消费消息",
-                                    ("消费结果="+(mqResult.isSuccess()?"成功":"失败")
-                                            +"；<br>消费者信息="+activeInfo.toString()
-                                            +"；<br>消费日志="+mqResult.getLog())
-                            );
+                            // log
+                            String appendLog_consume = null;
+                            if (mqConsumer.transaction()) {
+                                appendLog_consume = LogHelper.makeLog(
+                                        "消费消息",
+                                        ("消费结果="+(mqResult.isSuccess()?"成功":"失败")
+                                                +"；<br>消费日志="+mqResult.getLog())
+                                );
+                            } else {
+                                appendLog_consume = LogHelper.makeLog(
+                                        "消费消息",
+                                        ("消费结果="+(mqResult.isSuccess()?"成功":"失败")
+                                                +"；<br>消费者信息="+activeInfo.toString()
+                                                +"；<br>消费者IP="+IpUtil.getIp()
+                                                +"；<br>消费日志="+mqResult.getLog())
+                                );
+                            }
 
                             // callback
                             msg.setStatus(mqResult.isSuccess()? XxlMqMessageStatus.SUCCESS.name():XxlMqMessageStatus.FAIL.name());
