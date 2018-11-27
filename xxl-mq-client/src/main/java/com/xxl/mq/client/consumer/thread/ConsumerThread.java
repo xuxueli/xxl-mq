@@ -48,7 +48,7 @@ public class ConsumerThread extends Thread {
     @Override
     public void run() {
 
-        int waitTim = 10;
+        int waitTim = 0;
 
         while (!XxlMqClientFactory.clientFactoryPoolStoped) {
             try {
@@ -155,8 +155,10 @@ public class ConsumerThread extends Thread {
                         }
 
                     } else {
-                        waitTim = (waitTim < 60) ? (waitTim + 10) : waitTim;
+                        waitTim = (waitTim+10)<=60?(waitTim+10):60;
                     }
+                } else {
+                    waitTim = 2;
                 }
 
             } catch (Exception e) {
