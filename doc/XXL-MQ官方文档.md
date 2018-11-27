@@ -126,33 +126,21 @@ XXL-MQ是一款轻量级分布式消息队列，支持 "并发消息、串行消
 ### 数据库配置
 spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl-mq?Unicode=true&characterEncoding=UTF-8
 
-……
-
 ### 告警邮箱发送方配置
 spring.mail.username=xxx@qq.com
 spring.mail.password=xxx
 
-……
-
 ### 注册心跳时间
 xxl.mq.registry.beattime=10
-
-……
 
 ### 注册信息磁盘存储目录，务必拥有读写权限；
 xxl.mq.registry.data.filepath=/data/applogs/xxl-mq/registrydata
 
-……
-
 ### 消息中心Broker服务端口
 xxl-mq.rpc.remoting.port=7080
 
-……
-
 ### 日志保存天数，超过该阈值的成功消息将会被自动清理；大于等于3时生效
 xxl.mq.log.logretentiondays=3
-
-……
 
 ### 登陆信息配置
 xxl.mq.login.username=admin
@@ -182,9 +170,9 @@ xxl.mq.login.password=123456
 （规划中）
 
 
-### 2.4 接入XXL-MQ并使用 (以示例项目为例,进行讲解)
+### 2.4 接入XXL-MQ并使用
 
-    “执行器”项目："xxl-mq-samples-springboot" (提供多种版本示例项目供参考选择，现以springboot版本为例讲解)
+    接入XXL-MQ项目："xxl-mq-samples-springboot" (提供多种版本示例项目供参考选择，现以springboot版本为例讲解)
     作用：生产消息、消费消息；可直接部署，也可以将集成到现有业务项目中。
 
 #### 步骤一：maven依赖
@@ -200,8 +188,6 @@ xxl.mq.login.password=123456
 消息接入方配置，配置内容说明：
 
 ```
-……
-
 # 消息中心跟地址；支持配置多个，建议域名方式配置；
 xxl.mq.admin.address=http://localhost:8080/xxl-mq-admin
 ```
@@ -282,9 +268,7 @@ mqMessage.setRetryCount(3);
 
 XxlMqProducer.produce(mqMessage);
 
-
 ……
-
 ```
 
 更多消息属性、场景，可参考章节 "3.2 Message设计"；
@@ -314,7 +298,7 @@ public class DemoAMqComsumer implements IMqConsumer {
      - 3、需要加上注解 "com.xxl.mq.client.consumer.annotation.MqConsumer"。该注解 "value" 值为订阅的消息主题, "type" 值为消息类型(TOPIC广播消息、QUEUE并发消息队列 和 SERIAL_QUEUE串行消息队列);
 
 
-更多消息属性、场景，可参考章节 "3.6 Consumer设计"；
+更多消费者属性、场景，可参考章节 "3.6 Consumer设计"；
 
 
 #### 测试
