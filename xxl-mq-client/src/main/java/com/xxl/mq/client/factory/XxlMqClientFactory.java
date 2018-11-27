@@ -6,8 +6,8 @@ import com.xxl.mq.client.consumer.annotation.MqConsumer;
 import com.xxl.mq.client.consumer.registry.ConsumerRegistryHelper;
 import com.xxl.mq.client.consumer.thread.ConsumerThread;
 import com.xxl.mq.client.message.XxlMqMessage;
+import com.xxl.mq.client.registry.CommonServiceRegistry;
 import com.xxl.rpc.registry.ServiceRegistry;
-import com.xxl.rpc.registry.impl.NativeServiceRegistry;
 import com.xxl.rpc.remoting.invoker.XxlRpcInvokerFactory;
 import com.xxl.rpc.remoting.invoker.call.CallType;
 import com.xxl.rpc.remoting.invoker.reference.XxlRpcReferenceBean;
@@ -111,9 +111,8 @@ public class XxlMqClientFactory  {
 
     public void startBrokerService() {
         // init XxlRpcInvokerFactory
-        xxlRpcInvokerFactory = new XxlRpcInvokerFactory(NativeServiceRegistry.class, new HashMap<String, String>(){{
-            put(NativeServiceRegistry.XXL_RPC_ADMIN, adminAddress);
-            put(NativeServiceRegistry.ENV, "default");
+        xxlRpcInvokerFactory = new XxlRpcInvokerFactory(CommonServiceRegistry.class, new HashMap<String, String>(){{
+            put(CommonServiceRegistry.REGISTRY_CENTER, adminAddress);
         }});
         try {
             xxlRpcInvokerFactory.start();
