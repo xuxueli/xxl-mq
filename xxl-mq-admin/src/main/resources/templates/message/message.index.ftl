@@ -226,7 +226,7 @@
                 <div class="modal-body">
                     <form class="form-horizontal form" role="form" >
                         <div class="form-group">
-                            <label for="lastname" class="col-sm-3 control-label">消息主题<font color="red">*</font></label>
+                            <label for="lastname" class="col-sm-3 control-label">消息主题<font color="black">*</font></label>
                             <div class="col-sm-9"><input type="text" class="form-control" name="topic" maxlength="255" placeholder="请输入消息主题" ></div>
                         </div>
                         <div class="form-group">
@@ -241,7 +241,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-3 control-label"">清理方式：</label>
+                            <label class="col-sm-3 control-label"">清理方式 *</label>
                             <div class="col-sm-9">
                                 <select class="form-control" name="type" >
                                     <option value="1" >清理一个月之前消息数据</option>

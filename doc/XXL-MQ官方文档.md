@@ -271,7 +271,7 @@ XxlMqProducer.produce(mqMessage);
 ……
 ```
 
-更多消息属性、场景，可参考章节 "3.2 Message设计"；
+更多消息属性、场景，可参考章节 "4.2 Message设计"；
 
 
 #### 消费消息 
@@ -298,7 +298,7 @@ public class DemoAMqComsumer implements IMqConsumer {
      - 3、需要加上注解 "com.xxl.mq.client.consumer.annotation.MqConsumer"。该注解 "value" 值为订阅的消息主题, "type" 值为消息类型(TOPIC广播消息、QUEUE并发消息队列 和 SERIAL_QUEUE串行消息队列);
 
 
-更多消费者属性、场景，可参考章节 "3.6 Consumer设计"；
+更多消费者属性、场景，可参考章节 "4.6 Consumer设计"；
 
 
 #### 测试
@@ -339,9 +339,49 @@ public class DemoAMqComsumer implements IMqConsumer {
 - d、其他测试：如延时消息、重试消息 …… 可自行测试；
 
 
-## 三、系统设计
+## 三、消息中心，操作指南
 
-### 3.1 系统架构图
+### 3.1 运行报表：
+运行报表界面，展示消息中心系统信息，如业务线、消息主题、消息数量等；支持日期分布图、成功比例图方式查看；
+
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_01.png "在这里输入图片标题")
+
+### 3.2 消息主题
+消息主题界面，可查看在线消息主题列表；底层会周期性扫描消息记录，发型并录入新的消息主题，并展示在这里；
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_08.png "在这里输入图片标题")
+
+消息主题界面，支持为消息主题设置一些附属参数，提供一些增强功能；如负责人、告警邮箱等；
+
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_11.png "在这里输入图片标题")
+
+消息主题属性：
+- 业务线：该消息所属业务线，方便分组管理；
+- 负责人：该消息所属负责人；
+- 告警邮箱：一个或多个，多个逗号分隔；消息消费失败时，将会周期性发送告警邮件；
+
+### 3.3 消息记录
+消息记录界面，可查看在线消息记录；支持筛选、查看消息流转轨迹；
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_09.png "在这里输入图片标题")
+
+- 消息在线管理功能：支持在线 "新增"、"编辑" 和 "删除" 消息记录； 
+
+消息新增如下图所示，消息属性说明，可参考章节 "4.2 Message设计"；
+
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_12.png "在这里输入图片标题")
+
+- 消息手动清理：支持在线清理消息，可选择消息主题、状态、清理类型等；
+
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_13.png "在这里输入图片标题")
+
+### 3.4 业务线
+业务先界面，可查看在线业务线列表，并管理维护；可通过自定义业务线，绑定消息主题，从而方便消息主题的分组管理；
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_10.png "在这里输入图片标题")
+
+
+
+## 四、系统设计
+
+### 4.1 系统架构图
 
 ![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_03.png "在这里输入图片标题")
 
@@ -357,17 +397,17 @@ public class DemoAMqComsumer implements IMqConsumer {
 
 #### 架构图模块解读:
 
-- 1、Server
-    - 1.1、Broker: 消息代理中心, 系统核心组成模块, 负责接受消息生产者Producer推送生产的消息, 同时负责提供RPC服务供消费者Consumer使用来消费消息; 
-    - 1.2、Message Queue: 消息存储模块, 目前底层使用mysql消息表;
-- 2、Registry Center
-    - 2.1、Broker Registry Center: Broker注册中心子模块, 供Broker注册RPC服务使用;
-    - 2.2、Consumer Registry Center: Consumer注册中心子模块, 供Consumer注册消费节点使用;
-- 3、Client
-    - 3.1、Producer: 消息生产者模块, 负责提供API接口供开发者调用,并生成和发送队列消息;
-    - 3.2、Consumer: 消息消费者模块, 负责订阅消息并消息;
+- Server
+    - Broker: 消息代理中心, 系统核心组成模块, 负责接受消息生产者Producer推送生产的消息, 同时负责提供RPC服务供消费者Consumer使用来消费消息; 
+    - Message Queue: 消息存储模块, 目前底层使用mysql消息表;
+- Registry Center
+    - Broker Registry Center: Broker注册中心子模块, 供Broker注册RPC服务使用;
+    - Consumer Registry Center: Consumer注册中心子模块, 供Consumer注册消费节点使用;
+- Client
+    - Producer: 消息生产者模块, 负责提供API接口供开发者调用,并生成和发送队列消息;
+    - Consumer: 消息消费者模块, 负责订阅消息并消息;
 
-### 3.2 Message设计
+### 4.2 Message设计
 
 消息核心属性 | 说明
 --- | ---
@@ -380,7 +420,7 @@ timeout | 超时时间，单位秒；大于0时生效，处于锁定运行状态
 effectTime | 生效时间, new Date()立即执行, 否则在生效时间点之后开始执行;
 
 
-### 3.3 Broker设计
+### 4.3 Broker设计
 
 Broker(消息代理中心)：系统核心组成模块, 负责接受消息生产者Producer推送生产的消息, 同时负责提供RPC服务供消费者Consumer使用来消费消息；
 
@@ -394,7 +434,7 @@ Broker在接收到Produce的生产消息的RPC调用时, 并不会立即存储�
 Broker在接收到 "消息锁定" 等同步RPC调用时, 将会触发同步调用, 采用乐观锁方式锁定消息;
 
 
-### 3.4 Registry Center设计
+### 4.4 Registry Center设计
 
 Registry Center(注册中心)主要分为两个子模块: Broker注册中心、Consumer注册中心;
 
@@ -402,14 +442,14 @@ Registry Center(注册中心)主要分为两个子模块: Broker注册中心、C
 - Consumer注册中心子模块: 供Consumer注册消费节点使用;
 
 
-### 3.5 Producer设计
+### 4.5 Producer设计
 
 Producer(消息生产者), 兼容“异步批量多线程生产”+“同步生产”两种方式，提升消息发送性能；
 
 底层通讯全异步化：消息新增 + 消息新增接受 + 消息回调 + 消息回调接受；仅批量PULL消息与锁消息非异步；
 
 
-### 3.6 Consumer设计
+### 4.6 Consumer设计
 
 
 MqConsumer注解属性 | 说明
@@ -430,21 +470,21 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
 - 消息状态和日志: 消息执行结束后, 将会调用Broker的RPC服务修改消息状态并追加消息日志, Broker将会通过内存队列方式, 异步消息队列中变更存储到数据库中。
 
 
-### 3.7 延时消息
+### 4.7 延时消息
 支持设置消息的延迟生效时间, 到达设置的生效时间时该消息才会被消费；适用于延时消费场景，如订单超时取消等;
 
-### 3.8 事务性
+### 4.8 事务性
 消费者开启事务开关后,消息事务性保证只会成功执行一次;
 
-### 3.9 失败重试
+### 4.9 失败重试
 支持设置消息的重试次数, 在消息执行失败后将会按照设置的值进行消息重试执行,直至重试次数耗尽或者执行成功;
 
-### 3.10 超时控制
+### 4.10 超时控制
 支持自定义消息超时时间，消息消费超时将会主动中断；
 
 
-## 四、版本更新日志
-### 4.1 版本V1.1.0 新特性
+## 五、版本更新日志
+### 5.1 版本V1.1.0 新特性
 - 1、简单易用: 一行代码即可发布一条消息; 一行注解即可订阅一个消息主题;
 - 2、部署简单: 除ZK之外不依赖第三方服务;
 - 3、三种消息模式: TOPIC(广播消息)模型、QUEUE(并发队列)模型 和 SERIAL_QUEUE(串行队列)模型,下文将会详细讲解:
@@ -456,7 +496,7 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
 - 8、Delay执行: 支持设置消息的延迟生效时间, 到达设置的Delay执行时间时该消息才会被消费 ,提供DelayQueue的功能;
 - 9、消息重试: 支持设置消息的重试次数, 在消息执行失败后将会按照设置的值进行消息重试执行,直至重试次数耗尽或者执行成功;
 
-### 4.2 版本V1.1.1 特性
+### 5.2 版本V1.1.1 特性
 - 1、项目groupId改为com.xuxueli，为推送maven中央仓库做准备；
 - 2、项目推送Maven中央仓库；
 - 3、底层系统优化，CleanCode等；
@@ -465,7 +505,7 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
 - 6、broadcast 广播消息时ZK 发送方不进行watch, 否则发送方也会监听到；
 - 7、修复一处因ReentrantLock导致可能死锁的问题；
 
-### 4.3 版本V1.2.0 Release Notes[2018-11-27]
+### 5.3 版本V1.2.0 Release Notes[2018-11-27]
 - 1、client端与Broker长链初始化优化，防止重复创建连接。
 - 2、POM多项依赖升级；
 - 3、UI组件升级；
@@ -512,17 +552,18 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
 - 消息数据、Log使用text字段存储，为避免超长限制长度20000；后续考虑优化，尽量不限制数据长度、避免轨迹较多时Log超长问题；
 - 消息告警功能增强，目前仅支持失败告警，考虑支持消息堆积告警、阻塞告警等，Topic扩展属性存储阈值；30分钟统计一次消息情况, 将会根据topic分组, 堆积超过阈值的topic将会在报警邮件报表中进行记录;
 - accessToken安全校验；
+- 消息主题界面，支持查看在线消费者列表；
 
 
-## 五、其他
+## 六、其他
 
-### 5.1 项目贡献
+### 6.1 项目贡献
 欢迎参与项目贡献！比如提交PR修复一个bug，或者新建 [Issue](https://github.com/xuxueli/xxl-mq/issues/) 讨论新特性或者变更。
 
-### 5.2 用户接入登记
+### 6.2 用户接入登记
 更多接入的公司，欢迎在 [登记地址](https://github.com/xuxueli/xxl-mq/issues/1 ) 登记，登记仅仅为了产品推广。
 
-### 5.3 开源协议和版权
+### 6.3 开源协议和版权
 产品开源免费，并且将持续提供免费的社区技术支持。个人或企业内部可自由的接入和使用。
 
 - Licensed under the GNU General Public License (GPL) v3.
