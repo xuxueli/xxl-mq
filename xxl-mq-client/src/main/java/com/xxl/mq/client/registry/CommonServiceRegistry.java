@@ -288,7 +288,7 @@ public class CommonServiceRegistry extends ServiceRegistry {
         for (String adminAddressUrl: adminAddressArr) {
 
             // url + param
-            String url = adminAddressUrl + "/registry/discovery?";
+            String url = adminAddressUrl + "/registry/discovery";
             Map<String, String> params = new HashMap<>();
             for (String key:keys) {
                 params.put("keys", key);
