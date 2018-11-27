@@ -119,7 +119,9 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                                 xxlMqMessageDao.save(messageList);
                             }
                         } catch (Exception e) {
-                            logger.error(e.getMessage(), e);
+                            if (!executorStoped) {
+                                logger.error(e.getMessage(), e);
+                            }
                         }
                     }
 
@@ -170,7 +172,9 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                             }
 
                         } catch (Exception e) {
-                            logger.error(e.getMessage(), e);
+                            if (!executorStoped) {
+                                logger.error(e.getMessage(), e);
+                            }
                         }
                     }
 
@@ -203,7 +207,9 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                             logger.info("xxl-mq, retry message, count:{}", count);
                         }
                     } catch (Exception e) {
-                        logger.error(e.getMessage(), e);
+                        if (!executorStoped) {
+                            logger.error(e.getMessage(), e);
+                        }
                     }
                     try {
                         // mult reset block message
@@ -213,13 +219,17 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                             logger.info("xxl-mq, retry block message, count:{}", count);
                         }
                     } catch (Exception e) {
-                        logger.error(e.getMessage(), e);
+                        if (!executorStoped) {
+                            logger.error(e.getMessage(), e);
+                        }
                     }
                     try {
                         // sleep
                         TimeUnit.SECONDS.sleep(60);
                     } catch (Exception e) {
-                        logger.error(e.getMessage(), e);
+                        if (!executorStoped) {
+                            logger.error(e.getMessage(), e);
+                        }
                     }
                 }
             }
@@ -277,13 +287,17 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                             }
                         }
                     } catch (Exception e) {
-                        logger.error(e.getMessage(), e);
+                        if (!executorStoped) {
+                            logger.error(e.getMessage(), e);
+                        }
                     }
                     try {
                         // sleep
                         TimeUnit.MINUTES.sleep(1);
                     } catch (Exception e) {
-                        logger.error(e.getMessage(), e);
+                        if (!executorStoped) {
+                            logger.error(e.getMessage(), e);
+                        }
                     }
                 }
             }
@@ -301,12 +315,16 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                             int count = xxlMqMessageDao.cleanSuccessMessage(XxlMqMessageStatus.SUCCESS.name(), logretentiondays);
                             logger.info("xxl-mq, clean success message, count:{}", count);
                         } catch (Exception e) {
-                            logger.error(e.getMessage(), e);
+                            if (!executorStoped) {
+                                logger.error(e.getMessage(), e);
+                            }
                         }
                         try {
                             TimeUnit.DAYS.sleep(logretentiondays);
                         } catch (Exception e) {
-                            logger.error(e.getMessage(), e);
+                            if (!executorStoped) {
+                                logger.error(e.getMessage(), e);
+                            }
                         }
                     }
                 }
@@ -332,12 +350,16 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                         }
 
                     } catch (Exception e) {
-                        logger.error(e.getMessage(), e);
+                        if (!executorStoped) {
+                            logger.error(e.getMessage(), e);
+                        }
                     }
                     try {
                         TimeUnit.MINUTES.sleep(1);
                     } catch (Exception e) {
-                        logger.error(e.getMessage(), e);
+                        if (!executorStoped) {
+                            logger.error(e.getMessage(), e);
+                        }
                     }
                 }
             }
@@ -345,6 +367,7 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
 
     }
     public void destroyThread(){
+        executorStoped = true;
         executorService.shutdownNow();
     }
 
