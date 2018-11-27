@@ -283,20 +283,11 @@ mqMessage.setRetryCount(3);
 XxlMqProducer.produce(mqMessage);
 
 
-/**
- * …… 更多消息属性、场景，可以参考如下消息属性说明了解：
- */
+……
+
 ```
 
-消息属性 | 说明
---- | ---
-topic | 消息主题
-group | 消息分组, 分组一致时消息仅消费一次；存在多个分组时，多个分组时【广播消费】；
-data | 消息数据
-retryCount | 重试次数, 执行失败且大于0时生效，每重试一次减一；
-shardingId | 分片ID, 大于0时启用，否则使用消息ID；消费者通过该参数进行消息分片消费；分片ID不一致时分片【并发消费】、一致时【串行消费】；
-timeout | 超时时间，单位秒；大于0时生效，处于锁定运行状态且运行超时时，将主动标记运行失败；
-effectTime | 生效时间, new Date()立即执行, 否则在生效时间点之后开始执行;
+更多消息属性、场景，可参考章节 "3.2 Message设计"；
 
 
 #### 消费消息 
@@ -323,11 +314,7 @@ public class DemoAMqComsumer implements IMqConsumer {
      - 3、需要加上注解 "com.xxl.mq.client.consumer.annotation.MqConsumer"。该注解 "value" 值为订阅的消息主题, "type" 值为消息类型(TOPIC广播消息、QUEUE并发消息队列 和 SERIAL_QUEUE串行消息队列);
 
 
-MqConsumer注解属性 | 说明
---- | ---
-group | 消息分组,
-topic | 消息主题
-transaction | 事务开关，开启消息事务性保证只会成功执行一次;关闭时可能重复消费，性能较优；
+更多消息属性、场景，可参考章节 "3.6 Consumer设计"；
 
 
 #### 测试
@@ -382,7 +369,7 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
 - Topic segment : 消息分段, 同一个Topic的消息队列,将会根据订阅的Consumer进行分片分组,每个Consumer拥有的消息片即一个segment;
 - Producer : 消息生产者, 绑定一个消息Topic, 并向该Topic消息队列中生产消息;
 - Consumer : 消息消费者, 绑定一个消息Topic, 只能消费该Topic消息队列中的消息;
-- Consumer Group : 订阅同一个Topic的所有Consumer,认定为一个分组;
+- Consumer Group : 消费者分组，隔离消息；同一个Topic下一条消息消费一次；
 
 #### 架构图模块解读:
 
@@ -396,82 +383,80 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
     - 3.1、Producer: 消息生产者模块, 负责提供API接口供开发者调用,并生成和发送队列消息;
     - 3.2、Consumer: 消息消费者模块, 负责订阅消息并消息;
 
-### 3.2 Message设计: 消息核心参数
+### 3.2 Message设计
 
-- id: 消息唯一标识
-- name: 消息主题Topic, 每个消息队列的唯一标识
-- delayTime: 消息延迟执行的时间, 当前时间超过延迟执行时间该消息才会被消费掉, new Date()立即执行, 否则在延迟时间点之后开始执行;
-- status: 消息状态: NEW=新消息、ING=消费中、SUCCESS=消费成功、FAIL=消费失败
-- msg: 消息历史流转日志
-- retryCount: 剩余重试次数, 在消息执行失败后将会按照设置的值进行消息重试执行,直至重试次数耗尽或者执行成功; 
+消息核心属性 | 说明
+--- | ---
+topic | 消息主题
+group | 消息分组, 分组一致时消息仅消费一次；存在多个分组时，多个分组时【广播消费】；
+data | 消息数据
+retryCount | 重试次数, 执行失败且大于0时生效，每重试一次减一；
+shardingId | 分片ID, 大于0时启用，否则使用消息ID；消费者通过该参数进行消息分片消费；分片ID不一致时分片【并发消费】、一致时【串行消费】；
+timeout | 超时时间，单位秒；大于0时生效，处于锁定运行状态且运行超时时，将主动标记运行失败；
+effectTime | 生效时间, new Date()立即执行, 否则在生效时间点之后开始执行;
+
 
 ### 3.3 Broker设计
 
-**Broker(消息代理中心)**, 系统核心组成模块, 负责接受消息生产者Producer推送生产的消息, 同时负责提供RPC服务供消费者Consumer使用来消费消息; 
+Broker(消息代理中心)：系统核心组成模块, 负责接受消息生产者Producer推送生产的消息, 同时负责提供RPC服务供消费者Consumer使用来消费消息；
 
-**Broker支持集群部署**, 集群节点之间地位平等, 集群部署情况下可大大提高系统的消息吞吐量。
+Broker支持集群部署, 集群节点之间地位平等, 集群部署情况下可大大提高系统的消息吞吐量。
 
-Broker通过Zookeeper实现集群功能, 各节点在启动时会自动注册到注册中心, Producer或Consumer在生产消息或者消费消息时,将会通过ZK自动感知到在线的Broker节点。
+
+Broker通过内置注册中心实现集群功能, 各节点在启动时会自动注册到注册中心, Producer或Consumer在生产消息或者消费消息时,将会通过内置注册中心自动感知到在线的Broker节点。
 
 Broker在接收到Produce的生产消息的RPC调用时, 并不会立即存储该消息, 而是立即push到内存队列中, 同时立即响应RPC调用。 内存队列将会异步将队列中的消息数据存储到Mysql中。
 
 Broker在接收到 "消息锁定" 等同步RPC调用时, 将会触发同步调用, 采用乐观锁方式锁定消息;
 
-### 3.4 Producer设计
 
-Producer(消息生产者), Producer可以生成三种模式的消息
-
-- TOPIC(广播消息)模型 : Producer生产该类型消息, 主要通过ZK来实现, 可结合 章节2.6.1 来理解; 
-- QUEUE(并发队列)模型 : Producer生产该类型消息, 主要通过Broker的RPC服务来实现, 没生产一条消息,将会向Broker集群发送一条RPC调用, Broker将会立即将消息加入内存队列响应RPC调用, 内存队列将会异步将该消息存储在Mysql中;
-- SERIAL_QUEUE(串行队列)模型 : 同 "QUEUE(并发队列)模型" 逻辑;
-
-
-### 3.5 Registry Center设计
+### 3.4 Registry Center设计
 
 Registry Center(注册中心)主要分为两个子模块: Broker注册中心、Consumer注册中心;
 
-- Broker注册中心子模块: ZK中指定有一个固定的Broker注册位置, 每个Broker节点将会在该固定位置新增一个 "EPHEMERAL" 类型的ZK子节点, 赋值为该Broker的地址, 因此, Producer或Consumer可自动感知在线的节点来生产或消费消息;
-- Consumer注册中心子模块: 每个消息主题Topic在ZK中对应一个指定的注册位置, 该消息主题下的Consumer将会在该位置新增一个 "EPHEMERAL" 类型的ZK子节点, 赋值为该Consumer的唯一ID。 因此, 每个Consumer可以感知同一Topic下在线的所有Consumer以及排序, 这在 "QUEUE(并发队列)模型" 消息的分片中, 以及 "SERIAL_QUEUE(串行队列)模型" 消息的串行执行中将会起到关键性作用,下文将会详细讲解;
+- Broker注册中心子模块: 供Broker注册RPC服务使用;
+- Consumer注册中心子模块: 供Consumer注册消费节点使用;
 
-### 3.6 Consumer设计: 三种核心消息模型剖析
 
-#### 3.6.1 TOPIC(广播消息)模型
+### 3.5 Producer设计
 
-**"TOPIC(广播消息)模型"** 通过ZK来实现, 该类型消息在"Registry Center" 中分配一个指定的消息监听节点, Producer通过对该节点赋值触发ZK的NodeDataChanged广播, 而该消息队列的Consumer在启动时会主动监听该节点, 在监听到NodeDataChanged时将会根据节点数据自动生成一条广播消息并执行。从而,实现了消息广播功能;
+Producer(消息生产者), 兼容“异步批量多线程生产”+“同步生产”两种方式，提升消息发送性能；
 
-因为通过ZK节点来传输消息数据, 因此消息数据大小不可超过1M, 底层对消息长度做了限制。同时, 广播类型消息将不会落地;
+底层通讯全异步化：消息新增 + 消息新增接受 + 消息回调 + 消息回调接受；仅批量PULL消息与锁消息非异步；
 
-该类型Consumer内部为了一个**内存队列**, ZK的NodeDataChanged触发生成的广播将会推送到对应Consumer的内存队列中异步执行, 因此广播消息并不会堵塞, 而且可保证消息串行平稳执行。
 
-#### 3.6.2 QUEUE(并发队列)模型
+### 3.6 Consumer设计
 
-"QUEUE(并发队列)模型" 通过 "多线程轮训 + 消息分片 + PULL + 消息锁定" 的方式来实现:
+
+MqConsumer注解属性 | 说明
+--- | ---
+group | 消息分组,
+topic | 消息主题
+transaction | 事务开关，开启消息事务性保证只会成功执行一次;关闭时可能重复消费，性能较优；
+
+
+消费者通过 "多线程轮训 + 消息分片 + PULL + 消息锁定" 的方式来实现:
 
 - 多线程轮训: 该模式下每个Consumer将会存在一个线程, 如存在多个Consumer, 多个Consumer将会并行消息同一主题下的消息, 大大提高消息的消费速度; 
 - 消息分片 : 队列中消息将会按照 "Registry Center" 中注册的Consumer列表顺序进行消息分段, 保证一条消息只会被分配给其中一个Consumer, 每个Consumer只会消费分配给自己的消息。 因此在多个Consumer并发消息时, 可以保证同一条消息不被多个Consumer竞争来重复消息。
-    - 分片函数: MOD("消息主键ID", #{在线消费者总数}) = #{当前消费者排名} , 
-    - 分片逻辑解释: 每个Consumer通过注册中心感知到在线所有的Consumer, 计算出在线Consumer总数total, 以及当前Consumer在所有Consumer中的排名rank; 把消息主键ID对在线Consumer总数total进行取模, 余数和当前Consumer排名rank一致的消息认定为分配给自己的消息;
+    - 分片函数: MOD("消息分片ID", #{在线消费者总数}) = #{当前消费者排名} , 
+    - 分片逻辑解释: 每个Consumer通过注册中心感知到在线所有的Consumer, 计算出在线Consumer总数total, 以及当前Consumer在所有Consumer中的排名rank; 把消息分片ID对在线Consumer总数total进行取模, 余数和当前Consumer排名rank一致的消息认定为分配给自己的消息;
 - PULL : 每个Consumer将会轮训PULL消息分片分配给自己的消息, 顺序消费。
-- 消息锁定: Consumer在消费每一条消息时,将会主动进行消息锁定, 通过数据库乐观锁来实现, 锁定成功后消息状态变更为执行中状态, 将不会被Consumer再次PULL到。因此, 可以更进一步保证每条消息只会被消费一次;
+- 消息锁定: Consumer在消费每一条消息时,开启事务时，将会主动进行消息锁定, 通过数据库乐观锁来实现, 锁定成功后消息状态变更为执行中状态, 将不会被Consumer再次PULL到。因此, 可以更进一步保证每条消息只会被消费一次;
 - 消息状态和日志: 消息执行结束后, 将会调用Broker的RPC服务修改消息状态并追加消息日志, Broker将会通过内存队列方式, 异步消息队列中变更存储到数据库中。
 
-#### 3.6.3 SERIAL_QUEUE(串行队列)模型
 
-"SERIAL_QUEUE(串行队列)模型" 通过 "单线程轮训 + PULL" 的方式来实现, 
+### 3.7 延时消息
+支持设置消息的延迟生效时间, 到达设置的生效时间时该消息才会被消费；适用于延时消费场景，如订单超时取消等;
 
-- 单线程轮训: 该模式下, Consumer可以通过 "Registry Center" 感知到在线的所有Consumer, 规定只有最大的Consumer节点对应的线程拥有执行权限, 其余节点将会进入睡眠状态, 保证只会有一个Consuemr消费队列中数据;
-- PULL : 该模式下, 只会有一个存活状态的Consumer, 因此队列中所有消息都会被分配给该Consumer, 该Consumer将会轮训获取一定数量的消息, 顺序消费;
-- 消息锁定: 同 "QUEUE(并发队列)模型" 逻辑;
-- 消息状态和日志: 同 "QUEUE(并发队列)模型" 逻辑;
+### 3.8 事务性
+消费者开启事务开关后,消息事务性保证只会成功执行一次;
 
-### 3.8 消息重试
+### 3.9 失败重试
+支持设置消息的重试次数, 在消息执行失败后将会按照设置的值进行消息重试执行,直至重试次数耗尽或者执行成功;
 
-Delay : 支持设置消息的延迟生效时间, 到达设置的Delay执行时间时该消息才会被消费 ,提供DelayQueue的功能;
-
-### 3.7 消息延迟执行
-
-当状态为执行失败的消息, 并且剩余重试次数大于零时, Broker竟会扣减一次剩余重试次数, 同时将失败的状态改为初始状态并记录重试日志, 初始状态的消息将会被Consumer重新消息。
-
+### 3.10 超时控制
+支持自定义消息超时时间，消息消费超时将会主动中断；
 
 
 ## 四、版本更新日志
