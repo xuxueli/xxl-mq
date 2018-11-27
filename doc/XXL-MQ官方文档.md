@@ -91,155 +91,221 @@ XXL-MQ是一款轻量级分布式消息队列，支持 "并发消息、串行消
 
 ## 二、快速入门
 
-### 2.1 编译项目
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_0UU2.png "在这里输入图片标题")
 
-源码目录介绍：
-- /db
-- /doc
-- /xxl-mq-admin        (消息代理中心, 同时提供消息在线管理功能)
-- /xxl-mq-client        (公共依赖, 提供API开发Producer和Consumer)
-- /xxl-mq-samples       (消息生产和消费example示例项目, 项目中开发了三种经典的消息模型, 可自行参考学习并使用）
-    - /xxl-mq-samples-springboot    ：springboot版本示例；
+### 2.1 初始化"消息中心数据库"
+请下载项目源码并解压，获取 "消息中心数据库初始化SQL脚本" 并执行即可
 
-### 2.2 初始化数据库
+"消息中心数据库初始化SQL脚本" 位置为:
 
-执行源码目录下SQL脚本 "/xxl-mq/doc/db/xxl-mq-mysql.sql" , 初始化MQ数据库表; 
+    /xxl-mq/doc/db/xxl-mq-mysql.sql
+    
+消息中心支持集群部署，集群情况下各节点务必连接同一个mysql实例;
 
-### 2.3 配置全局Zookeeper地址
+### 2.2 编译项目
+解压源码,按照maven格式将源码导入IDE, 使用maven进行编译即可，源码结构如下：
 
-**"Broker项目" 和 "XXL-MQ接入项目", 使用同样的方式进行Zookeeper地址配置, 配置文件并不在项目中, 而在项目所在硬盘指定绝对目录中, 便于ZK配置文件统一**
+    - /xxl-mq-admin                 ：消息中心，提供消息Broker、服务注册、消息在线管理功能；
+    - /xxl-mq-client                ：客户端核心依赖, 提供API开发Producer和Consumer；
+    - /xxl-mq-samples               ：接入项目参考示例, 可自行参考学习并使用；
+        - /xxl-mq-samples-frameless     ：无框架示例项目，不依赖第三方框架，只需main方法即可启动运行；
+        - /xxl-mq-samples-springboot    ：springboot版本示例项目；
+        
 
-配置文件配置在项目所在硬盘绝对地址: “/data/webapps/xxl-conf.properties”
+### 2.3 配置部署“消息中心”
 
-配置内容如下：
+#### 步骤一：消息中心配置：
+消息中心配置文件地址：
+
 ```
-// zookeeper集群时，多个地址用逗号分隔
-zkserver=127.0.0.1:2181
+/xxl-mq/xxl-mq-admin/src/main/resources/application.properties
 ```
 
+消息中心配置内容说明：
 
-### 2.4 配置部署“消息代理中心”(支持集群部署)
+```
+### 数据库配置
+spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl-mq?Unicode=true&characterEncoding=UTF-8
 
-#### 配置JDBC连接
+……
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_Nsu5.png "在这里输入图片标题")
+### 告警邮箱发送方配置
+spring.mail.username=xxx@qq.com
+spring.mail.password=xxx
 
-#### 配置登录账号密码
+……
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_b8OS.png "在这里输入图片标题")
+### 注册心跳时间
+xxl.mq.registry.beattime=10
 
-### 2.5 接入XXL-MQ并使用 (以示例项目"xxl-mq-samples-springboot"为例,进行讲解)
+……
 
-#### 加入XXL-MQ的maven依赖
+### 注册信息磁盘存储目录，务必拥有读写权限；
+xxl.mq.registry.data.filepath=/data/applogs/xxl-mq/registrydata
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_dYNJ.png "在这里输入图片标题")
+……
+
+### 消息中心Broker服务端口
+xxl-mq.rpc.remoting.port=7080
+
+……
+
+### 日志保存天数，超过该阈值的成功消息将会被自动清理；大于等于3时生效
+xxl.mq.log.logretentiondays=3
+
+……
+
+### 登陆信息配置
+xxl.mq.login.username=admin
+xxl.mq.login.password=123456
+
+``` 
+
+#### 步骤二：部署项目：
+
+如果已经正确进行上述配置，可将项目编译打包部署。
+消息中心访问地址：http://localhost:8080/xxl-mq-admin (该地址接入方项目将会使用到，作为注册地址)，登录后运行界面如下图所示
+
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_01.png "在这里输入图片标题")
+
+至此“消息中心”项目已经部署成功。
+
+#### 步骤三：消息中心集群（可选）：
+消息中心支持集群部署，提升消息系统容灾和可用性。
+
+消息中心集群部署时，几点要求和建议：
+- DB配置保持一致；
+- 登陆账号配置保持一致；
+- 集群机器时钟保持一致（单机集群忽视）；
+- 建议：推荐通过nginx为消息中心集群做负载均衡，分配域名。消息中心访问、客户端使用等操作均通过该域名进行。
+
+#### 其他：Docker 镜像方式搭建消息中心：
+（规划中）
+
+
+### 2.4 接入XXL-MQ并使用 (以示例项目为例,进行讲解)
+
+    “执行器”项目："xxl-mq-samples-springboot" (提供多种版本示例项目供参考选择，现以springboot版本为例讲解)
+    作用：生产消息、消费消息；可直接部署，也可以将集成到现有业务项目中。
+
+#### 步骤一：maven依赖
+确认pom文件中引入了 "xxl-mq-client" 的maven依赖；
+
+#### 步骤二："消息接入方"，属性配置
+消息接入方配置，配置文件地址：
+
+```
+/xxl-mq/xxl-mq-samples/xxl-mq-samples-springboot/src/main/resources/application.properties
+```
+
+消息接入方配置，配置内容说明：
+
+```
+……
+
+# 消息中心跟地址；支持配置多个，建议域名方式配置；
+xxl.mq.admin.address=http://localhost:8080/xxl-mq-admin
+```
+    
+#### 步骤三："消息接入方"，组件配置
+
+```
+@Bean
+public XxlMqSpringClientFactory getXxlMqConsumer(){
+    XxlMqSpringClientFactory xxlMqSpringClientFactory = new XxlMqSpringClientFactory();
+    xxlMqSpringClientFactory.setAdminAddress(adminAddress);
+
+    return xxlMqSpringClientFactory;
+}
+```    
+    
+#### 步骤四：部署"消息接入方"项目：
+
+如果已经正确进行上述配置，可将项目编译打包部署。
+springboot版本示例项目，访问地址：http://localhost:8081/
+
+
+至此“消息接入方”示例项目已经部署结束。
+
+
+#### 步骤五："消息接入方"集群（可选）：
+消息接入方支持集群部署，提升消息系统可用性，同时提升消息处理能力。
+
+消息接入方集群部署时，要求和建议：
+- 消息中心跟地址（xxl.mq.admin.address）需要保持一致；
+
+
+### 2.5 生产消息、消费消息
 
 #### 生产消息
 
-- 1、生产TOPIC广播消息
 ```
-XxlMqProducer.broadcast("消息主题", "消息数据, Map<String, String>格式");
-```
-
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_VZb0.png "在这里输入图片标题")
-
-- 2、生产QUEUE、SERIAL_QUEUE消息 (QUEUE和SERIAL_QUEUE两种消息格式完全一样, 生产消息的方式相同; 不同之处在于Consumer测配置不同)
-```
-XxlMqProducer.produce("消息主题", "消息数据, Map<String, String>格式");
+XxlMqProducer.produce(new XxlMqMessage(topic, data));
 ```
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_uCkR.png "在这里输入图片标题")
+消息属性 | 说明
+--- | ---
+topic | 消息主题
+group | 消息分组, 分组一致时消息仅消费一次；存在多个分组时，多个分组时【广播消费】；
+data | 消息数据
+retryCount | 重试次数, 执行失败且大于0时生效，每重试一次减一；
+shardingId | 分片ID, 大于0时启用，否则使用消息ID；消费者通过该参数进行消息分片消费；分片ID不一致时分片【并发消费】、一致时【串行消费】；
+timeout | 超时时间，单位秒；大于0时生效，处于锁定运行状态且运行超时时，将主动标记运行失败；
+effectTime | 生效时间, new Date()立即执行, 否则在生效时间点之后开始执行;
+
 
 #### 消费消息 
 
-( 如果系统仅仅负责生产消息, 可忽略掉该配置; )
+```
+@MqConsumer(topic = "topic_1")
+@Service
+public class DemoAMqComsumer implements IMqConsumer {
+    private Logger logger = LoggerFactory.getLogger(DemoAMqComsumer.class);
 
-- 1、配置Consumer工厂, 扫描 "MqConsumer" 目录
+    @Override
+    public MqResult consume(String data) throws Exception {
+        logger.info("[DemoAMqComsumer] 消费一条消息:{}", data);
+        return MqResult.SUCCESS;
+    }
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_S4ql.png "在这里输入图片标题")
+}
+```
 
-- 2、开发 "MqConsumer"
+系统中每个消费者以 "IMqConsumer" 的形式存在, 规定如下:
  
-系统中每个消费者以 "MqConsumer" 的形式存在, 规定如下:
- 
-     - 1、每个 "MqConsumer" 需要继承 "com.xxl.mq.client.consumer.IMqConsumer" 接口;
-     - 2、需要扫描为Spring的Bean实例, 如加上 "@Service" 注解并被Spring扫描;
+     - 1、每个 "IMqConsumer" 需要继承 "com.xxl.mq.client.consumer.IMqConsumer" 接口;
+     - 2、需要扫描为Spring的Bean实例, 需加上 "@Service" 注解并被Spring扫描;
      - 3、需要加上注解 "com.xxl.mq.client.consumer.annotation.MqConsumer"。该注解 "value" 值为订阅的消息主题, "type" 值为消息类型(TOPIC广播消息、QUEUE并发消息队列 和 SERIAL_QUEUE串行消息队列);
 
 
-系统中已经提供了 (TOPIC、QUEUE和SERIAL_QUEUE) 三种模式消息Consumer的示例, 参考如下:
+MqConsumer注解属性 | 说明
+--- | ---
+group | 消息分组,
+topic | 消息主题
+transaction | 事务开关，开启消息事务性保证只会成功执行一次;关闭时可能重复消费，性能较优；
 
-"QUEUE并发消息队列" 模式的Consumer开发示例: 
-
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_wmvO.png "在这里输入图片标题")
-
-"SERIAL_QUEUE串行消息队列" 模式的Consumer开发示例: 
-
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_VnqX.png "在这里输入图片标题")
-
-"TOPIC广播消息" 模式的Consumer开发示例: 
-
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_k49L.png "在这里输入图片标题")
 
 #### 测试
 
-示例项目(xxl-mq-samples-springboot)已经提供了三种格式消息的 "消息生成示例代码" 和 "消息消费示例代码", 本次测试在此基础上进行;
+访问前面部署成功的 "springboot版本示例项目" 地址，页面如下：
+
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_02.png "在这里输入图片标题")
+
+
+该示例项目已经提供了多个消息生产与消费的实例，可以参考下：
+
+- 测试生产消息：
+- 测试
+
+三种格式消息的 "消息生成示例代码" 和 "消息消费示例代码", 本次测试在此基础上进行;
 
 我在本地测试时: 启动两台Tomcat-8080和Tomcat-8081, 端口分别为8080和8081, 各自都部署 "xxl-mq-samples-springboot 消息生产和消费示例项目" 和 "xxl-mq-admin 消息代理中心项目";
-
-"xxl-mq-samples-springboot 消息生产和消费示例项目" 部署在根路径下, 访问地址为: http://localhost:8080/ , 可以在线查看消息 QUEUE和ERIAL_QUEUE 消息记录,并且可以对消息进行 "查询(统计某个消息主题下消息堆积情况,消费情况)"、"新增"、"编辑(失败消息修改重试次数进行重试, 修改消息数据, 修改消息Delay执行时间从而让消息在指定时间后才执行)"和"删除"等操作;
-
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_qvEC.png "在这里输入图片标题")
-
-"xxl-mq-admin 消息代理中心项目" 部署在二级路径 "/example" 下, 访问地址 http://localhost:8080/example/  可进入示例项目提供的三种消息的发送界面, 在界面上点击按钮,即可生成三种消息, 可以跟踪消费方消费日志跟踪消息消费情况;
-
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_9fgb.png "在这里输入图片标题")
-
-
-**1、测试 "QUEUE (并行消费队列)" : **
-
-操作: 访问 "xxl-mq-admin 消息代理中心项目" 进入提供的消息生产测试页面, 点击 "QUEUE (并行消费队列)= mqconsumer-01" 按钮
-
-现象: 进入 "消息代理中心", 如下图点击每条消息对应的 "历史流转日志" 按钮, 可查看每一条消息的流转信息;
-
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_xnyN.png "在这里输入图片标题")
-
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_6xjZ.png "在这里输入图片标题")
-
-说明: 上图所示, 第一: 消息状态为SUCCESS, 说明消费成功; 第二: 消息ID=903, "rank=1, total=2", 意思是当前该消息队列存在两个Consumer, 该消息被排序为1(排名从0开始)的的Consumer消费掉; 通过上文 "QUEUE" 消息分片逻辑可知, 该消息ID对总consumer取模余数为1, 可消费该消息的Consumer的排名一致,说明消息分片成功;
-
-
-**2、测试 "SERIAL_QUEUE (串行消费队列)" : **
-
-操作: 访问 "xxl-mq-admin 消息代理中心项目" 进入提供的消息生产测试页面, 点击 "SERIAL_QUEUE (串行消费队列)= mqconsumer-02" 按钮
-
-现象: 进入 "消息代理中心", 如下图点击每条消息对应的 "历史流转日志" 按钮, 可查看每一条消息的流转信息;
-
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_JNbP.png "在这里输入图片标题")
-
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_SB97.png "在这里输入图片标题")
-
-说明: 上图所示, 第一: 消息状态为SUCCESS, 说明消费成功; 第二: 消息ID=910, "rank=0, total=1", 意思是当前该消息队列存在1个存活的Consumer, 该消息被排序为0(排名从0开始)的的Consumer消费掉; 通过上文 "SERIAL_QUEUE" 消费逻辑可知, 该类型消息对应的Consumer只有一个处于存活状态, 虽然两个Tomcat集群部署,但是只有一个处于存活状态, 它将串行消费掉队列中所有消息, 说明串行消费成功;
-
-**3、测试 "TOPIC (广播消息)" : **
-
-操作: 访问地址 http://localhost:8080/example/ ,点击 "TOPIC (广播消息)= mqconsumer-03" 按钮
-
-现象: 两台Tomcat-8080和Tomcat-8081下, 都打印了以下日志, 
-```
-2016-09-11 22:37:10 xxl-mq-samples-springboot [com.xxl.mq.example.mqcomsumer.DemoCMqComsumer]-[Thread-18]-[consume]-[25]-[INFO] TOPIC(广播消息): mqconsumer-02消费一条消息:{"时间戳":"1473604630889"}
-```
-
-说明: "TOPIC (广播消息)" 发送成功, 监听该消息主题 "mqconsumer-03" 的 "DemoCMqComsumer" 都收到了广播消息并执行成功, 说明测试成功;
-
 
 
 ## 三、系统设计
 
 ### 3.1 系统架构图
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_SKhG.jpg "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_03.png "在这里输入图片标题")
 
 #### 角色解释:
 
@@ -409,6 +475,7 @@ Delay : 支持设置消息的延迟生效时间, 到达设置的Delay执行时�
 - 客户端，Server端支持消息落磁盘；发送失败，存储失败时，写磁盘，避免消息丢失；LocalQueue消息可能丢失，考虑LocalFile；
 - 消息数据、Log使用text字段存储，为避免超长限制长度20000；后续考虑优化，尽量不限制数据长度、避免轨迹较多时Log超长问题；
 - 消息告警功能增强，目前仅支持失败告警，考虑支持消息堆积告警、阻塞告警等，Topic扩展属性存储阈值；30分钟统计一次消息情况, 将会根据topic分组, 堆积超过阈值的topic将会在报警邮件报表中进行记录;
+- accessToken安全校验；
 
 
 ## 五、其他

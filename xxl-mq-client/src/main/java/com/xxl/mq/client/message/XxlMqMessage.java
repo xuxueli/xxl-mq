@@ -15,7 +15,7 @@ public class XxlMqMessage implements Serializable {
 	private String data;			// 消息数据
 	private String status;			// 消息状态, @sae XxlMqMessageStatus
 	private int retryCount;			// 重试次数, 执行失败且大于0时生效，每重试一次减一；
-	private long shardingId;		// 分片ID, 大于0时启用，否则使用消息ID；消费者通过该参数进行消息分片消费；分片ID取模或数值不一致时分片【并发消费】、一致时【串行消费】；
+	private long shardingId;		// 分片ID, 大于0时启用，否则使用消息ID；消费者通过该参数进行消息分片消费；分片ID不一致时分片【并发消费】、一致时【串行消费】；
 	private int timeout;			// 超时时间，单位秒；大于0时生效，处于锁定运行状态且运行超时时，将主动标记运行失败；
 	private Date effectTime;		// 生效时间, new Date()立即执行, 否则在生效时间点之后开始执行;
 	private Date addTime;			// 创建时间
