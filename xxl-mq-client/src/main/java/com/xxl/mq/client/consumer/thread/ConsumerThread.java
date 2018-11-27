@@ -123,7 +123,12 @@ public class ConsumerThread extends Thread {
                                 mqResult = new MqResult(MqResult.FAIL_CODE, errorMsg);
                             }
 
-                            String appendLog_consume = LogHelper.makeLog("消费消息", ("消费结果="+(mqResult.isSuccess()?"成功":"失败")+"；消费日志="+mqResult.getLog() ) );
+                            String appendLog_consume = LogHelper.makeLog(
+                                    "消费消息",
+                                    ("消费结果="+(mqResult.isSuccess()?"成功":"失败")
+                                            +"；<br>消费者信息="+activeInfo.toString()
+                                            +"；<br>消费日志="+mqResult.getLog())
+                            );
 
                             // callback
                             msg.setStatus(mqResult.isSuccess()? XxlMqMessageStatus.SUCCESS.name():XxlMqMessageStatus.FAIL.name());

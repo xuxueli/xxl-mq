@@ -239,7 +239,53 @@ springboot版本示例项目，访问地址：http://localhost:8081/
 #### 生产消息
 
 ```
+/**
+ * 生产消息：并行消息
+ */
 XxlMqProducer.produce(new XxlMqMessage(topic, data));
+
+
+/**
+ * 生产消息：串行消费（ ShardingId 保持一致即可；如秒杀消息，可将 ShardingId 设置为商品ID，则该商户全部消息固定在一台机器消费；）
+ */
+XxlMqMessage mqMessage = new XxlMqMessage();
+mqMessage.setTopic(topic);
+mqMessage.setData(data);
+mqMessage.setShardingId(1);
+
+XxlMqProducer.produce(mqMessage);
+			
+/**
+ * 生产消息：广播消费（ 消费者 IMqConsumer 注解的 group 属性修改不一致即可；一条消息将会广播给该主题全部在线 group，每个group都会消费，单个group只会消费一次； ）
+ */
+XxlMqProducer.broadcast(new XxlMqMessage(topic, data));
+
+
+/**
+ * 生产消息：延时消费（ EffectTime 设置为固定时间点即可；如订单30min超时取消，可将 EffectTime 设置为30min后的时间点，到时将会自动消费；）
+ */
+XxlMqMessage mqMessage = new XxlMqMessage();
+mqMessage.setTopic(topic);
+mqMessage.setData(data);
+mqMessage.setEffectTime(effectTime);
+
+XxlMqProducer.produce(mqMessage);
+
+
+/**
+ * 生产消息：失败重试消费（ RetryCount 设置重试次数即可；如发送短信消息，第三方服务不稳定时失败很常见，可设置 RetryCount 为3，失败是将会自动重试指定次数；）
+ */
+XxlMqMessage mqMessage = new XxlMqMessage();
+mqMessage.setTopic(topic);
+mqMessage.setData(data);
+mqMessage.setRetryCount(3);
+
+XxlMqProducer.produce(mqMessage);
+
+
+/**
+ * …… 更多消息属性、场景，可以参考如下消息属性说明了解：
+ */
 ```
 
 消息属性 | 说明
@@ -285,20 +331,41 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
 
 
 #### 测试
+首选启动消息中心，然后启动 "springboot版本示例项目"；
 
-访问前面部署成功的 "springboot版本示例项目" 地址，页面如下：
+访问部署成功的 "springboot版本示例项目" 地址，浏览器访问展示如下如下：
 
 ![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_02.png "在这里输入图片标题")
 
+该示例项目已经提供了多个消息生产与消费的实例：
 
-该示例项目已经提供了多个消息生产与消费的实例，可以参考下：
+- a、"并行消费" 测试：连续点击 "并行消费" 按钮4次，将会生产4条并行消息；
 
-- 测试生产消息：
-- 测试
+进入消息中心 "消息记录" 菜单，消息列表如下：
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_06.png "在这里输入图片标题")
 
-三种格式消息的 "消息生成示例代码" 和 "消息消费示例代码", 本次测试在此基础上进行;
+逐个查看消息流转日志如下：
 
-我在本地测试时: 启动两台Tomcat-8080和Tomcat-8081, 端口分别为8080和8081, 各自都部署 "xxl-mq-samples-springboot 消息生产和消费示例项目" 和 "xxl-mq-admin 消息代理中心项目";
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_04.png "在这里输入图片标题")
+
+可以注意 "锁定消息" 的 "消费者信息"，可以查看到当前消费者在集群中的排序 "rank"。
+
+逐个查看每条消息对应消费者的 "rank" 属性，可以看到上面4条消息平局分配给不同 "rank" 的消费者，即平均分配给了不同消费者。测试正常；
+
+- b、"串行消费" 测试：连续点击 "串行消费" 按钮4次，将会生产4条串行消费；
+
+操作步骤同 "并行消息"。最后一步逐个查看每条消息对应消费者的 "rank" 属性，会发现全部一致，即固定分配给了一个消费者。测试正常
+
+
+- c、"广播消息"：点击 "广播消息" 按钮一次，将会生产一条广播消息；
+
+进入消息中心 "消息记录" 菜单，消息列表如下：
+
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_07.png "在这里输入图片标题")
+
+一条广播消息将会广播给该主题全部在线group，该消息主题存在2个消息group，所以会每个group创建一条，即两条消息。测试正常。
+
+- d、其他测试：如延时消息、重试消息 …… 可自行测试；
 
 
 ## 三、系统设计
