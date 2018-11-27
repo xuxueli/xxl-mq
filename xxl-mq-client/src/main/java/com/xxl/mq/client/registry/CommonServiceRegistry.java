@@ -94,7 +94,7 @@ public class CommonServiceRegistry extends ServiceRegistry {
                 logger.info(">>>>>>>>>> xxl-rpc, refresh thread stoped.");
             }
         });
-        registryThread.setName("xxl-rpc, NativeServiceRegistry refresh thread.");
+        registryThread.setName("xxl-rpc, CommonServiceRegistry refresh thread.");
         registryThread.setDaemon(true);
         registryThread.start();
 
@@ -133,7 +133,7 @@ public class CommonServiceRegistry extends ServiceRegistry {
 
 
 
-        logger.info(">>>>>>>>>> xxl-rpc, NativeServiceRegistry init success. [registryCenterAddress={}]", registryCenterAddress);
+        logger.info(">>>>>>>>>> xxl-rpc, CommonServiceRegistry init success. [registryCenterAddress={}]", registryCenterAddress);
     }
 
     @Override
