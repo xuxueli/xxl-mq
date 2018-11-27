@@ -479,7 +479,7 @@ public class XxlCommonRegistryServiceImpl implements XxlCommonRegistryService, I
 
         PropUtil.writeProp(prop, fileName);
 
-        logger.info(">>>>>>>>>>> xxl-rpc, setFileRegistryData: key={}, data={}", xxlCommonRegistry.getKey(), xxlCommonRegistry.getData());
+        logger.info(">>>>>>>>>>> xxl-mq, setFileRegistryData: key={}, data={}", xxlCommonRegistry.getKey(), xxlCommonRegistry.getData());
 
 
         // brocast monitor client
@@ -507,7 +507,7 @@ public class XxlCommonRegistryServiceImpl implements XxlCommonRegistryService, I
             if (childFile.isFile() && !registryDataFileList.contains(childFile.getPath())) {
                 childFile.delete();
 
-                logger.info(">>>>>>>>>>> xxl-rpc, cleanFileRegistryData, RegistryData Path={}", childFile.getPath());
+                logger.info(">>>>>>>>>>> xxl-mq, cleanFileRegistryData, RegistryData Path={}", childFile.getPath());
             }
             if (childFile.isDirectory()) {
                 if (parentPath.listFiles()!=null && parentPath.listFiles().length>0) {

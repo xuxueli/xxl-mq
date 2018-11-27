@@ -7,6 +7,12 @@
         <a href="http://www.xuxueli.com/xxl-mq/"><strong>-- Home Page --</strong></a>
         <br>
         <br>
+        <a href="https://travis-ci.org/xuxueli/xxl-mq">
+            <img src="https://travis-ci.org/xuxueli/xxl-mq.svg?branch=master" >
+        </a>
+        <a href="https://hub.docker.com/r/xuxueli/xxl-mq-admin/">
+            <img src="https://img.shields.io/badge/docker-passing-brightgreen.svg" >
+        </a>
         <a href="https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-mq/">
             <img src="https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-mq/badge.svg" >
         </a>

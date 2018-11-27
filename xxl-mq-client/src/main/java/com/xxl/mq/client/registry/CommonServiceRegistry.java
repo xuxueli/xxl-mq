@@ -75,26 +75,26 @@ public class CommonServiceRegistry extends ServiceRegistry {
                             for (String vItem : regL2KMap.keySet()) {
                                 doRegistry(adminAddressArr, regL2KMap.get(vItem), vItem);
                             }
-                            logger.info(">>>>>>>>>> xxl-rpc, refresh registry data success, registryData = {}", registryData);
+                            logger.info(">>>>>>>>>> xxl-mq, refresh registry data success, registryData = {}", registryData);
 
                         }
                     } catch (Exception e) {
                         if (!registryThreadStop) {
-                            logger.error(">>>>>>>>>> xxl-rpc, refresh thread error.", e);
+                            logger.error(">>>>>>>>>> xxl-mq, refresh thread error.", e);
                         }
                     }
                     try {
                         TimeUnit.SECONDS.sleep(10);
                     } catch (Exception e) {
                         if (!registryThreadStop) {
-                            logger.error(">>>>>>>>>> xxl-rpc, refresh thread error.", e);
+                            logger.error(">>>>>>>>>> xxl-mq, refresh thread error.", e);
                         }
                     }
                 }
-                logger.info(">>>>>>>>>> xxl-rpc, refresh thread stoped.");
+                logger.info(">>>>>>>>>> xxl-mq, refresh thread stoped.");
             }
         });
-        registryThread.setName("xxl-rpc, CommonServiceRegistry refresh thread.");
+        registryThread.setName("xxl-mq, CommonServiceRegistry refresh thread.");
         registryThread.setDaemon(true);
         registryThread.start();
 
@@ -113,27 +113,27 @@ public class CommonServiceRegistry extends ServiceRegistry {
                         }
                     } catch (Exception e) {
                         if (!registryThreadStop) {
-                            logger.error(">>>>>>>>>> xxl-rpc, refresh thread error.", e);
+                            logger.error(">>>>>>>>>> xxl-mq, refresh thread error.", e);
                         }
                     }
                     try {
                         TimeUnit.SECONDS.sleep(1);
                     } catch (Exception e) {
                         if (!registryThreadStop) {
-                            logger.error(">>>>>>>>>> xxl-rpc, refresh thread error.", e);
+                            logger.error(">>>>>>>>>> xxl-mq, refresh thread error.", e);
                         }
                     }
                 }
-                logger.info(">>>>>>>>>> xxl-rpc, refresh thread stoped.");
+                logger.info(">>>>>>>>>> xxl-mq, refresh thread stoped.");
             }
         });
-        discoveryThread.setName("xxl-rpc, NativeServiceRegistry refresh thread.");
+        discoveryThread.setName("xxl-mq, NativeServiceRegistry refresh thread.");
         discoveryThread.setDaemon(true);
         discoveryThread.start();
 
 
 
-        logger.info(">>>>>>>>>> xxl-rpc, CommonServiceRegistry init success. [registryCenterAddress={}]", registryCenterAddress);
+        logger.info(">>>>>>>>>> xxl-mq, CommonServiceRegistry init success. [registryCenterAddress={}]", registryCenterAddress);
     }
 
     @Override
@@ -159,7 +159,7 @@ public class CommonServiceRegistry extends ServiceRegistry {
                     discoveryData.put(keyItem, new TreeSet<String>(keyValueListData.get(keyItem)));
                 }
             }
-            logger.info(">>>>>>>>>> xxl-rpc, refresh discovery data success, discoveryData = {}", discoveryData);
+            logger.info(">>>>>>>>>> xxl-mq, refresh discovery data success, discoveryData = {}", discoveryData);
         }
     }
 
