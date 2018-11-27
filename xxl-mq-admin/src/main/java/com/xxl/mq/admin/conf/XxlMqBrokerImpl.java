@@ -282,6 +282,10 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
                                             logger.error(">>>>>>>>>>> message monitor alarm email send error, topic:{}, failCount:{}", mqTopic.getTopic(), failCount);
                                         }
 
+
+                                        // TODO, custom alarm strategy, such as sms
+
+
                                     }
                                 }
                             }

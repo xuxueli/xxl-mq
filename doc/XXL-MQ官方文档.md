@@ -29,6 +29,9 @@ XXL-MQ是一款轻量级分布式消息队列，支持 "并发消息、串行消
 - 10、吞吐量: 依赖于部署的消费中心集群和DB性能;DB可借助多表提升性能，不考虑DB的情况下，吞吐量可以无限横向扩展；
 - 11、消息可见: 系统中每一条消息可通过Web界面在线查看,甚至支持编辑消息内容和消息状态;
 - 12、消息可追踪: 支持追踪每一条消息的执行路径, 便于排查业务问题;
+- 13、容器化：提供官方docker镜像，并实时更新推送dockerhub，进一步实现产品开箱即用；
+- 14、消息失败告警：支持以Topic粒度监控消息，存在失败消息时主动推送告警邮件；默认提供邮件方式失败告警，同时预留扩展接口，可方面的扩展短信、钉钉等告警方式；
+
 
 ### 1.3 发展
 于2015年中，我在github上创建XXL-MQ项目仓库并提交第一个commit，随之进行系统结构设计，UI选型，交互设计……
@@ -167,7 +170,24 @@ xxl.mq.login.password=123456
 - 建议：推荐通过nginx为消息中心集群做负载均衡，分配域名。消息中心访问、客户端使用等操作均通过该域名进行。
 
 #### 其他：Docker 镜像方式搭建消息中心：
-（规划中）
+- 下载镜像
+
+```
+// Docker地址：https://hub.docker.com/r/xuxueli/xxl-mq-admin/
+docker pull xuxueli/xxl-mq-admin
+```
+
+- 创建容器并运行
+
+```
+docker run -p 8080:8080 -v /tmp:/data/applogs --name xxl-mq-admin  -d xuxueli/xxl-mq-admin
+
+/**
+* 如需自定义 mysql 等配置，可通过 "PARAMS" 指定；
+* 配置项参考文件：/xxl-mq/xxl-mq-admin/src/main/resources/application.properties
+*/
+docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl-mq?Unicode=true&characterEncoding=UTF-8" -p 8080:8080 -v /tmp:/data/applogs --name xxl-mq-admin  -d xuxueli/xxl-mq-admin
+```
 
 
 ### 2.4 接入XXL-MQ并使用
