@@ -251,8 +251,10 @@ public class XxlCommonRegistryServiceImpl implements XxlCommonRegistryService, I
                                 // checkRegistryDataAndSendMessage
                                 checkRegistryDataAndSendMessage(xxlCommonRegistryData);
                             }
-                        } catch (InterruptedException e) {
-                            logger.error(e.getMessage(), e);
+                        } catch (Exception e) {
+                            if (!executorStoped) {
+                                logger.error(e.getMessage(), e);
+                            }
                         }
                     }
                 }
@@ -283,8 +285,10 @@ public class XxlCommonRegistryServiceImpl implements XxlCommonRegistryService, I
                                 // checkRegistryDataAndSendMessage
                                 checkRegistryDataAndSendMessage(xxlCommonRegistryData);
                             }
-                        } catch (InterruptedException e) {
-                            logger.error(e.getMessage(), e);
+                        } catch (Exception e) {
+                            if (!executorStoped) {
+                                logger.error(e.getMessage(), e);
+                            }
                         }
                     }
                 }
@@ -324,12 +328,16 @@ public class XxlCommonRegistryServiceImpl implements XxlCommonRegistryService, I
                             readedMessageIds.clear();
                         }
                     } catch (Exception e) {
-                        logger.error(e.getMessage(), e);
+                        if (!executorStoped) {
+                            logger.error(e.getMessage(), e);
+                        }
                     }
                     try {
                         TimeUnit.SECONDS.sleep(1);
                     } catch (Exception e) {
-                        logger.error(e.getMessage(), e);
+                        if (!executorStoped) {
+                            logger.error(e.getMessage(), e);
+                        }
                     }
                 }
             }
@@ -401,12 +409,16 @@ public class XxlCommonRegistryServiceImpl implements XxlCommonRegistryService, I
                         cleanFileRegistryData(registryDataFileList);
 
                     } catch (Exception e) {
-                        logger.error(e.getMessage(), e);
+                        if (!executorStoped) {
+                            logger.error(e.getMessage(), e);
+                        }
                     }
                     try {
                         TimeUnit.SECONDS.sleep(registryBeatTime);
                     } catch (Exception e) {
-                        logger.error(e.getMessage(), e);
+                        if (!executorStoped) {
+                            logger.error(e.getMessage(), e);
+                        }
                     }
                 }
             }
@@ -417,6 +429,7 @@ public class XxlCommonRegistryServiceImpl implements XxlCommonRegistryService, I
 
     @Override
     public void destroy() throws Exception {
+        executorStoped = true;
         executorService.shutdownNow();
     }
 

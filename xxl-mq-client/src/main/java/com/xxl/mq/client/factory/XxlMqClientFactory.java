@@ -152,9 +152,19 @@ public class XxlMqClientFactory  {
                                 xxlMqBroker.addMessages(messageList);
                             }
                         } catch (Exception e) {
-                            logger.error(e.getMessage(), e);
+                            if (!XxlMqClientFactory.clientFactoryPoolStoped) {
+                                logger.error(e.getMessage(), e);
+                            }
                         }
                     }
+
+                    // finally total
+                    List<XxlMqMessage> otherMessageList = new ArrayList<>();
+                    int drainToNum = newMessageQueue.drainTo(otherMessageList);
+                    if (drainToNum> 0) {
+                        xxlMqBroker.addMessages(otherMessageList);
+                    }
+
                 }
             });
         }
@@ -179,13 +189,23 @@ public class XxlMqClientFactory  {
                                     messageList.addAll(otherMessageList);
                                 }
 
-                                // save
+                                // callback
                                 xxlMqBroker.callbackMessages(messageList);
                             }
                         } catch (Exception e) {
-                            logger.error(e.getMessage(), e);
+                            if (!XxlMqClientFactory.clientFactoryPoolStoped) {
+                                logger.error(e.getMessage(), e);
+                            }
                         }
                     }
+
+                    // finally total
+                    List<XxlMqMessage> otherMessageList = new ArrayList<>();
+                    int drainToNum = callbackMessageQueue.drainTo(otherMessageList);
+                    if (drainToNum> 0) {
+                        xxlMqBroker.callbackMessages(otherMessageList);
+                    }
+
                 }
             });
         }

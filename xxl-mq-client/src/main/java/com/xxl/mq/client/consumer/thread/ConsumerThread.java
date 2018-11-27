@@ -144,14 +144,18 @@ public class ConsumerThread extends Thread {
                 }
 
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                if (!XxlMqClientFactory.clientFactoryPoolStoped) {
+                    logger.error(e.getMessage(), e);
+                }
             }
 
             // wait
             try {
                 TimeUnit.SECONDS.sleep(waitTim);
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                if (!XxlMqClientFactory.clientFactoryPoolStoped) {
+                    logger.error(e.getMessage(), e);
+                }
             }
 
         }
