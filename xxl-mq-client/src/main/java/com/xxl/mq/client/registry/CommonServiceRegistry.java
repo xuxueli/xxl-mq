@@ -245,22 +245,10 @@ public class CommonServiceRegistry extends ServiceRegistry {
      * get and valid
      *
      * @param url
-     * @param params
      * @param timeout
      * @return
      */
-    private static Map<String, Object> getAndValid(String url, Map<String, String> params, int timeout){
-
-        // param
-        boolean firstParam = true;
-        for (String key: params.keySet()) {
-            url += firstParam?"?":"&";
-            if (firstParam) {
-                firstParam = false;
-            }
-            url += key + "=" + params.get(key);
-        }
-
+    private static Map<String, Object> getAndValid(String url, int timeout){
         // resp json
         String respJson = BaseHttpUtil.get(url, timeout);
         if (respJson == null) {
@@ -289,13 +277,13 @@ public class CommonServiceRegistry extends ServiceRegistry {
 
             // url + param
             String url = adminAddressUrl + "/registry/discovery";
-            Map<String, String> params = new HashMap<>();
+            url += "?accessToken=" + "";
             for (String key:keys) {
-                params.put("keys", key);
+                url += "&keys=" + key;
             }
 
             // get and valid
-            Map<String, Object> respObj = getAndValid(url, params, 10);
+            Map<String, Object> respObj = getAndValid(url, 10);
 
             // parse
             if (respObj!=null && respObj.containsKey("data")) {
@@ -321,15 +309,15 @@ public class CommonServiceRegistry extends ServiceRegistry {
 
             // url + param
             String url = adminAddressUrl + "/registry/registry";
-            Map<String, String> params = new HashMap<>();
-            for (String key:keys) {
-                params.put("keys", key);
-            }
-            params.put("value", value);
 
+            url += "?accessToken=" + "";
+            url += "&value=" + value;
+            for (String key:keys) {
+                url += "&keys=" + key;
+            }
 
             // get and valid
-            Map<String, Object> respObj = getAndValid(url, params, 10);
+            Map<String, Object> respObj = getAndValid(url, 10);
 
             return respObj!=null?true:false;
         }
@@ -350,14 +338,15 @@ public class CommonServiceRegistry extends ServiceRegistry {
 
             // url + param
             String url = adminAddressUrl + "/registry/remove";
-            Map<String, String> params = new HashMap<>();
+
+            url += "?accessToken=" + "";
+            url += "&value=" + value;
             for (String key:keys) {
-                params.put("keys", key);
+                url += "&keys=" + key;
             }
-            params.put("value", value);
 
             // get and valid
-            Map<String, Object> respObj = getAndValid(url, params, 10);
+            Map<String, Object> respObj = getAndValid(url, 10);
 
             return respObj!=null?true:false;
         }
@@ -377,13 +366,14 @@ public class CommonServiceRegistry extends ServiceRegistry {
 
             // url + param
             String url = adminAddressUrl + "/registry/monitor";
-            Map<String, String> params = new HashMap<>();
+
+            url += "?accessToken=" + "";
             for (String key:keys) {
-                params.put("keys", key);
+                url += "&keys=" + key;
             }
 
             // get and valid
-            Map<String, Object> respObj = getAndValid(url, params, 60);
+            Map<String, Object> respObj = getAndValid(url, 60);
 
             return respObj!=null?true:false;
         }
