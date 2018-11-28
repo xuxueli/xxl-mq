@@ -529,7 +529,7 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
 - 6、broadcast 广播消息时ZK 发送方不进行watch, 否则发送方也会监听到；
 - 7、修复一处因ReentrantLock导致可能死锁的问题；
 
-### 5.3 版本V1.2.0 Release Notes[2018-11-27]
+### 5.3 版本V1.2.0 Release Notes[2018-11-28]
 - 1、client端与Broker长链初始化优化，防止重复创建连接。
 - 2、POM多项依赖升级；
 - 3、UI组件升级；
