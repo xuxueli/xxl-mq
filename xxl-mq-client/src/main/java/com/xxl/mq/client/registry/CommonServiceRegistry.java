@@ -57,6 +57,14 @@ public class CommonServiceRegistry extends ServiceRegistry {
                     try {
                         if (registryData.size() > 0) {
 
+                            /**
+                             * TODO, k-v:
+                             *
+                             * registry: service-ip(N:1), topic-consumer(1:N)
+                             *
+                             * discovery: service-ip(1:N), topic-consumer(1:N)
+                             *
+                             */
                             // change k-v to v-k
                             Map<String, Set<String>> regL2KMap = new HashMap<>(); // v-k[]
                             for (String regK : registryData.keySet()) {    // k - v[]
