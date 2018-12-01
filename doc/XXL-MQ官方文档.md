@@ -185,7 +185,7 @@ docker pull xuxueli/xxl-mq-admin
 docker run -p 8080:8080 -v /tmp:/data/applogs --name xxl-mq-admin  -d xuxueli/xxl-mq-admin
 
 /**
-* 如需自定义 mysql 等配置，可通过 "PARAMS" 指定；
+* 如需自定义 mysql 等配置，可通过 "PARAMS" 指定，参数格式 RAMS="--key=value  --key2=value2" ；
 * 配置项参考文件：/xxl-mq/xxl-mq-admin/src/main/resources/application.properties
 */
 docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl-mq?Unicode=true&characterEncoding=UTF-8" -p 8080:8080 -v /tmp:/data/applogs --name xxl-mq-admin  -d xuxueli/xxl-mq-admin
