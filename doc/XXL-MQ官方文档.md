@@ -333,7 +333,7 @@ public class DemoAMqComsumer implements IMqConsumer {
 
 该示例项目已经提供了多个消息生产与消费的实例：
 
-- a、"并行消费" 测试：连续点击 "并行消费" 按钮4次，将会生产4条并行消息；
+#### a、"并行消费" 测试：连续点击 "并行消费" 按钮4次，将会生产4条并行消息；
 
 进入消息中心 "消息记录" 菜单，消息列表如下：
 ![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_06.png "在这里输入图片标题")
@@ -346,12 +346,12 @@ public class DemoAMqComsumer implements IMqConsumer {
 
 逐个查看每条消息对应消费者的 "rank" 属性，可以看到上面4条消息平局分配给不同 "rank" 的消费者，即平均分配给了不同消费者。测试正常；
 
-- b、"串行消费" 测试：连续点击 "串行消费" 按钮4次，将会生产4条串行消费；
+#### b、"串行消费" 测试：连续点击 "串行消费" 按钮4次，将会生产4条串行消费；
 
 操作步骤同 "并行消息"。最后一步逐个查看每条消息对应消费者的 "rank" 属性，会发现全部一致，即固定分配给了一个消费者。测试正常
 
 
-- c、"广播消息"：点击 "广播消息" 按钮一次，将会生产一条广播消息；
+#### c、"广播消息"：点击 "广播消息" 按钮一次，将会生产一条广播消息；
 
 进入消息中心 "消息记录" 菜单，消息列表如下：
 
@@ -359,7 +359,7 @@ public class DemoAMqComsumer implements IMqConsumer {
 
 一条广播消息将会广播给该主题全部在线group，该消息主题存在2个消息group，所以会每个group创建一条，即两条消息。测试正常。
 
-- a、"性能测试" 测试：点击 “性能测试”按钮，将会批量发送10000条消息；
+#### d、"性能测试" 测试：点击 “性能测试”按钮，将会批量发送10000条消息；
 
 点击按钮后，页面下方展示文案 “Cost = 1055”，说明在 1055ms 之内客户端发送了 1000 条消息；
 
@@ -373,7 +373,8 @@ public class DemoAMqComsumer implements IMqConsumer {
 
 ![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_14.png "在这里输入图片标题")
 
-…… 其他测试：如延时消息、重试消息 …… 可自行测试；
+#### 其他测试
+如延时消息、重试消息 …… 可自行参考示例代码测试；
 
 
 ## 三、消息中心，操作指南
