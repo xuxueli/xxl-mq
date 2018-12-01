@@ -371,7 +371,7 @@ public class DemoAMqComsumer implements IMqConsumer {
 
 然后进入 “运行报表” 界面，如下图，点击成功比例图可知，成功消费 10000 条，比例 100%。说明客户端发送的 10000 条消息 100% 消费成功。
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_14.png "在这里输入图片标题")
+![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_15.png "在这里输入图片标题")
 
 #### 其他测试
 如延时消息、重试消息 …… 可自行参考示例代码测试；
