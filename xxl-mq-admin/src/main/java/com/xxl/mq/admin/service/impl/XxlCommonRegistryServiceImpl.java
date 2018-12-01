@@ -47,53 +47,43 @@ public class XxlCommonRegistryServiceImpl implements XxlCommonRegistryService, I
 
 
     @Override
-    public ReturnT<String> registry(List<String> keys, String value) {
+    public ReturnT<String> registry(List<XxlCommonRegistryData> xxlCommonRegistryDataList) {
         // valid
-        if (keys==null || keys.size()==0) {
-            return new ReturnT<String>(ReturnT.FAIL_CODE, "keys Invalid.");
+        if (xxlCommonRegistryDataList==null || xxlCommonRegistryDataList.size()==0) {
+            return new ReturnT<String>(ReturnT.FAIL_CODE, "RegistryData Invalid.");
         }
-        for (String key: keys) {
-            if (key==null || key.trim().length()==0 || key.trim().length()>255) {
-                return new ReturnT<String>(ReturnT.FAIL_CODE, "Key Invalid[0~255]");
+        for (XxlCommonRegistryData registryData: xxlCommonRegistryDataList) {
+            if (registryData.getKey()==null || registryData.getKey().trim().length()==0 || registryData.getKey().trim().length()>255) {
+                return new ReturnT<String>(ReturnT.FAIL_CODE, "RegistryData Key Invalid[0~255]");
             }
-        }
-        if (value==null || value.trim().length()==0 || value.trim().length()>255) {
-            return new ReturnT<String>(ReturnT.FAIL_CODE, "Value Invalid[0~255]");
+            if (registryData.getValue()==null || registryData.getValue().trim().length()==0 || registryData.getValue().trim().length()>255) {
+                return new ReturnT<String>(ReturnT.FAIL_CODE, "RegistryData Value Invalid[0~255]");
+            }
         }
 
         // add queue
-        for (String key: keys) {
-            XxlCommonRegistryData xxlCommonRegistryData = new XxlCommonRegistryData();
-            xxlCommonRegistryData.setKey(key);
-            xxlCommonRegistryData.setValue(value);
-            registryQueue.add(xxlCommonRegistryData);
-        }
+        registryQueue.addAll(xxlCommonRegistryDataList);
 
         return ReturnT.SUCCESS;
     }
 
     @Override
-    public ReturnT<String> remove(List<String> keys, String value) {
+    public ReturnT<String> remove(List<XxlCommonRegistryData> xxlCommonRegistryDataList) {
         // valid
-        if (keys==null || keys.size()==0) {
-            return new ReturnT<String>(ReturnT.FAIL_CODE, "keys Invalid.");
+        if (xxlCommonRegistryDataList==null || xxlCommonRegistryDataList.size()==0) {
+            return new ReturnT<String>(ReturnT.FAIL_CODE, "RegistryData Invalid.");
         }
-        for (String key: keys) {
-            if (key==null || key.trim().length()==0 || key.trim().length()>255) {
-                return new ReturnT<String>(ReturnT.FAIL_CODE, "Key Invalid[0~255]");
+        for (XxlCommonRegistryData registryData: xxlCommonRegistryDataList) {
+            if (registryData.getKey()==null || registryData.getKey().trim().length()==0 || registryData.getKey().trim().length()>255) {
+                return new ReturnT<String>(ReturnT.FAIL_CODE, "RegistryData Key Invalid[0~255]");
             }
-        }
-        if (value==null || value.trim().length()==0 || value.trim().length()>255) {
-            return new ReturnT<String>(ReturnT.FAIL_CODE, "Value Invalid[0~255]");
+            if (registryData.getValue()==null || registryData.getValue().trim().length()==0 || registryData.getValue().trim().length()>255) {
+                return new ReturnT<String>(ReturnT.FAIL_CODE, "RegistryData Value Invalid[0~255]");
+            }
         }
 
         // add queue
-        for (String key: keys) {
-            XxlCommonRegistryData xxlCommonRegistryData = new XxlCommonRegistryData();
-            xxlCommonRegistryData.setKey(key);
-            xxlCommonRegistryData.setValue(value);
-            removeQueue.add(xxlCommonRegistryData);
-        }
+        removeQueue.addAll(xxlCommonRegistryDataList);
 
         return ReturnT.SUCCESS;
     }

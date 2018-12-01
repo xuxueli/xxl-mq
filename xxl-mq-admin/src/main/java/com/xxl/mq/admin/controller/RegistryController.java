@@ -1,26 +1,25 @@
 package com.xxl.mq.admin.controller;
 
 import com.xxl.mq.admin.controller.annotation.PermessionLimit;
+import com.xxl.mq.admin.core.model.XxlCommonRegistryData;
 import com.xxl.mq.admin.core.result.ReturnT;
+import com.xxl.mq.admin.core.util.JacksonUtil;
 import com.xxl.mq.admin.service.XxlCommonRegistryService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
 /**
- * xxl native regsitry, borrowed from "xxl-rpc"
+ * xxl native regsitry, borrowed from "xxl-registry"
  *
  * @author xuxueli 2018-11-26
  */
 @Controller
-@RequestMapping("/registry")
+@RequestMapping("/api")
 public class RegistryController {
 
 
@@ -28,31 +27,59 @@ public class RegistryController {
     private XxlCommonRegistryService xxlCommonRegistryService;
 
 
-    @RequestMapping("/registry")
+    @RequestMapping("/registry/{biz}/{env}")
     @ResponseBody
     @PermessionLimit(limit=false)
-    public ReturnT<String> registry(HttpServletRequest request,  @RequestParam(name = "keys", required = false) List<String> keys, String value){
-        return xxlCommonRegistryService.registry(keys, value);
+    public ReturnT<String> registry(@PathVariable(value = "biz", required = false) String biz,
+                                    @PathVariable(value = "env",required = false) String env,
+                                    @RequestBody(required = false) String data){
+
+        // parse
+        List<XxlCommonRegistryData> xxlCommonRegistryDataList = null;
+        try {
+            xxlCommonRegistryDataList = (List<XxlCommonRegistryData>) JacksonUtil.readValue(data, List.class, XxlCommonRegistryData.class);
+        } catch (Exception e) { }
+
+        return xxlCommonRegistryService.registry(xxlCommonRegistryDataList);
     }
 
-    @RequestMapping("/remove")
+    @RequestMapping("/remove/{biz}/{env}")
     @ResponseBody
     @PermessionLimit(limit=false)
-    public ReturnT<String> remove(@RequestParam(name = "keys", required = false) List<String> keys, String value){
-        return xxlCommonRegistryService.remove(keys, value);
+    public ReturnT<String> remove(@PathVariable(value = "biz", required = false) String biz,
+                                  @PathVariable(value = "env",required = false) String env,
+                                  @RequestBody(required = false) String data){
+
+        // parse
+        List<XxlCommonRegistryData> xxlCommonRegistryDataList = null;
+        try {
+            xxlCommonRegistryDataList = (List<XxlCommonRegistryData>) JacksonUtil.readValue(data, List.class, XxlCommonRegistryData.class);
+        } catch (Exception e) { }
+
+        return xxlCommonRegistryService.remove(xxlCommonRegistryDataList);
     }
 
-    @RequestMapping("/discovery")
+    @RequestMapping("/discovery/{biz}/{env}")
     @ResponseBody
     @PermessionLimit(limit=false)
-    public ReturnT<Map<String, List<String>>> discovery(@RequestParam(name = "keys", required = false) List<String> keys) {
+    public ReturnT<Map<String, List<String>>> discovery(@PathVariable(value = "biz", required = false) String biz,
+                                                        @PathVariable(value = "env",required = false) String env,
+                                                        @RequestBody(required = false) String data) {
+
+        List<String> keys = JacksonUtil.readValue(data, List.class);
+
         return xxlCommonRegistryService.discovery(keys);
     }
 
-    @RequestMapping("/monitor")
+    @RequestMapping("/monitor/{biz}/{env}")
     @ResponseBody
     @PermessionLimit(limit=false)
-    public DeferredResult monitor(@RequestParam(name = "keys", required = false) List<String> keys) {
+    public DeferredResult monitor(@PathVariable(value = "biz", required = false) String biz,
+                                  @PathVariable(value = "env",required = false) String env,
+                                  @RequestBody(required = false) String data) {
+
+        List<String> keys = JacksonUtil.readValue(data, List.class);
+
         return xxlCommonRegistryService.monitor(keys);
     }
 

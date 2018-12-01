@@ -1,5 +1,6 @@
 package com.xxl.mq.admin.service;
 
+import com.xxl.mq.admin.core.model.XxlCommonRegistryData;
 import com.xxl.mq.admin.core.result.ReturnT;
 import org.springframework.web.context.request.async.DeferredResult;
 
@@ -16,12 +17,12 @@ public interface XxlCommonRegistryService {
     /**
      * refresh registry-value, check update and broacase
      */
-    ReturnT<String> registry(List<String> keys, String value);
+    ReturnT<String> registry(List<XxlCommonRegistryData> xxlCommonRegistryDataList);
 
     /**
      * remove registry-value, check update and broacase
      */
-    ReturnT<String> remove(List<String> keys, String value);
+    ReturnT<String> remove(List<XxlCommonRegistryData> xxlCommonRegistryDataList);
 
     /**
      * discovery registry-data, read file

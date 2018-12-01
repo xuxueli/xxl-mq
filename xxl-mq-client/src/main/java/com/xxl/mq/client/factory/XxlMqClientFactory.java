@@ -6,8 +6,7 @@ import com.xxl.mq.client.consumer.annotation.MqConsumer;
 import com.xxl.mq.client.consumer.registry.ConsumerRegistryHelper;
 import com.xxl.mq.client.consumer.thread.ConsumerThread;
 import com.xxl.mq.client.message.XxlMqMessage;
-import com.xxl.mq.client.registry.CommonServiceRegistry;
-import com.xxl.rpc.registry.ServiceRegistry;
+import com.xxl.mq.client.registry.XxlRegistryServiceRegistry2;
 import com.xxl.rpc.remoting.invoker.XxlRpcInvokerFactory;
 import com.xxl.rpc.remoting.invoker.call.CallType;
 import com.xxl.rpc.remoting.invoker.reference.XxlRpcReferenceBean;
@@ -49,19 +48,25 @@ public class XxlMqClientFactory  {
         // valid ConsumerThread
         validConsumerThread();
 
-        // start BrokerService
+        // 1、start BrokerService
         startBrokerService();
 
-        // submit ConsumerThread
+        // 2、submit ConsumerThread
         submitConsumerThread();
+
+        // 3、start registry consumer
+        startRegistryConsumer();
     }
 
     public void destroy() throws Exception {
 
-        // destory ClientFactoryThreadPool
+        // 3、stop registry consumer
+        stopRegistryConsumer();
+
+        // 2、destory ClientFactoryThreadPool
         destoryClientFactoryThreadPool();
 
-        // destory BrokerService
+        // 1、destory BrokerService
         destoryBrokerService();
     }
 
@@ -111,8 +116,8 @@ public class XxlMqClientFactory  {
 
     public void startBrokerService() {
         // init XxlRpcInvokerFactory
-        xxlRpcInvokerFactory = new XxlRpcInvokerFactory(CommonServiceRegistry.class, new HashMap<String, String>(){{
-            put(CommonServiceRegistry.REGISTRY_CENTER, adminAddress);
+        xxlRpcInvokerFactory = new XxlRpcInvokerFactory(XxlRegistryServiceRegistry2.class, new HashMap<String, String>(){{
+            put(XxlRegistryServiceRegistry2.XXL_REGISTRY_ADDRESS, adminAddress);
         }});
         try {
             xxlRpcInvokerFactory.start();
@@ -121,12 +126,12 @@ public class XxlMqClientFactory  {
         }
 
         // init ConsumerRegistryHelper
-        ServiceRegistry serviceRegistry = xxlRpcInvokerFactory.getServiceRegistry();
-        consumerRegistryHelper = new ConsumerRegistryHelper(serviceRegistry);
+        XxlRegistryServiceRegistry2 commonServiceRegistry = (XxlRegistryServiceRegistry2) xxlRpcInvokerFactory.getServiceRegistry();
+        consumerRegistryHelper = new ConsumerRegistryHelper(commonServiceRegistry);
 
         // init IXxlMqBroker
         xxlMqBroker = (IXxlMqBroker) new XxlRpcReferenceBean(NetEnum.NETTY, Serializer.SerializeEnum.HESSIAN.getSerializer(), CallType.SYNC,
-                IXxlMqBroker.class, null, 10000, null, null, null, serviceRegistry).getObject();
+                IXxlMqBroker.class, null, 10000, null, null, null, xxlRpcInvokerFactory).getObject();
 
         // async + mult, addMessages
         for (int i = 0; i < 3; i++) {
@@ -265,11 +270,6 @@ public class XxlMqClientFactory  {
             return;
         }
 
-        // registry
-        for (ConsumerThread item: consumerRespository) {
-            getConsumerRegistryHelper().registerConsumer(item);
-        }
-
         // consumer
         for (ConsumerThread item: consumerRespository) {
             clientFactoryThreadPool.execute(item);
@@ -277,6 +277,13 @@ public class XxlMqClientFactory  {
         }
     }
 
+
+    private void startRegistryConsumer(){
+        getConsumerRegistryHelper().registerConsumer(consumerRespository);
+    }
+    private void stopRegistryConsumer(){
+        getConsumerRegistryHelper().removeConsumer(consumerRespository);
+    }
 
 
 }
