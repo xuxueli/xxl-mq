@@ -8,6 +8,9 @@
     <br><br>
 
     <input type="button" class="send" _type="2" value="广播消息" />
+    <br><br>
+
+    <input type="button" class="send" _type="3" value="性能测试：批量发送10000条消息" />
 
     <hr>
     <div id="console"></div>
@@ -17,7 +20,7 @@
             $(".send").click(function () {
                 var _type = $(this).attr("_type");
                 $.post( '${request.contextPath}/produce', {'type':_type}, function(data,status){
-                    var temp = "<br>" + new Date().format("yyyy-MM-dd HH:mm:ss") + ":";
+                    var temp = "<br>" + new Date().format("yyyy-MM-dd HH:mm:ss") + "：  ";
                     temp += ("SUCCESS" == data)?('成功发送一条消息！'):data;
                     $("#console").prepend(temp);
                 });

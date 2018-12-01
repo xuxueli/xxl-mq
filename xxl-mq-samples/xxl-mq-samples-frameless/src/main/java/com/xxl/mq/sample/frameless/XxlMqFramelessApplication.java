@@ -3,7 +3,7 @@ package com.xxl.mq.sample.frameless;
 
 import com.xxl.mq.client.consumer.IMqConsumer;
 import com.xxl.mq.sample.frameless.conf.XxlMqConf;
-import com.xxl.mq.sample.frameless.mqconsumer.DemoMqComsumer;
+import com.xxl.mq.sample.frameless.mqconsumer.Demo2MqComsumer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ public class XxlMqFramelessApplication {
 
         // consumer list
         List<IMqConsumer> consumerList = new ArrayList<>();
-        consumerList.add(new DemoMqComsumer());
+        consumerList.add(new Demo2MqComsumer());
 
 
         // start

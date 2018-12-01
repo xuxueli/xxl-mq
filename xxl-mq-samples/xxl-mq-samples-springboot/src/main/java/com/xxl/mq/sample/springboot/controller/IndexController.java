@@ -46,6 +46,16 @@ public class IndexController {
 			 * 广播消费
 			 */
 			XxlMqProducer.broadcast(new XxlMqMessage(topic, data));
+		} else if (type == 3) {
+
+			int msgNum = 10000;
+			long start = System.currentTimeMillis();
+			for (int i = 0; i < msgNum; i++) {
+				XxlMqProducer.produce(new XxlMqMessage("topic_2", "No:"+i));
+			}
+			long end = System.currentTimeMillis();
+			return "Cost = " + (end-start);
+
 		} else {
 			return "Type Error.";
 		}
