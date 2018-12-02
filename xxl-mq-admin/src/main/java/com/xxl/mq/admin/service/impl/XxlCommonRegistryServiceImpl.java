@@ -217,74 +217,69 @@ public class XxlCommonRegistryServiceImpl implements XxlCommonRegistryService, I
         /**
          * registry registry data         (client-num/10 s)
          */
-        for (int i = 0; i < 10; i++) {
-            executorService.execute(new Runnable() {
-                @Override
-                public void run() {
-                    while (!executorStoped) {
-                        try {
-                            XxlCommonRegistryData xxlCommonRegistryData = registryQueue.take();
-                            if (xxlCommonRegistryData !=null) {
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                while (!executorStoped) {
+                    try {
+                        XxlCommonRegistryData xxlCommonRegistryData = registryQueue.take();
+                        if (xxlCommonRegistryData !=null) {
 
-                                // refresh or add
-                                int ret = xxlCommonRegistryDataDao.refresh(xxlCommonRegistryData);
-                                if (ret == 0) {
-                                    xxlCommonRegistryDataDao.add(xxlCommonRegistryData);
-                                }
-
-                                // valid file status
-                                XxlCommonRegistry fileXxlCommonRegistry = getFileRegistryData(xxlCommonRegistryData);
-                                if (fileXxlCommonRegistry!=null && fileXxlCommonRegistry.getDataList().contains(xxlCommonRegistryData.getValue())) {
-                                    continue;     // "Repeated limited."
-                                }
-
-                                // checkRegistryDataAndSendMessage
-                                checkRegistryDataAndSendMessage(xxlCommonRegistryData);
+                            // refresh or add
+                            int ret = xxlCommonRegistryDataDao.refresh(xxlCommonRegistryData);
+                            if (ret == 0) {
+                                xxlCommonRegistryDataDao.add(xxlCommonRegistryData);
                             }
-                        } catch (Exception e) {
-                            if (!executorStoped) {
-                                logger.error(e.getMessage(), e);
+
+                            // valid file status
+                            XxlCommonRegistry fileXxlCommonRegistry = getFileRegistryData(xxlCommonRegistryData);
+                            if (fileXxlCommonRegistry!=null && fileXxlCommonRegistry.getDataList().contains(xxlCommonRegistryData.getValue())) {
+                                continue;     // "Repeated limited."
                             }
+
+                            // checkRegistryDataAndSendMessage
+                            checkRegistryDataAndSendMessage(xxlCommonRegistryData);
+                        }
+                    } catch (Exception e) {
+                        if (!executorStoped) {
+                            logger.error(e.getMessage(), e);
                         }
                     }
                 }
-            });
-        }
+            }
+        });
 
         /**
          * remove registry data         (client-num/start-interval s)
          */
-        for (int i = 0; i < 10; i++) {
-            executorService.execute(new Runnable() {
-                @Override
-                public void run() {
-                    while (!executorStoped) {
-                        try {
-                            XxlCommonRegistryData xxlCommonRegistryData = removeQueue.take();
-                            if (xxlCommonRegistryData != null) {
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                while (!executorStoped) {
+                    try {
+                        XxlCommonRegistryData xxlCommonRegistryData = removeQueue.take();
+                        if (xxlCommonRegistryData != null) {
 
-                                // delete
-                                xxlCommonRegistryDataDao.deleteDataValue(xxlCommonRegistryData.getKey(), xxlCommonRegistryData.getValue());
+                            // delete
+                            xxlCommonRegistryDataDao.deleteDataValue(xxlCommonRegistryData.getKey(), xxlCommonRegistryData.getValue());
 
-                                // valid file status
-                                XxlCommonRegistry fileXxlCommonRegistry = getFileRegistryData(xxlCommonRegistryData);
-                                if (fileXxlCommonRegistry!=null && !fileXxlCommonRegistry.getDataList().contains(xxlCommonRegistryData.getValue())) {
-                                    continue;   // "Repeated limited."
-                                }
-
-                                // checkRegistryDataAndSendMessage
-                                checkRegistryDataAndSendMessage(xxlCommonRegistryData);
+                            // valid file status
+                            XxlCommonRegistry fileXxlCommonRegistry = getFileRegistryData(xxlCommonRegistryData);
+                            if (fileXxlCommonRegistry!=null && !fileXxlCommonRegistry.getDataList().contains(xxlCommonRegistryData.getValue())) {
+                                continue;   // "Repeated limited."
                             }
-                        } catch (Exception e) {
-                            if (!executorStoped) {
-                                logger.error(e.getMessage(), e);
-                            }
+
+                            // checkRegistryDataAndSendMessage
+                            checkRegistryDataAndSendMessage(xxlCommonRegistryData);
+                        }
+                    } catch (Exception e) {
+                        if (!executorStoped) {
+                            logger.error(e.getMessage(), e);
                         }
                     }
                 }
-            });
-        }
-
+            }
+        });
 
         /**
          * broadcase new one registry-data-file     (1/1s)
