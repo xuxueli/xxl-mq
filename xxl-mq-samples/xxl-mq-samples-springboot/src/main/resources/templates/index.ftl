@@ -10,7 +10,10 @@
     <input type="button" class="send" _type="2" value="广播消息" />
     <br><br>
 
-    <input type="button" class="send" _type="3" value="性能测试：批量发送10000条消息" />
+    <input type="button" class="send" _type="3" value="延时消息：5分钟后执行" />
+    <br><br>
+
+    <input type="button" class="send" _type="4" value="性能测试：批量发送10000条消息" />
 
     <hr>
     <div id="console"></div>
