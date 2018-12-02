@@ -120,12 +120,16 @@ public class DateUtil {
 	public static void main(String[] args) throws ParseException {
 		String temp = DateUtil.formatDateTime(new Date());
 		System.out.println(temp);
+
 		Date temp2 = DateUtil.parseDateTime(temp);
 		System.out.println(temp2);
 
-		for (int i = 0; i < 100; i++) {
-			DateUtil.formatDateTime(new Date());
-		}
+		String temp3 = DateUtil.formatDate(new Date());
+		System.out.println(temp3);
+
+		Date temp4 = DateUtil.parseDate(temp3);
+		System.out.println(temp4);
+
 	}
 
 }
