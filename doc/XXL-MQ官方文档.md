@@ -141,7 +141,10 @@ xxl.mq.registry.beattime=10
 ### 注册信息磁盘存储目录，务必拥有读写权限；
 xxl.mq.registry.data.filepath=/data/applogs/xxl-mq/registrydata
 
-### 消息中心Broker服务端口
+### 消息中心Broker服务RPC通讯地址，为空则自动获取
+xxl-mq.rpc.remoting.ip=
+
+### 消息中心Broker服务RPC通讯端口
 xxl-mq.rpc.remoting.port=7080
 
 ### 日志保存天数，超过该阈值的成功消息将会被自动清理；大于等于3时生效
@@ -188,7 +191,7 @@ docker run -p 8080:8080 -v /tmp:/data/applogs --name xxl-mq-admin  -d xuxueli/xx
 * 如需自定义 mysql 等配置，可通过 "PARAMS" 指定，参数格式 RAMS="--key=value  --key2=value2" ；
 * 配置项参考文件：/xxl-mq/xxl-mq-admin/src/main/resources/application.properties
 */
-docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl-mq?Unicode=true&characterEncoding=UTF-8" -p 8080:8080 -v /tmp:/data/applogs --name xxl-mq-admin  -d xuxueli/xxl-mq-admin
+docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl-mq?Unicode=true&characterEncoding=UTF-8" -p 8080:8080 -p 7080 -v /tmp:/data/applogs --name xxl-mq-admin  -d xuxueli/xxl-mq-admin
 ```
 
 
@@ -590,7 +593,7 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
 - 底层long polling监控keys非法去重问题修复；
 - 注册逻辑优化，批量注册，提高注册性能，降低注册中心压力；
 - 示例项目中提供功能测试、性能测试用例，以及消息生产、消费、成功率等方便的数据分析；参考章节 “2.6 功能测试 & 性能测试”。测试数据显示 10000 条消息 2s 内 100% 投递只消息中心，且后续被 100% 成功消费；
-
+- 消息中心RPC服务支持自定义注册IP地址；
 
 ### TODO
 - 会考虑移除 mysql 强依赖的，迁移 jpa 进一步提升通用型。

@@ -42,6 +42,10 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
 
     // ---------------------- param ----------------------
 
+
+    @Value("${xxl-mq.rpc.remoting.ip}")
+    private String ip;
+
     @Value("${xxl-mq.rpc.remoting.port}")
     private int port;
 
@@ -383,8 +387,9 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
     public void initServer() throws Exception {
 
         // address, static registry
-        String ip = IpUtil.getIp();
+        ip = (ip!=null&&ip.trim().length()>0)?ip:IpUtil.getIp();
         String address = IpUtil.getIpPort(ip, port);
+
         XxlCommonRegistryData xxlCommonRegistryData = new XxlCommonRegistryData();
         xxlCommonRegistryData.setKey(IXxlMqBroker.class.getName());
         xxlCommonRegistryData.setValue(address);
