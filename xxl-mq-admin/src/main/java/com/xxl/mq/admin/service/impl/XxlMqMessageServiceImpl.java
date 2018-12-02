@@ -9,7 +9,7 @@ import com.xxl.mq.admin.service.IXxlMqMessageService;
 import com.xxl.mq.client.consumer.annotation.MqConsumer;
 import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.message.XxlMqMessageStatus;
-import com.xxl.mq.client.util.DateFormatUtil;
+import com.xxl.mq.client.util.DateUtil;
 import com.xxl.mq.client.util.LogHelper;
 import org.springframework.stereotype.Service;
 
@@ -210,10 +210,7 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
             }
         } else {
             for (int i = 4; i > -1; i--) {
-                String messageDay = "";
-                try {
-                    messageDay = DateFormatUtil.formatDate(new Date());
-                } catch (ParseException e) { }
+                String messageDay = DateUtil.formatDate(new Date());
 
                 messageDay_list.add(messageDay);
                 newNum_list.add(0);

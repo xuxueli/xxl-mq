@@ -30,6 +30,19 @@ public class XxlMqMessage implements Serializable {
 		this.data = data;
 	}
 
+	public XxlMqMessage(String topic, String data, Date effectTime) {
+		this.topic = topic;
+		this.data = data;
+		this.effectTime = effectTime;
+	}
+
+	public XxlMqMessage(String topic, String data, long shardingId) {
+		this.topic = topic;
+		this.data = data;
+		this.shardingId = shardingId;
+	}
+
+	// for clone
 	public XxlMqMessage(XxlMqMessage xxlMqMessage) {
 		this.id = xxlMqMessage.id;
 		this.topic = xxlMqMessage.topic;

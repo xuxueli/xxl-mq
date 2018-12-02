@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * index controller
  * @author xuxueli 2015-12-19 16:13:16
@@ -27,26 +30,39 @@ public class IndexController {
 		String data = "时间戳:" + System.currentTimeMillis();
 
 		if (type == 0) {
+
 			/**
 			 * 并行消费
 			 */
 			XxlMqProducer.produce(new XxlMqMessage(topic, data));
+
 		} else if (type == 1) {
+
 			/**
 			 * 串行消费
 			 */
-			XxlMqMessage mqMessage = new XxlMqMessage();
-			mqMessage.setTopic(topic);
-			mqMessage.setData(data);
-			mqMessage.setShardingId(1);
+			XxlMqProducer.produce(new XxlMqMessage(topic, data, 1L));
 
-			XxlMqProducer.produce(mqMessage);
 		} else if (type == 2) {
+
 			/**
 			 * 广播消费
 			 */
 			XxlMqProducer.broadcast(new XxlMqMessage(topic, data));
+
+
 		} else if (type == 3) {
+
+			Calendar calendar = Calendar.getInstance();
+			calendar.add(Calendar.MINUTE, 5);
+			Date effectTime = calendar.getTime();
+
+			/**
+			 * 延时消息
+			 */
+			XxlMqProducer.produce(new XxlMqMessage(topic, data, effectTime));
+
+		} else if (type == 4) {
 
 			int msgNum = 10000;
 			long start = System.currentTimeMillis();

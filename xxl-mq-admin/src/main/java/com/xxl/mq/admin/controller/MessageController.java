@@ -4,7 +4,7 @@ import com.xxl.mq.admin.core.result.ReturnT;
 import com.xxl.mq.admin.service.IXxlMqMessageService;
 import com.xxl.mq.client.message.XxlMqMessage;
 import com.xxl.mq.client.message.XxlMqMessageStatus;
-import com.xxl.mq.client.util.DateFormatUtil;
+import com.xxl.mq.client.util.DateUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,13 +50,10 @@ public class MessageController {
 		if (filterTime!=null && filterTime.trim().length()>0) {
 			String[] temp = filterTime.split(" - ");
 			if (temp!=null && temp.length == 2) {
-				try {
-					addTimeStart = DateFormatUtil.parseDateTime(temp[0]);
-					addTimeEnd = DateFormatUtil.parseDateTime(temp[1]);
-				} catch (ParseException e) {	}
+				addTimeStart = DateUtil.parseDateTime(temp[0]);
+				addTimeEnd = DateUtil.parseDateTime(temp[1]);
 			}
 		}
-
 
 		return xxlMqMessageService.pageList(start, length, topic, status, addTimeStart, addTimeEnd);
 	}
@@ -79,15 +76,14 @@ public class MessageController {
                                   @RequestParam(required = false, defaultValue = "0") int timeout,
                                   String effectTime){
 
-	    // effectTime
-	    Date effectTimeObj = null;
-        try {
-            if (effectTime!=null && effectTime.trim().length()>0) {
-                effectTimeObj = DateFormatUtil.parseDateTime(effectTime);
-            }
-        } catch (ParseException e) {
-            return new ReturnT<String>(ReturnT.FAIL_CODE, "生效时间格式非法");
-        }
+		// effectTime
+		Date effectTimeObj = null;
+		if (effectTime!=null && effectTime.trim().length()>0) {
+			effectTimeObj = DateUtil.parseDateTime(effectTime);
+			if (effectTimeObj == null) {
+				return new ReturnT<String>(ReturnT.FAIL_CODE, "生效时间格式非法");
+			}
+		}
 
         // message
         XxlMqMessage message = new XxlMqMessage();
@@ -117,13 +113,12 @@ public class MessageController {
 
         // effectTime
         Date effectTimeObj = null;
-        try {
-            if (effectTime!=null && effectTime.trim().length()>0) {
-                effectTimeObj = DateFormatUtil.parseDateTime(effectTime);
-            }
-        } catch (ParseException e) {
-            return new ReturnT<String>(ReturnT.FAIL_CODE, "生效时间格式非法");
-        }
+		if (effectTime!=null && effectTime.trim().length()>0) {
+			effectTimeObj = DateUtil.parseDateTime(effectTime);
+			if (effectTimeObj == null) {
+				return new ReturnT<String>(ReturnT.FAIL_CODE, "生效时间格式非法");
+			}
+		}
 
         // message
         XxlMqMessage message = new XxlMqMessage();
