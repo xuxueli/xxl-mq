@@ -44,11 +44,15 @@ public class XxlCommonRegistryServiceImpl implements XxlCommonRegistryService, I
     private String registryDataFilePath;
     @Value("${xxl.mq.registry.beattime}")
     private int registryBeatTime;
-
+    @Value("${xxl.mq.registry.accessToken}")
+    private String accessToken;
 
     @Override
-    public ReturnT<String> registry(List<XxlCommonRegistryData> xxlCommonRegistryDataList) {
+    public ReturnT<String> registry(String accessToken, List<XxlCommonRegistryData> xxlCommonRegistryDataList) {
         // valid
+        if (this.accessToken!=null && this.accessToken.trim().length()>0 && !this.accessToken.equals(accessToken)) {
+            return new ReturnT<String>(ReturnT.FAIL_CODE, "AccessToken Invalid");
+        }
         if (xxlCommonRegistryDataList==null || xxlCommonRegistryDataList.size()==0) {
             return new ReturnT<String>(ReturnT.FAIL_CODE, "RegistryData Invalid.");
         }
@@ -68,8 +72,11 @@ public class XxlCommonRegistryServiceImpl implements XxlCommonRegistryService, I
     }
 
     @Override
-    public ReturnT<String> remove(List<XxlCommonRegistryData> xxlCommonRegistryDataList) {
+    public ReturnT<String> remove(String accessToken, List<XxlCommonRegistryData> xxlCommonRegistryDataList) {
         // valid
+        if (this.accessToken!=null && this.accessToken.trim().length()>0 && !this.accessToken.equals(accessToken)) {
+            return new ReturnT<String>(ReturnT.FAIL_CODE, "AccessToken Invalid");
+        }
         if (xxlCommonRegistryDataList==null || xxlCommonRegistryDataList.size()==0) {
             return new ReturnT<String>(ReturnT.FAIL_CODE, "RegistryData Invalid.");
         }
@@ -89,8 +96,11 @@ public class XxlCommonRegistryServiceImpl implements XxlCommonRegistryService, I
     }
 
     @Override
-    public ReturnT<Map<String, List<String>>> discovery(List<String> keys) {
+    public ReturnT<Map<String, List<String>>> discovery(String accessToken, List<String> keys) {
         // valid
+        if (this.accessToken!=null && this.accessToken.trim().length()>0 && !this.accessToken.equals(accessToken)) {
+            return new ReturnT<>(ReturnT.FAIL_CODE, "AccessToken Invalid");
+        }
         if (keys==null || keys.size()==0) {
             return new ReturnT<>(ReturnT.FAIL_CODE, "keys Invalid.");
         }
@@ -118,11 +128,15 @@ public class XxlCommonRegistryServiceImpl implements XxlCommonRegistryService, I
     }
 
     @Override
-    public DeferredResult<ReturnT<String>> monitor(List<String> keys) {
+    public DeferredResult<ReturnT<String>> monitor(String accessToken, List<String> keys) {
         // init
         DeferredResult deferredResult = new DeferredResult(registryBeatTime * 3 * 1000L, new ReturnT<>(ReturnT.FAIL_CODE, "Monitor timeout."));
 
         // valid
+        if (this.accessToken!=null && this.accessToken.trim().length()>0 && !this.accessToken.equals(accessToken)) {
+            deferredResult.setResult(new ReturnT<>(ReturnT.FAIL_CODE, "AccessToken Invalid"));
+            return deferredResult;
+        }
         if (keys==null || keys.size()==0) {
             deferredResult.setResult(new ReturnT<>(ReturnT.FAIL_CODE, "keys Invalid."));
             return deferredResult;

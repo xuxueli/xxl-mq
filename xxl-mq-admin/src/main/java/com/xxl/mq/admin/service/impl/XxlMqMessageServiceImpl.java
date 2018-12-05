@@ -14,7 +14,6 @@ import com.xxl.mq.client.util.LogHelper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -144,7 +143,7 @@ public class XxlMqMessageServiceImpl implements IXxlMqMessageService {
         }
 
         // log
-        String appendLog = LogHelper.makeLog("人工修改", message.toString());
+        String appendLog = LogHelper.makeLog("人工添加", message.toString());
         message.setLog(appendLog);
 
         // save

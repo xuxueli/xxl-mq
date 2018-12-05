@@ -67,7 +67,7 @@ public class IndexController {
 			int msgNum = 10000;
 			long start = System.currentTimeMillis();
 			for (int i = 0; i < msgNum; i++) {
-				XxlMqProducer.produce(new XxlMqMessage("topic_2", "No:"+i));
+				XxlMqProducer.produce(new XxlMqMessage("topic_1", "No:"+i));
 			}
 			long end = System.currentTimeMillis();
 			return "Cost = " + (end-start);

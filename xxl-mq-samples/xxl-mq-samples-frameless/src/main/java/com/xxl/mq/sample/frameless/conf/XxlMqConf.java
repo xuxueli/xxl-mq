@@ -37,6 +37,7 @@ public class XxlMqConf {
 
         xxlMqClientFactory = new XxlMqClientFactory();
         xxlMqClientFactory.setAdminAddress(xxlJobProp.getProperty("xxl.mq.admin.address"));
+        xxlMqClientFactory.setAccessToken(xxlJobProp.getProperty("xxl.mq.accessToken"));
         xxlMqClientFactory.setConsumerList(consumerList);
 
         xxlMqClientFactory.init();

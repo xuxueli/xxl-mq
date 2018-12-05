@@ -6,10 +6,11 @@ import com.xxl.mq.client.consumer.annotation.MqConsumer;
 import com.xxl.mq.client.consumer.registry.ConsumerRegistryHelper;
 import com.xxl.mq.client.consumer.thread.ConsumerThread;
 import com.xxl.mq.client.message.XxlMqMessage;
-import com.xxl.mq.client.registry.XxlRegistryServiceRegistry2;
+import com.xxl.rpc.registry.impl.XxlRegistryServiceRegistry;
 import com.xxl.rpc.remoting.invoker.XxlRpcInvokerFactory;
 import com.xxl.rpc.remoting.invoker.call.CallType;
 import com.xxl.rpc.remoting.invoker.reference.XxlRpcReferenceBean;
+import com.xxl.rpc.remoting.invoker.route.LoadBalance;
 import com.xxl.rpc.remoting.net.NetEnum;
 import com.xxl.rpc.serialize.Serializer;
 import org.slf4j.Logger;
@@ -33,10 +34,14 @@ public class XxlMqClientFactory  {
     // ---------------------- param  ----------------------
 
     private String adminAddress;
+    private String accessToken;
     private List<IMqConsumer> consumerList;
 
     public void setAdminAddress(String adminAddress) {
         this.adminAddress = adminAddress;
+    }
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
     public void setConsumerList(List<IMqConsumer> consumerList) {
         this.consumerList = consumerList;
@@ -116,8 +121,9 @@ public class XxlMqClientFactory  {
 
     public void startBrokerService() {
         // init XxlRpcInvokerFactory
-        xxlRpcInvokerFactory = new XxlRpcInvokerFactory(XxlRegistryServiceRegistry2.class, new HashMap<String, String>(){{
-            put(XxlRegistryServiceRegistry2.XXL_REGISTRY_ADDRESS, adminAddress);
+        xxlRpcInvokerFactory = new XxlRpcInvokerFactory(XxlRegistryServiceRegistry.class, new HashMap<String, String>(){{
+            put(XxlRegistryServiceRegistry.XXL_REGISTRY_ADDRESS, adminAddress);
+            put(XxlRegistryServiceRegistry.ACCESS_TOKEN, accessToken);
         }});
         try {
             xxlRpcInvokerFactory.start();
@@ -126,12 +132,22 @@ public class XxlMqClientFactory  {
         }
 
         // init ConsumerRegistryHelper
-        XxlRegistryServiceRegistry2 commonServiceRegistry = (XxlRegistryServiceRegistry2) xxlRpcInvokerFactory.getServiceRegistry();
+        XxlRegistryServiceRegistry commonServiceRegistry = (XxlRegistryServiceRegistry) xxlRpcInvokerFactory.getServiceRegistry();
         consumerRegistryHelper = new ConsumerRegistryHelper(commonServiceRegistry);
 
         // init IXxlMqBroker
-        xxlMqBroker = (IXxlMqBroker) new XxlRpcReferenceBean(NetEnum.NETTY, Serializer.SerializeEnum.HESSIAN.getSerializer(), CallType.SYNC,
-                IXxlMqBroker.class, null, 10000, null, null, null, xxlRpcInvokerFactory).getObject();
+        xxlMqBroker = (IXxlMqBroker) new XxlRpcReferenceBean(
+                NetEnum.NETTY,
+                Serializer.SerializeEnum.HESSIAN.getSerializer(),
+                CallType.SYNC,
+                LoadBalance.ROUND,
+                IXxlMqBroker.class,
+                null,
+                10000,
+                null,
+                null,
+                null,
+                xxlRpcInvokerFactory).getObject();
 
         // async + mult, addMessages
         for (int i = 0; i < 3; i++) {

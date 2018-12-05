@@ -12,12 +12,16 @@ public class XxlMqConf {
 
     @Value("${xxl.mq.admin.address}")
     private String adminAddress;
+    @Value("${xxl.mq.accessToken}")
+    private String accessToken;
 
 
     @Bean
     public XxlMqSpringClientFactory getXxlMqConsumer(){
+
         XxlMqSpringClientFactory xxlMqSpringClientFactory = new XxlMqSpringClientFactory();
         xxlMqSpringClientFactory.setAdminAddress(adminAddress);
+        xxlMqSpringClientFactory.setAccessToken(accessToken);
 
         return xxlMqSpringClientFactory;
     }

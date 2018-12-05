@@ -2,8 +2,8 @@ package com.xxl.mq.client.consumer.registry;
 
 import com.xxl.mq.client.consumer.annotation.MqConsumer;
 import com.xxl.mq.client.consumer.thread.ConsumerThread;
-import com.xxl.mq.client.registry.XxlRegistryServiceRegistry2;
-import com.xxl.registry.client.model.XxlRegistryParam;
+import com.xxl.registry.client.model.XxlRegistryDataParamVO;
+import com.xxl.rpc.registry.impl.XxlRegistryServiceRegistry;
 
 import java.util.*;
 
@@ -12,8 +12,8 @@ import java.util.*;
  */
 public class ConsumerRegistryHelper {
 
-    private XxlRegistryServiceRegistry2 serviceRegistry;
-    public ConsumerRegistryHelper(XxlRegistryServiceRegistry2 serviceRegistry) {
+    private XxlRegistryServiceRegistry serviceRegistry;
+    public ConsumerRegistryHelper(XxlRegistryServiceRegistry serviceRegistry) {
         this.serviceRegistry = serviceRegistry;
     }
 
@@ -52,28 +52,28 @@ public class ConsumerRegistryHelper {
      */
     public void registerConsumer(List<ConsumerThread> consumerThreadList) {
 
-        List<XxlRegistryParam> registryParamList = new ArrayList<>();
+        List<XxlRegistryDataParamVO> registryParamList = new ArrayList<>();
         for (ConsumerThread consumerThread: consumerThreadList) {
             String registryKey = makeRegistryKey(consumerThread.getMqConsumer().topic());
             String registryVal = makeRegistryVal(consumerThread.getMqConsumer().group(), consumerThread.getUuid());
-            registryParamList.add(new XxlRegistryParam(registryKey, registryVal));
+            registryParamList.add(new XxlRegistryDataParamVO(registryKey, registryVal));
         }
 
-        serviceRegistry.registry(registryParamList);
+        serviceRegistry.getXxlRegistryClient().registry(registryParamList);
     }
 
     /**
      * consumer registry remove
      */
     public void removeConsumer(List<ConsumerThread> consumerThreadList){
-        List<XxlRegistryParam> registryParamList = new ArrayList<>();
+        List<XxlRegistryDataParamVO> registryParamList = new ArrayList<>();
         for (ConsumerThread consumerThread: consumerThreadList) {
             String registryKey = makeRegistryKey(consumerThread.getMqConsumer().topic());
             String registryVal = makeRegistryVal(consumerThread.getMqConsumer().group(), consumerThread.getUuid());
-            registryParamList.add(new XxlRegistryParam(registryKey, registryVal));
+            registryParamList.add(new XxlRegistryDataParamVO(registryKey, registryVal));
         }
 
-        serviceRegistry.remove(registryParamList);
+        serviceRegistry.getXxlRegistryClient().remove(registryParamList);
     }
 
     /**

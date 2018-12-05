@@ -20,9 +20,13 @@ public class XxlMqSpringClientFactory implements ApplicationContextAware, Dispos
     // ---------------------- param  ----------------------
 
     private String adminAddress;
+    private String accessToken;
 
     public void setAdminAddress(String adminAddress) {
         this.adminAddress = adminAddress;
+    }
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     // XxlMqClientFactory
@@ -47,6 +51,7 @@ public class XxlMqSpringClientFactory implements ApplicationContextAware, Dispos
         xxlMqClientFactory = new XxlMqClientFactory();
 
         xxlMqClientFactory.setAdminAddress(adminAddress);
+        xxlMqClientFactory.setAccessToken(accessToken);
         xxlMqClientFactory.setConsumerList(consumerList);
 
         xxlMqClientFactory.init();
