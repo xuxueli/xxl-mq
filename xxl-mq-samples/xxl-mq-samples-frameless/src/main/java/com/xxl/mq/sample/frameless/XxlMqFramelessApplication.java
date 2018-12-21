@@ -2,6 +2,8 @@ package com.xxl.mq.sample.frameless;
 
 
 import com.xxl.mq.client.consumer.IMqConsumer;
+import com.xxl.mq.client.message.XxlMqMessage;
+import com.xxl.mq.client.producer.XxlMqProducer;
 import com.xxl.mq.sample.frameless.conf.XxlMqConf;
 import com.xxl.mq.sample.frameless.mqconsumer.Demo2MqComsumer;
 
@@ -23,6 +25,9 @@ public class XxlMqFramelessApplication {
 
         // start
         XxlMqConf.getInstance().start(consumerList);
+
+        // producer
+        XxlMqProducer.produce(new XxlMqMessage("topic_2", "test msg data"));
 
         while (!Thread.currentThread().isInterrupted()) {
             TimeUnit.HOURS.sleep(1);

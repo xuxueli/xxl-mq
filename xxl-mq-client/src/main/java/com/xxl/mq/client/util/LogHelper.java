@@ -8,7 +8,7 @@ import java.util.Date;
  */
 public class LogHelper {
 
-    private static final String LOG_TEMPLATE = "<hr>时间：{0}<br>操作：{1}<br>备注：{2}";
+    private static final String LOG_TEMPLATE = "<br><br>  <span style=\"color:#00c0ef;\" > >>>>>>>>>>> {0} <<<<<<<<<<< </span>  <br>时间：{1}  <br>备注：{2}";
 
     /**
      * make log
@@ -16,7 +16,7 @@ public class LogHelper {
     public static String makeLog(String logTitle, String logContent){
 
         String tim = DateUtil.formatDateTime(new Date());
-        String log = MessageFormat.format(LOG_TEMPLATE, tim, logTitle, logContent);
+        String log = MessageFormat.format(LOG_TEMPLATE, logTitle, tim, logContent);
 
         // sub
         if (log.length() > 20000) {
