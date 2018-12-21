@@ -28,10 +28,6 @@ public class XxlMqConf {
      */
     public void start(List<IMqConsumer> consumerList){
 
-        if (consumerList==null || consumerList.size()==0) {
-            return;
-        }
-
         // load executor prop
         Properties xxlJobProp = loadProperties("xxl-mq.properties");
 
