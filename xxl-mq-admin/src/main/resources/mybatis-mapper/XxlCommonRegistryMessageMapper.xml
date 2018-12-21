@@ -16,7 +16,7 @@
 	</sql>
 
 	<insert id="add" parameterType="com.xxl.mq.admin.core.model.XxlCommonRegistryMessage" >
-		INSERT INTO XXL_MQ_COMMON_REGISTRY_MESSAGE (
+		INSERT INTO xxl_mq_common_registry_message (
 			`data`,
 			`addTime`
 		) VALUES
@@ -28,7 +28,7 @@
 
 	<select id="findMessage" parameterType="java.util.HashMap" resultMap="xxlCommonRegistryMessage" >
 		SELECT <include refid="Base_Column_List" />
-		FROM XXL_MQ_COMMON_REGISTRY_MESSAGE AS t
+		FROM xxl_mq_common_registry_message AS t
 		<if test="excludeIds != null and excludeIds.size() > 0" >
 			where t.id not in
 			<foreach collection="excludeIds" item="idItem"  index="index" separator="," open="(" close=")">
@@ -39,7 +39,7 @@
 	</select>
 
 	<delete id="cleanMessage" parameterType="java.util.HashMap" >
-		DELETE FROM XXL_MQ_COMMON_REGISTRY_MESSAGE
+		DELETE FROM xxl_mq_common_registry_message
 		WHERE NOW() <![CDATA[ > ]]> DATE_ADD(addTime, Interval #{messageTimeout} SECOND)
 	</delete>
 

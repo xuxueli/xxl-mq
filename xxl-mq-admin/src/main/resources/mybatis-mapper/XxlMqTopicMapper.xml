@@ -19,7 +19,7 @@
 
 	<select id="pageList" parameterType="java.util.HashMap" resultMap="xxlMqTopic">
 		SELECT <include refid="Base_Column_List" />
-		FROM XXL_MQ_TOPIC AS t
+		FROM xxl_mq_topic AS t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
 			<if test="bizId gte 0">
 				AND t.bizId = #{bizId}
@@ -34,7 +34,7 @@
 
 	<select id="pageListCount" parameterType="java.util.HashMap" resultType="int">
 		SELECT count(1)
-		FROM XXL_MQ_TOPIC AS t
+		FROM xxl_mq_topic AS t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
 			<if test="bizId gte 0">
 				AND t.bizId = #{bizId}
@@ -47,12 +47,12 @@
 
 	<select id="load" parameterType="java.util.HashMap" resultMap="xxlMqTopic">
 		SELECT <include refid="Base_Column_List" />
-		FROM XXL_MQ_TOPIC AS t
+		FROM xxl_mq_topic AS t
 		WHERE t.`topic` = #{topic}
 	</select>
 
 	<insert id="add" parameterType="com.xxl.mq.admin.core.model.XxlMqBiz" >
-		INSERT INTO XXL_MQ_TOPIC (
+		INSERT INTO xxl_mq_topic (
 			`topic`,
 			`bizId`,
 			`author`,
@@ -67,7 +67,7 @@
 	</insert>
 
 	<update id="update" parameterType="com.xxl.mq.admin.core.model.XxlMqBiz"  >
-		UPDATE XXL_MQ_TOPIC AS t
+		UPDATE xxl_mq_topic AS t
 		SET
 			t.`bizId` = #{xxlMqTopic.bizId},
 			t.`author` = #{xxlMqTopic.author},
@@ -76,13 +76,13 @@
 	</update>
 
 	<delete id="delete" parameterType="java.util.HashMap" >
-		DELETE FROM XXL_MQ_TOPIC
+		DELETE FROM xxl_mq_topic
 		WHERE topic = #{topic}
 	</delete>
 
 	<select id="findAlarmByTopic" parameterType="java.util.HashMap" resultMap="xxlMqTopic">
 		SELECT <include refid="Base_Column_List" />
-		FROM XXL_MQ_TOPIC AS t
+		FROM xxl_mq_topic AS t
 		where LENGTH(t.alarmEmails) <![CDATA[ > ]]> 0
 			and t.topic in
 			<foreach collection="topics" item="topicItem"  index="index" separator="," open="(" close=")">

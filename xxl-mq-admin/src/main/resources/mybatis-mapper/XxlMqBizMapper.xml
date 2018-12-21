@@ -17,19 +17,19 @@
 	
 	<select id="findAll" parameterType="java.util.HashMap" resultMap="xxlMqBiz">
 		SELECT <include refid="Base_Column_List" />
-		FROM XXL_MQ_BIZ AS t
+		FROM xxl_mq_biz AS t
 		ORDER BY t.`order` ASC
 	</select>
 
 	<select id="load" parameterType="java.util.HashMap" resultMap="xxlMqBiz">
 		SELECT <include refid="Base_Column_List" />
-		FROM XXL_MQ_BIZ AS t
+		FROM xxl_mq_biz AS t
 		WHERE t.`id` = #{id}
 	</select>
 
 	<!-- "useGeneratedKeys" cannot work with "@Param" -->
 	<insert id="add" parameterType="com.xxl.mq.admin.core.model.XxlMqBiz" useGeneratedKeys="true" keyProperty="id" >
-		INSERT INTO XXL_MQ_BIZ (
+		INSERT INTO xxl_mq_biz (
 			`bizName`,
 			`order`
 		) VALUES
@@ -40,7 +40,7 @@
 	</insert>
 
 	<update id="update" parameterType="java.util.HashMap"  >
-		UPDATE XXL_MQ_BIZ AS t
+		UPDATE xxl_mq_biz AS t
 		SET
 			t.`bizName` = #{xxlMqBiz.bizName},
 			t.`order` = #{xxlMqBiz.order}
@@ -48,7 +48,7 @@
 	</update>
 
 	<delete id="delete" parameterType="java.util.HashMap" >
-		DELETE FROM XXL_MQ_BIZ
+		DELETE FROM xxl_mq_biz
 		WHERE id = #{id}
 	</delete>
 

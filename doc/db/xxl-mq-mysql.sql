@@ -3,7 +3,7 @@ use `xxl-mq`;
 
 
 
-CREATE TABLE `XXL_MQ_BIZ` (
+CREATE TABLE `xxl_mq_biz` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `bizName` varchar(64) NOT NULL,
   `order` int(11) NOT NULL DEFAULT '0',
@@ -11,7 +11,7 @@ CREATE TABLE `XXL_MQ_BIZ` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `XXL_MQ_TOPIC` (
+CREATE TABLE `xxl_mq_topic` (
   `topic` varchar(255) NOT NULL,
   `bizId` int(11) NOT NULL DEFAULT '0',
   `author` varchar(64) DEFAULT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE `XXL_MQ_TOPIC` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `XXL_MQ_MESSAGE` (
+CREATE TABLE `xxl_mq_message` (
   `id` bigint(11) NOT NULL AUTO_INCREMENT,
   `topic` varchar(255) NOT NULL,
   `group` varchar(255) NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE `XXL_MQ_MESSAGE` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `XXL_MQ_COMMON_REGISTRY` (
+CREATE TABLE `xxl_mq_common_registry` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `key` varchar(255) NOT NULL COMMENT '注册Key',
   `data` text NOT NULL COMMENT '注册Value有效数据',
@@ -47,7 +47,7 @@ CREATE TABLE `XXL_MQ_COMMON_REGISTRY` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `XXL_MQ_COMMON_REGISTRY_DATA` (
+CREATE TABLE `xxl_mq_common_registry_data` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `key` varchar(255) NOT NULL COMMENT '注册Key',
   `value` varchar(255) NOT NULL COMMENT '注册Value',
@@ -57,7 +57,7 @@ CREATE TABLE `XXL_MQ_COMMON_REGISTRY_DATA` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `XXL_MQ_COMMON_REGISTRY_MESSAGE` (
+CREATE TABLE `xxl_mq_common_registry_message` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `data` text NOT NULL COMMENT '消息内容',
   `addTime` datetime NOT NULL COMMENT '添加时间',

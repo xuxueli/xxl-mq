@@ -33,7 +33,7 @@
 	
 	<select id="pageList" parameterType="java.util.HashMap" resultMap="XxlMqMessage">
 		SELECT <include refid="Base_Column_List" />
-		FROM XXL_MQ_MESSAGE AS t
+		FROM xxl_mq_message AS t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
 			<if test="topic != null and topic != ''">
 				AND t.topic = #{topic}
@@ -54,7 +54,7 @@
 	
 	<select id="pageListCount" parameterType="java.util.HashMap" resultType="int">
 		SELECT count(1)
-		FROM XXL_MQ_MESSAGE AS t
+		FROM xxl_mq_message AS t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
 			<if test="topic != null and topic != ''">
 				AND t.topic = #{topic}
@@ -72,12 +72,12 @@
 	</select>
 
 	<delete id="delete" parameterType="java.util.HashMap" >
-		DELETE FROM XXL_MQ_MESSAGE
+		DELETE FROM xxl_mq_message
 		WHERE id = #{id}
 	</delete>
 
 	<update id="update" parameterType="java.util.HashMap" >
-		UPDATE XXL_MQ_MESSAGE AS t
+		UPDATE xxl_mq_message AS t
 		SET
 			t.`group` = #{message.group},
 			t.`data` = #{message.data},
@@ -91,7 +91,7 @@
 	</update>
 
 	<insert id="save" parameterType="com.xxl.mq.client.message.XxlMqMessage" useGeneratedKeys="true" keyProperty="id" >
-		INSERT INTO XXL_MQ_MESSAGE (
+		INSERT INTO xxl_mq_message (
 			`topic`,
 			`group`,
 			`data`,
@@ -124,7 +124,7 @@
 
 	<select id="pullNewMessage" parameterType="java.util.HashMap" resultMap="XxlMqMessage">
 		SELECT <include refid="Base_Column_List" />
-		FROM XXL_MQ_MESSAGE AS t
+		FROM xxl_mq_message AS t
 		WHERE 	t.topic = #{topic}
 			AND t.group = #{group}
 			AND t.status = #{newStatus}
@@ -149,7 +149,7 @@
 	</select>
 
 	<update id="lockMessage" parameterType="java.util.HashMap" >
-		UPDATE XXL_MQ_MESSAGE AS t
+		UPDATE xxl_mq_message AS t
 		SET
 			t.status = #{ingStatus},
 			t.`log` = CONCAT(t.`log`, #{appendLog})
@@ -157,7 +157,7 @@
 	</update>
 
 	<update id="updateStatus" parameterType="java.util.HashMap" >
-		UPDATE XXL_MQ_MESSAGE
+		UPDATE xxl_mq_message
 		SET
 			status =
 				<foreach collection="messageList" item="messageItem" index="index" separator=" " open="case id" close="end">
@@ -175,7 +175,7 @@
 	</update>
 
 	<update id="updateRetryCount" parameterType="java.util.HashMap" >
-		UPDATE XXL_MQ_MESSAGE
+		UPDATE xxl_mq_message
 		SET
 			status = #{newStatus},
 			retryCount = retryCount - 1 ,
@@ -186,16 +186,16 @@
 	</update>
 
 	<delete id="cleanSuccessMessage" >
-		DELETE FROM XXL_MQ_MESSAGE
+		DELETE FROM xxl_mq_message
 		WHERE status =  #{successStatus}
 			AND addTime <![CDATA[ < ]]> DATE_SUB(NOW(), Interval #{logretentiondays} DAY)
 	</delete>
 
 	<select id="findNewTopicList" parameterType="java.util.HashMap" resultType="java.lang.String" >
 		select distinct topic
-		from XXL_MQ_MESSAGE
+		from xxl_mq_message
 		where topic not in (
-				select topic from XXL_MQ_TOPIC
+				select topic from xxl_mq_topic
 			)
 	</select>
 
@@ -207,13 +207,13 @@
 			SUM(CASE WHEN (status = 'RUNNING' ) then 1 else 0 end) as ingNum,
 			SUM(CASE WHEN (status = 'SUCCESS' ) then 1 else 0 end) as successNum,
 			SUM(CASE WHEN (status = 'FAIL' ) then 1 else 0 end) as failNum
-		FROM XXL_MQ_MESSAGE
+		FROM xxl_mq_message
 		WHERE addTime BETWEEN #{startDate} and #{endDate}
 		GROUP BY messageDay;
     </select>
 
     <delete id="clearMessage" >
-        delete from XXL_MQ_MESSAGE
+        delete from xxl_mq_message
         where 1 = 1
 			<if test="topic != null and topic != ''">
 				AND topic = #{topic}
@@ -237,7 +237,7 @@
             <if test="type == 5 or type == 6 or type == 7" >
                 AND id NOT in(
                     SELECT id FROM(
-                        SELECT t.id FROM XXL_MQ_MESSAGE AS t
+                        SELECT t.id FROM xxl_mq_message AS t
                         where t.topic = #{topic}
                             <if test="status != null and status != ''">
                                 AND t.status = #{status}
@@ -263,7 +263,7 @@
     </delete>
 
 	<delete id="resetBlockTimeoutMessage" parameterType="java.util.HashMap" >
-		update XXL_MQ_MESSAGE
+		update xxl_mq_message
 		set `status` = #{failStatus},
 			log = CONCAT(log, #{appendLog})
 		where `status` = #{ingStatus}

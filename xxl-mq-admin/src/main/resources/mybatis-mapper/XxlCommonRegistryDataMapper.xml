@@ -18,7 +18,7 @@
 	</sql>
 
 	<update id="refresh" parameterType="com.xxl.mq.admin.core.model.XxlCommonRegistryData"  >
-		UPDATE XXL_MQ_COMMON_REGISTRY_DATA AS t
+		UPDATE xxl_mq_common_registry_data AS t
 		SET
 			t.`updateTime` = now()
 		WHERE t.`key` = #{xxlCommonRegistryData.key}
@@ -26,7 +26,7 @@
 	</update>
 
 	<insert id="add" parameterType="com.xxl.mq.admin.core.model.XxlCommonRegistryData" >
-		INSERT INTO XXL_MQ_COMMON_REGISTRY_DATA (
+		INSERT INTO xxl_mq_common_registry_data (
 			`key`,
 			`value`,
 			`updateTime`
@@ -40,25 +40,25 @@
 
 	<select id="findData" parameterType="java.util.HashMap" resultMap="xxlCommonRegistryData">
 		SELECT <include refid="Base_Column_List" />
-		FROM XXL_MQ_COMMON_REGISTRY_DATA AS t
+		FROM xxl_mq_common_registry_data AS t
 		where t.key = #{key}
 		ORDER BY t.value ASC
 	</select>
 
 	<delete id="cleanData" parameterType="java.util.HashMap" >
-		DELETE FROM XXL_MQ_COMMON_REGISTRY_DATA
+		DELETE FROM xxl_mq_common_registry_data
 		WHERE NOW() <![CDATA[ > ]]> DATE_ADD(updateTime, Interval #{timeout} SECOND)
 	</delete>
 
 	<delete id="deleteDataValue" parameterType="java.util.HashMap" >
-		DELETE FROM XXL_MQ_COMMON_REGISTRY_DATA
+		DELETE FROM xxl_mq_common_registry_data
 		WHERE `key` = #{key}
 			and `value` = #{value}
 	</delete>
 
 	<select id="count" resultType="java.lang.Integer" >
 		SELECT count(1)
-		FROM XXL_MQ_COMMON_REGISTRY_DATA
+		FROM xxl_mq_common_registry_data
 	</select>
 
 </mapper>
