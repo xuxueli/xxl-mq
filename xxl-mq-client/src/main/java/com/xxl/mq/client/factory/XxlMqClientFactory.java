@@ -50,29 +50,31 @@ public class XxlMqClientFactory  {
     // ---------------------- init destroy  ----------------------
 
     public void init() {
-        // valid ConsumerThread
-        validConsumerThread();
 
-        // 1、start BrokerService
+        // pre : valid consumer
+        validConsumer();
+
+
+        // start BrokerService
         startBrokerService();
 
-        // 2、submit ConsumerThread
-        submitConsumerThread();
+        // start consumer
+        startConsumer();
 
-        // 3、start registry consumer
-        startRegistryConsumer();
     }
 
     public void destroy() throws Exception {
 
-        // 3、stop registry consumer
-        stopRegistryConsumer();
-
-        // 2、destory ClientFactoryThreadPool
+        // pre : destory ClientFactoryThreadPool
         destoryClientFactoryThreadPool();
 
-        // 1、destory BrokerService
+
+        // destory Consumer
+        destoryConsumer();
+
+        // destory BrokerService
         destoryBrokerService();
+
     }
 
 
@@ -247,17 +249,14 @@ public class XxlMqClientFactory  {
     // queue consumer respository
     private List<ConsumerThread> consumerRespository = new ArrayList<ConsumerThread>();
 
-    /**
-     * valid ConsumerThread
-     */
-    private void validConsumerThread(){
-
+    private void validConsumer(){
         // valid
         if (consumerList==null || consumerList.size()==0) {
-            throw new RuntimeException("xxl-mq, MqConsumer not found.");
+            logger.warn(">>>>>>>>>>> xxl-mq, MqConsumer not found.");
+            return;
         }
 
-        // valid data
+        // make ConsumerThread
         for (IMqConsumer consumer : consumerList) {
             // valid annotation
             MqConsumer annotation = consumer.getClass().getAnnotation(MqConsumer.class);
@@ -276,29 +275,33 @@ public class XxlMqClientFactory  {
         }
     }
 
-    /**
-     * submit ConsumerThread
-     */
-    private void submitConsumerThread(){
+    private void startConsumer() {
 
         // valid
         if (consumerRespository ==null || consumerRespository.size()==0) {
             return;
         }
 
-        // consumer
+        // execute thread
         for (ConsumerThread item: consumerRespository) {
             clientFactoryThreadPool.execute(item);
             logger.info(">>>>>>>>>>> xxl-mq, consumer init success, , topic:{}, group:{}", item.getMqConsumer().topic(), item.getMqConsumer().group());
         }
-    }
 
-
-    private void startRegistryConsumer(){
+        // registry consumer
         getConsumerRegistryHelper().registerConsumer(consumerRespository);
+
     }
-    private void stopRegistryConsumer(){
+    private void destoryConsumer(){
+
+        // valid
+        if (consumerRespository ==null || consumerRespository.size()==0) {
+            return;
+        }
+
+        // stop registry consumer
         getConsumerRegistryHelper().removeConsumer(consumerRespository);
+
     }
 
 
