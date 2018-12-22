@@ -53,13 +53,21 @@ public class ConsumerRegistryHelper {
     public void registerConsumer(List<ConsumerThread> consumerThreadList) {
 
         List<XxlRegistryDataParamVO> registryParamList = new ArrayList<>();
+        Set<String> registryParamKeyList = new HashSet<>();
+
         for (ConsumerThread consumerThread: consumerThreadList) {
             String registryKey = makeRegistryKey(consumerThread.getMqConsumer().topic());
             String registryVal = makeRegistryVal(consumerThread.getMqConsumer().group(), consumerThread.getUuid());
+
             registryParamList.add(new XxlRegistryDataParamVO(registryKey, registryVal));
+            registryParamKeyList.add(registryKey);
         }
 
+        // registry mult consumer
         serviceRegistry.getXxlRegistryClient().registry(registryParamList);
+
+        // discovery mult consumer
+        serviceRegistry.getXxlRegistryClient().discovery(registryParamKeyList);
     }
 
     /**

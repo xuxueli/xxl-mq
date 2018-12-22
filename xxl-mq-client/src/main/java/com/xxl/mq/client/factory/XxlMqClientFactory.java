@@ -282,14 +282,14 @@ public class XxlMqClientFactory  {
             return;
         }
 
+        // registry consumer
+        getConsumerRegistryHelper().registerConsumer(consumerRespository);
+
         // execute thread
         for (ConsumerThread item: consumerRespository) {
             clientFactoryThreadPool.execute(item);
             logger.info(">>>>>>>>>>> xxl-mq, consumer init success, , topic:{}, group:{}", item.getMqConsumer().topic(), item.getMqConsumer().group());
         }
-
-        // registry consumer
-        getConsumerRegistryHelper().registerConsumer(consumerRespository);
 
     }
     private void destoryConsumer(){
