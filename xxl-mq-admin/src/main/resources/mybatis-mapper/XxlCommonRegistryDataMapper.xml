@@ -18,11 +18,11 @@
 	</sql>
 
 	<update id="refresh" parameterType="com.xxl.mq.admin.core.model.XxlCommonRegistryData"  >
-		UPDATE xxl_mq_common_registry_data AS t
+		UPDATE xxl_mq_common_registry_data
 		SET
-			t.`updateTime` = now()
-		WHERE t.`key` = #{xxlCommonRegistryData.key}
-			and t.`value` = #{xxlCommonRegistryData.value}
+			`updateTime` = now()
+		WHERE `key` = #{xxlCommonRegistryData.key}
+			and `value` = #{xxlCommonRegistryData.value}
 	</update>
 
 	<insert id="add" parameterType="com.xxl.mq.admin.core.model.XxlCommonRegistryData" >
