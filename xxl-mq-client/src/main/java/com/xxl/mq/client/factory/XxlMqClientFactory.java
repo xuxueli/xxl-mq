@@ -16,10 +16,10 @@ import com.xxl.rpc.serialize.Serializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -258,31 +258,38 @@ public class XxlMqClientFactory  {
 
         // make ConsumerThread
         for (IMqConsumer consumer : consumerList) {
+
             // valid annotation
             MqConsumer annotation = consumer.getClass().getAnnotation(MqConsumer.class);
             if (annotation == null) {
-                throw new RuntimeException("xxl-mq, MqConsumer("+ consumer.getClass() +"),annotation is not exists.");
+                throw new RuntimeException("xxl-mq, MqConsumer("+ consumer.getClass() +"), annotation is not exists.");
+            }
+
+            // valid group
+            if (annotation.group()==null || annotation.group().trim().length()==0) {
+                // empty group means consume broadcase message, will replace by uuid
+                try {
+                    // annotation memberValues
+                    InvocationHandler invocationHandler = Proxy.getInvocationHandler(annotation);
+                    Field mValField = invocationHandler.getClass().getDeclaredField("memberValues");
+                    mValField.setAccessible(true);
+                    Map memberValues = (Map) mValField.get(invocationHandler);
+
+                    // set data for "group"
+                    String randomGroup = UUID.randomUUID().toString().replaceAll("-", "");
+                    memberValues.put("group", randomGroup);
+                } catch (Exception e) {
+                    throw new RuntimeException("xxl-mq, MqConsumer("+ consumer.getClass() +"), group empty and genereta error.");
+                }
+
             }
             if (annotation.group()==null || annotation.group().trim().length()==0) {
                 throw new RuntimeException("xxl-mq, MqConsumer("+ consumer.getClass() +"),group is empty.");
-                /**
-                 *
-                 *  // change annotation value by reflect
-                 *
-                 *  MqConsumer annotation = DemoCMqComsumer.class.getAnnotation(MqConsumer.class);
-                 *
-                 *  String randomGroup = UUID.randomUUID().toString().replaceAll("-", "");
-                 *
-                 *  InvocationHandler invocationHandler = Proxy.getInvocationHandler(annotation);
-                 *  Field mValField = invocationHandler.getClass().getDeclaredField("memberValues");
-                 *  mValField.setAccessible(true);
-                 *  Map memberValues = (Map) mValField.get(invocationHandler);
-                 *  memberValues.put("group", randomGroup);
-                 *
-                 */
             }
+
+            // valid topic
             if (annotation.topic()==null || annotation.topic().trim().length()==0) {
-                throw new RuntimeException("xxl-mq, MqConsumer("+ consumer.getClass() +"),topic is empty.");
+                throw new RuntimeException("xxl-mq, MqConsumer("+ consumer.getClass() +"), topic is empty.");
             }
 
             // consumer map
