@@ -22,16 +22,16 @@ public class ConsumerRegistryHelper {
     private static final String SpaceMark = "_consumer_";
 
     private static String makeRegistryKey(String topic){
-        String registryKey = SpaceMark.concat(topic);
+        String registryKey = SpaceMark.concat(topic);                       // _consumer_{topic01}
         return registryKey;
     }
     private static String makeRegistryValPrefix(String group){
-        String registryValPrefix = group.concat(SpaceMark);
+        String registryValPrefix = group.concat(SpaceMark);                 // {group01}_consumer_***
         return registryValPrefix;
     }
     private static String makeRegistryVal(String group, String consumerUuid){
         String registryValPrefix = makeRegistryValPrefix(group);
-        String registryVal = registryValPrefix.concat(consumerUuid);
+        String registryVal = registryValPrefix.concat(consumerUuid);        // {group01}_consumer_{uuid}
         return registryVal;
     }
     private static String parseGroupFromRegistryVal(String registryVal){
