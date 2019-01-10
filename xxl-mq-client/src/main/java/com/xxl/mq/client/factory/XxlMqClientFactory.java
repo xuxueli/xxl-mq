@@ -265,6 +265,21 @@ public class XxlMqClientFactory  {
             }
             if (annotation.group()==null || annotation.group().trim().length()==0) {
                 throw new RuntimeException("xxl-mq, MqConsumer("+ consumer.getClass() +"),group is empty.");
+                /**
+                 *
+                 *  // change annotation value by reflect
+                 *
+                 *  MqConsumer annotation = DemoCMqComsumer.class.getAnnotation(MqConsumer.class);
+                 *
+                 *  String randomGroup = UUID.randomUUID().toString().replaceAll("-", "");
+                 *
+                 *  InvocationHandler invocationHandler = Proxy.getInvocationHandler(annotation);
+                 *  Field mValField = invocationHandler.getClass().getDeclaredField("memberValues");
+                 *  mValField.setAccessible(true);
+                 *  Map memberValues = (Map) mValField.get(invocationHandler);
+                 *  memberValues.put("group", randomGroup);
+                 *
+                 */
             }
             if (annotation.topic()==null || annotation.topic().trim().length()==0) {
                 throw new RuntimeException("xxl-mq, MqConsumer("+ consumer.getClass() +"),topic is empty.");
