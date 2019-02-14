@@ -130,7 +130,7 @@ public class XxlCommonRegistryServiceImpl implements XxlCommonRegistryService, I
     @Override
     public DeferredResult<ReturnT<String>> monitor(String accessToken, List<String> keys) {
         // init
-        DeferredResult deferredResult = new DeferredResult(registryBeatTime * 3 * 1000L, new ReturnT<>(ReturnT.FAIL_CODE, "Monitor timeout."));
+        DeferredResult deferredResult = new DeferredResult(registryBeatTime * 3 * 1000L, new ReturnT<>(ReturnT.SUCCESS_CODE, "Monitor timeout."));
 
         // valid
         if (this.accessToken!=null && this.accessToken.trim().length()>0 && !this.accessToken.equals(accessToken)) {
@@ -486,7 +486,7 @@ public class XxlCommonRegistryServiceImpl implements XxlCommonRegistryService, I
         if (deferredResultList != null) {
             registryDeferredResultMap.remove(fileName);
             for (DeferredResult deferredResult: deferredResultList) {
-                deferredResult.setResult(new ReturnT<>(ReturnT.FAIL_CODE, "Monitor key update."));
+                deferredResult.setResult(new ReturnT<>(ReturnT.SUCCESS_CODE, "Monitor key update."));
             }
         }
 
