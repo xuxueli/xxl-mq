@@ -172,7 +172,7 @@ xxl.mq.login.password=123456
 如果已经正确进行上述配置，可将项目编译打包部署。
 消息中心访问地址：http://localhost:8080/xxl-mq-admin (该地址接入方项目将会使用到，作为注册地址)，登录后运行界面如下图所示
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_01.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_01.png "在这里输入图片标题")
 
 至此“消息中心”项目已经部署成功。
 
@@ -343,18 +343,18 @@ public class DemoAMqComsumer implements IMqConsumer {
 
 访问部署成功的 "springboot版本示例项目" 地址，浏览器访问展示如下如下：
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_02.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_02.png "在这里输入图片标题")
 
 该示例项目已经提供了多个消息生产与消费的实例：
 
 #### a、"并行消费" 测试：连续点击 "并行消费" 按钮4次，将会生产4条并行消息；
 
 进入消息中心 "消息记录" 菜单，消息列表如下：
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_06.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_06.png "在这里输入图片标题")
 
 逐个查看消息流转日志如下：
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_04.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_04.png "在这里输入图片标题")
 
 可以注意 "锁定消息" 的 "消费者信息"，可以查看到当前消费者在集群中的排序 "rank"。
 
@@ -369,7 +369,7 @@ public class DemoAMqComsumer implements IMqConsumer {
 
 进入消息中心 "消息记录" 菜单，消息列表如下：
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_07.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_07.png "在这里输入图片标题")
 
 一条广播消息将会广播给该主题全部在线group，该消息主题存在2个消息group，所以会每个group创建一条，即两条消息。测试正常。
 
@@ -385,11 +385,11 @@ public class DemoAMqComsumer implements IMqConsumer {
 
 进入消息中心 “消息记录” 菜单，如下图，可以看到 10000 条消息创建事件最大为 “2018-12-02 04:51:54”，最小为 “2018-12-02 04:51:55”。说明在 1s 左右客户端成功发送了 10000 条消息，且 100% 投递成功，即单机TPS过万；
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_14.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_14.png "在这里输入图片标题")
 
 然后进入 “运行报表” 界面，如下图，点击成功比例图可知，成功消费 10000 条，比例 100%。说明客户端发送的 10000 条消息 100% 消费成功。
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_15.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_15.png "在这里输入图片标题")
 
 #### 其他测试
 如延时消息、重试消息 …… 可自行参考示例代码测试；
@@ -400,15 +400,15 @@ public class DemoAMqComsumer implements IMqConsumer {
 ### 3.1 运行报表：
 运行报表界面，展示消息中心系统信息，如业务线、消息主题、消息数量等；支持日期分布图、成功比例图方式查看；
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_01.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_01.png "在这里输入图片标题")
 
 ### 3.2 消息主题
 消息主题界面，可查看在线消息主题列表；底层会周期性扫描消息记录，发型并录入新的消息主题，并展示在这里；
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_08.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_08.png "在这里输入图片标题")
 
 消息主题界面，支持为消息主题设置一些附属参数，提供一些增强功能；如负责人、告警邮箱等；
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_11.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_11.png "在这里输入图片标题")
 
 消息主题属性：
 - 业务线：该消息所属业务线，方便分组管理；
@@ -417,21 +417,21 @@ public class DemoAMqComsumer implements IMqConsumer {
 
 ### 3.3 消息记录
 消息记录界面，可查看在线消息记录；支持筛选、查看消息流转轨迹；
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_09.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_09.png "在这里输入图片标题")
 
 - 消息在线管理功能：支持在线 "新增"、"编辑" 和 "删除" 消息记录； 
 
 消息新增如下图所示，消息属性说明，可参考章节 "4.2 Message设计"；
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_12.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_12.png "在这里输入图片标题")
 
 - 消息手动清理：支持在线清理消息，可选择消息主题、状态、清理类型等；
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_13.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_13.png "在这里输入图片标题")
 
 ### 3.4 业务线
 业务先界面，可查看在线业务线列表，并管理维护；可通过自定义业务线，绑定消息主题，从而方便消息主题的分组管理；
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_10.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_10.png "在这里输入图片标题")
 
 
 
@@ -439,7 +439,7 @@ public class DemoAMqComsumer implements IMqConsumer {
 
 ### 4.1 系统架构图
 
-![输入图片说明](https://raw.githubusercontent.com/xuxueli/xxl-mq/master/doc/images/img_03.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_03.png "在这里输入图片标题")
 
 #### 角色解释:
 
