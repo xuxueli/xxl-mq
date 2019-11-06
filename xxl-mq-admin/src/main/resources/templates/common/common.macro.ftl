@@ -117,7 +117,7 @@
 		Powered by <b>XXL-MQ</b> 1.3.0-SNAPSHOT
 		<div class="pull-right hidden-xs">
 			<strong>Copyright &copy; 2015-${.now?string('yyyy')} &nbsp;
-				<a href="http://www.xuxueli.com/" target="_blank" >xuxueli</a>
+				<a href="https://www.xuxueli.com/" target="_blank" >xuxueli</a>
 				&nbsp;
 				<a href="https://github.com/xuxueli/xxl-mq" target="_blank" >github</a>
 			</strong><!-- All rights reserved. -->

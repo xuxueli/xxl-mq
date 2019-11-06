@@ -5,7 +5,7 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-mq/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-mq/)
 [![GitHub release](https://img.shields.io/github/release/xuxueli/xxl-mq.svg)](https://github.com/xuxueli/xxl-mq/releases)
 [![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
-[![donate](https://img.shields.io/badge/%24-donate-ff69b4.svg?style=flat-square)](http://www.xuxueli.com/page/donate.html)
+[![donate](https://img.shields.io/badge/%24-donate-ff69b4.svg?style=flat-square)](https://www.xuxueli.com/page/donate.html)
 
 
 ## 一、简介
@@ -71,7 +71,7 @@ XXL-MQ是一款轻量级分布式消息队列，拥有 "水平扩展、高可用
 
 #### 文档地址
 
-- [中文文档](http://www.xuxueli.com/xxl-mq/)
+- [中文文档](https://www.xuxueli.com/xxl-mq/)
 
 #### 源码仓库地址
 
@@ -82,7 +82,7 @@ XXL-MQ是一款轻量级分布式消息队列，拥有 "水平扩展、高可用
 
 
 #### 技术交流
-- [社区交流](http://www.xuxueli.com/page/community.html)
+- [社区交流](https://www.xuxueli.com/page/community.html)
 
 #### 中央仓库地址
 
@@ -660,4 +660,4 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
 
 ---
 ### 捐赠
-无论金额多少都足够表达您这份心意，非常感谢 ：）      [前往捐赠](http://www.xuxueli.com/page/donate.html )
+无论金额多少都足够表达您这份心意，非常感谢 ：）      [前往捐赠](https://www.xuxueli.com/page/donate.html )
