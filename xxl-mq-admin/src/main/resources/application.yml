@@ -1,0 +1,65 @@
+mybatis:
+    mapper-locations: classpath:/mybatis-mapper/*Mapper.xml
+
+### web
+server:
+    context-path: /xxl-mq-admin
+    port: 8080
+
+
+spring:
+    datasource:
+        driver-class-name: com.mysql.jdbc.Driver
+        url: jdbc:mysql://10.182.26.169:3358/publictest?Unicode=true&characterEncoding=UTF-8&useSSL=false
+        username: publictest
+        password: 123456
+        idleConnectionTestPeriod: 60
+        preferredTestQuery: SELECT 1
+
+    ### freemarker
+    freemarker:
+        charset: UTF-8
+        request-context-attribute: request
+        settings:
+            number_format: 0.##########
+        suffix: .ftl
+        templateLoaderPath: classpath:/templates/
+    ### mail
+    mail:
+        host: smtp.qq.com
+        password: xxx
+        port: 25
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true
+                        required: true
+        username: xxx@qq.com
+    ### resources
+    mvc:
+        static-path-pattern: /static/**
+    resources:
+        static-locations: classpath:/static/
+
+xxl:
+    mq:
+        ### log conf
+        log:
+            logretentiondays: 3
+        login:
+            password: 123456
+            username: admin
+        ### registry data filepath
+        registry:
+            accessToken: ''
+            beattime: 10
+            data:
+                filepath: ./data/applogs/xxl-mq/registrydata
+        ### rpc conf
+        rpc:
+            remoting:
+                ip: ''
+                port: 7080
+

@@ -1,0 +1,22 @@
+server:
+    context-path: /
+    port: 8081
+
+spring:
+    freemarker:
+        charset: UTF-8
+        request-context-attribute: request
+        settings:
+            number_format: 0.##########
+        suffix: .ftl
+        templateLoaderPath: classpath:/templates/
+    mvc:
+        static-path-pattern: /static/**
+    resources:
+        static-locations: classpath:/static/
+
+xxl:
+    mq:
+        accessToken: ''
+        admin:
+            address: http://localhost:8080/xxl-mq-admin

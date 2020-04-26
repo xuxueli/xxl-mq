@@ -2,7 +2,7 @@ CREATE database if NOT EXISTS `xxl-mq` default character set utf8 collate utf8_g
 use `xxl-mq`;
 
 
-
+drop table `xxl_mq_biz`;
 CREATE TABLE `xxl_mq_biz` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `bizName` varchar(64) NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE `xxl_mq_biz` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
+drop table `xxl_mq_topic`;
 CREATE TABLE `xxl_mq_topic` (
   `topic` varchar(255) NOT NULL,
   `bizId` int(11) NOT NULL DEFAULT '0',
@@ -19,7 +19,7 @@ CREATE TABLE `xxl_mq_topic` (
   PRIMARY KEY (`topic`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
+drop  table  xxl_mq_message;
 CREATE TABLE `xxl_mq_message` (
   `id` bigint(11) NOT NULL AUTO_INCREMENT,
   `topic` varchar(255) NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE `xxl_mq_message` (
   KEY `I_t_g_f_s` (`topic`,`group`,`status`,`effectTime`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
+drop  table  xxl_mq_common_registry;
 CREATE TABLE `xxl_mq_common_registry` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `key` varchar(255) NOT NULL COMMENT '注册Key',
@@ -46,7 +46,7 @@ CREATE TABLE `xxl_mq_common_registry` (
   UNIQUE KEY `I_k` (`key`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
+drop table xxl_mq_common_registry_data;
 CREATE TABLE `xxl_mq_common_registry_data` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `key` varchar(255) NOT NULL COMMENT '注册Key',
@@ -56,7 +56,7 @@ CREATE TABLE `xxl_mq_common_registry_data` (
   UNIQUE KEY `I_k_v` (`key`,`value`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
+drop table xxl_mq_common_registry_message;
 CREATE TABLE `xxl_mq_common_registry_message` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `data` text NOT NULL COMMENT '消息内容',

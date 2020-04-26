@@ -136,7 +136,7 @@ XXL-MQ是一款轻量级分布式消息队列，拥有 "水平扩展、高可用
 消息中心配置文件地址：
 
 ```
-/xxl-mq/xxl-mq-admin/src/main/resources/application.properties
+/xxl-mq/xxl-mq-admin/src/main/resources/application.yml
 ```
 
 消息中心配置内容说明：
@@ -156,10 +156,10 @@ xxl.mq.registry.beattime=10
 xxl.mq.registry.data.filepath=/data/applogs/xxl-mq/registrydata
 
 ### 消息中心Broker服务RPC通讯地址，为空则自动获取
-xxl-mq.rpc.remoting.ip=
+xxl.mq.rpc.remoting.ip=
 
 ### 消息中心Broker服务RPC通讯端口
-xxl-mq.rpc.remoting.port=7080
+xxl.mq.rpc.remoting.port=7080
 
 ### 日志保存天数，超过该阈值的成功消息将会被自动清理；大于等于3时生效
 xxl.mq.log.logretentiondays=3
@@ -203,7 +203,7 @@ docker run -p 8080:8080 -v /tmp:/data/applogs --name xxl-mq-admin  -d xuxueli/xx
 
 /**
 * 如需自定义 mysql 等配置，可通过 "PARAMS" 指定，参数格式 RAMS="--key=value  --key2=value2" ；
-* 配置项参考文件：/xxl-mq/xxl-mq-admin/src/main/resources/application.properties
+* 配置项参考文件：/xxl-mq/xxl-mq-admin/src/main/resources/application.yml
 */
 docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl-mq?Unicode=true&characterEncoding=UTF-8" -p 8080:8080 -p 7080 -v /tmp:/data/applogs --name xxl-mq-admin  -d xuxueli/xxl-mq-admin
 ```
@@ -221,7 +221,7 @@ docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl-mq
 消息接入方配置，配置文件地址：
 
 ```
-/xxl-mq/xxl-mq-samples/xxl-mq-samples-springboot/src/main/resources/application.properties
+/xxl-mq/xxl-mq-samples/xxl-mq-samples-springboot/src/main/resources/application.yml
 ```
 
 消息接入方配置，配置内容说明：

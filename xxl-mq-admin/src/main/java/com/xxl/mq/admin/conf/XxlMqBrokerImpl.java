@@ -43,10 +43,10 @@ public class XxlMqBrokerImpl implements IXxlMqBroker, InitializingBean, Disposab
     // ---------------------- param ----------------------
 
 
-    @Value("${xxl-mq.rpc.remoting.ip}")
+    @Value("${xxl.mq.rpc.remoting.ip}")
     private String ip;
 
-    @Value("${xxl-mq.rpc.remoting.port}")
+    @Value("${xxl.mq.rpc.remoting.port}")
     private int port;
 
     @Value("${xxl.mq.log.logretentiondays}")
