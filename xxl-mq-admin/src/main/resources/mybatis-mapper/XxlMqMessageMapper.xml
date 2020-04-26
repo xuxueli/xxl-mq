@@ -39,7 +39,7 @@
 				AND t.topic = #{topic}
 			</if>
 			<if test="status != null and status != ''">
-				AND t.status = #{status}
+				AND t.`status` = #{status}
 			</if>
 			<if test="addTimeStart != null">
 				AND t.addTime <![CDATA[ >= ]]> #{addTimeStart}
@@ -60,7 +60,7 @@
 				AND t.topic = #{topic}
 			</if>
 			<if test="status != null and status != ''">
-				AND t.status = #{status}
+				AND t.`status` = #{status}
 			</if>
 			<if test="addTimeStart != null">
 				AND t.addTime <![CDATA[ >= ]]> #{addTimeStart}
@@ -77,17 +77,17 @@
 	</delete>
 
 	<update id="update" parameterType="java.util.HashMap" >
-		UPDATE xxl_mq_message AS t
+		UPDATE xxl_mq_message
 		SET
-			t.`group` = #{message.group},
-			t.`data` = #{message.data},
-			t.`status` = #{message.status},
-			t.`retryCount` = #{message.retryCount},
-			t.`shardingId` = #{message.shardingId},
-			t.`timeout` = #{message.timeout},
-			t.`effectTime` = #{message.effectTime},
-			t.`log` = CONCAT(t.`log`, #{message.log})
-		WHERE t.`id` = #{message.id}
+			`group` = #{message.group},
+			`data` = #{message.data},
+			`status` = #{message.status},
+			`retryCount` = #{message.retryCount},
+			`shardingId` = #{message.shardingId},
+			`timeout` = #{message.timeout},
+			`effectTime` = #{message.effectTime},
+			`log` = CONCAT(`log`, #{message.log})
+		WHERE `id` = #{message.id}
 	</update>
 
 	<insert id="save" parameterType="com.xxl.mq.client.message.XxlMqMessage" useGeneratedKeys="true" keyProperty="id" >
@@ -127,7 +127,7 @@
 		FROM xxl_mq_message AS t
 		WHERE 	t.topic = #{topic}
 			AND t.group = #{group}
-			AND t.status = #{newStatus}
+			AND t.`status` = #{newStatus}
 			AND t.effectTime <![CDATA[ < ]]> NOW()
 			<if test="consumerTotal > 1">
 				AND (
@@ -149,11 +149,11 @@
 	</select>
 
 	<update id="lockMessage" parameterType="java.util.HashMap" >
-		UPDATE xxl_mq_message AS t
+		UPDATE xxl_mq_message
 		SET
-			t.status = #{ingStatus},
-			t.`log` = CONCAT(t.`log`, #{appendLog})
-		WHERE id = #{id} AND t.status =  #{newStatus}
+			`status` = #{ingStatus},
+			`log` = CONCAT(`log`, #{appendLog})
+		WHERE id = #{id} AND `status` =  #{newStatus}
 	</update>
 
 	<update id="updateStatus" parameterType="java.util.HashMap" >
@@ -240,7 +240,7 @@
                         SELECT t.id FROM xxl_mq_message AS t
                         where t.topic = #{topic}
                             <if test="status != null and status != ''">
-                                AND t.status = #{status}
+                                AND t.`status` = #{status}
                             </if>
                         ORDER BY t.id desc
                         <if test="type == 5" >
@@ -267,7 +267,7 @@
 		set `status` = #{failStatus},
 			log = CONCAT(log, #{appendLog})
 		where `status` = #{ingStatus}
-			AND NOW() <![CDATA[ > ]]> DATE_ADD( DATE_ADD(effectTime, Interval timeout SECOND) , Interval 1 hour )
+			AND NOW() <![CDATA[ > ]]> DATE_ADD(effectTime , Interval 1 hour )
 	</delete>
 
 </mapper>

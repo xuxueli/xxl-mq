@@ -40,10 +40,10 @@
 	</insert>
 
 	<update id="update" parameterType="com.xxl.mq.admin.core.model.XxlCommonRegistry"  >
-		UPDATE xxl_mq_common_registry AS t
+		UPDATE xxl_mq_common_registry
 		SET
-			t.`data` = #{xxlCommonRegistry.data}
-		WHERE t.`id` = #{xxlCommonRegistry.id}
+			`data` = #{xxlCommonRegistry.data}
+		WHERE `id` = #{xxlCommonRegistry.id}
 	</update>
 
 	<delete id="cleanDead" parameterType="java.util.HashMap" >
