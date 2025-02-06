@@ -1,9 +1,10 @@
 ## 《分布式消息队列XXL-MQ》
 
-[![Build Status](https://travis-ci.org/xuxueli/xxl-mq.svg?branch=master)](https://travis-ci.org/xuxueli/xxl-mq)
-[![Docker Status](https://img.shields.io/badge/docker-passing-brightgreen.svg)](https://hub.docker.com/r/xuxueli/xxl-mq-admin/)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-mq/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-mq/)
+[![Actions Status](https://github.com/xuxueli/xxl-mq/workflows/Java%20CI/badge.svg)](https://github.com/xuxueli/xxl-mq/actions)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-mq-client/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-mq-client/)
 [![GitHub release](https://img.shields.io/github/release/xuxueli/xxl-mq.svg)](https://github.com/xuxueli/xxl-mq/releases)
+[![GitHub stars](https://img.shields.io/github/stars/xuxueli/xxl-mq)](https://github.com/xuxueli/xxl-mq/)
+[![Docker pulls](https://img.shields.io/docker/pulls/xuxueli/xxl-mq-admin)](https://hub.docker.com/r/xuxueli/xxl-mq-admin/)
 [![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
 [![donate](https://img.shields.io/badge/%24-donate-ff69b4.svg?style=flat-square)](https://www.xuxueli.com/page/donate.html)
 
@@ -628,6 +629,41 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
 - 5、海量数据堆积：消息数据存储在DB中，原生兼容支持 "MySQL、TIDB" 两种存储方式，前者支持千万级消息堆积，后者支持百亿级别消息堆积（TIDB理论上无上限）；
 - 6、消费者分组属性 "group" 支持为空，为空时自动赋值UUID，方便实现多分组广播消费；
 - 7、升级xxl-rpc、xxl-registry至较新版本，Broker注册发现服务做适配性优化；
+
+
+### Tmp
+
+1、模型说明：
+  - AppName：服务应用，一个应用包含多个 Consumer；
+    - instance：uuid；
+  - Topic：消息主题，逻辑消息队列；
+  - Message：消息队列，物理消息队列；msgid + msgbody + topic + group + shardingId + status + retryCount + effectTime;
+    - topic：关联 消息主题；
+    - group：
+    - shardingId：消费分片ID，限制0-1000之内；结合Consumer在线列表，匹配消费分片范围，实现并行分片消费消息；
+2、模块组成：
+  - Broker： 
+    - Manage：提供 AccessToken、Topic、Message 管理能力；
+    - Registry：提供 Consumer 注册、动态发现能力；消息分片消费时使用；
+    - Broker Server：提供消息存储、读写能力；
+    - OpenAPI：生产、批量查询、锁定、消费消息；（http+gson；借助 xxl-tool 实现通用 http-rpc 能力；）
+  - Producer：
+    - 功能：直连Broker；发起消息生产；
+    - 性能：内存queue，批量异步推送；异常，写本地磁盘；（xxl-tool）
+    - 要点：
+      - 普通消息：指定 topic + group，生产单条消息，借助 shardingid 分片消费；
+      - 广播消息：指定 topic，根据在线 group 列表生产多条消息；
+  - Consumer：
+    - 功能：查询消息，消费消息，回调消息；
+    - 性能：批量查询、批量回调；
+    - 要点：
+      - 注册：
+        - 写：instanceUUID : topic + group + shardingId 
+        - 读：instanceIndex / instanceNum；
+      - 查询：分片查询：topic + group + 注册分片计算->消息分片范围；
+    - 属性：
+      - topic：绑定 Topic，只消费该topic的消息；
+      - group：绑定 Topic Group，group 维度隔离，只消费该group下消息；同一 topic 支持绑定多group，可借助 group 实效消息广播；
 
 
 ### TODO
