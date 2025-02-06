@@ -634,9 +634,9 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
 ### Tmp
 
 1、模型说明：
-  - AppName：服务应用，一个应用包含多个 Consumer；
-    - instance：uuid；
-  - Topic：消息主题，逻辑消息队列；
+  - Topic：消息主题；
+    - 查看注册节点；
+    - 操作：状态；
   - Message：消息队列，物理消息队列；msgid + msgbody + topic + group + shardingId + status + retryCount + effectTime;
     - topic：关联 消息主题；
     - group：
@@ -651,16 +651,23 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
     - 功能：直连Broker；发起消息生产；
     - 性能：内存queue，批量异步推送；异常，写本地磁盘；（xxl-tool）
     - 要点：
-      - 并行消息：指定 topic + group（固定） + shardingid（随机生成），生产单条消息；借助 shardingid 分片消费；
-      - 串行消息：指定 topic + group（固定） + shardingid（固定），生产单条消息；固定 shardingid 绑定固定节点消费；
-      - 广播消息：指定 topic + group（uuid） + shardingid（任意）；根据在线 group 列表生产多条消息；
+      - 并行消息：指定 topic + group（固定） + shardingid（随机），生产单条消息；借助 shardingid 分片消费；
+      - 串行消息：指定 topic + group（固定） + shardingid（固定>0），生产单条消息；固定 shardingid 绑定固定节点消费；
+      - 广播消息：指定 topic + group（uuid） + shardingid（随机）；根据在线 group 列表生产多条消息；
   - Consumer：
     - 功能：查询消息，消费消息，回调消息；
     - 性能：批量查询、批量回调；
     - 要点：
       - 注册：
-        - 写：instanceUUID : topic + group + shardingId 
+        - 写：instanceUUID : topic + group 
+          - instance01
+            - topic01 / group01
+            - topic02 / group02
         - 读：instanceIndex / instanceNum；
+          - topic01
+            - group01: 3/5
+          - topic02
+            - group02: 4/6
       - 查询：分片查询：topic + group + 注册分片计算->消息分片范围；
     - 属性：
       - topic：绑定 Topic，只消费该topic的消息；
