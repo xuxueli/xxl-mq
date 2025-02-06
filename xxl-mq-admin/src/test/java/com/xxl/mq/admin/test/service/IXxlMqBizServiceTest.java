@@ -3,16 +3,13 @@ package com.xxl.mq.admin.test.service;
 import com.xxl.mq.admin.core.model.XxlMqBiz;
 import com.xxl.mq.admin.core.result.ReturnT;
 import com.xxl.mq.admin.service.IXxlMqBizService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 import java.util.List;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class IXxlMqBizServiceTest {
 
     @Resource
