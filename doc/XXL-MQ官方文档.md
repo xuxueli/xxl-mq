@@ -637,7 +637,7 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
   - Topic：消息主题；
     - 查看注册节点；
     - 操作：状态；
-  - Message：消息队列，物理消息队列；msgid + msgbody + topic + group + shardingId + status + retryCount + effectTime;
+  - Message：消息队列，物理消息队列；msgid + msgbody + topic + group + shardingId + status + retryCount + intervalTime + effectTime;
     - topic：关联 消息主题；
     - group：
     - shardingId：消费分片ID，限制0-1000之内；结合Consumer在线列表，匹配消费分片范围，实现并行分片消费消息；
