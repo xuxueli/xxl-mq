@@ -637,68 +637,70 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
 1、特性：
     - 特性：存算分离、水平扩展、高性能（TPS：Mysql单机1W/Blade 10W）、海量消息（Mysql日百万/Blade日十亿）、消息轨迹、多消费模式（分片/串行/广播）、延迟消息、失败重试（固定/增长/指数）、
     - 其他：失败告警、AccessToken、容器化；
-2、模型设计：
-    - _user：用户管理
-    - _access_token：通讯Token，for OpenAPI
-    - _registry：【10s一次；广播更新；】Broker动态注册（内置RPC服务） + Consumer动态注册（数据分片用）
-        - 字段：type + key + data + addtime
-        - 示例：
-            - 01(broker) + “broker” + “address01” + "" + now()
-            - 02(comsumer) + “consumer_uuid” + [{topic01&group, topic02&group}] + now()
-        - 【RegistryData】不额外存储，内存动态生成；
-            - Broker：[address01、address02]
-            - Consumer：topic : [{group : consumer_uuid01, uuid02}]
-    - _topic：消息主题，配置管理；查看注册节点，借助 “consumer_uuid + group” 分片处理数据；
-        - 字段：name + store_table(通用/单独表) + 优先级() + author + alarm_email 
-        - 示例：“topic01” + "单独表" + "1" + "" + "" + 
-    - _message：消息队列，物理消息队列；【10min一次，自动数据归档；】
-        - 字段：msgid + msgbody + topic + group + shardingId + status + retryCount + intervalTime + effectTime + consume_log;
-            - topic：关联 消息主题；
-            - group：数据广播
-            - uuid序号：并行处理
-            - shardingId：消费分片ID，限制0-1000之内；结合Consumer在线列表，匹配消费分片范围，实现并行分片消费消息；
-    - _message_archive：归档消息
-        - 字段：同 message；
-3、模块设计：
-    - 首页：Topic数量、集群数量、消息管数量；
-    - Topic管理：
-        - 查询条件：Topic（模糊搜索）
-        - 管理：Topic，存储配置、优先级（归档等）、告警邮箱；注册信息查看；
-    - 消息管理：
-        - 查询条件 》 Topic/必选（精确搜索） + Group + 状态 + 时间；
-        - 操作 》新增 + 删除 + 状态更新；
-    - Broker管理：Broker 集群节点；IP : PORT；
-4、组件组成：
-  - Broker： 
-    - Manage：提供 AccessToken、Topic、Message 管理能力；
+2、流程：
+    - pub->broker：根据group生产，服务端处理。
+    - sub-> broker：根据cId分片消费，服务端分片；服务端滚动预热，抗并发。
+    - broker ：无状态，维护topic注册节点。
+    - appname：应用服务，注册节点uuid
+    - topic：关联appname，分片切分。清理及归档配置。
+    - message：topic，group，shardId
+    - 归档数据：定时归档，自动清理
+3、设计：
+- Broker：
+    - Manage：
+      - User：服务授权
+        - AccessToken：能力
+        - AppName：能力（注册、节点动态更新；用于Topic数据分片；）
+            - 模型：Instance注册：字段（appname + uuid + register_heartbeat）；app维度20s汇总一次，同步至app表；时钟打平，从0开始每20s一次；
+        - Topic：能力（定义管理 + 查看注册节点 / 节点分片分配情况；）
+            - 模型：topic + store_table(通用/单独表) + 优先级() + author + alarm_email + timeout
+        - Message：查看 + 管理（增 + 该状态 + 归档）；消息队列，物理消息队列；【10min一次，自动数据归档；】
+            - 模型：msgid + msgbody + topic + group + shardingId + status + retryCount + intervalTime + effectTime + consume_log;
+            - 属性：
+                - topic：关联 消息主题；
+                - group：数据广播
+                - uuid序号：并行处理
+                - shardingId：消费分片ID，限制0-1000之内；结合Consumer在线列表，匹配消费分片范围，实现并行分片消费消息；
+         - MessageArchive：归档消息，同 message；
     - Registry：提供 Consumer 注册、动态发现能力；消息分片消费时使用；
     - Broker Server：提供消息存储、读写能力；
-    - OpenAPI：生产、批量查询、锁定、消费消息；（http+gson；借助 xxl-tool 实现通用 http-rpc 能力；）
-  - Producer：
-    - 功能：直连Broker；发起消息生产；
-    - 性能：内存queue，批量异步推送；异常，写本地磁盘；（xxl-tool）
-    - 要点：
-      - 并行消息：指定 topic + group（固定） + shardingid（随机），生产单条消息；借助 shardingid 分片消费；
-      - 串行消息：指定 topic + group（固定） + shardingid（固定>0），生产单条消息；固定 shardingid 绑定固定节点消费；
-      - 广播消息：指定 topic + group（uuid） + shardingid（随机）；根据在线 group 列表生产多条消息；
-  - Consumer：
-    - 功能：查询消息，消费消息，回调消息；
-    - 性能：批量查询、批量回调；
-    - 要点：
-      - 注册：
-        - 写：instanceUUID : topic + group 
-          - instance01
-            - topic01 / group01
-            - topic02 / group02
-        - 读：instanceIndex / instanceNum；
-          - topic01
-            - group01: 3/5
-          - topic02
-            - group02: 4/6
-      - 查询：分片查询：topic + group + 注册分片计算->消息分片范围；
-    - 属性：
-      - topic：绑定 Topic，只消费该topic的消息；
-      - group：绑定 Topic Group，group 维度隔离，只消费该group下消息；同一 topic 支持绑定多group，可借助 group 实效消息广播；
+    - OpenAPI：统一“Token验证”（http+gson；借助 xxl-tool 实现通用 http-rpc 能力；）
+        - a 、注册：app+topic初始化 + 节点心跳注册/摘除；
+          - 数据格式：
+            - instance01（UUID）：
+              - topic01 / group01
+              - topic02 / group02
+        - b、生产：异步队列，批量写入；处理group广播。
+        - c、批量查询（锁定）：pullAndLock，多topic并行查询能力，根据node分配10条，同时锁定。分配不到直接返回。
+          - 分片数据：
+            - topic01：
+              - group01：2/3；
+          - 逻辑：pullAndLock（topics，group +节点）
+            - 分片查询：topic + group + 分片范围（分片序号计算；动态计算）；默认每个topic取100条数据；
+            - 数据所动：查询出的数据，锁定执行状态；根基Topic自定义超时时间（默认10min）超时释放；
+        - d、消费消息：异步队列，批量更新消费结果；
+- Client：
+    - Registry 组件：
+        - 数据：app + 节点UUID(IP+时间戳) + topics
+        - 动作：初始化（app + topics绑定） + 节点心跳 + 节点下线摘除；
+    - Producer 组件：
+        - 功能：直连Broker；发起消息生产；
+        - 性能：内存queue，批量异步推送；异常，写本地磁盘；（xxl-tool）
+        - 要点：
+            - 并行消息：指定 topic + group（固定） + shardingid（随机），生产单条消息；借助 shardingid 分片消费；
+            - 串行消息：指定 topic + group（固定） + shardingid（固定>0），生产单条消息；固定 shardingid 绑定固定节点消费；
+            - 广播消息：指定 topic + group（uuid） + shardingid（随机）；根据在线 group 列表生产多条消息；
+    - Consumer 组件：
+      - 功能：查询消息，消费消息，回调消息；
+      - 性能：批量查询、批量回调；
+      - 要点：pullAndLock前过滤topic，空闲topic才查询；
+      - 属性：
+          - topic：绑定 Topic，只消费该topic的消息；
+          - group：绑定 Topic Group，group 维度隔离，只消费该group下消息；同一 topic 支持绑定多group，可借助 group 实效消息广播；
+    - ConsumerInvokeThread 组件：
+      - 功能：消费业务逻辑，执行线程；
+      - 要点：单Topic单线程；不同Topic隔离；
+
 
 ### TODO
 - 会考虑移除 mysql 强依赖的，迁移 jpa 进一步提升通用型。
