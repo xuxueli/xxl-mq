@@ -96,16 +96,14 @@ public class PermissionInterceptor implements AsyncHandlerInterceptor {
 		// fill menu-list
 		List<ResourceDTO> resourceDTOList = Arrays.asList(
 				new ResourceDTO(1, 0, "首页",1, "", "/index", "fa fa-home", 1, 0, null),
-
 				new ResourceDTO(2, 0, "消息管理",1, "", "/confdata", " fa-database", 2, 0, null),
 				new ResourceDTO(3, 0, "主题管理",1, "", "/instance", " fa-cubes", 3, 0, null),
-
-				new ResourceDTO(4, 0, "系统管理",0, "ADMIN", "/system", "fa-cog", 5, 0, Arrays.asList(
-						new ResourceDTO(5, 4, "服务管理",1, "ADMIN", "/application", " fa-cloud", 4, 0,null),
-						new ResourceDTO(6, 4, "AccessToken",1, "ADMIN", "/accesstoken", "fa-key", 6, 0, null),
-						new ResourceDTO(7, 4, "用户管理",1, "ADMIN", "/user", "fa-users", 7, 0, null)
+				new ResourceDTO(4, 0, "服务管理",1, "ADMIN", "/application", " fa-cloud", 4, 0,null),
+				new ResourceDTO(5, 0, "系统管理",0, "ADMIN", "/system", "fa-cog", 5, 0, Arrays.asList(
+						new ResourceDTO(6, 5, "AccessToken",1, "ADMIN", "/accesstoken", "fa-key", 6, 0, null),
+						new ResourceDTO(7, 5, "用户管理",1, "ADMIN", "/user", "fa-users", 7, 0, null)
 				)),
-				new ResourceDTO(9, 0, "帮助中心",1, "", "/help", "fa-book", 8, 0, null)
+				new ResourceDTO(8, 0, "帮助中心",1, "", "/help", "fa-book", 8, 0, null)
 		);
 		// valid
 		if (!loginService.isAdmin(request)) {

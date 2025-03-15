@@ -659,8 +659,6 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
             - shardingId：消费分片ID，限制0-1000之内；结合Consumer在线列表，匹配消费分片范围，实现并行分片消费消息；
     - _message_archive：归档消息
         - 字段：同 message；
-    - _message_001：自定义表记录；
-    - _message_archive_001：自定义表记录；
 3、模块设计：
     - 首页：Topic数量、集群数量、消息管数量；
     - Topic管理：
