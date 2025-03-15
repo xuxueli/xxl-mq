@@ -11,8 +11,9 @@
 	<url>https://www.xuxueli.com/</url>
 
 	<modules>
-		<module>xxl-mq-client</module>
 		<module>xxl-mq-admin</module>
+		<module>xxl-mq-admin2</module>
+		<module>xxl-mq-client</module>
 		<module>xxl-mq-samples</module>
 	</modules>
 
@@ -29,17 +30,20 @@
 		<maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
 		<maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
 
-		<!-- xxl-rpc -->
-		<xxl-rpc.version>1.3.2</xxl-rpc.version>
-
 		<!-- spring -->
 		<spring.version>5.3.39</spring.version>
 		<spring-boot.version>2.7.18</spring-boot.version>
-
 		<!-- database -->
 		<mybatis-spring-boot-starter.version>2.3.2</mybatis-spring-boot-starter.version>
 		<mysql-connector-j.version>9.1.0</mysql-connector-j.version>
 
+		<!-- xxl-rpc -->
+		<xxl-rpc.version>1.3.2</xxl-rpc.version>
+
+		<!-- tool -->
+		<xxl-tool.version>1.3.2</xxl-tool.version>
+		<!-- json -->
+		<fastjson2.version>2.0.54</fastjson2.version>
 	</properties>
 
 	<build>

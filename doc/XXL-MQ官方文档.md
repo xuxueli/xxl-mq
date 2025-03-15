@@ -634,15 +634,43 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
 
 ### Tmp
 
-1、模型说明：
-  - Topic：消息主题；
-    - 查看注册节点；
-    - 操作：状态；
-  - Message：消息队列，物理消息队列；msgid + msgbody + topic + group + shardingId + status + retryCount + intervalTime + effectTime;
-    - topic：关联 消息主题；
-    - group：
-    - shardingId：消费分片ID，限制0-1000之内；结合Consumer在线列表，匹配消费分片范围，实现并行分片消费消息；
-2、模块组成：
+1、特性：
+    - 特性：存算分离、水平扩展、高性能（TPS：Mysql单机1W/Blade 10W）、海量消息（Mysql日百万/Blade日十亿）、消息轨迹、多消费模式（分片/串行/广播）、延迟消息、失败重试（固定/增长/指数）、
+    - 其他：失败告警、AccessToken、容器化；
+2、模型设计：
+    - _user：用户管理
+    - _access_token：通讯Token，for OpenAPI
+    - _registry：【10s一次；广播更新；】Broker动态注册（内置RPC服务） + Consumer动态注册（数据分片用）
+        - 字段：type + key + data + addtime
+        - 示例：
+            - 01(broker) + “broker” + “address01” + "" + now()
+            - 02(comsumer) + “consumer_uuid” + [{topic01&group, topic02&group}] + now()
+        - 【RegistryData】不额外存储，内存动态生成；
+            - Broker：[address01、address02]
+            - Consumer：topic : [{group : consumer_uuid01, uuid02}]
+    - _topic：消息主题，配置管理；查看注册节点，借助 “consumer_uuid + group” 分片处理数据；
+        - 字段：name + store_table(通用/单独表) + 优先级() + author + alarm_email 
+        - 示例：“topic01” + "单独表" + "1" + "" + "" + 
+    - _message：消息队列，物理消息队列；【10min一次，自动数据归档；】
+        - 字段：msgid + msgbody + topic + group + shardingId + status + retryCount + intervalTime + effectTime + consume_log;
+            - topic：关联 消息主题；
+            - group：数据广播
+            - uuid序号：并行处理
+            - shardingId：消费分片ID，限制0-1000之内；结合Consumer在线列表，匹配消费分片范围，实现并行分片消费消息；
+    - _message_archive：归档消息
+        - 字段：同 message；
+    - _message_001：自定义表记录；
+    - _message_archive_001：自定义表记录；
+3、模块设计：
+    - 首页：Topic数量、集群数量、消息管数量；
+    - Topic管理：
+        - 查询条件：Topic（模糊搜索）
+        - 管理：Topic，存储配置、优先级（归档等）、告警邮箱；注册信息查看；
+    - 消息管理：
+        - 查询条件 》 Topic/必选（精确搜索） + Group + 状态 + 时间；
+        - 操作 》新增 + 删除 + 状态更新；
+    - Broker管理：Broker 集群节点；IP : PORT；
+4、组件组成：
   - Broker： 
     - Manage：提供 AccessToken、Topic、Message 管理能力；
     - Registry：提供 Consumer 注册、动态发现能力；消息分片消费时使用；
