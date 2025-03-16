@@ -650,17 +650,17 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
     - Manage：
       - User：服务授权
         - AccessToken：能力
-        - AppName：能力（注册、节点动态更新；用于Topic数据分片；）
+        - AppName：能力（注册、节点动态更新；用于Topic数据分片；）；【AppName维度，在线实例信息：实例总数 = instanceNum；序号 = instanceIndex；partitionScope = 3～5；】
             - 模型：Instance注册：字段（appname + uuid + register_heartbeat）；app维度20s汇总一次，同步至app表；时钟打平，从0开始每20s一次；
-        - Topic：能力（定义管理 + 查看注册节点 / 节点分片分配情况；）
-            - 模型：topic + store_table(通用/单独表) + 优先级() + author + alarm_email + timeout
+        - Topic：能力（定义管理 + 查看注册节点 / 节点分片分配情况；）；【Topic】【名称】【负责人】【告警邮箱】【状态】【存储策略】【partition数量】【优先级】【重试次数】【重试间隔策略】【归档策略】
+            - 模型：topic + store + partition + level + author + alarm_email + timeout
         - Message：查看 + 管理（增 + 该状态 + 归档）；消息队列，物理消息队列；【10min一次，自动数据归档；】
-            - 模型：msgid + msgbody + topic + group + shardingId + status + retryCount + intervalTime + effectTime + consume_log;
+            - 模型：msgid + msgbody + topic + group + partitionId + status + retryCount + intervalTime + effectTime + consume_log;
             - 属性：
                 - topic：关联 消息主题；
-                - group：数据广播
+                - group：数据广播；【topic向上；广播；】
                 - uuid序号：并行处理
-                - shardingId：消费分片ID，限制0-1000之内；结合Consumer在线列表，匹配消费分片范围，实现并行分片消费消息；
+                - partitionKey：分区Key进行hashcode取模，会转成分区ID，限制 [0-10000] 之内；结合Consumer在线列表，匹配消费分片范围，实现并行分片消费消息；【topic向下；并行；同sId保障顺序；根据消费者 partition 信息计算 范围；】
          - MessageArchive：归档消息，同 message；
     - Registry：提供 Consumer 注册、动态发现能力；消息分片消费时使用；
     - Broker Server：提供消息存储、读写能力；
@@ -675,7 +675,7 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
           - 分片数据：
             - topic01：
               - group01：2/3；
-          - 逻辑：pullAndLock（topics，group +节点）
+          - 逻辑：pullAndLock（topics，group +节点）【生成唯一标识，lock时写入；根据标识判断锁定值；】
             - 分片查询：topic + group + 分片范围（分片序号计算；动态计算）；默认每个topic取100条数据；
             - 数据所动：查询出的数据，锁定执行状态；根基Topic自定义超时时间（默认10min）超时释放；
         - d、消费消息：异步队列，批量更新消费结果；
