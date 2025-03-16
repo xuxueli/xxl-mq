@@ -644,12 +644,12 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
         - AccessToken：能力
         - AppName：
             - 能力（注册、节点动态更新；用于Topic数据分片；）；【AppName维度，在线实例信息：实例总数 = instanceNum；序号 = instanceIndex；partitionScope = 3～5；】
-            - 模型：Instance注册：字段（appname + uuid + register_heartbeat）；app维度20s汇总一次，同步至app表；时钟打平，从0开始每20s一次；
+            - 模型：Instance注册：字段（appname + uuid + register_heartbeat）；app维度20s汇总一次，同步至app表；时钟打平，从0开始每20s一次；                                           【TODO - 01：注册Helper（App+Topic）逻辑；】
         - Topic：
-            - 能力（定义管理 + 查看注册节点 / 节点分片分配情况；）；【Topic】【名称】【负责人】【告警邮箱】【状态】【存储策略】【partition数量】【优先级】【重试次数】【重试间隔策略】【归档策略】
+            - 能力（定义管理 + 查看注册节点 / 节点分片分配情况；）；【Topic】【名称】【负责人】【告警邮箱】【状态】【存储策略】【partition数量】【优先级】【重试次数】【重试间隔策略】【归档策略】    【TODO - 02：Topic管理】
             - 模型：topic + store + partitionCount + level + author + alarm_email + timeout
         - Message：
-            - 能力：查看 + 管理（增 + 该状态 + 归档）；消息队列，物理消息队列；【10min一次，自动数据归档；】
+            - 能力：查看 + 管理（增 + 该状态 + 归档）；消息队列，物理消息队列；【10min一次，自动数据归档；】                                                                             【TODO - 03：消息管理能力；更新 + 归档】
             - 模型：msgid + msgbody + topic + group + partitionId + status + retryCount + intervalTime + effectTime + consume_log;
             - 属性：
                 - topic：关联 消息主题；
@@ -657,7 +657,7 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
                 - uuid序号：并行处理
                 - partitionKey：分区Key进行hashcode取模，会转成分区ID，限制 [0-10000] 之内；结合Consumer在线列表，匹配消费分片范围，实现并行分片消费消息；【topic向下；并行；同sId保障顺序；根据消费者 partition 信息计算 范围；】
          - MessageArchive：
-            - 能力：定期讲终止态消息，同步归档，清理原始表；
+            - 能力：定期讲终止态消息，同步归档，清理原始表；                                                                                                                      【TODO - 04：消息归档数据查看；】
             - 模型：同 message；
     - Registry：
          - 能力：提供 Consumer 注册、动态发现能力；消息分片消费时使用；
