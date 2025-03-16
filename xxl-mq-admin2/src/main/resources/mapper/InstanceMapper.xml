@@ -22,7 +22,7 @@
     </sql>
 
     <insert id="insert" parameterType="java.util.Map" >
-        INSERT INTO instance (
+        INSERT INTO xxl_mq_instance (
             `appname`,
             `uuid`,
             `register_heartbeat`,
@@ -39,7 +39,7 @@
     </insert>
 
     <delete id="delete" parameterType="java.util.Map" >
-        DELETE FROM instance
+        DELETE FROM xxl_mq_instance
         WHERE `id` in
         <foreach collection="ids" item="item" open="(" close=")" separator="," >
             #{item}
@@ -47,7 +47,7 @@
     </delete>
 
     <update id="update" parameterType="java.util.Map" >
-        UPDATE instance
+        UPDATE xxl_mq_instance
         SET
             `appname` = #{instance.appname},
             `uuid` = #{instance.uuid},
@@ -58,19 +58,19 @@
 
     <select id="load" parameterType="java.util.Map" resultMap="Instance">
         SELECT <include refid="Base_Column_List" />
-        FROM instance AS t
+        FROM xxl_mq_instance AS t
         WHERE t.`id` = #{id}
     </select>
 
     <select id="pageList" parameterType="java.util.Map" resultMap="Instance">
         SELECT <include refid="Base_Column_List" />
-        FROM instance AS t
+        FROM xxl_mq_instance AS t
         LIMIT #{offset}, #{pagesize}
     </select>
 
     <select id="pageListCount" parameterType="java.util.Map" resultType="int">
         SELECT count(1)
-        FROM instance AS t
+        FROM xxl_mq_instance AS t
     </select>
 
 </mapper>
