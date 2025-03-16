@@ -8,56 +8,58 @@ use `xxl_mq`;
 SET NAMES utf8mb4;
 
 
-## —————————————————————— config data ——————————————————
+## —————————————————————— topic and message ——————————————————
 
 CREATE TABLE `xxl_mq_topic`(
-    `id`          int(11)      NOT NULL AUTO_INCREMENT,
-    `topic`       varchar(255) NOT NULL COMMENT '消息主题Topic',
-    `desc`        varchar(100) NOT NULL COMMENT '消息主题名称',
-    `store_type`  tinyint(4)   NOT NULL COMMENT '存储类型：0-通用存储，2-单独存储',
-    `level`       int(11)      NOT NULL COMMENT '优先级',
-    `owner`       varchar(50)  NOT NULL COMMENT '负责人',
-    `alarm_email` varchar(255) DEFAULT NULL COMMENT '告警配置（邮箱）',
-    `add_time`    datetime     NOT NULL COMMENT '新增时间',
-    `update_time` datetime     NOT NULL COMMENT '更新时间',
+    `id`                    bigint(20)   NOT NULL AUTO_INCREMENT,
+    `topic`                 varchar(255) NOT NULL COMMENT '消息主题Topic',
+    `name`                  varchar(100) NOT NULL COMMENT '消息主题名称',
+    `owner`                 varchar(50)  NOT NULL COMMENT '负责人',
+    `alarm_email`           varchar(255) DEFAULT NULL COMMENT '告警配置（邮箱）',
+    `status`                tinyint(4)   NOT NULL COMMENT '状态：0-正常、1-禁用',
+    `store_strategy`        tinyint(4)   NOT NULL COMMENT '存储策略：0-统一存储，2-隔离存储',
+    `partition_strategy`    tinyint(4)   NOT NULL COMMENT '分区策略：0-Hash分区，1-随机分区，2-轮询分区',
+    `level`                 int(11)      NOT NULL COMMENT '优先级',
+    `retry_type`            varchar(100) NOT NULL COMMENT '重试策略（固定；增长；指数；不重试；）',
+    `retry_count`           int(11)      NOT NULL COMMENT '重试次数',
+    `retry_interval`        int(11)      NOT NULL COMMENT '重试间隔，单位秒（3s；3/6/9；3/9/27）',
+    `execution_timeout`     int(11)      NOT NULL COMMENT '执行超时时间',
+    `add_time`              datetime     NOT NULL COMMENT '新增时间',
+    `update_time`           datetime     NOT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),
     UNIQUE KEY `uni_topic` (`topic`) USING BTREE
 ) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COMMENT ='消息主题';
 
 CREATE TABLE `xxl_mq_message`(
-    `id`             bigint(20)   NOT NULL AUTO_INCREMENT,
-    `data`           text         NOT NULL COMMENT '消息数据',
-    `topic`          varchar(255) NOT NULL COMMENT '消息主题Topic',
-    `group`          varchar(255) NOT NULL COMMENT '消息分组',
-    `sharding_id`    int(11)      NOT NULL COMMENT '消息分片序号',
-    `status`         tinyint(4)   NOT NULL COMMENT '状态：0-正常、1-运行中、2-成功、3-失败',
-    `retry_count`    int(11)      NOT NULL COMMENT '重试次数',
-    `retry_type`     varchar(100) NOT NULL COMMENT '重试策略（固定；增长；指数）',
-    `retry_interval` int(11)      NOT NULL COMMENT '重试间隔（3s；2/4/6；2/4/8）',
-    `effect_time`    datetime     NOT NULL COMMENT '生效时间',
-    `consume_log`    text DEFAULT NULL COMMENT '消费地址',
-    `add_time`       datetime     NOT NULL COMMENT '新增时间',
-    `update_time`    datetime     NOT NULL COMMENT '更新时间',
+    `id`                    bigint(20)   NOT NULL AUTO_INCREMENT,
+    `data`                  text         NOT NULL COMMENT '消息数据',
+    `topic`                 varchar(255) NOT NULL COMMENT '消息主题Topic',
+    `group`                 varchar(255) NOT NULL COMMENT '消息主题分组',
+    `partition_id`          int(11)      NOT NULL COMMENT '消息分片ID',
+    `status`                tinyint(4)   NOT NULL COMMENT '状态：0-正常、1-执行中、2-成功、3-失败、4-超时失败',
+    `effect_time`           datetime     NOT NULL COMMENT '生效时间',
+    `consume_log`           text         DEFAULT NULL COMMENT '消费日志',
+    `consume_instance_uuid` varchar(50)  DEFAULT NULL COMMENT '消费实例实例唯一标识',
+    `add_time`              datetime     NOT NULL COMMENT '新增时间',
+    `update_time`           datetime     NOT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),
-    KEY `i_t_g_1` (`topic`, `group`, `sharding_id`)
+    KEY `i_t_g_p` (`topic`, `group`, `partition_id`)
 ) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COMMENT ='消息数据表';
 
 CREATE TABLE `xxl_mq_message_archive` (
-    `id`             bigint(20)   NOT NULL AUTO_INCREMENT,
-    `data`           text         NOT NULL COMMENT '消息数据',
-    `topic`          varchar(255) NOT NULL COMMENT '消息主题Topic',
-    `group`          varchar(255) NOT NULL COMMENT '消息分组',
-    `sharding_id`    int(11)      NOT NULL COMMENT '消息分片序号',
-    `status`         tinyint(4)   NOT NULL COMMENT '状态：0-正常、1-运行中、2-成功、3-失败',
-    `retry_count`    int(11)      NOT NULL COMMENT '重试次数',
-    `retry_type`     varchar(100) NOT NULL COMMENT '重试策略（固定；增长；指数）',
-    `retry_interval` int(11)      NOT NULL COMMENT '重试间隔（3s；2/4/6；2/4/8）',
-    `effect_time`    datetime     NOT NULL COMMENT '生效时间',
-    `consume_log`    text DEFAULT NULL COMMENT '消费日志',
-    `add_time`       datetime     NOT NULL COMMENT '新增时间',
-    `update_time`    datetime     NOT NULL COMMENT '更新时间',
+    `id`                    bigint(20)   NOT NULL AUTO_INCREMENT,
+    `data`                  text         NOT NULL COMMENT '消息数据',
+    `topic`                 varchar(255) NOT NULL COMMENT '消息主题Topic',
+    `group`                 varchar(255) NOT NULL COMMENT '消息主题分组',
+    `partition_id`          int(11)      NOT NULL COMMENT '消息分片ID',
+    `status`                tinyint(4)   NOT NULL COMMENT '状态：0-正常、1-执行中、2-成功、3-失败、4-超时失败',
+    `effect_time`           datetime     NOT NULL COMMENT '生效时间',
+    `consume_log`           text         DEFAULT NULL COMMENT '消费日志',
+    `consume_instance_uuid` varchar(50)  DEFAULT NULL COMMENT '消费实例实例唯一标识',
+    `add_time`              datetime     NOT NULL COMMENT '新增时间',
+    `update_time`           datetime     NOT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),
-    KEY `i_t_g_1` (`topic`, `group`, `sharding_id`)
+    KEY `i_t_g_p` (`topic`, `group`, `partition_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='消息数据归档表';
 
 ## —————————————————————— registry ——————————————————
@@ -65,8 +67,8 @@ CREATE TABLE `xxl_mq_message_archive` (
 CREATE TABLE `xxl_mq_instance` (
     `id`                 bigint(20)      NOT NULL AUTO_INCREMENT,
     `appname`            varchar(50)     NOT NULL COMMENT 'AppName（服务唯一标识）',
-    `uuid`               varchar(50)     NOT NULL COMMENT '节点唯一标识',
-    `register_heartbeat` datetime        DEFAULT NULL COMMENT '节点最后心跳时间，动态注册时判定是否过期',
+    `uuid`               varchar(50)     NOT NULL COMMENT '实例唯一标识',
+    `register_heartbeat` datetime        DEFAULT NULL COMMENT '实例最后心跳时间，动态注册时判定是否过期',
     `add_time`           datetime        NOT NULL COMMENT '新增时间',
     `update_time`        datetime        NOT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),
@@ -81,7 +83,7 @@ CREATE TABLE `xxl_mq_application` (
     `appname`       varchar(50)     NOT NULL COMMENT 'AppName（服务唯一标识）',
     `name`          varchar(20)     NOT NULL COMMENT '服务名称',
     `desc`          varchar(100)    NOT NULL COMMENT '服务描述',
-    `registry_instance`  text COMMENT '在线节点列表，数据JSON',
+    `registry_data`  text COMMENT '在线节点列表，数据JSON',
     `add_time`      datetime        NOT NULL COMMENT '新增时间',
     `update_time`   datetime        NOT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),

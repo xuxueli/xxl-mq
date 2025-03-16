@@ -633,51 +633,71 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
 ### 5.7 版本 v1.4.0 Release Notes[迭代中]
 
 ### Tmp
-
+```
 1、特性：
     - 特性：存算分离、水平扩展、高性能（TPS：Mysql单机1W/Blade 10W）、海量消息（Mysql日百万/Blade日十亿）、消息轨迹、多消费模式（分片/串行/广播）、延迟消息、失败重试（固定/增长/指数）、
     - 其他：失败告警、AccessToken、容器化；
-2、流程：
-    - pub->broker：根据group生产，服务端处理。
-    - sub-> broker：根据cId分片消费，服务端分片；服务端滚动预热，抗并发。
-    - broker ：无状态，维护topic注册节点。
-    - appname：应用服务，注册节点uuid
-    - topic：关联appname，分片切分。清理及归档配置。
-    - message：topic，group，shardId
-    - 归档数据：定时归档，自动清理
-3、设计：
+2、设计：
 - Broker：
     - Manage：
-      - User：服务授权
+        - User：服务授权
         - AccessToken：能力
-        - AppName：能力（注册、节点动态更新；用于Topic数据分片；）；【AppName维度，在线实例信息：实例总数 = instanceNum；序号 = instanceIndex；partitionScope = 3～5；】
+        - AppName：
+            - 能力（注册、节点动态更新；用于Topic数据分片；）；【AppName维度，在线实例信息：实例总数 = instanceNum；序号 = instanceIndex；partitionScope = 3～5；】
             - 模型：Instance注册：字段（appname + uuid + register_heartbeat）；app维度20s汇总一次，同步至app表；时钟打平，从0开始每20s一次；
-        - Topic：能力（定义管理 + 查看注册节点 / 节点分片分配情况；）；【Topic】【名称】【负责人】【告警邮箱】【状态】【存储策略】【partition数量】【优先级】【重试次数】【重试间隔策略】【归档策略】
-            - 模型：topic + store + partition + level + author + alarm_email + timeout
-        - Message：查看 + 管理（增 + 该状态 + 归档）；消息队列，物理消息队列；【10min一次，自动数据归档；】
+        - Topic：
+            - 能力（定义管理 + 查看注册节点 / 节点分片分配情况；）；【Topic】【名称】【负责人】【告警邮箱】【状态】【存储策略】【partition数量】【优先级】【重试次数】【重试间隔策略】【归档策略】
+            - 模型：topic + store + partitionCount + level + author + alarm_email + timeout
+        - Message：
+            - 能力：查看 + 管理（增 + 该状态 + 归档）；消息队列，物理消息队列；【10min一次，自动数据归档；】
             - 模型：msgid + msgbody + topic + group + partitionId + status + retryCount + intervalTime + effectTime + consume_log;
             - 属性：
                 - topic：关联 消息主题；
                 - group：数据广播；【topic向上；广播；】
                 - uuid序号：并行处理
                 - partitionKey：分区Key进行hashcode取模，会转成分区ID，限制 [0-10000] 之内；结合Consumer在线列表，匹配消费分片范围，实现并行分片消费消息；【topic向下；并行；同sId保障顺序；根据消费者 partition 信息计算 范围；】
-         - MessageArchive：归档消息，同 message；
-    - Registry：提供 Consumer 注册、动态发现能力；消息分片消费时使用；
-    - Broker Server：提供消息存储、读写能力；
+         - MessageArchive：
+            - 能力：定期讲终止态消息，同步归档，清理原始表；
+            - 模型：同 message；
+    - Registry：
+         - 能力：提供 Consumer 注册、动态发现能力；消息分片消费时使用；
+    - Broker 
+         - 能力：Server：提供消息存储、读写能力；
     - OpenAPI：统一“Token验证”（http+gson；借助 xxl-tool 实现通用 http-rpc 能力；）
         - a 、注册：app+topic初始化 + 节点心跳注册/摘除；
-          - 数据格式：
-            - instance01（UUID）：
-              - topic01 / group01
-              - topic02 / group02
-        - b、生产：异步队列，批量写入；处理group广播。
-        - c、批量查询（锁定）：pullAndLock，多topic并行查询能力，根据node分配10条，同时锁定。分配不到直接返回。
-          - 分片数据：
-            - topic01：
-              - group01：2/3；
-          - 逻辑：pullAndLock（topics，group +节点）【生成唯一标识，lock时写入；根据标识判断锁定值；】
-            - 分片查询：topic + group + 分片范围（分片序号计算；动态计算）；默认每个topic取100条数据；
-            - 数据所动：查询出的数据，锁定执行状态；根基Topic自定义超时时间（默认10min）超时释放；
+                  - 数据格式：
+                        - app01 : 
+                        - instanceUuid01：
+                        - topicList：
+                              - topic01 : default
+                              - topic02 : group02
+                  - RegistryData：存app表；
+                        - app01:
+                              - instanceList：
+                                    - instance01：partitionScope: [0-5000]
+                                    - instance02：partitionScope：[5001-10000]
+                              - topicList：
+                                    - topic01 : [default、group01、group02]
+                                    - topic02 : [default]
+                  - RegistryCache：30s一次；
+                        - topic01：
+                          - info：配置信息（app）；
+                          - instanceList：
+                                    - instance01：partitionScope: [0-5000]
+                                    - instance02：partitionScope：[5001-10000]
+                          - groupList：[default、group01、group02]
+                        - app01：基础信息；
+        - b、生产：
+                  - 能力：异步队列，批量写入；处理group广播。
+                  - 数据格式：topic + group(null广播)  + partitionKey（null随机；partitionId [0, 10000]） + msgBody
+        - c、批量查询（锁定）：
+                - 能力：多topic并行查询；单topic分片查询；能力，根据node分配10条，同时锁定。分配不到直接返回。
+                - pullAndLock：（topics，group +节点）【生成唯一标识，lock时写入；根据标识判断锁定值；】
+                      - 数据格式：
+                          - topic01 + group01 + clientId（计算partitionScope）
+                          - topic02 + group01 +
+                      - 查询逻辑：多topic并行查询 + 单topic分片查询 + 每topic每次取10个；
+                      - 锁定逻辑：针对查询出的数据，更新锁定态；注意超时释放；
         - d、消费消息：异步队列，批量更新消费结果；
 - Client：
     - Registry 组件：
@@ -687,9 +707,9 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
         - 功能：直连Broker；发起消息生产；
         - 性能：内存queue，批量异步推送；异常，写本地磁盘；（xxl-tool）
         - 要点：
-            - 并行消息：指定 topic + group（固定） + shardingid（随机），生产单条消息；借助 shardingid 分片消费；
-            - 串行消息：指定 topic + group（固定） + shardingid（固定>0），生产单条消息；固定 shardingid 绑定固定节点消费；
-            - 广播消息：指定 topic + group（uuid） + shardingid（随机）；根据在线 group 列表生产多条消息；
+            - 并行消息：指定 topic + group（固定） + partitionKey（随机），生产单条消息；借助 partitionKey 分片消费；
+            - 串行消息：指定 topic + group（固定） + partitionKey（固定>0），生产单条消息；固定 partitionKey 绑定固定节点消费；
+            - 广播消息：指定 topic + group（uuid） + partitionKey（随机）；根据在线 group 列表生产多条消息；
     - Consumer 组件：
       - 功能：查询消息，消费消息，回调消息；
       - 性能：批量查询、批量回调；
@@ -700,7 +720,7 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
     - ConsumerInvokeThread 组件：
       - 功能：消费业务逻辑，执行线程；
       - 要点：单Topic单线程；不同Topic隔离；
-
+```
 
 ### TODO
 - 会考虑移除 mysql 强依赖的，迁移 jpa 进一步提升通用型。
