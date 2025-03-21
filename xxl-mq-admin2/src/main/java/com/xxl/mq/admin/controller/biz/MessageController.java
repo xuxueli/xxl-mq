@@ -154,4 +154,14 @@ public class MessageController {
         return messageService.update(messageDTO);
     }
 
+    /**
+     * 更新
+     */
+    @RequestMapping("/archive")
+    @ResponseBody
+    @Permission
+    public Response<String> archive(String topic, Integer archiveStrategy){
+        return new ResponseBuilder<String>().fail("building").build();
+    }
+
 }

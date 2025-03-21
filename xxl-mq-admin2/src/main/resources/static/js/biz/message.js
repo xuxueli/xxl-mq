@@ -408,7 +408,7 @@ $(function() {
 	});
 
 
-	// ---------- ---------- ---------- update operation ---------- ---------- ----------
+	// ---------- ---------- ---------- showConsumeLog ---------- ---------- ----------
 
 	$("#data_operation").on('click', '.showConsumeLog',function() {
 
@@ -429,14 +429,41 @@ $(function() {
 
 	});
 
-	// ---------- ---------- ---------- update operation ---------- ---------- ----------
+	// ---------- ---------- ---------- archive ---------- ---------- ----------
 
 	$("#data_operation").on('click', '.archive',function() {
 
+		let topic = $('#data_filter .topic').val();
+		$("#archiveModel .form input[name='topic']").val( topic );
+
 		$('#archiveModel').modal({backdrop: false, keyboard: false}).modal('show');
+	});
+	$("#archiveModel .ok").on('click', function(){
 
-		layer.msg('归档 ING'); // TODO
-
+		$.post(base_url + "/message/archive",  $("#archiveModel .form").serialize(), function(data, status) {
+			if (data.code == "200") {
+				$('#archiveModel').modal('hide');
+				layer.open({
+					title: "系统提示",
+					btn: [ "确认" ],
+					content: "操作成功" ,
+					icon: '1',
+					end: function(layero, index){
+						dataTable.fnDraw(false);
+					}
+				});
+			} else {
+				layer.open({
+					title: "系统提示",
+					btn: [ "确认" ],
+					content: (data.msg || "操作失败" ),
+					icon: '2'
+				});
+			}
+		});
+	});
+	$("#archiveModel").on('hide.bs.modal', function () {
+		$("#archiveModel .form")[0].reset();
 	});
 
 

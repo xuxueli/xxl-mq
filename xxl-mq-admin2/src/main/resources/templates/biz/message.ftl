@@ -255,7 +255,7 @@
 
 			<!-- 归档.模态框 -->
 			<div class="modal fade" id="archiveModel" tabindex="-1" role="dialog"  aria-hidden="true">
-				<div class="modal-dialog modal-lg">
+				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">
 							<h4 class="modal-title" >归档消费</h4>
@@ -271,7 +271,7 @@
 								<div class="form-group">
 									<label for="lastname" class="col-sm-2 control-label">归档策略<font color="red">*</font></label>
 									<div class="col-sm-10 consumeInstanceUuid">
-										<select class="form-control" name="status" >
+										<select class="form-control" name="archiveStrategy" >
 											<#list ArchiveStrategyEnum as item>
 												<option value="${item.value}" >${item.desc}</option>
 											</#list>
@@ -281,9 +281,9 @@
 
 								<hr>
 								<div class="form-group">
-									<div class="col-sm-offset-5 col-sm-2">
-										<button type="submit" class="btn btn-primary"  >确认</button>
-										<button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+									<div class="col-sm-offset-4 col-sm-4">
+										<button type="button" class="btn btn-primary ok" >确认</button>
+										<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 									</div>
 								</div>
 							</form>
