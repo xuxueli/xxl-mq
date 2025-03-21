@@ -36,6 +36,11 @@ public class TopicServiceImpl implements TopicService {
 			return new ResponseBuilder<String>().fail("必要参数缺失").build();
         }
 
+		Topic existTopic = topicMapper.loadByTopic(topic.getTopic());
+		if (existTopic != null) {
+			return new ResponseBuilder<String>().fail("Topic已存在").build();
+		}
+
 		topicMapper.insert(topic);
 		return new ResponseBuilder<String>().success().build();
 	}

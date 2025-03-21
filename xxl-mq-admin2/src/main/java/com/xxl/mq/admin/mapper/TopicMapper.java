@@ -35,6 +35,11 @@ public interface TopicMapper {
     public Topic load(@Param("id") int id);
 
     /**
+     * 根据topic查询
+     */
+    public Topic loadByTopic(@Param("topic") String topic);
+
+    /**
     * 分页查询Data
     */
 	public List<Topic> pageList(@Param("offset") int offset,

@@ -12,8 +12,8 @@ SET NAMES utf8mb4;
 
 CREATE TABLE `xxl_mq_topic`(
     `id`                    bigint(20)      NOT NULL AUTO_INCREMENT,
-    `appname`               varchar(50)     NOT NULL COMMENT 'AppName（服务唯一标识）',
     `topic`                 varchar(100)    NOT NULL COMMENT '消息主题Topic',
+    `appname`               varchar(50)     NOT NULL COMMENT 'AppName（服务唯一标识）',
     `desc`                  varchar(50)     NOT NULL COMMENT '消息主题描述',
     `owner`                 varchar(50)     NOT NULL COMMENT '负责人',
     `alarm_email`           varchar(200)    DEFAULT NULL COMMENT '告警配置（邮箱）',
@@ -33,25 +33,25 @@ CREATE TABLE `xxl_mq_topic`(
 ) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COMMENT ='消息主题';
 
 CREATE TABLE `xxl_mq_message`(
-    `id`                    bigint(20)   NOT NULL AUTO_INCREMENT,
-    `data`                  text         NOT NULL COMMENT '消息数据',
-    `topic`                 varchar(255) NOT NULL COMMENT '消息主题Topic',
-    `group`                 varchar(255) NOT NULL COMMENT '消息主题分组',
-    `partition_id`          int(11)      NOT NULL COMMENT '消息分片ID',
-    `status`                tinyint(4)   NOT NULL COMMENT '状态：0-正常、1-执行中、2-成功、3-失败、4-超时失败',
-    `effect_time`           datetime     NOT NULL COMMENT '生效时间',
-    `consume_log`           text         DEFAULT NULL COMMENT '消费日志',
-    `consume_instance_uuid` varchar(50)  DEFAULT NULL COMMENT '消费实例实例唯一标识',
-    `add_time`              datetime     NOT NULL COMMENT '新增时间',
-    `update_time`           datetime     NOT NULL COMMENT '更新时间',
+    `id`                    bigint(20)      NOT NULL AUTO_INCREMENT,
+    `topic`                 varchar(100)    NOT NULL COMMENT '消息主题Topic',
+    `group`                 varchar(20)     NOT NULL COMMENT '消息主题分组',
+    `partition_id`          int(11)         NOT NULL COMMENT '消息分片ID',
+    `data`                  text            NOT NULL COMMENT '消息数据',
+    `status`                tinyint(4)      NOT NULL COMMENT '状态',
+    `effect_time`           datetime        NOT NULL COMMENT '生效时间',
+    `consume_log`           text            DEFAULT NULL COMMENT '消费日志',
+    `consume_instance_uuid` varchar(50)     DEFAULT NULL COMMENT '消费实例实例唯一标识',
+    `add_time`              datetime        NOT NULL COMMENT '新增时间',
+    `update_time`           datetime        NOT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),
     KEY `i_t_g_p` (`topic`, `group`, `partition_id`)
 ) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COMMENT ='消息数据表';
 
 CREATE TABLE `xxl_mq_message_archive` (
     `id`                    bigint(20)   NOT NULL AUTO_INCREMENT,
-    `data`                  text         NOT NULL COMMENT '消息数据',
     `topic`                 varchar(255) NOT NULL COMMENT '消息主题Topic',
+    `data`                  text         NOT NULL COMMENT '消息数据',
     `group`                 varchar(255) NOT NULL COMMENT '消息主题分组',
     `partition_id`          int(11)      NOT NULL COMMENT '消息分片ID',
     `status`                tinyint(4)   NOT NULL COMMENT '状态：0-正常、1-执行中、2-成功、3-失败、4-超时失败',

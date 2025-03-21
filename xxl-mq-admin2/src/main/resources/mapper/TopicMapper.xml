@@ -96,7 +96,6 @@
             `desc` = #{topic.desc},
             `owner` = #{topic.owner},
             `alarm_email` = #{topic.alarmEmail},
-            `status` = #{topic.status},
             `store_strategy` = #{topic.storeStrategy},
             `archive_strategy` = #{topic.archiveStrategy},
             `partition_strategy` = #{topic.partitionStrategy},
@@ -113,6 +112,12 @@
         SELECT <include refid="Base_Column_List" />
         FROM xxl_mq_topic AS t
         WHERE t.`id` = #{id}
+    </select>
+
+    <select id="loadByTopic" parameterType="java.util.Map" resultMap="Topic">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_mq_topic AS t
+        WHERE t.`topic` = #{topic}
     </select>
 
     <select id="pageList" parameterType="java.util.Map" resultMap="Topic">
