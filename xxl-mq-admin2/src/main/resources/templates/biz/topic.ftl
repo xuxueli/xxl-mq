@@ -185,9 +185,9 @@
 
 								<hr>
 								<div class="form-group">
-									<div class="col-sm-offset-3 col-sm-6">
+									<div class="col-sm-offset-5 col-sm-2">
 										<button type="submit" class="btn btn-primary"  >保存</button>
-										<button type="button" class="btn btn-default" data-dismiss="modal">确认</button>
+										<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 									</div>
 								</div>
 
@@ -291,9 +291,9 @@
 
 								<hr>
 								<div class="form-group">
-									<div class="col-sm-offset-3 col-sm-6">
+									<div class="col-sm-offset-5 col-sm-2">
 										<button type="submit" class="btn btn-primary"  >保存</button>
-										<button type="button" class="btn btn-default" data-dismiss="modal">确认</button>
+										<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 									</div>
 
 									<input type="hidden" class="form-control" name="id"  >

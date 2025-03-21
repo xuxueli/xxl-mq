@@ -80,6 +80,8 @@
 							<button class="btn btn-sm btn-info add" type="button"><i class="fa fa-plus" ></i>${I18n.system_opt_add}</button>
 							<button class="btn btn-sm btn-warning selectOnlyOne update" type="button"><i class="fa fa-edit"></i>${I18n.system_opt_edit}</button>
 							<button class="btn btn-sm btn-danger selectAny delete" type="button"><i class="fa fa-remove "></i>${I18n.system_opt_del}</button>
+							<button class="btn btn-sm btn-primary selectOnlyOne showConsumeLog" type="button">消费日志</button>
+							<button class="btn btn-sm btn-primary archive" type="button">归档</button>
 						</div>
 						<div class="box-body" >
 							<table id="data_list" class="table table-bordered table-striped" width="100%" >
@@ -94,7 +96,7 @@
 
 			<!-- 新增.模态框 -->
 			<div class="modal fade" id="addModal" tabindex="-1" role="dialog"  aria-hidden="true">
-				<div class="modal-dialog">
+				<div class="modal-dialog modal-lg">
 					<div class="modal-content">
 						<div class="modal-header">
 							<h4 class="modal-title" >${I18n.system_opt_add}消息</h4>
@@ -141,9 +143,9 @@
 
 								<hr>
 								<div class="form-group">
-									<div class="col-sm-offset-3 col-sm-6">
+									<div class="col-sm-offset-5 col-sm-2">
 										<button type="submit" class="btn btn-primary"  >保存</button>
-										<button type="button" class="btn btn-default" data-dismiss="modal">确认</button>
+										<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 									</div>
 								</div>
 							</form>
@@ -199,12 +201,89 @@
 
 								<hr>
 								<div class="form-group">
-									<div class="col-sm-offset-3 col-sm-6">
+									<div class="col-sm-offset-5 col-sm-2">
 										<button type="submit" class="btn btn-primary"  >保存</button>
-										<button type="button" class="btn btn-default" data-dismiss="modal">确认</button>
+										<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 
 										<#-- id -->
 										<input type="hidden" class="form-control" name="id" >
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 消费日志.模态框 -->
+			<div class="modal fade" id="showConsumeLogModel" tabindex="-1" role="dialog"  aria-hidden="true">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title" >消费日志</h4>
+						</div>
+						<div class="modal-body">
+							<form class="form-horizontal form" role="form" >
+								<div class="form-group">
+									<label for="lastname" class="col-sm-2 control-label">消费者实例<font color="red">*</font></label>
+									<div class="col-sm-10 consumeInstanceUuid"></div>
+								</div>
+								<div class="form-group">
+									<label for="lastname" class="col-sm-2 control-label">消费日志<font color="red">*</font></label>
+									<div class="col-sm-10 consumeLog"></div>
+								</div>
+								<div class="form-group">
+									<label for="lastname" class="col-sm-2 control-label">新增时间<font color="red">*</font></label>
+									<div class="col-sm-10 addTime"></div>
+								</div>
+								<div class="form-group">
+									<label for="lastname" class="col-sm-2 control-label">更新时间<font color="red">*</font></label>
+									<div class="col-sm-10 updateTime"></div>
+								</div>
+
+								<hr>
+								<div class="form-group">
+									<div class="col-sm-offset-5 col-sm-2">
+										<button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 归档.模态框 -->
+			<div class="modal fade" id="archiveModel" tabindex="-1" role="dialog"  aria-hidden="true">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title" >归档消费</h4>
+						</div>
+						<div class="modal-body">
+							<form class="form-horizontal form" role="form" >
+								<div class="form-group">
+									<label for="lastname" class="col-sm-2 control-label">Topic<font color="red">*</font></label>
+									<div class="col-sm-10 consumeInstanceUuid">
+										<input type="text" class="form-control" name="topic" placeholder="请输入Topic" maxlength="100" >
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="lastname" class="col-sm-2 control-label">归档策略<font color="red">*</font></label>
+									<div class="col-sm-10 consumeInstanceUuid">
+										<select class="form-control" name="status" >
+											<#list ArchiveStrategyEnum as item>
+												<option value="${item.value}" >${item.desc}</option>
+											</#list>
+										</select>
+									</div>
+								</div>
+
+								<hr>
+								<div class="form-group">
+									<div class="col-sm-offset-5 col-sm-2">
+										<button type="submit" class="btn btn-primary"  >确认</button>
+										<button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
 									</div>
 								</div>
 							</form>

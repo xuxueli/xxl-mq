@@ -324,7 +324,6 @@ $(function() {
 	});
 
 
-
 	// ---------- ---------- ---------- update operation ---------- ---------- ----------
 	$("#data_operation .update").click(function(){
 
@@ -406,6 +405,38 @@ $(function() {
 
 		$("#updateModal .form")[0].reset();
         $("#updateModal .form .form-group").removeClass("has-error");
+	});
+
+
+	// ---------- ---------- ---------- update operation ---------- ---------- ----------
+
+	$("#data_operation").on('click', '.showConsumeLog',function() {
+
+		// find select ids
+		var selectIds = $.dataTableSelect.selectIdsFind();
+		if (selectIds.length != 1) {
+			layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
+			return;
+		}
+		var row = tableData[ 'key' + selectIds[0] ];
+
+		// show
+		$('#showConsumeLogModel .consumeInstanceUuid').html(row.consumeInstanceUuid);
+		$('#showConsumeLogModel .addTime').html( moment(row.addTime).format('YYYY-MM-DD HH:mm:ss') );
+		$('#showConsumeLogModel .updateTime').html( moment(row.updateTime).format('YYYY-MM-DD HH:mm:ss') );
+		$('#showConsumeLogModel .consumeLog').html(row.consumeLog);
+		$('#showConsumeLogModel').modal({backdrop: false, keyboard: false}).modal('show');
+
+	});
+
+	// ---------- ---------- ---------- update operation ---------- ---------- ----------
+
+	$("#data_operation").on('click', '.archive',function() {
+
+		$('#archiveModel').modal({backdrop: false, keyboard: false}).modal('show');
+
+		layer.msg('归档 ING'); // TODO
+
 	});
 
 

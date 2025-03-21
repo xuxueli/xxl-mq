@@ -1,6 +1,7 @@
 package com.xxl.mq.admin.controller.biz;
 
 import com.xxl.mq.admin.annotation.Permission;
+import com.xxl.mq.admin.constant.enums.ArchiveStrategyEnum;
 import com.xxl.mq.admin.constant.enums.MessageStatusEnum;
 import com.xxl.mq.admin.constant.enums.TopicStatusEnum;
 import com.xxl.mq.admin.model.adaptor.MessageAdaptor;
@@ -55,6 +56,7 @@ public class MessageController {
 
         // Enum
         model.addAttribute("MessageStatusEnum", MessageStatusEnum.values());
+        model.addAttribute("ArchiveStrategyEnum", ArchiveStrategyEnum.values());
 
         // appname
         List<Application> applicationList = findPermissionApplication(request);
