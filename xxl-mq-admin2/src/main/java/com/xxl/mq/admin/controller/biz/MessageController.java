@@ -93,6 +93,7 @@ public class MessageController {
     public Response<PageModel<MessageDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                     @RequestParam(required = false, defaultValue = "10") int pagesize,
                                                     @RequestParam(required = false) String topic,
+                                                    @RequestParam(required = false) int status,
                                                     @RequestParam(required = false) String filterTime) {
 
         // parse param
@@ -107,7 +108,7 @@ public class MessageController {
         }
 
         // page query
-        PageModel<MessageDTO> pageModel = messageService.pageList(offset, pagesize, topic, effectTimeStart, effectTimeEnd);
+        PageModel<MessageDTO> pageModel = messageService.pageList(offset, pagesize, topic, status, effectTimeStart, effectTimeEnd);
         return new ResponseBuilder<PageModel<MessageDTO>>().success(pageModel).build();
     }
 

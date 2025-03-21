@@ -50,6 +50,7 @@ $(function() {
 	        data : function ( d ) {
 	        	var obj = {};
                 obj.topic = $('#data_filter .topic').val();
+				obj.status = $('#data_filter .status').val();
 				obj.filterTime = $('#data_filter .filterTime').val();
 	        	obj.start = d.start;
 	        	obj.length = d.length;
@@ -58,11 +59,6 @@ $(function() {
 				if (!obj.topic) {
 					layer.msg('请输入Topic');
 					//layer.msg('请输入Topic', {icon: 2, time: 3000});
-					return;
-				}
-				if (!obj.filterTime) {
-					layer.msg('请选择生效时间');
-					return;
 				}
 
                 return obj;

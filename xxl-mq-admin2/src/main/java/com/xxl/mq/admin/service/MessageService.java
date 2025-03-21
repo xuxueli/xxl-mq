@@ -38,6 +38,6 @@ public interface MessageService {
     /**
     * 分页查询
     */
-    public PageModel<MessageDTO> pageList(int offset, int pagesize, String topic, Date effectTimeStart, Date effectTimeEnd);
+    public PageModel<MessageDTO> pageList(int offset, int pagesize, String topic, int status, Date effectTimeStart, Date effectTimeEnd);
 
 }

@@ -91,6 +91,9 @@
         SELECT <include refid="Base_Column_List" />
         FROM xxl_mq_message AS t
         WHERE t.`topic` = #{topic}
+            <if test="status gt -1">
+                AND t.status = #{status}
+            </if>
             <if test="effectTimeStart != null">
                 AND t.effect_time <![CDATA[ >= ]]> #{effectTimeStart}
             </if>
@@ -104,6 +107,9 @@
         SELECT count(1)
         FROM xxl_mq_message AS t
         WHERE t.`topic` = #{topic}
+            <if test="status gt -1">
+                AND t.status = #{status}
+            </if>
             <if test="effectTimeStart != null">
                 AND t.effect_time <![CDATA[ >= ]]> #{effectTimeStart}
             </if>

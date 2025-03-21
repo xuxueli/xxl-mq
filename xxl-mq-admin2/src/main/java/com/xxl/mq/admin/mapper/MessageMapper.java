@@ -41,6 +41,7 @@ public interface MessageMapper {
 	public List<Message> pageList(@Param("offset") int offset,
                                   @Param("pagesize") int pagesize,
                                   @Param("topic") String topic,
+                                  @Param("status") int status,
                                   @Param("effectTimeStart") Date effectTimeStart,
                                   @Param("effectTimeEnd") Date effectTimeEnd);
 
@@ -50,6 +51,7 @@ public interface MessageMapper {
     public int pageListCount(@Param("offset") int offset,
                              @Param("pagesize") int pagesize,
                              @Param("topic") String topic,
+                             @Param("status") int status,
                              @Param("effectTimeStart") Date effectTimeStart,
                              @Param("effectTimeEnd") Date effectTimeEnd);
 
