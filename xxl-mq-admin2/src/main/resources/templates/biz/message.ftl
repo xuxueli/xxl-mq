@@ -45,7 +45,13 @@
 						<div class="col-xs-5">
 							<div class="input-group">
 								<span class="input-group-addon">Topic</span>
-								<input type="text" class="form-control topic" autocomplete="on" >
+								<input type="text" class="form-control topic" autocomplete="on" placeholder="请输入消息Topic，精确匹配" <#if topic??>value="${topic}" </#if>  >
+							</div>
+						</div>
+						<div class="col-xs-5">
+							<div class="input-group">
+								<span class="input-group-addon">生效时间</span>
+								<input type="text" class="form-control filterTime" >
 							</div>
 						</div>
 						<div class="col-xs-1">

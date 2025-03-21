@@ -201,9 +201,9 @@ $(function() {
 	// ---------- ---------- ---------- add operation ---------- ---------- ----------
 	// add validator method
 	jQuery.validator.addMethod("topicValid", function(value, element) {
-		var valid = /^[a-z][a-z0-9-]*$/;
+		var valid = /^[a-z][a-z0-9_]*$/;
 		return this.optional(element) || valid.test(value);
-	}, '限制小写字母开头，由小写字母、数字和中划线组成' );
+	}, '限制小写字母开头，由小写字母、数字和下划线组成' );
 	// add
 	$("#data_operation .add").click(function(){
 		$('#addModal').modal({backdrop: false, keyboard: false}).modal('show');
@@ -472,5 +472,20 @@ $(function() {
 			}
 		});
 	}
+
+	// ---------- ---------- ---------- query Message ---------- ---------- ----------
+	$("#data_operation .queryMessage").click(function(){
+
+		// find select ids
+		var selectIds = $.dataTableSelect.selectIdsFind();
+		if (selectIds.length != 1) {
+			layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
+			return;
+		}
+		var row = tableData[ 'key' + selectIds[0] ];
+
+		// show
+		window.location.href = base_url + "/message?topic=" + row.topic;
+	});
 
 });

@@ -152,9 +152,9 @@ $(function() {
 	// ---------- ---------- ---------- add operation ---------- ---------- ----------
 	// add validator method
 	jQuery.validator.addMethod("appnameValid", function(value, element) {
-		var valid = /^[a-z][a-z0-9-]*$/;
+		var valid = /^[a-z][a-z0-9_]*$/;
 		return this.optional(element) || valid.test(value);
-	}, '限制小写字母开头，由小写字母、数字和中划线组成' );
+	}, '限制小写字母开头，由小写字母、数字和下划线组成' );
 	// add
 	$("#data_operation .add").click(function(){
 		$('#addModal').modal({backdrop: false, keyboard: false}).modal('show');

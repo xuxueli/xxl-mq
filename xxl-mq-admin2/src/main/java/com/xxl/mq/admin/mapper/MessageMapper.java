@@ -4,6 +4,7 @@ import com.xxl.mq.admin.model.entity.Message;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,11 +38,19 @@ public interface MessageMapper {
     /**
     * 分页查询Data
     */
-	public List<Message> pageList(@Param("offset") int offset, @Param("pagesize") int pagesize);
+	public List<Message> pageList(@Param("offset") int offset,
+                                  @Param("pagesize") int pagesize,
+                                  @Param("topic") String topic,
+                                  @Param("effectTimeStart") Date effectTimeStart,
+                                  @Param("effectTimeEnd") Date effectTimeEnd);
 
     /**
     * 分页查询Count
     */
-    public int pageListCount(@Param("offset") int offset, @Param("pagesize") int pagesize);
+    public int pageListCount(@Param("offset") int offset,
+                             @Param("pagesize") int pagesize,
+                             @Param("topic") String topic,
+                             @Param("effectTimeStart") Date effectTimeStart,
+                             @Param("effectTimeEnd") Date effectTimeEnd);
 
 }

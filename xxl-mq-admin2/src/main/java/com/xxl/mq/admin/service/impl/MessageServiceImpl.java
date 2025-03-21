@@ -1,17 +1,17 @@
 package com.xxl.mq.admin.service.impl;
 
 import com.xxl.mq.admin.mapper.MessageMapper;
+import com.xxl.mq.admin.mapper.TopicMapper;
 import com.xxl.mq.admin.model.adaptor.MessageAdaptor;
 import com.xxl.mq.admin.model.dto.MessageDTO;
 import com.xxl.mq.admin.model.entity.Message;
+import com.xxl.mq.admin.model.entity.Topic;
 import com.xxl.mq.admin.service.MessageService;
+import com.xxl.tool.core.StringTool;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.xxl.tool.response.Response;
@@ -28,6 +28,8 @@ public class MessageServiceImpl implements MessageService {
 
 	@Resource
 	private MessageMapper messageMapper;
+	@Resource
+	private TopicMapper topicMapper;
 
 	/**
     * 新增
@@ -40,6 +42,11 @@ public class MessageServiceImpl implements MessageService {
 		if (message == null) {
 			return new ResponseBuilder<String>().fail("必要参数缺失").build();
         }
+		Topic topic = topicMapper.loadByTopic(messageDTO.getTopic());
+		if (topic == null) {
+			return new ResponseBuilder<String>().fail("参数非法：Topic").build();
+		}
+
 
 		messageMapper.insert(message);
 		return new ResponseBuilder<String>().success().build();
@@ -80,17 +87,24 @@ public class MessageServiceImpl implements MessageService {
 	* 分页查询
 	*/
 	@Override
-	public PageModel<MessageDTO> pageList(int offset, int pagesize) {
+	public PageModel<MessageDTO> pageList(int offset, int pagesize, String topic, Date effectTimeStart, Date effectTimeEnd) {
+		PageModel<MessageDTO> pageModel = new PageModel<>();
+
+		// valid
+		if (StringTool.isBlank(topic)) {
+			pageModel.setPageData(new ArrayList<>());
+			pageModel.setTotalCount(0);
+			return pageModel;
+		}
 
 		// page
-		List<Message> pageList = messageMapper.pageList(offset, pagesize);
-		int totalCount = messageMapper.pageListCount(offset, pagesize);
+		List<Message> pageList = messageMapper.pageList(offset, pagesize, topic, effectTimeStart, effectTimeEnd);
+		int totalCount = messageMapper.pageListCount(offset, pagesize, topic, effectTimeStart, effectTimeEnd);
 
 		// adaptor
 		List<MessageDTO> pageListForDTO = pageList.stream().map(MessageAdaptor::adaptor).collect(Collectors.toList());
 
 		// result
-		PageModel<MessageDTO> pageModel = new PageModel<>();
 		pageModel.setPageData(pageListForDTO);
 		pageModel.setTotalCount(totalCount);
 

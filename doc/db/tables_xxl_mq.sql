@@ -128,5 +128,11 @@ VALUES (1, 'defaultaccesstoken', 0, now(), now());
 INSERT INTO `xxl_mq_application` (id, appname, name, `desc`, add_time, update_time)
 VALUES (1, 'xxl-mq-sample', '示例服务', '示例服务，演示使用', '2025-01-18 20:03:13', '2025-01-18 20:03:13');
 
+INSERT INTO xxl_mq.xxl_mq_topic (id, topic, appname, `desc`, owner, alarm_email, status, store_strategy, archive_strategy, partition_strategy, retry_strategy, retry_count, retry_interval, level, execution_timeout, add_time, update_time)
+VALUES (1, 'topic_sample', 'xxl-mq-sample', '示例消息主题', '张三', '', 0, '0', '1', '1', '1', 0, 3, 1, 0, now(), now());
+
+INSERT INTO xxl_mq.xxl_mq_message (id, topic, data, `group`, partition_id, status, effect_time, consume_log, consume_instance_uuid, add_time, update_time)
+VALUES (5, 'topic_sample', 'hello world.', 'DEFAULT', 1, 0, now(), null, null, now(), now());
+
 
 commit;

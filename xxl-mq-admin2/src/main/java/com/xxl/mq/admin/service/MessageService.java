@@ -1,5 +1,6 @@
 package com.xxl.mq.admin.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.xxl.mq.admin.model.dto.MessageDTO;
@@ -37,6 +38,6 @@ public interface MessageService {
     /**
     * 分页查询
     */
-    public PageModel<MessageDTO> pageList(int offset, int pagesize);
+    public PageModel<MessageDTO> pageList(int offset, int pagesize, String topic, Date effectTimeStart, Date effectTimeEnd);
 
 }

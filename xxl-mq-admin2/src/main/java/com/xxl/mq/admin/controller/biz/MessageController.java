@@ -11,6 +11,7 @@ import com.xxl.mq.admin.model.entity.Message;
 import com.xxl.mq.admin.service.ApplicationService;
 import com.xxl.mq.admin.service.MessageService;
 import com.xxl.mq.admin.service.impl.LoginService;
+import com.xxl.tool.core.DateTool;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
@@ -49,7 +51,7 @@ public class MessageController {
     */
     @RequestMapping
     @Permission
-    public String index(Model model, HttpServletRequest request) {
+    public String index(Model model, HttpServletRequest request, String topic) {
 
         // Enum
         model.addAttribute("MessageStatusEnum", MessageStatusEnum.values());
@@ -57,6 +59,9 @@ public class MessageController {
         // appname
         List<Application> applicationList = findPermissionApplication(request);
         model.addAttribute("applicationList", applicationList);
+
+        // param
+        model.addAttribute("topic", topic);
 
         return "biz/message";
     }
@@ -86,8 +91,23 @@ public class MessageController {
     @ResponseBody
     @Permission
     public Response<PageModel<MessageDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
-                                                 @RequestParam(required = false, defaultValue = "10") int pagesize) {
-        PageModel<MessageDTO> pageModel = messageService.pageList(offset, pagesize);
+                                                    @RequestParam(required = false, defaultValue = "10") int pagesize,
+                                                    @RequestParam(required = false) String topic,
+                                                    @RequestParam(required = false) String filterTime) {
+
+        // parse param
+        Date effectTimeStart = null;
+        Date effectTimeEnd = null;
+        if (filterTime!=null && filterTime.trim().length()>0) {
+            String[] temp = filterTime.split(" - ");
+            if (temp!=null && temp.length == 2) {
+                effectTimeStart = DateTool.parseDateTime(temp[0]);
+                effectTimeEnd = DateTool.parseDateTime(temp[1]);
+            }
+        }
+
+        // page query
+        PageModel<MessageDTO> pageModel = messageService.pageList(offset, pagesize, topic, effectTimeStart, effectTimeEnd);
         return new ResponseBuilder<PageModel<MessageDTO>>().success(pageModel).build();
     }
 
