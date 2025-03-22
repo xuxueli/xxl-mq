@@ -1,5 +1,6 @@
 package com.xxl.mq.admin.model.adaptor;
 
+import com.xxl.mq.admin.model.dto.MessageArchiveDTO;
 import com.xxl.mq.admin.model.dto.MessageDTO;
 import com.xxl.mq.admin.model.entity.Message;
 import com.xxl.mq.admin.model.entity.MessageArchive;
@@ -39,6 +40,8 @@ public class MessageAdaptor {
         return messageDTO;
     }
 
+    // --------------------------------- for archive ----------------------
+
     public static MessageArchive adaptorToArchive(Message message) {
         MessageArchive messageArchive = new MessageArchive();
         messageArchive.setId(message.getId());
@@ -53,6 +56,22 @@ public class MessageAdaptor {
         messageArchive.setAddTime(message.getAddTime());
         messageArchive.setUpdateTime(message.getUpdateTime());
         return messageArchive;
+    }
+
+    public static MessageArchiveDTO adaptorToArchiveDto(MessageArchive messageArchive) {
+        MessageArchiveDTO messageArchiveDTO = new MessageArchiveDTO();
+        messageArchiveDTO.setId(messageArchive.getId());
+        messageArchiveDTO.setTopic(messageArchive.getTopic());
+        messageArchiveDTO.setGroup(messageArchive.getGroup());
+        messageArchiveDTO.setPartitionId(messageArchive.getPartitionId());
+        messageArchiveDTO.setData(messageArchive.getData());
+        messageArchiveDTO.setStatus(messageArchive.getStatus());
+        messageArchiveDTO.setEffectTime(DateTool.formatDateTime(messageArchive.getEffectTime()));
+        messageArchiveDTO.setConsumeLog(messageArchive.getConsumeLog());
+        messageArchiveDTO.setConsumeInstanceUuid(messageArchive.getConsumeInstanceUuid());
+        messageArchiveDTO.setAddTime(messageArchive.getAddTime());
+        messageArchiveDTO.setUpdateTime(messageArchive.getUpdateTime());
+        return messageArchiveDTO;
     }
 
 }

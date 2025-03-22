@@ -55,12 +55,6 @@ $(function() {
 	        	obj.start = d.start;
 	        	obj.length = d.length;
 
-				// valid
-				if (!obj.topic) {
-					layer.msg('请输入Topic');
-					//layer.msg('请输入Topic', {icon: 2, time: 3000});
-				}
-
                 return obj;
             },
 			// response data filter
@@ -164,6 +158,14 @@ $(function() {
 
 	// search btn
 	$('#data_filter .searchBtn').on('click', function(){
+
+		// valid
+		if (!$('#data_filter .topic').val()) {
+			//layer.msg('请输入Topic');
+			layer.msg('请输入Topic', {icon: 2, time: 3000});
+			return;
+		}
+
         mainDataTable.fnDraw();
 	});
 

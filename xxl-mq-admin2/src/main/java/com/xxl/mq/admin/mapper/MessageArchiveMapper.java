@@ -36,14 +36,22 @@ public interface MessageArchiveMapper {
     public MessageArchive load(@Param("id") int id);
 
     /**
-    * 分页查询Data
-    */
-	public List<MessageArchive> pageList(@Param("offset") int offset, @Param("pagesize") int pagesize);
+     * 分页查询Data
+     */
+    public List<MessageArchive> pageList(@Param("offset") int offset,
+                                  @Param("pagesize") int pagesize,
+                                  @Param("topic") String topic,
+                                  @Param("effectTimeStart") Date effectTimeStart,
+                                  @Param("effectTimeEnd") Date effectTimeEnd);
 
     /**
-    * 分页查询Count
-    */
-    public int pageListCount(@Param("offset") int offset, @Param("pagesize") int pagesize);
+     * 分页查询Count
+     */
+    public int pageListCount(@Param("offset") int offset,
+                             @Param("pagesize") int pagesize,
+                             @Param("topic") String topic,
+                             @Param("effectTimeStart") Date effectTimeStart,
+                             @Param("effectTimeEnd") Date effectTimeEnd);
 
     /**
      * 批量插入

@@ -74,7 +74,8 @@
 							<button class="btn btn-sm btn-warning selectOnlyOne update" type="button"><i class="fa fa-edit"></i>${I18n.system_opt_edit}</button>
 							<button class="btn btn-sm btn-danger selectAny delete" type="button"><i class="fa fa-remove "></i>${I18n.system_opt_del}</button>
 							<button class="btn btn-sm btn-primary selectAny updateStatus" type="button">更新状态</button>
-							<button class="btn btn-sm btn-primary selectOnlyOne queryMessage" type="button">管理消息</button>
+							<button class="btn btn-sm btn-primary selectOnlyOne queryMessage" type="button">查看消息</button>
+							<button class="btn btn-sm btn-primary selectOnlyOne queryMessageArchive" type="button">查看归档消息</button>
 						</div>
 						<div class="box-body" >
 							<table id="data_list" class="table table-bordered table-striped" width="100%" >

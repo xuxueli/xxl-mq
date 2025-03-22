@@ -90,12 +90,26 @@
     <select id="pageList" parameterType="java.util.Map" resultMap="MessageArchive">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_mq_message_archive AS t
+        WHERE `topic` = #{topic}
+            <if test="effectTimeStart != null">
+                AND t.effect_time <![CDATA[ >= ]]> #{effectTimeStart}
+            </if>
+            <if test="effectTimeEnd != null">
+                AND t.effect_time <![CDATA[ <= ]]> #{effectTimeEnd}
+            </if>
         LIMIT #{offset}, #{pagesize}
     </select>
 
     <select id="pageListCount" parameterType="java.util.Map" resultType="int">
         SELECT count(1)
         FROM xxl_mq_message_archive AS t
+        WHERE `topic` = #{topic}
+            <if test="effectTimeStart != null">
+                AND t.effect_time <![CDATA[ >= ]]> #{effectTimeStart}
+            </if>
+            <if test="effectTimeEnd != null">
+                AND t.effect_time <![CDATA[ <= ]]> #{effectTimeEnd}
+            </if>
     </select>
 
     <insert id="batchInsert" parameterType="java.util.Map" >

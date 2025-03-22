@@ -488,4 +488,18 @@ $(function() {
 		window.location.href = base_url + "/message?topic=" + row.topic;
 	});
 
+	$("#data_operation .queryMessageArchive").click(function(){
+
+		// find select ids
+		var selectIds = $.dataTableSelect.selectIdsFind();
+		if (selectIds.length != 1) {
+			layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
+			return;
+		}
+		var row = tableData[ 'key' + selectIds[0] ];
+
+		// show
+		window.location.href = base_url + "/messageArchive?topic=" + row.topic;
+	});
+
 });
