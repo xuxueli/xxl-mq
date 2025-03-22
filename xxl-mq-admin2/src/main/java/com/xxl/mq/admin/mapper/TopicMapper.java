@@ -60,4 +60,9 @@ public interface TopicMapper {
      */
     public int updateStatus(@Param("ids") List<Integer> ids, @Param("status") int status);
 
+    /**
+     * 查询总数
+     */
+    public int count();
+
 }

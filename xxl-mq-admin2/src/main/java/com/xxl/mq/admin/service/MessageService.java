@@ -2,6 +2,7 @@ package com.xxl.mq.admin.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.xxl.mq.admin.model.dto.MessageDTO;
 import com.xxl.mq.admin.model.entity.Message;
@@ -44,5 +45,15 @@ public interface MessageService {
      * 归档
      */
     public Response<String> archive(String topic, Integer archiveStrategy);
+
+    /**
+     * 报表信息
+     */
+    public Response<Map<String, Object>> chartInfo(Date startDate, Date endDate);
+
+    /**
+     * 仪表盘信息
+     */
+    Map<String, Object> dashboardInfo();
 
 }

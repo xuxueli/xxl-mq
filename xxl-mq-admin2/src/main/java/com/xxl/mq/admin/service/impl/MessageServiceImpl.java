@@ -2,14 +2,13 @@ package com.xxl.mq.admin.service.impl;
 
 import com.xxl.mq.admin.constant.enums.ArchiveStrategyEnum;
 import com.xxl.mq.admin.constant.enums.MessageStatusEnum;
+import com.xxl.mq.admin.mapper.ApplicationMapper;
 import com.xxl.mq.admin.mapper.MessageArchiveMapper;
 import com.xxl.mq.admin.mapper.MessageMapper;
 import com.xxl.mq.admin.mapper.TopicMapper;
 import com.xxl.mq.admin.model.adaptor.MessageAdaptor;
 import com.xxl.mq.admin.model.dto.MessageDTO;
-import com.xxl.mq.admin.model.entity.Message;
-import com.xxl.mq.admin.model.entity.MessageArchive;
-import com.xxl.mq.admin.model.entity.Topic;
+import com.xxl.mq.admin.model.entity.*;
 import com.xxl.mq.admin.service.MessageService;
 import com.xxl.mq.admin.util.ConsumeLogUtil;
 import com.xxl.tool.core.CollectionTool;
@@ -39,6 +38,8 @@ public class MessageServiceImpl implements MessageService {
 	private MessageMapper messageMapper;
 	@Resource
 	private TopicMapper topicMapper;
+	@Resource
+	private ApplicationMapper applicationMapper;
 	@Resource
 	private MessageArchiveMapper messageArchiveMapper;
 
@@ -224,6 +225,69 @@ public class MessageServiceImpl implements MessageService {
 		}
 
 		return archeveNum;
+	}
+
+	@Override
+	public Response<Map<String, Object>> chartInfo(Date startDate, Date endDate) {
+		// process
+		List<String> dayList = new ArrayList<String>();
+		List<Long> dayRunningCountList = new ArrayList<>();
+		List<Long> daySuccessCountList = new ArrayList<>();
+		List<Long> dayFailCountList = new ArrayList<>();
+		int runningTotal = 0;
+		int successTotal = 0;
+		int failTotal = 0;
+
+		List<MessageReport> dayReportList = messageMapper.queryReport(startDate, endDate);
+		/*List<MessageReport> dayReportListForArchive = messageMapper.queryReportByTopic(startDate, endDate);*/
+
+		if (CollectionTool.isNotEmpty(dayReportList)) {
+			for (MessageReport item: dayReportList) {
+				dayList.add(DateTool.formatDate(item.getEffectTime()));
+				dayRunningCountList.add(item.getRunningTotal());
+				daySuccessCountList.add(item.getSuccessTotal());
+				dayFailCountList.add(item.getFailTotal());
+
+				runningTotal += item.getRunningTotal();
+				successTotal += item.getSuccessTotal();
+				failTotal += item.getFailTotal();
+			}
+		} else {
+			for (int i = -6; i <= 0; i++) {
+				dayList.add(DateTool.formatDate(DateTool.addDays(new Date(), i)));
+				dayRunningCountList.add(0L);
+				daySuccessCountList.add(0L);
+				dayFailCountList.add(0L);
+			}
+		}
+
+		Map<String, Object> result = new HashMap<>();
+		result.put("dayList", dayList);
+		result.put("dayRunningCountList", dayRunningCountList);
+		result.put("daySuccessCountList", daySuccessCountList);
+		result.put("dayFailCountList", dayFailCountList);
+
+		result.put("runningTotal", runningTotal);
+		result.put("successTotal", successTotal);
+		result.put("failTotal", failTotal);
+
+		return new ResponseBuilder<Map<String, Object>>().success(result).build();
+	}
+
+	@Override
+	public Map<String, Object> dashboardInfo() {
+
+		// load data
+		List<Application> applicationList = applicationMapper.findAll();
+		int topicCount = topicMapper.count();
+		int messageCount = messageMapper.count();
+
+		Map<String, Object> result = new HashMap<>();
+		result.put("applicationCount", applicationList.size());
+		result.put("topicCount", topicCount);
+		result.put("messageCount", messageCount);
+
+		return result;
 	}
 
 }

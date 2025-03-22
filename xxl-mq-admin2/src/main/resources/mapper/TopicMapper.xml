@@ -146,5 +146,9 @@
         </foreach>
     </update>
 
+    <select id="count" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM xxl_mq_topic AS t
+    </select>
 
 </mapper>

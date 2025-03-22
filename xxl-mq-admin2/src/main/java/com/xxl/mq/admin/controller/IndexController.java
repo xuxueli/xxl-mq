@@ -2,17 +2,17 @@ package com.xxl.mq.admin.controller;
 
 import com.xxl.mq.admin.annotation.Permission;
 import com.xxl.mq.admin.model.dto.LoginUserDTO;
+import com.xxl.mq.admin.service.MessageService;
 import com.xxl.mq.admin.service.impl.LoginService;
+import com.xxl.tool.core.DateTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.response.Response;
+import com.xxl.tool.response.ResponseBuilder;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -20,7 +20,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 
 /**
  * index controller
@@ -32,6 +32,8 @@ public class IndexController {
 
 	@Resource
 	private LoginService loginService;
+	@Resource
+	private MessageService messageService;
 
 
 	@RequestMapping("/")
@@ -43,14 +45,24 @@ public class IndexController {
 	@RequestMapping("/index")
 	@Permission
 	public String index(HttpServletRequest request, Model model) {
+
+		// dashboardInfo
+		Map<String, Object> dashboardInfo = messageService.dashboardInfo();
+		model.addAttribute("dashboardInfo", dashboardInfo);
+
 		return "index";
+	}
+
+	@RequestMapping("/chartInfo")
+	@ResponseBody
+	@Permission
+	public Response<Map<String, Object>> chartInfo(@RequestParam("startDate") Date startDate, @RequestParam("endDate") Date endDate) {
+		return messageService.chartInfo(startDate, endDate);
 	}
 
 	@RequestMapping("/help")
 	@Permission
 	public String help() {
-
-
 		return "help";
 	}
 

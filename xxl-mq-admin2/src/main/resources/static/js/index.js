@@ -20,8 +20,12 @@ $(function () {
     });
 
 
-    // filter Time
-    /*var rangesConf = {};
+    // --------------------------------- dashboart ----------------------
+
+    /**
+     * filter Time
+     */
+    var rangesConf = {};
     rangesConf[I18n.daterangepicker_ranges_today] = [moment().startOf('day'), moment().endOf('day')];
     rangesConf[I18n.daterangepicker_ranges_yesterday] = [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')];
     rangesConf[I18n.daterangepicker_ranges_this_month] = [moment().startOf('month'), moment().endOf('month')];
@@ -55,7 +59,171 @@ $(function () {
     }, function (start, end, label) {
         freshChartDate(start, end);
     });
-    freshChartDate(rangesConf[I18n.daterangepicker_ranges_recent_week][0], rangesConf[I18n.daterangepicker_ranges_recent_week][1]);*/
+    freshChartDate(rangesConf[I18n.daterangepicker_ranges_recent_week][0], rangesConf[I18n.daterangepicker_ranges_recent_week][1]);
+
+    /**
+     * fresh Chart Date
+     *
+     * @param startDate
+     * @param endDate
+     */
+    function freshChartDate(startDate, endDate) {
+        $.ajax({
+            type : 'POST',
+            url : base_url + '/chartInfo',
+            data : {
+                'startDate':startDate.format('YYYY-MM-DD HH:mm:ss'),
+                'endDate':endDate.format('YYYY-MM-DD HH:mm:ss')
+            },
+            dataType : "json",
+            success : function(data){
+                if (data.code == 200) {
+                    lineChartInit(data)
+                    pieChartInit(data);
+                } else {
+                    layer.open({
+                        title: I18n.system_tips ,
+                        btn: [ I18n.system_ok ],
+                        content: (data.msg || '系统异常' ),
+                        icon: '2'
+                    });
+                }
+            }
+        });
+    }
+
+    /**
+     * line Chart Init
+     */
+    function lineChartInit(data) {
+        var option = {
+            title: {
+                text: '日期分布圖'
+            },
+            tooltip : {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    label: {
+                        backgroundColor: '#6a7985'
+                    }
+                }
+            },
+            legend: {
+                data:['成功', '失败', '运行中']
+            },
+            toolbox: {
+                feature: {
+                    /*saveAsImage: {}*/
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis : [
+                {
+                    type : 'category',
+                    boundaryGap : false,
+                    data : data.data.dayList
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value'
+                }
+            ],
+            series : [
+                {
+                    name:'成功',
+                    type:'line',
+                    stack: 'Total',
+                    areaStyle: {normal: {}},
+                    data: data.data.daySuccessCountList
+                },
+                {
+                    name:'失败',
+                    type:'line',
+                    stack: 'Total',
+                    label: {
+                        normal: {
+                            show: true,
+                            position: 'top'
+                        }
+                    },
+                    areaStyle: {normal: {}},
+                    data: data.data.dayFailCountList
+                },
+                {
+                    name:'运行中',
+                    type:'line',
+                    stack: 'Total',
+                    areaStyle: {normal: {}},
+                    data: data.data.dayRunningCountList
+                }
+            ],
+            color:['#00A65A', '#c23632', '#F39C12']
+        };
+
+        var lineChart = echarts.init(document.getElementById('lineChart'));
+        lineChart.setOption(option);
+    }
+
+    /**
+     * pie Chart Init
+     */
+    function pieChartInit(data) {
+        var option = {
+            title : {
+                text: '成功比例圖' ,
+                /*subtext: 'subtext',*/
+                x:'center'
+            },
+            tooltip : {
+                trigger: 'item',
+                formatter: "{b} : {c} ({d}%)"
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left',
+                data: ['成功', '失败', '运行中']
+            },
+            series : [
+                {
+                    //name: '分布比例',
+                    type: 'pie',
+                    radius : '55%',
+                    center: ['50%', '60%'],
+                    data:[
+                        {
+                            name:'成功',
+                            value:data.data.successTotal
+                        },
+                        {
+                            name:'失败',
+                            value:data.data.failTotal
+                        },
+                        {
+                            name:'运行中',
+                            value:data.data.runningTotal
+                        }
+                    ],
+                    itemStyle: {
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ],
+            color:['#00A65A', '#c23632', '#F39C12']
+        };
+        var pieChart = echarts.init(document.getElementById('pieChart'));
+        pieChart.setOption(option);
+    }
 
 
 });

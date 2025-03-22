@@ -128,4 +128,33 @@
         LIMIT #{pageSize}
     </select>
 
+    <select id="count" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM xxl_mq_message AS t
+    </select>
+
+    <select id="queryReport" resultType="com.xxl.mq.admin.model.entity.MessageReport" >
+        SELECT
+            DATE_FORMAT(`effect_time`,'%Y-%m-%d') effectTime,
+            COUNT(`id`) totalCount,
+            SUM(CASE WHEN (`status` = 2) then 1 else 0 end) as successTotal,
+            SUM(CASE WHEN `status` in (3, 4) then 1 else 0 end) as failTotal
+        FROM xxl_mq_message
+        WHERE effect_time BETWEEN #{startDate} and #{endDate}
+        GROUP BY effectTime
+        ORDER BY effectTime
+    </select>
+
+    <select id="queryReportByTopic" resultType="java.util.Map" >
+        SELECT
+            DATE_FORMAT(`effect_time`,'%Y-%m-%d') effectTime,
+            COUNT(`id`) totalCount,
+            SUM(CASE WHEN (`status` = 2) then 1 else 0 end) as successTotal,
+            SUM(CASE WHEN `status` in (3, 4) then 1 else 0 end) as failTotal
+        FROM xxl_mq_message
+        WHERE effect_time BETWEEN #{startDate} and #{endDate}
+        GROUP BY effectTime
+        ORDER BY effectTime
+    </select>
+
 </mapper>

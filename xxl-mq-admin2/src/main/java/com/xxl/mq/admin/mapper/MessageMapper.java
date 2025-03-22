@@ -1,6 +1,7 @@
 package com.xxl.mq.admin.mapper;
 
 import com.xxl.mq.admin.model.entity.Message;
+import com.xxl.mq.admin.model.entity.MessageReport;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -61,5 +62,16 @@ public interface MessageMapper {
     public List<Message> queryByStatus(@Param("topic") String topic,
                                        @Param("archiveStatusList") List<Integer> archiveStatusList,
                                        @Param("pageSize") int pageSize);
+
+    /**
+     * 查询总数
+     */
+    public int count();
+
+    /**
+     * 查询报表
+     */
+    List<MessageReport> queryReport(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+    List<MessageReport> queryReportByTopic(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
 }
