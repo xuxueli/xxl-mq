@@ -632,42 +632,32 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
 
 ### 5.7 版本 v1.4.0 Release Notes[迭代中]
 
-
-
-
 ### Tmp
 ```
 1、特性：
-    - 特性：存算分离、水平扩展、高性能（TPS：Mysql单机1W/Blade 10W）、海量消息（Mysql日百万/Blade日十亿）、消息轨迹、多消费模式（分片/串行/广播）、延迟消息、失败重试（固定/增长/指数）、
-    - 其他：失败告警、AccessToken、容器化；
+    - 存算分离：Broker 计算；Blade/Mysql 存储；
+    - 水平扩展：无状态；
+    - 高吞吐：并行计算、异步计算；（TPS：Blade 10W / Mysql单机1W）
+    - 海量消息：（Mysql日百万/Blade日十亿）
+    - 消息轨迹：消息日志，追溯消息记录；
+    - 多消费模式：Group + Partition，支持 广播消费、串行消费、分片消费；
+    - 延迟消息：支持自定义延迟时间；
+    - 失败重试：支持固定间隔策略、线性退避策略、指数退避策略等；
+    - 失败告警：
+    - AccessToken：
+    - 容器化：
 2、设计：
 - Broker：
-    - Manage：
-        - User：服务授权
-        - AccessToken：能力
-        - AppName：
-            - 能力（注册、节点动态更新；用于Topic数据分片；）；【AppName维度，在线实例信息：实例总数 = instanceNum；序号 = instanceIndex；partitionScope = 3～5；】
-            - 模型：Instance注册：字段（appname + uuid + register_heartbeat）；app维度20s汇总一次，同步至app表；时钟打平，从0开始每20s一次；                                           【TODO - 01：注册Helper（App+Topic）逻辑；】
-        - Topic：
-            - 能力（定义管理 + 查看注册节点 / 节点分片分配情况；）；【Topic】【名称】【负责人】【告警邮箱】【状态】【存储策略】【partition数量】【优先级】【重试次数】【重试间隔策略】【归档策略】    【TODO - 02：Topic管理】
-            - 模型：topic + store + partitionCount + level + author + alarm_email + timeout
-        - Message：
-            - 能力：查看 + 管理（增 + 该状态 + 归档）；消息队列，物理消息队列；【10min一次，自动数据归档；】                                                                             【TODO - 03：消息管理能力；更新 + 归档】
-            - 模型：msgid + msgbody + topic + group + partitionId + status + retryCount + intervalTime + effectTime + consume_log;
-            - 属性：
-                - topic：关联 消息主题；
-                - group：数据广播；【topic向上；广播；】
-                - uuid序号：并行处理
-                - partitionKey：分区Key进行hashcode取模，会转成分区ID，限制 [0-10000] 之内；结合Consumer在线列表，匹配消费分片范围，实现并行分片消费消息；【topic向下；并行；同sId保障顺序；根据消费者 partition 信息计算 范围；】
-         - MessageArchive：
-            - 能力：定期讲终止态消息，同步归档，清理原始表；                                                                                                                      【TODO - 04：消息归档数据查看；】
-            - 模型：同 message；
-    - Registry：
-         - 能力：提供 Consumer 注册、动态发现能力；消息分片消费时使用；
-    - Broker 
-         - 能力：Server：提供消息存储、读写能力；
+    - Manage：控制台；
+        - User：服务授权;
+        - AccessToken：管理 + 【01: AccessToken本地缓存（Helper）】
+        - AppName：管理;                                                   
+        - Topic：Topic管理；  
+        - Message：Message管理 + 手动归档；                                    【TODO - 02: Message归档（Helper）；自动 Message + MessageArchive，滚动清理及归档；】
+        - MessageArchive：MessageArchive查看 + 手动清理；        
+    - Registry：注册中心；                                                    【TODO - 03: Registry注册（Helper）；注册心跳异步写 + 定期本地缓存（计算 + 更新至AppName/app&instance&topic）】
     - OpenAPI：统一“Token验证”（http+gson；借助 xxl-tool 实现通用 http-rpc 能力；）
-        - a 、注册：app+topic初始化 + 节点心跳注册/摘除；
+        - a 、注册：app+topic初始化 + 节点心跳注册/摘除；                        【TODO ： 转发 Registry注册（Helper） 】
                   - 数据格式：
                         - app01 : 
                         - instanceUuid01：
@@ -690,10 +680,10 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
                                     - instance02：partitionScope：[5001-10000]
                           - groupList：[default、group01、group02]
                         - app01：基础信息；
-        - b、生产：
+        - b、生产：                                                       【TODO - 04: 消息处理（Helper）： 异步写 + 异步更新；】
                   - 能力：异步队列，批量写入；处理group广播。
                   - 数据格式：topic + group(null广播)  + partitionKey（null随机；partitionId [0, 10000]） + msgBody
-        - c、批量查询（锁定）：
+        - c、批量查询（锁定）：                                            【TODO: 分topic查询 + 锁定；】
                 - 能力：多topic并行查询；单topic分片查询；能力，根据node分配10条，同时锁定。分配不到直接返回。
                 - pullAndLock：（topics，group +节点）【生成唯一标识，lock时写入；根据标识判断锁定值；】
                       - 数据格式：
@@ -701,7 +691,7 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
                           - topic02 + group01 +
                       - 查询逻辑：多topic并行查询 + 单topic分片查询 + 每topic每次取10个；
                       - 锁定逻辑：针对查询出的数据，更新锁定态；注意超时释放；
-        - d、消费消息：异步队列，批量更新消费结果；
+        - d、消费消息：异步队列，批量更新消费结果；                           【TODO：转发 消息处理（Helper） 】
 - Client：
     - Registry 组件：
         - 数据：app + 节点UUID(IP+时间戳) + topics

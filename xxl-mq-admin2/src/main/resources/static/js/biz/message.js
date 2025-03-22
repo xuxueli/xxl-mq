@@ -457,7 +457,7 @@ $(function() {
 					content: "操作成功" ,
 					icon: '1',
 					end: function(layero, index){
-						dataTable.fnDraw(false);
+						mainDataTable.fnDraw(false);
 					}
 				});
 			} else {
