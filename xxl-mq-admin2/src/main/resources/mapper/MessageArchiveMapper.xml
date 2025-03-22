@@ -97,6 +97,7 @@
             <if test="effectTimeEnd != null">
                 AND t.effect_time <![CDATA[ <= ]]> #{effectTimeEnd}
             </if>
+        ORDER BY t.`effect_time` DESC
         LIMIT #{offset}, #{pagesize}
     </select>
 

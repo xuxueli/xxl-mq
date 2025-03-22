@@ -11,9 +11,11 @@ import com.xxl.mq.admin.model.entity.Message;
 import com.xxl.mq.admin.model.entity.MessageArchive;
 import com.xxl.mq.admin.model.entity.Topic;
 import com.xxl.mq.admin.service.MessageService;
+import com.xxl.mq.admin.util.ConsumeLogUtil;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.DateTool;
 import com.xxl.tool.core.StringTool;
+import com.xxl.tool.gson.GsonTool;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -51,12 +53,15 @@ public class MessageServiceImpl implements MessageService {
 		if (message == null || StringTool.isBlank(messageDTO.getTopic())) {
 			return new ResponseBuilder<String>().fail("必要参数缺失").build();
         }
-		messageDTO.setTopic(messageDTO.getTopic().trim());
 
 		Topic topic = topicMapper.loadByTopic(messageDTO.getTopic());
 		if (topic == null) {
 			return new ResponseBuilder<String>().fail("参数非法：Topic").build();
 		}
+
+		// save
+		message.setTopic(messageDTO.getTopic().trim());
+		ConsumeLogUtil.appendConsumeLog(message, "人工新建消息", GsonTool.toJson(message));
 
 		messageMapper.insert(message);
 		return new ResponseBuilder<String>().success().build();
@@ -77,7 +82,18 @@ public class MessageServiceImpl implements MessageService {
 	*/
 	@Override
 	public Response<String> update(MessageDTO messageDTO) {
-		Message message = MessageAdaptor.adaptor(messageDTO);
+
+		// valid
+		Message message = messageMapper.load(messageDTO.getId());
+		if (message == null) {
+			return new ResponseBuilder<String>().fail("参数非法：消息ID").build();
+		}
+
+		// write
+		message.setData(messageDTO.getData());
+		message.setStatus(messageDTO.getStatus());
+		message.setEffectTime(DateTool.parseDateTime(messageDTO.getEffectTime()));
+		ConsumeLogUtil.appendConsumeLog(message, "人工修改消息", GsonTool.toJson(messageDTO));
 
 		int ret = messageMapper.update(message);
 		return ret>0? new ResponseBuilder<String>().success().build()

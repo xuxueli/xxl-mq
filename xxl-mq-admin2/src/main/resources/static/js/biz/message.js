@@ -86,6 +86,11 @@ $(function() {
 				}
 			},
 			{
+				"title": '消息ID',
+				"data": 'id',
+				"width":'5%'
+			},
+			{
 				"title": 'Topic（消息主题）',
 				"data": 'topic',
 				"width":'20%',
@@ -252,6 +257,9 @@ $(function() {
 
 	// add
 	$("#data_operation .add").click(function(){
+
+		// init
+		$("#addModal .form input[name='topic']").val( $('#data_filter .topic').val() );
 
 		// init effectTime
 		initDateTimePicker($("#addModal .form input[name='effectTime']"), moment().format('YYYY-MM-DD HH:mm:ss'));
@@ -423,6 +431,7 @@ $(function() {
 		var row = tableData[ 'key' + selectIds[0] ];
 
 		// show
+		$('#showConsumeLogModel .id').html(row.id);
 		$('#showConsumeLogModel .consumeInstanceUuid').html(row.consumeInstanceUuid);
 		$('#showConsumeLogModel .addTime').html( moment(row.addTime).format('YYYY-MM-DD HH:mm:ss') );
 		$('#showConsumeLogModel .updateTime').html( moment(row.updateTime).format('YYYY-MM-DD HH:mm:ss') );

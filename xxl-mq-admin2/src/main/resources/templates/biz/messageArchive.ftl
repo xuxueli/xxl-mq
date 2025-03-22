@@ -66,8 +66,8 @@
 				<div class="col-xs-12">
 					<div class="box">
 						<div class="box-header" style="float: right" id="data_operation" >
-							<button class="btn btn-sm btn-primary selectOnlyOne showConsumeLog" type="button">消费日志</button>
-							<button class="btn btn-sm btn-primary archive" type="button">归档清理</button>
+							<button class="btn btn-sm btn-danger archive" type="button">归档清理</button>
+							<button class="btn btn-sm btn-primary selectOnlyOne showConsumeLog" type="button">查看消费日志</button>
 						</div>
 						<div class="box-body" >
 							<table id="data_list" class="table table-bordered table-striped" width="100%" >
@@ -211,12 +211,8 @@
 						<div class="modal-body">
 							<form class="form-horizontal form" role="form" >
 								<div class="form-group">
-									<label for="lastname" class="col-sm-2 control-label">消费者实例<font color="red">*</font></label>
-									<div class="col-sm-10 consumeInstanceUuid"></div>
-								</div>
-								<div class="form-group">
-									<label for="lastname" class="col-sm-2 control-label">消费日志<font color="red">*</font></label>
-									<div class="col-sm-10 consumeLog"></div>
+									<label for="lastname" class="col-sm-2 control-label">消息ID<font color="red">*</font></label>
+									<div class="col-sm-10 id"></div>
 								</div>
 								<div class="form-group">
 									<label for="lastname" class="col-sm-2 control-label">新增时间<font color="red">*</font></label>
@@ -225,6 +221,14 @@
 								<div class="form-group">
 									<label for="lastname" class="col-sm-2 control-label">更新时间<font color="red">*</font></label>
 									<div class="col-sm-10 updateTime"></div>
+								</div>
+								<div class="form-group">
+									<label for="lastname" class="col-sm-2 control-label">消费者实例<font color="red">*</font></label>
+									<div class="col-sm-10 consumeInstanceUuid"></div>
+								</div>
+								<div class="form-group">
+									<label for="lastname" class="col-sm-2 control-label">消费日志<font color="red">*</font></label>
+									<div class="col-sm-10 consumeLog"></div>
 								</div>
 
 								<hr>

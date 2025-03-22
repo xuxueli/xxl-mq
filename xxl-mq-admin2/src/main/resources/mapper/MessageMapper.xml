@@ -69,9 +69,6 @@
     <update id="update" parameterType="java.util.Map" >
         UPDATE xxl_mq_message
         SET
-            `topic` = #{message.topic},
-            `group` = #{message.group},
-            `partition_id` = #{message.partitionId},
             `data` = #{message.data},
             `status` = #{message.status},
             `effect_time` = #{message.effectTime},
@@ -100,6 +97,7 @@
             <if test="effectTimeEnd != null">
                 AND t.effect_time <![CDATA[ <= ]]> #{effectTimeEnd}
             </if>
+        ORDER BY t.`effect_time` DESC
         LIMIT #{offset}, #{pagesize}
     </select>
 
