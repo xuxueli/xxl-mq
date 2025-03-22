@@ -134,14 +134,25 @@ public class LoginService {
         return null;
     }
 
+    // ********************** for loginUser with request **********************
     /**
-     * get login user (from request, copy from cookie)
+     * set loginUser
+     *
+     * @param request
+     * @param loginUser
+     */
+    public static void setLoginUser(HttpServletRequest request, LoginUserDTO loginUser){
+        request.setAttribute("loginUser", loginUser);
+    }
+
+    /**
+     * get loginUser
      *
      * @param request
      * @return
      */
-    public LoginUserDTO getLoginUser(HttpServletRequest request){
-        LoginUserDTO loginUser = (LoginUserDTO) request.getAttribute(LoginService.LOGIN_IDENTITY_KEY);
+    public static LoginUserDTO getLoginUser(HttpServletRequest request){
+        LoginUserDTO loginUser = (LoginUserDTO) request.getAttribute("loginUser");	// get loginUser, with request
         return loginUser;
     }
 

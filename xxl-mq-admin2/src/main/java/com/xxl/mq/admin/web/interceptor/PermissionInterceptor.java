@@ -58,7 +58,7 @@ public class PermissionInterceptor implements AsyncHandlerInterceptor {
 			response.setHeader("location", request.getContextPath() + "/toLogin");
 			return false;
 		}
-		request.setAttribute(LoginService.LOGIN_IDENTITY_KEY, loginUser);
+		LoginService.setLoginUser(request, loginUser);
 
 		// valid permission
 		if (StringTool.isNotBlank(permission.value())) {

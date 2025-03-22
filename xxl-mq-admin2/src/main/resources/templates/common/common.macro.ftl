@@ -107,8 +107,7 @@
 					<#-- login user -->
                     <li class="dropdown">
                         <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                            ${I18n.system_welcome}：${Request["XXL_MQ_LOGIN_IDENTITY"].username}
-							<#-- todo，改为 loginuser  -->
+                            ${I18n.system_welcome}：${loginUser.username}
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
