@@ -36,6 +36,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 				|| StringTool.isBlank(application.getDesc())) {
 			return new ResponseBuilder<String>().fail("必要参数缺失").build();
         }
+		application.setAppname(application.getAppname().trim());
 
 		// valid
 		if (applicationMapper.loadByAppName(application.getAppname()) != null) {

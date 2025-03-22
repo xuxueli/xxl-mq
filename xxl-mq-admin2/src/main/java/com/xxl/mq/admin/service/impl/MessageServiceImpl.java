@@ -1,18 +1,25 @@
 package com.xxl.mq.admin.service.impl;
 
+import com.xxl.mq.admin.constant.enums.ArchiveStrategyEnum;
+import com.xxl.mq.admin.constant.enums.MessageStatusEnum;
+import com.xxl.mq.admin.mapper.MessageArchiveMapper;
 import com.xxl.mq.admin.mapper.MessageMapper;
 import com.xxl.mq.admin.mapper.TopicMapper;
 import com.xxl.mq.admin.model.adaptor.MessageAdaptor;
 import com.xxl.mq.admin.model.dto.MessageDTO;
 import com.xxl.mq.admin.model.entity.Message;
+import com.xxl.mq.admin.model.entity.MessageArchive;
 import com.xxl.mq.admin.model.entity.Topic;
 import com.xxl.mq.admin.service.MessageService;
+import com.xxl.tool.core.CollectionTool;
+import com.xxl.tool.core.DateTool;
 import com.xxl.tool.core.StringTool;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.ResponseBuilder;
@@ -30,6 +37,8 @@ public class MessageServiceImpl implements MessageService {
 	private MessageMapper messageMapper;
 	@Resource
 	private TopicMapper topicMapper;
+	@Resource
+	private MessageArchiveMapper messageArchiveMapper;
 
 	/**
     * 新增
@@ -39,14 +48,15 @@ public class MessageServiceImpl implements MessageService {
 		Message message = MessageAdaptor.adaptor(messageDTO);
 
 		// valid
-		if (message == null) {
+		if (message == null || StringTool.isBlank(messageDTO.getTopic())) {
 			return new ResponseBuilder<String>().fail("必要参数缺失").build();
         }
+		messageDTO.setTopic(messageDTO.getTopic().trim());
+
 		Topic topic = topicMapper.loadByTopic(messageDTO.getTopic());
 		if (topic == null) {
 			return new ResponseBuilder<String>().fail("参数非法：Topic").build();
 		}
-
 
 		messageMapper.insert(message);
 		return new ResponseBuilder<String>().success().build();
@@ -56,7 +66,7 @@ public class MessageServiceImpl implements MessageService {
 	* 删除
 	*/
 	@Override
-	public Response<String> delete(List<Integer> ids) {
+	public Response<String> delete(List<Long> ids) {
 		int ret = messageMapper.delete(ids);
 		return ret>0? new ResponseBuilder<String>().success().build()
 					: new ResponseBuilder<String>().fail().build() ;
@@ -109,6 +119,95 @@ public class MessageServiceImpl implements MessageService {
 		pageModel.setTotalCount(totalCount);
 
 		return pageModel;
+	}
+
+	@Override
+	public Response<String> archive(String topic, Integer archiveStrategy) {
+
+		// valid
+		Topic topicData = topicMapper.loadByTopic(topic);
+		if (topicData == null) {
+			return new ResponseBuilder<String>().fail("Topic非法").build();
+		}
+		ArchiveStrategyEnum archiveStrategyEnum = ArchiveStrategyEnum.match(archiveStrategy, null);
+		if (archiveStrategyEnum == null) {
+			return new ResponseBuilder<String>().fail("归档策略非法").build();
+		}
+
+		// archive
+		long cleanCount = 0;
+		switch (archiveStrategyEnum) {
+			case RESERVE_7_DAY:
+				cleanCount = cleanAndArchive(topic, true, DateTool.addDays(new Date(), -7));
+				break;
+			case RESERVE_30_DAY:
+				cleanCount = cleanAndArchive(topic, true, DateTool.addDays(new Date(), -30));
+				break;
+			case RESERVE_90_DAY:
+				cleanCount = cleanAndArchive(topic, true, DateTool.addDays(new Date(), -90));
+				break;
+			case RESERVE_FOREVER:
+				cleanCount = cleanAndArchive(topic, true, DateTool.addDays(new Date(), -90));
+				break;
+			case NONE:
+				cleanCount =cleanAndArchive(topic, false, null);
+				break;
+		}
+
+		return new ResponseBuilder<String>().success("操作成功，处理数据行数：" + cleanCount).build();
+	}
+
+	/**
+	 * clean and archive (TODO, need daily cycle cleaning )
+	 *
+	 * @param isArchive
+	 * @param effectTimeFrom
+	 * @return
+	 */
+	private long cleanAndArchive(String topic, boolean isArchive, Date effectTimeFrom){
+
+		// init param
+		List<Integer> archiveStatusList = Stream.of(MessageStatusEnum.EXECUTE_SUCCESS, MessageStatusEnum.EXECUTE_FAIL, MessageStatusEnum.EXECUTE_TIMEOUT)
+				.map(MessageStatusEnum::getValue)
+				.collect(Collectors.toList());
+
+		int pageSize = 100;
+		int maxCycleCount = 100; 	// Avoid dead loops
+
+		List<Message> messageList = messageMapper.queryByStatus(topic, archiveStatusList, pageSize);
+		long archeveNum = 0;
+		while (maxCycleCount>0 && CollectionTool.isNotEmpty(messageList)){
+			// 1、clean termination message
+			List<Long> ids = messageList.stream().map(Message::getId).collect(Collectors.toList());
+			messageMapper.delete(ids);
+			archeveNum += ids.size();
+
+			// 2、write to archive table （new）
+			if (isArchive) {
+				List<MessageArchive> messageArchiveList = messageList.stream()
+						.filter(message -> message.getEffectTime().after(effectTimeFrom))
+						.map(MessageAdaptor::adaptorToArchive)
+						.collect(Collectors.toList());
+				if (CollectionTool.isNotEmpty(messageArchiveList)) {
+					messageArchiveMapper.batchInsert(messageArchiveList);
+				}
+			}
+
+			// next page
+			messageList = messageMapper.queryByStatus(topic, archiveStatusList, pageSize);
+			maxCycleCount--;
+		}
+
+		// 3、scroll clean archived data （old）
+		maxCycleCount = 100;
+		int count = messageArchiveMapper.batchClean(topic, isArchive, effectTimeFrom, pageSize);
+		while (maxCycleCount>0 && count > 0) {
+			// next page
+			count = messageArchiveMapper.batchClean(topic, isArchive, effectTimeFrom, pageSize);
+			maxCycleCount--;
+		}
+
+		return archeveNum;
 	}
 
 }

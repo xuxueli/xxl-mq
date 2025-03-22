@@ -440,6 +440,14 @@ $(function() {
 	});
 	$("#archiveModel .ok").on('click', function(){
 
+		// valid
+		var topic = $("#archiveModel input[name='topic']").val();
+		if (!(typeof topic === 'string' && topic.length > 0)) {
+			layer.msg("请输入topic");
+			return;
+		}
+
+		// invoke
 		$.post(base_url + "/message/archive",  $("#archiveModel .form").serialize(), function(data, status) {
 			if (data.code == "200") {
 				$('#archiveModel').modal('hide');

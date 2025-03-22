@@ -23,7 +23,7 @@ public interface MessageMapper {
     /**
     * 删除
     */
-    public int delete(@Param("ids") List<Integer> ids);
+    public int delete(@Param("ids") List<Long> ids);
 
     /**
     * 更新
@@ -54,5 +54,12 @@ public interface MessageMapper {
                              @Param("status") int status,
                              @Param("effectTimeStart") Date effectTimeStart,
                              @Param("effectTimeEnd") Date effectTimeEnd);
+
+    /**
+     * 根据状态查询消息
+     */
+    public List<Message> queryByStatus(@Param("topic") String topic,
+                                       @Param("archiveStatusList") List<Integer> archiveStatusList,
+                                       @Param("pageSize") int pageSize);
 
 }

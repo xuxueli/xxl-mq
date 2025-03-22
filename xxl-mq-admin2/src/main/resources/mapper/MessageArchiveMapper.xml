@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.mq.admin.mapper.MessageArchiveMapper">
+
+    <resultMap id="MessageArchive" type="com.xxl.mq.admin.model.entity.MessageArchive" >
+        <result column="id" property="id" />
+        <result column="topic" property="topic" />
+        <result column="group" property="group" />
+        <result column="partition_id" property="partitionId" />
+        <result column="data" property="data" />
+        <result column="status" property="status" />
+        <result column="effect_time" property="effectTime" />
+        <result column="consume_log" property="consumeLog" />
+        <result column="consume_instance_uuid" property="consumeInstanceUuid" />
+        <result column="add_time" property="addTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t.`id`,
+        t.`topic`,
+        t.`group`,
+        t.`partition_id`,
+        t.`data`,
+        t.`status`,
+        t.`effect_time`,
+        t.`consume_log`,
+        t.`consume_instance_uuid`,
+        t.`add_time`,
+        t.`update_time`
+    </sql>
+
+    <insert id="insert" parameterType="java.util.Map" >
+        INSERT INTO xxl_mq_message_archive (
+            `topic`,
+            `group`,
+            `partition_id`,
+            `data`,
+            `status`,
+            `effect_time`,
+            `consume_log`,
+            `consume_instance_uuid`,
+            `add_time`,
+            `update_time`
+        )
+        VALUES(
+                  #{messageArchive.topic} ,
+                  #{messageArchive.group} ,
+                  #{messageArchive.partitionId} ,
+                  #{messageArchive.data} ,
+                  #{messageArchive.status} ,
+                  #{messageArchive.effectTime} ,
+                  #{messageArchive.consumeLog} ,
+                  #{messageArchive.consumeInstanceUuid} ,
+                  NOW() ,
+                  NOW()
+              )
+    </insert>
+
+    <delete id="delete" parameterType="java.util.Map" >
+        DELETE FROM xxl_mq_message_archive
+        WHERE `id` in
+        <foreach collection="ids" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="java.util.Map" >
+        UPDATE xxl_mq_message_archive
+        SET
+            `topic` = #{messageArchive.topic},
+            `group` = #{messageArchive.group},
+            `partition_id` = #{messageArchive.partitionId},
+            `data` = #{messageArchive.data},
+            `status` = #{messageArchive.status},
+            `effect_time` = #{messageArchive.effectTime},
+            `consume_log` = #{messageArchive.consumeLog},
+            `consume_instance_uuid` = #{messageArchive.consumeInstanceUuid},
+            `update_time` = NOW()
+        WHERE `id` = #{messageArchive.id}
+    </update>
+
+    <select id="load" parameterType="java.util.Map" resultMap="MessageArchive">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_mq_message_archive AS t
+        WHERE t.`id` = #{id}
+    </select>
+
+    <select id="pageList" parameterType="java.util.Map" resultMap="MessageArchive">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_mq_message_archive AS t
+        LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="pageListCount" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM xxl_mq_message_archive AS t
+    </select>
+
+    <insert id="batchInsert" parameterType="java.util.Map" >
+        INSERT IGNORE INTO xxl_mq_message_archive (
+            `id`,
+            `topic`,
+            `group`,
+            `partition_id`,
+            `data`,
+            `status`,
+            `effect_time`,
+            `consume_log`,
+            `consume_instance_uuid`,
+            `add_time`,
+            `update_time`
+        )
+        VALUES
+        <foreach collection="messageArchiveList" item="item" index="index" separator=",">
+            (
+                #{item.id} ,
+                #{item.topic} ,
+                #{item.group} ,
+                #{item.partitionId} ,
+                #{item.data} ,
+                #{item.status} ,
+                #{item.effectTime} ,
+                #{item.consumeLog} ,
+                #{item.consumeInstanceUuid} ,
+                #{item.addTime} ,
+                #{item.updateTime}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="batchClean" parameterType="java.util.Map" >
+        DELETE FROM xxl_mq_message_archive
+        WHERE `id` in (
+            SELECT `id` FROM(
+                SELECT `id`
+                FROM xxl_mq_message_archive
+                WHERE `topic` = #{topic}
+                    <if test="isArchive">
+                        AND `effect_time` <![CDATA[ < ]]> #{effectTimeFrom}
+                    </if>
+                ORDER BY `id` ASC
+                LIMIT #{pageSize}
+            ) as t
+        )
+    </delete>
+
+</mapper>

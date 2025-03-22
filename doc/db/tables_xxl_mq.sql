@@ -49,17 +49,17 @@ CREATE TABLE `xxl_mq_message`(
 ) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COMMENT ='消息数据表';
 
 CREATE TABLE `xxl_mq_message_archive` (
-    `id`                    bigint(20)   NOT NULL AUTO_INCREMENT,
-    `topic`                 varchar(255) NOT NULL COMMENT '消息主题Topic',
-    `data`                  text         NOT NULL COMMENT '消息数据',
-    `group`                 varchar(255) NOT NULL COMMENT '消息主题分组',
-    `partition_id`          int(11)      NOT NULL COMMENT '消息分片ID',
-    `status`                tinyint(4)   NOT NULL COMMENT '状态：0-正常、1-执行中、2-成功、3-失败、4-超时失败',
-    `effect_time`           datetime     NOT NULL COMMENT '生效时间',
-    `consume_log`           text         DEFAULT NULL COMMENT '消费日志',
-    `consume_instance_uuid` varchar(50)  DEFAULT NULL COMMENT '消费实例实例唯一标识',
-    `add_time`              datetime     NOT NULL COMMENT '新增时间',
-    `update_time`           datetime     NOT NULL COMMENT '更新时间',
+    `id`                    bigint(20)      NOT NULL ,
+    `topic`                 varchar(100)    NOT NULL COMMENT '消息主题Topic',
+    `group`                 varchar(20)     NOT NULL COMMENT '消息主题分组',
+    `partition_id`          int(11)         NOT NULL COMMENT '消息分片ID',
+    `data`                  text            NOT NULL COMMENT '消息数据',
+    `status`                tinyint(4)      NOT NULL COMMENT '状态',
+    `effect_time`           datetime        NOT NULL COMMENT '生效时间',
+    `consume_log`           text            DEFAULT NULL COMMENT '消费日志',
+    `consume_instance_uuid` varchar(50)     DEFAULT NULL COMMENT '消费实例实例唯一标识',
+    `add_time`              datetime        NOT NULL COMMENT '新增时间',
+    `update_time`           datetime        NOT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),
     KEY `i_t_g_p` (`topic`, `group`, `partition_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='消息数据归档表';
@@ -132,7 +132,7 @@ INSERT INTO xxl_mq.xxl_mq_topic (id, topic, appname, `desc`, owner, alarm_email,
 VALUES (1, 'topic_sample', 'xxl-mq-sample', '示例消息主题', '张三', '', 0, '0', '1', '1', '1', 0, 3, 1, 0, now(), now());
 
 INSERT INTO xxl_mq.xxl_mq_message (id, topic, data, `group`, partition_id, status, effect_time, consume_log, consume_instance_uuid, add_time, update_time)
-VALUES (5, 'topic_sample', 'hello world.', 'DEFAULT', 1, 0, now(), null, null, now(), now());
+VALUES (1, 'topic_sample', 'hello world.', 'DEFAULT', 1, 0, now(), null, null, now(), now());
 
 
 commit;

@@ -23,7 +23,7 @@ public interface MessageService {
     /**
     * 删除
     */
-    public Response<String> delete(List<Integer> ids);
+    public Response<String> delete(List<Long> ids);
 
     /**
     * 更新
@@ -39,5 +39,10 @@ public interface MessageService {
     * 分页查询
     */
     public PageModel<MessageDTO> pageList(int offset, int pagesize, String topic, int status, Date effectTimeStart, Date effectTimeEnd);
+
+    /**
+     * 归档
+     */
+    public Response<String> archive(String topic, Integer archiveStrategy);
 
 }

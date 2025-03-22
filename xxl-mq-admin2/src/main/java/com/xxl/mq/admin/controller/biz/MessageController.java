@@ -140,7 +140,7 @@ public class MessageController {
     @RequestMapping("/delete")
     @ResponseBody
     @Permission
-    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
+    public Response<String> delete(@RequestParam("ids[]") List<Long> ids){
         return messageService.delete(ids);
     }
 
@@ -161,7 +161,7 @@ public class MessageController {
     @ResponseBody
     @Permission
     public Response<String> archive(String topic, Integer archiveStrategy){
-        return new ResponseBuilder<String>().fail("building").build();
+        return messageService.archive(topic, archiveStrategy);
     }
 
 }

@@ -37,6 +37,7 @@ public class AccessTokenServiceImpl implements AccessTokenService {
 		if (accessToken == null) {
 			return new ResponseBuilder<String>().fail("必要参数缺失").build();
         }
+		accessToken.setAccessToken(accessToken.getAccessToken().trim());
 
 		accessTokenMapper.insert(accessToken);
 		return new ResponseBuilder<String>().success().build();

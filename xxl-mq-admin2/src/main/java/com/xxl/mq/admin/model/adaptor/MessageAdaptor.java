@@ -2,6 +2,7 @@ package com.xxl.mq.admin.model.adaptor;
 
 import com.xxl.mq.admin.model.dto.MessageDTO;
 import com.xxl.mq.admin.model.entity.Message;
+import com.xxl.mq.admin.model.entity.MessageArchive;
 import com.xxl.tool.core.DateTool;
 
 public class MessageAdaptor {
@@ -36,6 +37,22 @@ public class MessageAdaptor {
         messageDTO.setAddTime(message.getAddTime());
         messageDTO.setUpdateTime(message.getUpdateTime());
         return messageDTO;
+    }
+
+    public static MessageArchive adaptorToArchive(Message message) {
+        MessageArchive messageArchive = new MessageArchive();
+        messageArchive.setId(message.getId());
+        messageArchive.setTopic(message.getTopic());
+        messageArchive.setGroup(message.getGroup());
+        messageArchive.setPartitionId(message.getPartitionId());
+        messageArchive.setData(message.getData());
+        messageArchive.setStatus(message.getStatus());
+        messageArchive.setEffectTime(message.getEffectTime());
+        messageArchive.setConsumeLog(message.getConsumeLog());
+        messageArchive.setConsumeInstanceUuid(message.getConsumeInstanceUuid());
+        messageArchive.setAddTime(message.getAddTime());
+        messageArchive.setUpdateTime(message.getUpdateTime());
+        return messageArchive;
     }
 
 }
