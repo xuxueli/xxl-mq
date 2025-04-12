@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
-import com.xxl.tool.response.ResponseBuilder;
 
 /**
 * Message Controller
@@ -111,7 +110,7 @@ public class MessageController {
 
         // page query
         PageModel<MessageDTO> pageModel = messageService.pageList(offset, pagesize, topic, status, effectTimeStart, effectTimeEnd);
-        return new ResponseBuilder<PageModel<MessageDTO>>().success(pageModel).build();
+        return Response.ofSuccess(pageModel);
     }
 
     /**

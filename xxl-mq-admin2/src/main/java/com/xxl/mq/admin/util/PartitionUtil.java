@@ -1,7 +1,5 @@
 package com.xxl.mq.admin.util;
 
-import com.alibaba.fastjson2.JSON;
-
 import java.util.*;
 
 /**

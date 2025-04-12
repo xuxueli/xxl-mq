@@ -11,7 +11,6 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 import com.xxl.tool.response.PageModel;
 
 /**
@@ -33,16 +32,16 @@ public class TopicServiceImpl implements TopicService {
 
 		// valid
 		if (topic == null) {
-			return new ResponseBuilder<String>().fail("必要参数缺失").build();
+			return Response.ofFail("必要参数缺失");
         }
 
 		Topic existTopic = topicMapper.loadByTopic(topic.getTopic());
 		if (existTopic != null) {
-			return new ResponseBuilder<String>().fail("Topic已存在").build();
+			return Response.ofFail("Topic已存在");
 		}
 
 		topicMapper.insert(topic);
-		return new ResponseBuilder<String>().success().build();
+		return Response.ofSuccess();
 	}
 
 	/**
@@ -51,8 +50,7 @@ public class TopicServiceImpl implements TopicService {
 	@Override
 	public Response<String> delete(List<Integer> ids) {
 		int ret = topicMapper.delete(ids);
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
 
 	/**
@@ -61,8 +59,7 @@ public class TopicServiceImpl implements TopicService {
 	@Override
 	public Response<String> update(Topic topic) {
 		int ret = topicMapper.update(topic);
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
 
 	/**
@@ -71,7 +68,7 @@ public class TopicServiceImpl implements TopicService {
 	@Override
 	public Response<Topic> load(int id) {
 		Topic record = topicMapper.load(id);
-		return new ResponseBuilder<Topic>().success(record).build();
+		return Response.ofSuccess(record);
 	}
 
 	/**
@@ -101,10 +98,10 @@ public class TopicServiceImpl implements TopicService {
 	@Override
 	public Response<String> updateStatus(List<Integer> ids, int status) {
 		if (TopicStatusEnum.match(status, null) == null) {
-			return new ResponseBuilder<String>().fail("参数非法").build();
+			return Response.ofFail("参数非法");
 		}
 		int ret = topicMapper.updateStatus(ids, status);
-		return new ResponseBuilder<String>().success().build();
+		return Response.ofSuccess();
 	}
 
 }

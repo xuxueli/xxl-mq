@@ -1,12 +1,11 @@
 package com.xxl.mq.admin.openapi.registry.thread;
 
-
-import com.alibaba.fastjson2.JSON;
 import com.xxl.mq.admin.constant.enums.AccessTokenStatuEnum;
 import com.xxl.mq.admin.model.entity.AccessToken;
 import com.xxl.mq.admin.openapi.registry.config.RegistryFactory;
 import com.xxl.mq.admin.openapi.common.model.OpenApiRequest;
 import com.xxl.tool.core.CollectionTool;
+import com.xxl.tool.gson.GsonTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,8 +73,8 @@ public class AccessTokenHelpler {
                         }
 
                         // do refresh
-                        String newDataJson = JSON.toJSONString(accessTokenStoreNew);
-                        if (!Objects.equals(newDataJson, JSON.toJSONString(accessTokenStore))) {
+                        String newDataJson = GsonTool.toJson(accessTokenStoreNew);
+                        if (!Objects.equals(newDataJson, GsonTool.toJson(accessTokenStore))) {
                             logger.info(">>>>>>>>>>> xxl-mq, AccessTokenHelpler-accessTokenThread found diff data, accessTokenStoreNew:{}", newDataJson);
                             accessTokenStore = accessTokenStoreNew;
                         }

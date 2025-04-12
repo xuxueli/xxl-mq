@@ -1,7 +1,7 @@
 package com.xxl.mq.admin.openapi.registry.tool;
 
-import com.alibaba.fastjson2.JSON;
-import com.xxl.tool.net.HttpTool;
+import com.xxl.tool.gson.GsonTool;
+import com.xxl.tool.http.HttpTool;
 
 import java.io.Serializable;
 import java.util.List;
@@ -407,12 +407,13 @@ public class RegisterTool {
 
         // 2、post
         String responseBody = HttpTool.postBody(adminAddress + "/openapi/registry/register",
-                JSON.toJSONString(request),
+                GsonTool.toJson(request),
                 null,
-                3000);
+                3000
+                );
 
         // 3、parse response
-        OpenApiResponse openApiResponse = JSON.parseObject(responseBody, OpenApiResponse.class);
+        OpenApiResponse openApiResponse = GsonTool.fromJson(responseBody, OpenApiResponse.class);
         return openApiResponse;
     }
 
@@ -437,12 +438,13 @@ public class RegisterTool {
 
         // 2、post
         String responseBody = HttpTool.postBody(adminAddress + "/openapi/registry/unregister",
-                JSON.toJSONString(request),
+                GsonTool.toJson(request),
                 null,
-                3000);
+                3000
+                );
 
         // 3、parse response
-        OpenApiResponse openApiResponse = JSON.parseObject(responseBody, OpenApiResponse.class);
+        OpenApiResponse openApiResponse = GsonTool.fromJson(responseBody, OpenApiResponse.class);
         return openApiResponse;
     }
 
@@ -468,11 +470,12 @@ public class RegisterTool {
         request.setSimpleQuery(simpleQuery);
 
         String responseBody = HttpTool.postBody(adminAddress + "/openapi/registry/discovery",
-                JSON.toJSONString(request),
+                GsonTool.toJson(request),
                 null,
                 3000
+
         );
-        DiscoveryResponse discoveryResponse = JSON.parseObject(responseBody, DiscoveryResponse.class);
+        DiscoveryResponse discoveryResponse = GsonTool.fromJson(responseBody, DiscoveryResponse.class);
         return discoveryResponse;
     }
 
@@ -500,10 +503,11 @@ public class RegisterTool {
 
         try {
             String responseBody = HttpTool.postBody(adminAddress + "/openapi/registry/monitor",
-                    JSON.toJSONString(request),
+                    GsonTool.toJson(request),
                     null,
-                    timeout);
-            OpenApiResponse discoveryResponse = JSON.parseObject(responseBody, OpenApiResponse.class);
+                    3000
+                    );
+            OpenApiResponse discoveryResponse = GsonTool.fromJson(responseBody, OpenApiResponse.class);
             return discoveryResponse;
         } catch (Exception e) {
             return new OpenApiResponse(OpenApiResponse.FAIL_CODE, e.getMessage());

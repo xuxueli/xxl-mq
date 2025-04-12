@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 import com.xxl.tool.response.PageModel;
 
 /**
@@ -34,18 +33,18 @@ public class ApplicationServiceImpl implements ApplicationService {
 				|| StringTool.isBlank(application.getAppname())
 				|| StringTool.isBlank(application.getName())
 				|| StringTool.isBlank(application.getDesc())) {
-			return new ResponseBuilder<String>().fail("必要参数缺失").build();
+			return Response.ofFail("必要参数缺失");
         }
 		application.setAppname(application.getAppname().trim());
 
 		// valid
 		if (applicationMapper.loadByAppName(application.getAppname()) != null) {
-			return new ResponseBuilder<String>().fail("AppName（环境标识）已存在，请更换").build();
+			return Response.ofFail("AppName（环境标识）已存在，请更换");
 		}
 
 		// invoke
 		applicationMapper.insert(application);
-		return new ResponseBuilder<String>().success().build();
+		return Response.ofSuccess();
 	}
 
 	/**
@@ -54,8 +53,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 	@Override
 	public Response<String> delete(List<Integer> ids) {
 		int ret = applicationMapper.delete(ids);
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess(): Response.ofFail();
 	}
 
 	/**
@@ -69,13 +67,12 @@ public class ApplicationServiceImpl implements ApplicationService {
 				|| StringTool.isBlank(application.getAppname())
 				|| StringTool.isBlank(application.getName())
 				|| StringTool.isBlank(application.getDesc())) {
-			return new ResponseBuilder<String>().fail("必要参数缺失").build();
+			return Response.ofFail("必要参数缺失");
 		}
 
 		// invoke
 		int ret = applicationMapper.update(application);
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess(): Response.ofFail();
 	}
 
 	/**
@@ -84,7 +81,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 	@Override
 	public Response<Application> load(int id) {
 		Application record = applicationMapper.load(id);
-		return new ResponseBuilder<Application>().success(record).build();
+		return Response.ofSuccess(record);
 	}
 
 	/**
@@ -107,7 +104,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 	@Override
 	public Response<List<Application>> findAll() {
 		List<Application> applicationList = applicationMapper.findAll();
-		return new ResponseBuilder<List<Application>>().success(applicationList).build();
+		return Response.ofSuccess(applicationList);
 	}
 
 }

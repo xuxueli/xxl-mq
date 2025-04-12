@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 import com.xxl.tool.response.PageModel;
 
 /**
@@ -52,12 +51,12 @@ public class MessageServiceImpl implements MessageService {
 
 		// valid
 		if (message == null || StringTool.isBlank(messageDTO.getTopic())) {
-			return new ResponseBuilder<String>().fail("必要参数缺失").build();
+			return Response.ofFail("必要参数缺失");
         }
 
 		Topic topic = topicMapper.loadByTopic(messageDTO.getTopic());
 		if (topic == null) {
-			return new ResponseBuilder<String>().fail("参数非法：Topic").build();
+			return Response.ofFail("参数非法：Topic");
 		}
 
 		// save
@@ -65,7 +64,7 @@ public class MessageServiceImpl implements MessageService {
 		ConsumeLogUtil.appendConsumeLog(message, "人工新建消息", GsonTool.toJson(message));
 
 		messageMapper.insert(message);
-		return new ResponseBuilder<String>().success().build();
+		return Response.ofSuccess();
 	}
 
 	/**
@@ -74,8 +73,7 @@ public class MessageServiceImpl implements MessageService {
 	@Override
 	public Response<String> delete(List<Long> ids) {
 		int ret = messageMapper.delete(ids);
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess(): Response.ofFail() ;
 	}
 
 	/**
@@ -87,7 +85,7 @@ public class MessageServiceImpl implements MessageService {
 		// valid
 		Message message = messageMapper.load(messageDTO.getId());
 		if (message == null) {
-			return new ResponseBuilder<String>().fail("参数非法：消息ID").build();
+			return Response.ofFail("参数非法：消息ID");
 		}
 
 		// write
@@ -97,8 +95,7 @@ public class MessageServiceImpl implements MessageService {
 		ConsumeLogUtil.appendConsumeLog(message, "人工修改消息", GsonTool.toJson(messageDTO));
 
 		int ret = messageMapper.update(message);
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
 
 	/**
@@ -107,7 +104,7 @@ public class MessageServiceImpl implements MessageService {
 	@Override
 	public Response<Message> load(int id) {
 		Message record = messageMapper.load(id);
-		return new ResponseBuilder<Message>().success(record).build();
+		return Response.ofSuccess(record);
 	}
 
 	/**
@@ -144,11 +141,11 @@ public class MessageServiceImpl implements MessageService {
 		// valid
 		Topic topicData = topicMapper.loadByTopic(topic);
 		if (topicData == null) {
-			return new ResponseBuilder<String>().fail("Topic非法").build();
+			return Response.ofFail("Topic非法");
 		}
 		ArchiveStrategyEnum archiveStrategyEnum = ArchiveStrategyEnum.match(archiveStrategy, null);
 		if (archiveStrategyEnum == null) {
-			return new ResponseBuilder<String>().fail("归档策略非法").build();
+			return Response.ofFail("归档策略非法");
 		}
 
 		// archive
@@ -171,7 +168,7 @@ public class MessageServiceImpl implements MessageService {
 				break;
 		}
 
-		return new ResponseBuilder<String>().success("操作成功，处理数据行数：" + cleanCount).build();
+		return Response.ofSuccess("操作成功，处理数据行数：" + cleanCount);
 	}
 
 	/**
@@ -271,7 +268,7 @@ public class MessageServiceImpl implements MessageService {
 		result.put("successTotal", successTotal);
 		result.put("failTotal", failTotal);
 
-		return new ResponseBuilder<Map<String, Object>>().success(result).build();
+		return Response.ofSuccess(result);
 	}
 
 	@Override

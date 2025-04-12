@@ -12,7 +12,6 @@ import com.xxl.mq.admin.service.impl.LoginService;
 import com.xxl.tool.core.DateTool;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -106,7 +105,7 @@ public class MessageArchiveController {
 
         // page query
         PageModel<MessageArchiveDTO> pageModel = messageAichiveService.pageList(offset, pagesize, topic, effectTimeStart, effectTimeEnd);
-        return new ResponseBuilder<PageModel<MessageArchiveDTO>>().success(pageModel).build();
+        return Response.ofSuccess(pageModel);
     }
 
 

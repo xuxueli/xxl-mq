@@ -12,7 +12,6 @@ import com.xxl.tool.core.DateTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -70,11 +69,11 @@ public class MessageArchiveServiceImpl implements MessageAichiveService {
 		// valid
 		Topic topicData = topicMapper.loadByTopic(topic);
 		if (topicData == null) {
-			return new ResponseBuilder<String>().fail("Topic非法").build();
+			return Response.ofFail("Topic非法");
 		}
 		ArchiveStrategyEnum archiveStrategyEnum = ArchiveStrategyEnum.match(archiveStrategy, null);
 		if (archiveStrategyEnum == null) {
-			return new ResponseBuilder<String>().fail("归档策略非法").build();
+			return Response.ofFail("归档策略非法");
 		}
 
 		// archive
@@ -97,7 +96,7 @@ public class MessageArchiveServiceImpl implements MessageAichiveService {
 				break;
 		}
 
-		return new ResponseBuilder<String>().success("操作成功，处理数据行数：" + cleanCount).build();
+		return Response.ofSuccess("操作成功，处理数据行数：" + cleanCount);
 	}
 
 	/**

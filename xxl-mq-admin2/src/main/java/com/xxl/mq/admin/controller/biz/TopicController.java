@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
-import com.xxl.tool.response.ResponseBuilder;
 
 /**
 * Topic Controller
@@ -107,7 +106,7 @@ public class TopicController {
                                                @RequestParam(required = false) String appname,
                                                @RequestParam(required = false) String topic) {
         PageModel<Topic> pageModel = topicService.pageList(offset, pagesize, appname, topic);
-        return new ResponseBuilder<PageModel<Topic>>().success(pageModel).build();
+        return Response.ofSuccess(pageModel);
     }
 
     /**
@@ -129,7 +128,7 @@ public class TopicController {
     public Response<String> insert(HttpServletRequest request, Topic topic){
         // valid
         if (!hasPermissionForAppname(request, topic.getAppname())) {
-            return new ResponseBuilder<String>().fail(I18nUtil.getString("system_permission_limit")).build();
+            return Response.ofFail(I18nUtil.getString("system_permission_limit"));
         }
 
         return topicService.insert(topic);
@@ -154,7 +153,7 @@ public class TopicController {
     public Response<String> update(HttpServletRequest request, Topic topic){
         // valid
         if (!hasPermissionForAppname(request, topic.getAppname())) {
-            return new ResponseBuilder<String>().fail(I18nUtil.getString("system_permission_limit")).build();
+            return Response.ofFail(I18nUtil.getString("system_permission_limit"));
         }
 
         return topicService.update(topic);

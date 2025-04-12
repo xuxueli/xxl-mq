@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 import com.xxl.tool.response.PageModel;
 
 /**
@@ -35,12 +34,12 @@ public class AccessTokenServiceImpl implements AccessTokenService {
 
 		// valid
 		if (accessToken == null) {
-			return new ResponseBuilder<String>().fail("必要参数缺失").build();
+			return Response.ofFail("必要参数缺失");
         }
 		accessToken.setAccessToken(accessToken.getAccessToken().trim());
 
 		accessTokenMapper.insert(accessToken);
-		return new ResponseBuilder<String>().success().build();
+		return Response.ofSuccess();
 	}
 
 	/**
@@ -49,8 +48,7 @@ public class AccessTokenServiceImpl implements AccessTokenService {
 	@Override
 	public Response<String> delete(List<Integer> ids) {
 		int ret = accessTokenMapper.delete(ids);
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
 
 	/**
@@ -59,8 +57,7 @@ public class AccessTokenServiceImpl implements AccessTokenService {
 	@Override
 	public Response<String> update(AccessToken accessToken) {
 		int ret = accessTokenMapper.update(accessToken);
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
 
 	/**
@@ -69,7 +66,7 @@ public class AccessTokenServiceImpl implements AccessTokenService {
 	@Override
 	public Response<AccessToken> load(int id) {
 		AccessToken record = accessTokenMapper.load(id);
-		return new ResponseBuilder<AccessToken>().success(record).build();
+		return Response.ofSuccess(record);
 	}
 
 	/**
