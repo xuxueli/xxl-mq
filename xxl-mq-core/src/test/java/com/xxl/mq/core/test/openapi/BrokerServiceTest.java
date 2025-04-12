@@ -1,15 +1,11 @@
 package com.xxl.mq.core.test.openapi;
 
 import com.xxl.mq.core.openapi.BrokerService;
-import com.xxl.mq.core.openapi.model.MessageData;
 import com.xxl.tool.jsonrpc.JsonRpcClient;
 import com.xxl.tool.response.Response;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class BrokerServiceTest {
     private static Logger logger = LoggerFactory.getLogger(BrokerServiceTest.class);
@@ -24,10 +20,10 @@ public class BrokerServiceTest {
     }
 
     @Test
-    public void test() {
+    public void registryTest() {
         BrokerService brokerService = buildClient();
 
-        Response<List<MessageData>> response = brokerService.pull("");
+        Response<String> response = brokerService.registry(null);
         logger.info("response:{}", response);
     }
 

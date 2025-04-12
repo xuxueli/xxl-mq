@@ -1,6 +1,6 @@
 package com.xxl.mq.core.openapi;
 
-import com.xxl.mq.core.openapi.model.MessageData;
+import com.xxl.mq.core.openapi.model.*;
 import com.xxl.tool.response.Response;
 
 import java.util.List;
@@ -15,18 +15,18 @@ public interface BrokerService {
     /**
      * registry instance
      *
-     * @param instanceData
+     * @param registryRequest
      * @return
      */
-    public Response<String> registry(String registryRequest);
+    public Response<String> registry(RegistryRequest registryRequest);
 
     /**
      * produce messages
      *
-     * @param messageList
+     * @param produceRequest
      * @return
      */
-    public Response<String> produce(List<MessageData> messageList);
+    public Response<String> produce(ProduceRequest produceRequest);
 
     /**
      * pull messages (will lock)
@@ -34,15 +34,15 @@ public interface BrokerService {
      * @param pullRequest
      * @return
      */
-    public Response<List<MessageData>> pull(String pullRequest);
+    public Response<List<MessageData>> pull(PullRequest pullRequest);
 
     /**
      * consume messages (callback)
      *
-     * @param messageList
+     * @param consumeRequest
      * @return
      */
-    public Response<String> consumeRequest(List<MessageData> consumeRequest);
+    public Response<String> consumeRequest(ConsumeRequest consumeRequest);
 
 
 }

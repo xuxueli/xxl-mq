@@ -1,4 +1,4 @@
-package com.xxl.mq.admin.openapi.registry.tool;
+package com.xxl.mq.admin.openapi.old.tool;
 
 import com.xxl.tool.gson.GsonTool;
 import com.xxl.tool.http.HttpTool;

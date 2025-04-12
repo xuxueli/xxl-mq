@@ -1,6 +1,6 @@
-package com.xxl.mq.admin.openapi.registry;
+package com.xxl.mq.admin.openapi.old;
 
-import com.xxl.mq.admin.openapi.registry.tool.RegisterTool;
+import com.xxl.mq.admin.openapi.old.tool.RegisterTool;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
