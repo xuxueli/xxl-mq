@@ -76,14 +76,8 @@
 		<!-- xxl-tool -->
 		<dependency>
 			<groupId>com.xuxueli</groupId>
-			<artifactId>xxl-tool</artifactId>
-			<version>${xxl-tool.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>${gson.version}</version>
-			<scope>provided</scope>
+			<artifactId>xxl-mq-core</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
 
 	</dependencies>

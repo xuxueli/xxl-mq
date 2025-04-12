@@ -13,6 +13,10 @@ public class MessageData implements Serializable {
     // todo
     private String topic;
 
+    public MessageData(String topic) {
+        this.topic = topic;
+    }
+
     public String getTopic() {
         return topic;
     }
