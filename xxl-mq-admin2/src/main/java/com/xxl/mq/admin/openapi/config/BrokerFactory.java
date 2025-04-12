@@ -3,8 +3,11 @@ package com.xxl.mq.admin.openapi.config;
 import com.xxl.mq.admin.constant.enums.AccessTokenStatuEnum;
 import com.xxl.mq.admin.mapper.*;
 import com.xxl.mq.admin.model.entity.AccessToken;
+import com.xxl.mq.admin.model.entity.Instance;
 import com.xxl.mq.core.openapi.BrokerService;
+import com.xxl.mq.core.openapi.model.RegistryRequest;
 import com.xxl.tool.concurrent.CyclicThread;
+import com.xxl.tool.concurrent.MessageQueue;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.gson.GsonTool;
 import com.xxl.tool.jsonrpc.JsonRpcServer;
@@ -16,6 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -47,13 +51,9 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
     private ApplicationMapper applicationMapper;
     @Resource
     private AccessTokenMapper accessTokenMapper;
+    @Resource
+    private InstanceMapper instanceMapper;
 
-    public ApplicationMapper getApplicationMapper() {
-        return applicationMapper;
-    }
-    public AccessTokenMapper getAccessTokenMapper() {
-        return accessTokenMapper;
-    }
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -62,12 +62,14 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
 
         // 1、AccessTokenThread
         startAccessTokenThread();
+
+        // 2、Registry MessageQueue
+        startRegistryMessageQueue();
     }
 
     @Override
     public void destroy() throws Exception {
-        // 1、AccessTokenThread
-        stopAccessTokenThread();
+        // stop
     }
 
 
@@ -84,14 +86,16 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
 
     // ---------------------- AccessToken ----------------------
 
+    /**
+     * AccessToken LocalStore
+     */
     private volatile Set<String> accessTokenStore = new ConcurrentSkipListSet<>();
-    private CyclicThread accessTokenThread;
 
     /**
-     * start AccessTokenThread
+     * start AccessTokenThread (will stop with jvm)
      */
     private void startAccessTokenThread() {
-        accessTokenThread = new CyclicThread("accessTokenThread", true, 30 * 1000, new Runnable() {
+        CyclicThread accessTokenThread = new CyclicThread("accessTokenThread", true, 30 * 1000, new Runnable() {
             @Override
             public void run() {
                 try {
@@ -120,15 +124,6 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
         accessTokenThread.start();
     }
 
-    /*
-     * stop AccessTokenThread
-     */
-    private void stopAccessTokenThread() {
-        if (accessTokenThread != null) {
-            accessTokenThread.stop();
-        }
-    }
-
     /**
      * valid  AccessToken
      *
@@ -138,5 +133,45 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
     public boolean validAccessToken(String accessToken) {
         return accessToken!=null && accessTokenStore.contains(accessToken);
     }
+
+    // ---------------------- Registry ----------------------
+
+    private volatile MessageQueue<RegistryRequest> registryMessageQueue;
+
+    /**
+     * start Registry MessageQueue (will stop with jvm)
+     */
+    private void startRegistryMessageQueue() {
+        registryMessageQueue = new MessageQueue<RegistryRequest>(
+                "registryMessageQueue",
+                1000,
+                messages -> {
+                    for (RegistryRequest registryRequest : messages) {
+                        // write registry
+                        String registryDate = GsonTool.toJson(registryRequest);
+
+                        Instance newInstance = new Instance();
+                        newInstance.setAppname(registryRequest.getAppname());
+                        newInstance.setUuid(registryRequest.getInstanceUuid());
+                        newInstance.setRegisterHeartbeat(new Date());
+                        newInstance.setRegistryData(registryDate);
+
+                        instanceMapper.insert(newInstance); // todo, save or update
+                    }
+                },
+                1,
+                1);
+    }
+
+    /**
+     * registry
+     *
+     * @param registryRequest
+     * @return
+     */
+    public boolean registry(RegistryRequest registryRequest) {
+        return registryMessageQueue.produce(registryRequest);
+    }
+
 
 }

@@ -8,6 +8,7 @@
         <result column="appname" property="appname" />
         <result column="name" property="name" />
         <result column="desc" property="desc" />
+        <result column="registry_data" property="registryData" />
         <result column="add_time" property="addTime" />
         <result column="update_time" property="updateTime" />
     </resultMap>
@@ -17,6 +18,7 @@
         t.`appname`,
         t.`name`,
         t.`desc`,
+        t.`registry_data`,
         t.`add_time`,
         t.`update_time`
     </sql>
@@ -26,6 +28,7 @@
             `appname`,
             `name`,
             `desc`,
+            `registry_data`,
             `add_time`,
             `update_time`
         )
@@ -33,6 +36,7 @@
                   #{application.appname} ,
                   #{application.name} ,
                   #{application.desc} ,
+                  #{application.registryData} ,
                   NOW() ,
                   NOW()
               )
@@ -51,6 +55,7 @@
         SET
             `name` = #{application.name},
             `desc` = #{application.desc},
+            `registry_data` = #{application.registryData},
             `update_time` = NOW()
         WHERE `id` = #{application.id}
     </update>

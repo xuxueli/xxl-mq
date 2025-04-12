@@ -32,6 +32,11 @@ public class Application implements Serializable {
     private String desc;
 
     /**
+     * 注册数据
+     */
+    private String registryData;
+
+    /**
     * 新增时间
     */
     private Date addTime;
@@ -72,6 +77,14 @@ public class Application implements Serializable {
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+
+    public String getRegistryData() {
+        return registryData;
+    }
+
+    public void setRegistryData(String registryData) {
+        this.registryData = registryData;
     }
 
     public Date getAddTime() {

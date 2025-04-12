@@ -1,11 +1,15 @@
 package com.xxl.mq.core.test.openapi;
 
 import com.xxl.mq.core.openapi.BrokerService;
+import com.xxl.mq.core.openapi.model.RegistryRequest;
+import com.xxl.tool.core.MapTool;
 import com.xxl.tool.jsonrpc.JsonRpcClient;
 import com.xxl.tool.response.Response;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
 
 public class BrokerServiceTest {
     private static Logger logger = LoggerFactory.getLogger(BrokerServiceTest.class);
@@ -21,9 +25,18 @@ public class BrokerServiceTest {
 
     @Test
     public void registryTest() {
+        // client
         BrokerService brokerService = buildClient();
 
-        Response<String> response = brokerService.registry(null);
+        // param
+        RegistryRequest registryRequest = new RegistryRequest();
+        registryRequest.setAccessToken("defaultaccesstoken");
+        registryRequest.setAppname("xxl-mq-sample");
+        registryRequest.setInstanceUuid("qwerqweqrwer");
+        registryRequest.setTopicData(MapTool.newHashMap("topic01", "default"));
+
+        // invoke
+        Response<String> response = brokerService.registry(registryRequest);
         logger.info("response:{}", response);
     }
 
