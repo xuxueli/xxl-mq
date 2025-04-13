@@ -4,6 +4,7 @@ import com.xxl.mq.admin.model.entity.Instance;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,6 +19,14 @@ public interface InstanceMapper {
     * 新增
     */
     public int insert(@Param("instance") Instance instance);
+
+    /**
+     * 插入或更新
+     *
+     * @param instance
+     * @return
+     */
+    public int insertOrUpdate(@Param("instance") Instance instance);
 
     /**
     * 删除
@@ -43,5 +52,13 @@ public interface InstanceMapper {
     * 分页查询Count
     */
     public int pageListCount(@Param("offset") int offset, @Param("pagesize") int pagesize);
+
+    /**
+     * 查询在线实例
+     *
+     * @param effectiveTime
+     * @return
+     */
+    public List<Instance> queryOnlineInstance(@Param("effectiveTime") Date effectiveTime);
 
 }

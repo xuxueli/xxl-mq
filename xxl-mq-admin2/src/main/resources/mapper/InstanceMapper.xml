@@ -42,6 +42,29 @@
           )
     </insert>
 
+    <insert id="insertOrUpdate" parameterType="java.util.Map" >
+        INSERT INTO xxl_mq_instance (
+            `appname`,
+            `uuid`,
+            `register_heartbeat`,
+            `registry_data`,
+            `add_time`,
+            `update_time`
+        )
+        VALUES(
+                  #{instance.appname} ,
+                  #{instance.uuid} ,
+                  #{instance.registerHeartbeat} ,
+                  #{instance.registryData} ,
+                  NOW() ,
+                  NOW()
+              )
+        ON DUPLICATE KEY UPDATE
+            `register_heartbeat` = #{instance.registerHeartbeat},
+            `registry_data` = #{instance.registryData},
+            `update_time` = NOW()
+    </insert>
+
     <delete id="delete" parameterType="java.util.Map" >
         DELETE FROM xxl_mq_instance
         WHERE `id` in
@@ -76,6 +99,12 @@
     <select id="pageListCount" parameterType="java.util.Map" resultType="int">
         SELECT count(1)
         FROM xxl_mq_instance AS t
+    </select>
+
+    <select id="queryOnlineInstance" parameterType="java.util.Map" resultMap="Instance">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_mq_instance AS t
+        WHERE t.`register_heartbeat` <![CDATA[ >= ]]>  #{effectiveTime}
     </select>
 
 </mapper>

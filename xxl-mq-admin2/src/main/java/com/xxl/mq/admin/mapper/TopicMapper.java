@@ -65,4 +65,9 @@ public interface TopicMapper {
      */
     public int count();
 
+    /**
+     * 查询所有
+     */
+    public List<Topic> queryByStatus(@Param("status") int status);
+
 }

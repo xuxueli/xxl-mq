@@ -9,13 +9,16 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class BrokerServiceTest {
     private static Logger logger = LoggerFactory.getLogger(BrokerServiceTest.class);
 
     private static String url = "http://127.0.0.1:8080/xxl-mq-admin/openapi";
     private static String service = "brokerService";
+    private static String accessToken = "defaultaccesstoken";
 
     private BrokerService buildClient(){
         JsonRpcClient jsonRpcClient = new JsonRpcClient(url, 3 * 1000);
@@ -33,7 +36,7 @@ public class BrokerServiceTest {
         registryRequest.setAccessToken("defaultaccesstoken");
         registryRequest.setAppname("xxl-mq-sample");
         registryRequest.setInstanceUuid("qwerqweqrwer");
-        registryRequest.setTopicData(MapTool.newHashMap("topic01", "default"));
+        registryRequest.setTopicGroup(MapTool.newHashMap("topic01", new HashSet<>(Arrays.asList("default"))));
 
         // invoke
         Response<String> response = brokerService.registry(registryRequest);

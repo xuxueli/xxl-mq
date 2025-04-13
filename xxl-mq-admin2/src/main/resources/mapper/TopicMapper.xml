@@ -151,4 +151,10 @@
         FROM xxl_mq_topic AS t
     </select>
 
+    <select id="queryByStatus" parameterType="java.util.Map" resultMap="Topic">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_mq_topic AS t
+        WHERE t.`status` = #{status}
+    </select>
+
 </mapper>
