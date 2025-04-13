@@ -82,6 +82,45 @@
               )
     </insert>
 
+    <insert id="insertIgnoreRepeat" parameterType="java.util.Map" >
+        INSERT IGNORE INTO xxl_mq_topic (
+            `appname`,
+            `topic`,
+            `desc`,
+            `owner`,
+            `alarm_email`,
+            `status`,
+            `store_strategy`,
+            `archive_strategy`,
+            `partition_strategy`,
+            `level`,
+            `retry_strategy`,
+            `retry_count`,
+            `retry_interval`,
+            `execution_timeout`,
+            `add_time`,
+            `update_time`
+        )
+        VALUES(
+                  #{topic.appname} ,
+                  #{topic.topic} ,
+                  #{topic.desc} ,
+                  #{topic.owner} ,
+                  #{topic.alarmEmail} ,
+                  #{topic.status} ,
+                  #{topic.storeStrategy} ,
+                  #{topic.archiveStrategy} ,
+                  #{topic.partitionStrategy} ,
+                  #{topic.level} ,
+                  #{topic.retryStrategy} ,
+                  #{topic.retryCount} ,
+                  #{topic.retryInterval} ,
+                  #{topic.executionTimeout} ,
+                  NOW() ,
+                  NOW()
+              )
+    </insert>
+
     <delete id="delete" parameterType="java.util.Map" >
         DELETE FROM xxl_mq_topic
         WHERE `id` in

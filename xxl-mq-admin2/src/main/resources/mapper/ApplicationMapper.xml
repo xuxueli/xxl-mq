@@ -42,6 +42,25 @@
               )
     </insert>
 
+    <insert id="insertIgnoreRepeat" parameterType="java.util.Map" >
+        INSERT IGNORE INTO xxl_mq_application (
+            `appname`,
+            `name`,
+            `desc`,
+            `registry_data`,
+            `add_time`,
+            `update_time`
+        )
+        VALUES(
+                  #{application.appname} ,
+                  #{application.name} ,
+                  #{application.desc} ,
+                  #{application.registryData} ,
+                  NOW() ,
+                  NOW()
+              )
+    </insert>
+
     <delete id="delete" parameterType="java.util.Map" >
         DELETE FROM xxl_mq_application
         WHERE `id` in

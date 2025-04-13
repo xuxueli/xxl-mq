@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 
 public class BrokerServiceTest {
@@ -36,7 +35,10 @@ public class BrokerServiceTest {
         registryRequest.setAccessToken("defaultaccesstoken");
         registryRequest.setAppname("xxl-mq-sample");
         registryRequest.setInstanceUuid("qwerqweqrwer");
-        registryRequest.setTopicGroup(MapTool.newHashMap("topic01", new HashSet<>(Arrays.asList("default"))));
+        registryRequest.setTopicGroup(MapTool.newHashMap(
+                "topic01", new HashSet<>(Arrays.asList("default")),
+                "topic03", new HashSet<>(Arrays.asList("default"))
+        ));
 
         // invoke
         Response<String> response = brokerService.registry(registryRequest);

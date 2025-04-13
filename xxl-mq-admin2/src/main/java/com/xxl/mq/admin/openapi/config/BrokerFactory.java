@@ -1,7 +1,6 @@
 package com.xxl.mq.admin.openapi.config;
 
-import com.xxl.mq.admin.constant.enums.AccessTokenStatuEnum;
-import com.xxl.mq.admin.constant.enums.TopicStatusEnum;
+import com.xxl.mq.admin.constant.enums.*;
 import com.xxl.mq.admin.mapper.*;
 import com.xxl.mq.admin.model.entity.AccessToken;
 import com.xxl.mq.admin.model.entity.Application;
@@ -203,29 +202,78 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
             public void run() {
 
                 /**
-                 * 1、Instance 初始化
-                 *      - 处理增量，30s内在线节点
-                 *      - 不存在直接初始化:
-                 *          - appname： 去重新建
-                 *          - topic：默认同appname下 topic 信息相同；取最新instance下topic识别增量、新建；
+                 * 1、AppName + Topic：自动初始化
+                 *      - 处理增量：30s内在线节点
+                 *      - 初始化：
+                 *          - appname：注意去重、判断是否存在；
+                 *          - topic：默认同appname下 topic 信息相同；处理其中一个 appname 下topic即可；
                  */
                 List<Instance> instanceList = instanceMapper.queryOnlineInstance(DateTool.addMilliseconds(new Date(), -3 * BEAT_TIME_INTERVAL));
                 if (CollectionTool.isNotEmpty(instanceList)) {
+
+                    // exist appname
+                    List<Application> existApplicationData = applicationMapper.findAll();
+                    List<String> existAppNameList = existApplicationData.stream().map(Application::getAppname).distinct().collect(Collectors.toList());
+
+                    // exist topic
+                    List<Topic> existTopicData = topicMapper.queryByStatus(TopicStatusEnum.NORMAL.getValue());
+                    List<String> existTopicNameList = existTopicData.stream().map(Topic::getTopic).distinct().collect(Collectors.toList());
+
+                    // do init
                     for (Instance instance : instanceList) {
 
-                        // todo，多虑已存在，新建；
-                        Application application = new Application();
-                        application.setAppname(instance.getAppname());
-                        application.setName("初始化");
-                        application.setDesc("初始化");
-                        application.setRegistryData(null);
+                        // avoid repeat
+                        if (existAppNameList.contains(instance.getAppname())) {
+                            continue;
+                        }
 
-                        applicationMapper.insert(application);
+                        // do init
+                        RegistryRequest registryRequest = GsonTool.fromJson(instance.getRegistryData(), RegistryRequest.class);
+                        if (!existAppNameList.contains(instance.getAppname())) {
+                            existAppNameList.add(instance.getAppname());
+
+                            // a、init appname
+                            Application application = new Application();
+                            application.setAppname(instance.getAppname());
+                            application.setName(instance.getAppname()+"服务");
+                            application.setDesc("初始化数据");
+                            application.setRegistryData(null);
+
+                            applicationMapper.insertIgnoreRepeat(application);
+
+                            // b、init topic
+                            for (String topicName : registryRequest.getTopicGroup().keySet()) {
+                                if (!existTopicNameList.contains(topicName)) {
+                                    existTopicNameList.add(topicName);
+
+                                    // init topic
+                                    Topic topic = new Topic();
+                                    topic.setAppname(instance.getAppname());
+                                    topic.setTopic(topicName);
+                                    topic.setDesc("初始化数据");
+                                    topic.setOwner("系统");
+                                    topic.setAlarmEmail(null);
+                                    topic.setStatus(TopicStatusEnum.NORMAL.getValue());
+                                    topic.setStoreStrategy(StoreStrategyEnum.UNITY_STORE.getValue());
+                                    topic.setArchiveStrategy(ArchiveStrategyEnum.RESERVE_7_DAY.getValue());
+                                    topic.setPartitionStrategy(PartitionRouteStrategyEnum.HASH.getValue());
+                                    topic.setLevel(TopicLevelStrategyEnum.LEVEL_1.getValue());
+                                    topic.setRetryStrategy(RetryStrategyEnum.FIXED_RETREAT.getValue());
+                                    topic.setRetryCount(0);
+                                    topic.setRetryInterval(0);
+                                    topic.setExecutionTimeout(-1);
+
+                                    topicMapper.insertIgnoreRepeat(topic);
+                                }
+                            }
+
+                        }
+
                     }
-                }
-                // todo 新建
 
-                // 3、topic 缓存处理 （查询全部）
+                }
+
+                // 2、topic 缓存处理 （查询全部）
                 List<Topic> topicList =topicMapper.queryByStatus(TopicStatusEnum.NORMAL.getValue());
                 Map<String, Topic> topicStoreNew = new ConcurrentHashMap<>();
                 if (CollectionTool.isNotEmpty(topicList)) {
@@ -235,7 +283,8 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
                 }
                 topicStore = topicStoreNew;
 
-                // 4、ApplicationRegistryData 缓存处理 （查询全部）
+                // 3、ApplicationRegistryData 缓存处理 （查询全部）
+                // todo，appname 维度聚合；
 
             }
         }, BEAT_TIME_INTERVAL, true);

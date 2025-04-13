@@ -20,6 +20,11 @@ public interface TopicMapper {
     public int insert(@Param("topic") Topic topic);
 
     /**
+     * 插入（防重复）
+     */
+    public int insertIgnoreRepeat(@Param("topic") Topic topic);
+
+    /**
     * 删除
     */
     public int delete(@Param("ids") List<Integer> ids);
