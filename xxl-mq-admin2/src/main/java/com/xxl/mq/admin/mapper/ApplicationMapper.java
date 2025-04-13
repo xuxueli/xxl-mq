@@ -20,6 +20,11 @@ public interface ApplicationMapper {
     public int insert(@Param("application") Application application);
 
     /**
+     * 插入（防重复）
+     */
+    public int insertIgnoreRepeat(@Param("application") Application application);
+
+    /**
     * 删除
     */
     public int delete(@Param("ids") List<Integer> ids);
@@ -53,5 +58,10 @@ public interface ApplicationMapper {
      * find all
      */
     public List<Application> findAll();
+
+    /**
+     * 查询关联topic数量
+     */
+    public int queryRelateTopicCoutByIds(@Param("ids") List<Integer> ids);
 
 }

@@ -1,6 +1,7 @@
 package com.xxl.mq.admin.service.impl;
 
 import com.xxl.mq.admin.mapper.ApplicationMapper;
+import com.xxl.mq.admin.mapper.TopicMapper;
 import com.xxl.mq.admin.model.entity.Application;
 import com.xxl.mq.admin.service.ApplicationService;
 import com.xxl.tool.core.StringTool;
@@ -52,6 +53,13 @@ public class ApplicationServiceImpl implements ApplicationService {
 	*/
 	@Override
 	public Response<String> delete(List<Integer> ids) {
+		// valid
+		int count = applicationMapper.queryRelateTopicCoutByIds(ids);
+		if (count > 0) {
+			return Response.ofFail("存在关联Topic，无法删除");
+		}
+
+		// invoke
 		int ret = applicationMapper.delete(ids);
 		return ret>0? Response.ofSuccess(): Response.ofFail();
 	}

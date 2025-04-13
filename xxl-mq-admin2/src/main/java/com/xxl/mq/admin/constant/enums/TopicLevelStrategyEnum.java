@@ -7,7 +7,7 @@ package com.xxl.mq.admin.constant.enums;
  */
 public enum TopicLevelStrategyEnum {
 
-    LEVEL_1(1, "1级"),
+    LEVEL_1(1, "1级"),       // Lowest
     LEVEL_2(2, "2级"),
     LEVEL_3(3, "3级"),
     LEVEL_4(4, "4级"),

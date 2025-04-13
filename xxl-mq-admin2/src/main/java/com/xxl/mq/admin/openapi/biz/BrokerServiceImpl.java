@@ -50,7 +50,7 @@ public class BrokerServiceImpl implements BrokerService {
      *      3、注册信息数据结构：
      *      <pre>   // 【ApplicationRegistryData】
      *      {
-     *          "instancePartitionRange":{           // 聚合同 appname 下活跃节点；根据节点顺序计算 负责分区范围；
+     *          "instancePartitionRange":{           // 根据活跃 instance，计算获取；
      *              "instanceUuid_01": {
      *                  "partitionFrom": 0,
      *                  "partitionTo": 5000
@@ -60,7 +60,7 @@ public class BrokerServiceImpl implements BrokerService {
      *                  "partitionTo": 10000
      *              }
      *          },
-     *          "topicGroup":{                       // 聚合同 appname 下活跃节点；汇总最终 group 信息；
+     *          "topicGroup":{                       // 默认同appname下instance的topic一致；取最近心跳 instance 的topic数据；
      *              "topic_01":["default"],
      *              "topic_02":["uuid_01", "uuid_02"]
      *          {

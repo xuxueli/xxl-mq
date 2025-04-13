@@ -69,7 +69,7 @@ public class Topic implements Serializable {
     /**
     * 重试策略
     */
-    private String retryStrategy;
+    private int retryStrategy;
 
     /**
     * 重试次数
@@ -185,11 +185,11 @@ public class Topic implements Serializable {
         this.level = level;
     }
 
-    public String getRetryStrategy() {
+    public int getRetryStrategy() {
         return retryStrategy;
     }
 
-    public void setRetryStrategy(String retryStrategy) {
+    public void setRetryStrategy(int retryStrategy) {
         this.retryStrategy = retryStrategy;
     }
 
@@ -231,6 +231,29 @@ public class Topic implements Serializable {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    @Override
+    public String toString() {
+        return "Topic{" +
+                "id=" + id +
+                ", appname='" + appname + '\'' +
+                ", topic='" + topic + '\'' +
+                ", desc='" + desc + '\'' +
+                ", owner='" + owner + '\'' +
+                ", alarmEmail='" + alarmEmail + '\'' +
+                ", status=" + status +
+                ", storeStrategy=" + storeStrategy +
+                ", archiveStrategy=" + archiveStrategy +
+                ", partitionStrategy=" + partitionStrategy +
+                ", level=" + level +
+                ", retryStrategy=" + retryStrategy +
+                ", retryCount=" + retryCount +
+                ", retryInterval=" + retryInterval +
+                ", executionTimeout=" + executionTimeout +
+                ", addTime=" + addTime +
+                ", updateTime=" + updateTime +
+                '}';
     }
 
 }

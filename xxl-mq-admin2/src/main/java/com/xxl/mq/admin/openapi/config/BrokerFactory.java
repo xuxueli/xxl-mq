@@ -1,15 +1,15 @@
 package com.xxl.mq.admin.openapi.config;
 
-import com.xxl.mq.admin.constant.enums.AccessTokenStatuEnum;
-import com.xxl.mq.admin.constant.enums.TopicStatusEnum;
+import com.xxl.mq.admin.constant.enums.*;
 import com.xxl.mq.admin.mapper.*;
+import com.xxl.mq.admin.model.dto.ApplicationRegistryData;
 import com.xxl.mq.admin.model.entity.AccessToken;
 import com.xxl.mq.admin.model.entity.Application;
 import com.xxl.mq.admin.model.entity.Instance;
 import com.xxl.mq.admin.model.entity.Topic;
+import com.xxl.mq.admin.util.PartitionUtil;
 import com.xxl.mq.core.openapi.BrokerService;
 import com.xxl.mq.core.openapi.model.RegistryRequest;
-import com.xxl.mq.core.openapi.model.broker.ApplicationRegistryData;
 import com.xxl.tool.concurrent.CyclicThread;
 import com.xxl.tool.concurrent.MessageQueue;
 import com.xxl.tool.core.CollectionTool;
@@ -203,29 +203,78 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
             public void run() {
 
                 /**
-                 * 1、Instance 初始化
-                 *      - 处理增量，30s内在线节点
-                 *      - 不存在直接初始化:
-                 *          - appname： 去重新建
-                 *          - topic：默认同appname下 topic 信息相同；取最新instance下topic识别增量、新建；
+                 * 1、AppName + Topic：自动初始化
+                 *      - 处理增量：30s内在线节点
+                 *      - 初始化：
+                 *          - appname：注意去重、判断是否存在；
+                 *          - topic：默认同appname下 topic 信息相同；处理其中一个 appname 下topic即可；
                  */
                 List<Instance> instanceList = instanceMapper.queryOnlineInstance(DateTool.addMilliseconds(new Date(), -3 * BEAT_TIME_INTERVAL));
                 if (CollectionTool.isNotEmpty(instanceList)) {
+
+                    // exist appname
+                    List<Application> existApplicationData = applicationMapper.findAll();
+                    List<String> existAppNameList = existApplicationData.stream().map(Application::getAppname).distinct().collect(Collectors.toList());
+
+                    // exist topic
+                    List<Topic> existTopicData = topicMapper.queryByStatus(TopicStatusEnum.NORMAL.getValue());
+                    List<String> existTopicNameList = existTopicData.stream().map(Topic::getTopic).distinct().collect(Collectors.toList());
+
+                    // do init
                     for (Instance instance : instanceList) {
 
-                        // todo，多虑已存在，新建；
-                        Application application = new Application();
-                        application.setAppname(instance.getAppname());
-                        application.setName("初始化");
-                        application.setDesc("初始化");
-                        application.setRegistryData(null);
+                        // avoid repeat
+                        if (existAppNameList.contains(instance.getAppname())) {
+                            continue;
+                        }
 
-                        applicationMapper.insert(application);
+                        // do init
+                        RegistryRequest registryRequest = GsonTool.fromJson(instance.getRegistryData(), RegistryRequest.class);
+                        if (!existAppNameList.contains(instance.getAppname())) {
+                            existAppNameList.add(instance.getAppname());
+
+                            // a、init appname
+                            Application application = new Application();
+                            application.setAppname(instance.getAppname());
+                            application.setName(instance.getAppname()+"服务");
+                            application.setDesc("初始化数据");
+                            application.setRegistryData(null);
+
+                            applicationMapper.insertIgnoreRepeat(application);
+
+                            // b、init topic
+                            for (String topicName : registryRequest.getTopicGroup().keySet()) {
+                                if (!existTopicNameList.contains(topicName)) {
+                                    existTopicNameList.add(topicName);
+
+                                    // init topic
+                                    Topic topic = new Topic();
+                                    topic.setAppname(instance.getAppname());
+                                    topic.setTopic(topicName);
+                                    topic.setDesc("初始化数据");
+                                    topic.setOwner("系统");
+                                    topic.setAlarmEmail(null);
+                                    topic.setStatus(TopicStatusEnum.NORMAL.getValue());
+                                    topic.setStoreStrategy(StoreStrategyEnum.UNITY_STORE.getValue());
+                                    topic.setArchiveStrategy(ArchiveStrategyEnum.RESERVE_7_DAY.getValue());
+                                    topic.setPartitionStrategy(PartitionRouteStrategyEnum.HASH.getValue());
+                                    topic.setLevel(TopicLevelStrategyEnum.LEVEL_1.getValue());
+                                    topic.setRetryStrategy(RetryStrategyEnum.FIXED_RETREAT.getValue());
+                                    topic.setRetryCount(0);
+                                    topic.setRetryInterval(0);
+                                    topic.setExecutionTimeout(-1);
+
+                                    topicMapper.insertIgnoreRepeat(topic);
+                                }
+                            }
+
+                        }
+
                     }
-                }
-                // todo 新建
 
-                // 3、topic 缓存处理 （查询全部）
+                }
+
+                // 2、topic 缓存处理 （查询全部）
                 List<Topic> topicList =topicMapper.queryByStatus(TopicStatusEnum.NORMAL.getValue());
                 Map<String, Topic> topicStoreNew = new ConcurrentHashMap<>();
                 if (CollectionTool.isNotEmpty(topicList)) {
@@ -233,13 +282,93 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
                         topicStoreNew.put(topic.getTopic(), topic);
                     });
                 }
-                topicStore = topicStoreNew;
+                String topicStoreNewJson = GsonTool.toJson(topicStoreNew);
+                if (!topicStoreNewJson.equals(GsonTool.toJson(topicStore))) {
+                    topicStore = topicStoreNew;
+                    logger.info(">>>>>>>>>>> xxl-mq, registryLocalCacheThread found diff data, topicStoreNew:{}", topicStoreNewJson);
+                }
 
-                // 4、ApplicationRegistryData 缓存处理 （查询全部）
+                // 3、appname 维度缓存：ApplicationRegistryData 缓存处理 （查询全部）
+                Map<String, ApplicationRegistryData> applicationRegistryDataStoreNew = new ConcurrentHashMap<>();
+                if (CollectionTool.isNotEmpty(instanceList)) {
+                    // group by appname
+                    Map<String, List<Instance>> instanceListGroup = instanceList.stream().collect(Collectors.groupingBy(Instance::getAppname));
+                    for (String appname : instanceListGroup.keySet()) {
+                        List<Instance> instanceListGroupAppname = instanceListGroup.get(appname);
+
+                        // instance
+                        List<String> instanceUuidList =instanceListGroupAppname.stream().map(Instance::getUuid).sorted().collect(Collectors.toList());
+                        Map<String, PartitionUtil.PartitionRange> instancePartitionRange = PartitionUtil.allocatePartition(instanceUuidList);
+
+                        // topic
+                        RegistryRequest registryRequest = GsonTool.fromJson(instanceListGroupAppname.get(0).getRegistryData(), RegistryRequest.class);
+                        Map<String, Set<String>> topicGroup = registryRequest.getTopicGroup();
+
+                        // build new cache
+                        ApplicationRegistryData applicationRegistryData = new ApplicationRegistryData();
+                        applicationRegistryData = new ApplicationRegistryData();
+                        applicationRegistryData.setTopicGroup(topicGroup);
+                        applicationRegistryData.setInstancePartitionRange(instancePartitionRange);
+
+                        applicationRegistryDataStoreNew.put(appname, applicationRegistryData);
+                    }
+                }
+                String applicationRegistryDataNewJson = GsonTool.toJson(applicationRegistryDataStoreNew);
+                if (!applicationRegistryDataNewJson.equals(GsonTool.toJson(applicationRegistryDataStore))) {
+                    applicationRegistryDataStore = applicationRegistryDataStoreNew;
+                    logger.info(">>>>>>>>>>> xxl-mq, registryLocalCacheThread found diff data, applicationRegistryDataNew:{}", applicationRegistryDataNewJson);
+                }
 
             }
         }, BEAT_TIME_INTERVAL, true);
         registryLocalCacheThread.start();
+    }
+
+    /**
+     * find topic group
+     *
+     * @param topic
+     * @return
+     */
+    public Set<String> findTopicGroup(String topic) {
+        Topic topicData = topicStore.get(topic);
+        if (topicData == null) {
+            return null;
+        }
+
+        ApplicationRegistryData applicationRegistryData = applicationRegistryDataStore.get(topicData.getAppname());
+        if (applicationRegistryData == null) {
+            return null;
+        }
+        Map<String, Set<String>> topicGroup = applicationRegistryData.getTopicGroup();
+        if (topicGroup == null) {
+            return null;
+        }
+
+        return topicGroup.get(topic);
+    }
+
+    /**
+     * find partition range
+     *
+     * @param topic
+     * @return
+     */
+    public PartitionUtil.PartitionRange findPartitionRange(String topic) {
+        Topic topicData = topicStore.get(topic);
+        if (topicData == null) {
+            return null;
+        }
+
+        ApplicationRegistryData applicationRegistryData = applicationRegistryDataStore.get(topicData.getAppname());
+        if (applicationRegistryData == null) {
+            return null;
+        }
+        Map<String, PartitionUtil.PartitionRange> instancePartitionRange = applicationRegistryData.getInstancePartitionRange();
+        if (instancePartitionRange == null) {
+            return null;
+        }
+        return instancePartitionRange.get(topicData.getAppname());
     }
 
 }
