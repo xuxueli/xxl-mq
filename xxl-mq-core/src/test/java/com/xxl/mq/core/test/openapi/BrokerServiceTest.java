@@ -30,19 +30,40 @@ public class BrokerServiceTest {
         // client
         BrokerService brokerService = buildClient();
 
-        // param
-        RegistryRequest registryRequest = new RegistryRequest();
-        registryRequest.setAccessToken("defaultaccesstoken");
-        registryRequest.setAppname("xxl-mq-sample2");
-        registryRequest.setInstanceUuid("qwerqweqrwer");
-        registryRequest.setTopicGroup(MapTool.newHashMap(
-                "topic01", new HashSet<>(Arrays.asList("default")),
-                "topic02", new HashSet<>(Arrays.asList("default"))
-        ));
+        // 01
+        {
+            // param
+            RegistryRequest registryRequest = new RegistryRequest();
+            registryRequest.setAccessToken("defaultaccesstoken");
+            registryRequest.setAppname("xxl-mq-sample");
+            registryRequest.setInstanceUuid("uuid_01");
+            registryRequest.setTopicGroup(MapTool.newHashMap(
+                    "topic01", new HashSet<>(Arrays.asList("default")),
+                    "topic02", new HashSet<>(Arrays.asList("uuid_01"))
+            ));
 
-        // invoke
-        Response<String> response = brokerService.registry(registryRequest);
-        logger.info("response:{}", response);
+            // invoke
+            Response<String> response = brokerService.registry(registryRequest);
+            logger.info("response:{}", response);
+        }
+
+        // 02
+        {
+            // param
+            RegistryRequest registryRequest = new RegistryRequest();
+            registryRequest.setAccessToken("defaultaccesstoken");
+            registryRequest.setAppname("xxl-mq-sample");
+            registryRequest.setInstanceUuid("uuid_02");
+            registryRequest.setTopicGroup(MapTool.newHashMap(
+                    "topic01", new HashSet<>(Arrays.asList("default")),
+                    "topic02", new HashSet<>(Arrays.asList("uuid_02"))
+            ));
+
+            // invoke
+            Response<String> response = brokerService.registry(registryRequest);
+            logger.info("response:{}", response);
+        }
+
     }
 
 }

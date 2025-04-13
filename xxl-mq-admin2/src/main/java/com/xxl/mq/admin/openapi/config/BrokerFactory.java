@@ -223,17 +223,9 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
                     // do init
                     for (Instance instance : instanceList) {
 
-                        // avoid repeat
-                        if (existAppNameList.contains(instance.getAppname())) {
-                            continue;
-                        }
-
-                        // do init
-                        RegistryRequest registryRequest = GsonTool.fromJson(instance.getRegistryData(), RegistryRequest.class);
+                        // a、init appname
                         if (!existAppNameList.contains(instance.getAppname())) {
-                            existAppNameList.add(instance.getAppname());
 
-                            // a、init appname
                             Application application = new Application();
                             application.setAppname(instance.getAppname());
                             application.setName(instance.getAppname()+"服务");
@@ -242,39 +234,43 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
 
                             applicationMapper.insertIgnoreRepeat(application);
 
-                            // b、init topic
-                            for (String topicName : registryRequest.getTopicGroup().keySet()) {
-                                if (!existTopicNameList.contains(topicName)) {
-                                    existTopicNameList.add(topicName);
+                            // avoid repeat
+                            existAppNameList.add(instance.getAppname());
+                        }
 
-                                    // init topic
-                                    Topic topic = new Topic();
-                                    topic.setAppname(instance.getAppname());
-                                    topic.setTopic(topicName);
-                                    topic.setDesc("初始化数据");
-                                    topic.setOwner("系统");
-                                    topic.setAlarmEmail(null);
-                                    topic.setStatus(TopicStatusEnum.NORMAL.getValue());
-                                    topic.setStoreStrategy(StoreStrategyEnum.UNITY_STORE.getValue());
-                                    topic.setArchiveStrategy(ArchiveStrategyEnum.RESERVE_7_DAY.getValue());
-                                    topic.setPartitionStrategy(PartitionRouteStrategyEnum.HASH.getValue());
-                                    topic.setLevel(TopicLevelStrategyEnum.LEVEL_1.getValue());
-                                    topic.setRetryStrategy(RetryStrategyEnum.FIXED_RETREAT.getValue());
-                                    topic.setRetryCount(0);
-                                    topic.setRetryInterval(0);
-                                    topic.setExecutionTimeout(-1);
+                        // b、init topic
+                        RegistryRequest registryRequest = GsonTool.fromJson(instance.getRegistryData(), RegistryRequest.class);
+                        for (String topicName : registryRequest.getTopicGroup().keySet()) {
+                            if (!existTopicNameList.contains(topicName)) {
 
-                                    topicMapper.insertIgnoreRepeat(topic);
-                                }
+                                Topic topic = new Topic();
+                                topic.setAppname(instance.getAppname());
+                                topic.setTopic(topicName);
+                                topic.setDesc("初始化数据");
+                                topic.setOwner("系统");
+                                topic.setAlarmEmail(null);
+                                topic.setStatus(TopicStatusEnum.NORMAL.getValue());
+                                topic.setStoreStrategy(StoreStrategyEnum.UNITY_STORE.getValue());
+                                topic.setArchiveStrategy(ArchiveStrategyEnum.RESERVE_7_DAY.getValue());
+                                topic.setPartitionStrategy(PartitionRouteStrategyEnum.HASH.getValue());
+                                topic.setLevel(TopicLevelStrategyEnum.LEVEL_1.getValue());
+                                topic.setRetryStrategy(RetryStrategyEnum.FIXED_RETREAT.getValue());
+                                topic.setRetryCount(0);
+                                topic.setRetryInterval(0);
+                                topic.setExecutionTimeout(-1);
+
+                                topicMapper.insertIgnoreRepeat(topic);
+
+                                // avoid repeat
+                                existTopicNameList.add(topicName);
                             }
-
                         }
 
                     }
 
                 }
 
-                // 2、topic 缓存处理 （查询全部）
+                // 2、topic 缓存处理：查询全部
                 List<Topic> topicList =topicMapper.queryByStatus(TopicStatusEnum.NORMAL.getValue());
                 Map<String, Topic> topicStoreNew = new ConcurrentHashMap<>();
                 if (CollectionTool.isNotEmpty(topicList)) {
@@ -288,19 +284,20 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
                     logger.info(">>>>>>>>>>> xxl-mq, registryLocalCacheThread found diff data, topicStoreNew:{}", topicStoreNewJson);
                 }
 
-                // 3、appname 维度缓存：ApplicationRegistryData 缓存处理 （查询全部）
+                // 3、appname 维度缓存（ApplicationRegistryData）： instance注册及分区信息 + topic分组信息
                 Map<String, ApplicationRegistryData> applicationRegistryDataStoreNew = new ConcurrentHashMap<>();
                 if (CollectionTool.isNotEmpty(instanceList)) {
                     // group by appname
                     Map<String, List<Instance>> instanceListGroup = instanceList.stream().collect(Collectors.groupingBy(Instance::getAppname));
+                    // parse by appname
                     for (String appname : instanceListGroup.keySet()) {
                         List<Instance> instanceListGroupAppname = instanceListGroup.get(appname);
 
-                        // instance
+                        // a、instance, process partition rage
                         List<String> instanceUuidList =instanceListGroupAppname.stream().map(Instance::getUuid).sorted().collect(Collectors.toList());
                         Map<String, PartitionUtil.PartitionRange> instancePartitionRange = PartitionUtil.allocatePartition(instanceUuidList);
 
-                        // topic
+                        // b、topic, process topic group
                         RegistryRequest registryRequest = GsonTool.fromJson(instanceListGroupAppname.get(0).getRegistryData(), RegistryRequest.class);
                         Map<String, Set<String>> topicGroup = registryRequest.getTopicGroup();
 
