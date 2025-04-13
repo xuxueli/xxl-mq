@@ -1,6 +1,7 @@
 package com.xxl.mq.core.test.openapi;
 
 import com.xxl.mq.core.openapi.BrokerService;
+import com.xxl.mq.core.openapi.model.ProduceRequest;
 import com.xxl.mq.core.openapi.model.RegistryRequest;
 import com.xxl.tool.core.MapTool;
 import com.xxl.tool.jsonrpc.JsonRpcClient;
@@ -64,6 +65,18 @@ public class BrokerServiceTest {
             logger.info("response:{}", response);
         }
 
+    }
+
+    @Test
+    public void produceTest() {
+        // client
+        BrokerService brokerService = buildClient();
+
+        ProduceRequest produceRequest = new ProduceRequest();
+        // todo
+
+        Response<String> response = brokerService.produce(produceRequest);
+        logger.info("response:{}", response);
     }
 
 }

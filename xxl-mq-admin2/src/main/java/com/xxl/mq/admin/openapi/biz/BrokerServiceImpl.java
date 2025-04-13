@@ -99,7 +99,7 @@ public class BrokerServiceImpl implements BrokerService {
     }
 
     @Override
-    public Response<String> consumeRequest(ConsumeRequest consumeRequest) {
+    public Response<String> consume(ConsumeRequest consumeRequest) {
         return null;
     }
 }

@@ -657,16 +657,16 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
 2、设计：
 - Broker：
     - Manage：控制台；
-        - Index：首页报表；                                                   【Todo；复用 Message归档 ；】
+        - Index：首页报表；                                                    【Todo；复用 Message归档 ；】
         - User：服务授权;
-        - AccessToken：管理 + 【01: AccessToken本地缓存（Helper）】
+        - AccessToken：管理 +                                     【DONE - 01: AccessToken本地缓存（Helper）】
         - AppName：管理;                                                   
         - Topic：Topic管理；  
         - Message：Message管理 + 手动归档；                                    【TODO - 02: Message归档（Helper）；自动 Message + MessageArchive，滚动清理及归档；+报表声哼；】
         - MessageArchive：MessageArchive查看 + 手动清理；        
-    - Registry：注册中心；                                                    【TODO - 03: Registry注册（Helper）；注册心跳异步写 + 定期本地缓存（计算 + 更新至AppName/app&instance&topic）】
+    - Registry：注册中心；                                          【DONE - 03: Registry注册（Helper）；注册心跳异步写 + 定期本地缓存（计算 + 更新至AppName/app&instance&topic）】
     - OpenAPI：统一“Token验证”（http+gson；借助 xxl-tool 实现通用 http-rpc 能力；）
-        - a 、注册：app+topic初始化 + 节点心跳注册/摘除；                        【TODO ： 转发 Registry注册（Helper） 】
+        - a 、注册：app+topic初始化 + 节点心跳注册/摘除；              【DONE ： 转发 Registry注册（Helper） 】
                   - 数据格式：
                         - app01 : 
                         - instanceUuid01：

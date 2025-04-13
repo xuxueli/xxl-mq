@@ -42,7 +42,7 @@ public interface BrokerService {
      * @param consumeRequest
      * @return
      */
-    public Response<String> consumeRequest(ConsumeRequest consumeRequest);
+    public Response<String> consume(ConsumeRequest consumeRequest);
 
 
 }
