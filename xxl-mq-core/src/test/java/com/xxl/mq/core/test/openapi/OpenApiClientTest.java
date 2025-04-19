@@ -10,11 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.HashSet;
-
-public class BrokerServiceTest {
-    private static Logger logger = LoggerFactory.getLogger(BrokerServiceTest.class);
+public class OpenApiClientTest {
+    private static Logger logger = LoggerFactory.getLogger(OpenApiClientTest.class);
 
     private static String url = "http://127.0.0.1:8080/xxl-mq-admin/openapi";
     private static String service = "brokerService";
@@ -38,10 +35,6 @@ public class BrokerServiceTest {
             registryRequest.setAccessToken("defaultaccesstoken");
             registryRequest.setAppname("xxl-mq-sample");
             registryRequest.setInstanceUuid("uuid_01");
-            registryRequest.setTopicGroup(MapTool.newHashMap(
-                    "topic01", new HashSet<>(Arrays.asList("default")),
-                    "topic02", new HashSet<>(Arrays.asList("uuid_01"))
-            ));
 
             // invoke
             Response<String> response = brokerService.registry(registryRequest);
@@ -55,10 +48,6 @@ public class BrokerServiceTest {
             registryRequest.setAccessToken("defaultaccesstoken");
             registryRequest.setAppname("xxl-mq-sample");
             registryRequest.setInstanceUuid("uuid_02");
-            registryRequest.setTopicGroup(MapTool.newHashMap(
-                    "topic01", new HashSet<>(Arrays.asList("default")),
-                    "topic02", new HashSet<>(Arrays.asList("uuid_02"))
-            ));
 
             // invoke
             Response<String> response = brokerService.registry(registryRequest);

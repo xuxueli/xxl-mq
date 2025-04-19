@@ -6,7 +6,6 @@
     <resultMap id="MessageArchive" type="com.xxl.mq.admin.model.entity.MessageArchive" >
         <result column="id" property="id" />
         <result column="topic" property="topic" />
-        <result column="group" property="group" />
         <result column="partition_id" property="partitionId" />
         <result column="data" property="data" />
         <result column="status" property="status" />
@@ -20,7 +19,6 @@
     <sql id="Base_Column_List">
         t.`id`,
         t.`topic`,
-        t.`group`,
         t.`partition_id`,
         t.`data`,
         t.`status`,
@@ -34,7 +32,6 @@
     <insert id="insert" parameterType="java.util.Map" >
         INSERT INTO xxl_mq_message_archive (
             `topic`,
-            `group`,
             `partition_id`,
             `data`,
             `status`,
@@ -46,7 +43,6 @@
         )
         VALUES(
                   #{messageArchive.topic} ,
-                  #{messageArchive.group} ,
                   #{messageArchive.partitionId} ,
                   #{messageArchive.data} ,
                   #{messageArchive.status} ,
@@ -70,7 +66,6 @@
         UPDATE xxl_mq_message_archive
         SET
             `topic` = #{messageArchive.topic},
-            `group` = #{messageArchive.group},
             `partition_id` = #{messageArchive.partitionId},
             `data` = #{messageArchive.data},
             `status` = #{messageArchive.status},
@@ -117,7 +112,6 @@
         INSERT IGNORE INTO xxl_mq_message_archive (
             `id`,
             `topic`,
-            `group`,
             `partition_id`,
             `data`,
             `status`,
@@ -132,7 +126,6 @@
             (
                 #{item.id} ,
                 #{item.topic} ,
-                #{item.group} ,
                 #{item.partitionId} ,
                 #{item.data} ,
                 #{item.status} ,

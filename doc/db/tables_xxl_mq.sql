@@ -35,7 +35,6 @@ CREATE TABLE `xxl_mq_topic`(
 CREATE TABLE `xxl_mq_message`(
     `id`                    bigint(20)      NOT NULL AUTO_INCREMENT,
     `topic`                 varchar(100)    NOT NULL COMMENT '消息主题Topic',
-    `group`                 varchar(20)     NOT NULL COMMENT '消息主题分组',
     `partition_id`          int(11)         NOT NULL COMMENT '消息分片ID',
     `data`                  text            NOT NULL COMMENT '消息数据',
     `status`                tinyint(4)      NOT NULL COMMENT '状态',
@@ -45,13 +44,13 @@ CREATE TABLE `xxl_mq_message`(
     `add_time`              datetime        NOT NULL COMMENT '新增时间',
     `update_time`           datetime        NOT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),
-    KEY `i_t_g_p` (`topic`, `group`, `partition_id`)
+    KEY `i_t_s_p_e` (`topic`, `status`, `partition_id`, `effect_time`),
+    KEY `i_cuuid` (`consume_instance_uuid`)
 ) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COMMENT ='消息数据表';
 
 CREATE TABLE `xxl_mq_message_archive` (
     `id`                    bigint(20)      NOT NULL ,
     `topic`                 varchar(100)    NOT NULL COMMENT '消息主题Topic',
-    `group`                 varchar(20)     NOT NULL COMMENT '消息主题分组',
     `partition_id`          int(11)         NOT NULL COMMENT '消息分片ID',
     `data`                  text            NOT NULL COMMENT '消息数据',
     `status`                tinyint(4)      NOT NULL COMMENT '状态',
@@ -61,7 +60,8 @@ CREATE TABLE `xxl_mq_message_archive` (
     `add_time`              datetime        NOT NULL COMMENT '新增时间',
     `update_time`           datetime        NOT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),
-    KEY `i_t_g_p` (`topic`, `group`, `partition_id`)
+    KEY `i_t_s_p_e` (`topic`, `status`, `partition_id`, `effect_time`),
+    KEY `i_cuuid` (`consume_instance_uuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='消息数据归档表';
 
 ## —————————————————————— registry ——————————————————
@@ -71,7 +71,6 @@ CREATE TABLE `xxl_mq_instance` (
     `appname`            varchar(50)     NOT NULL COMMENT 'AppName（服务唯一标识）',
     `uuid`               varchar(50)     NOT NULL COMMENT '实例唯一标识',
     `register_heartbeat` datetime        DEFAULT NULL COMMENT '实例最后心跳时间，动态注册时判定是否过期',
-    `registry_data`      text            DEFAULT NULL COMMENT '注册数据，JSON',
     `add_time`           datetime        NOT NULL COMMENT '新增时间',
     `update_time`        datetime        NOT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),
@@ -132,8 +131,8 @@ VALUES (1, 'xxl-mq-sample', '示例服务', '示例服务，演示使用', '2025
 INSERT INTO xxl_mq.xxl_mq_topic (id, topic, appname, `desc`, owner, alarm_email, status, store_strategy, archive_strategy, partition_strategy, retry_strategy, retry_count, retry_interval, level, execution_timeout, add_time, update_time)
 VALUES (1, 'topic_sample', 'xxl-mq-sample', '示例消息主题', '张三', '', 0, '0', '1', '1', '1', 0, 3, 1, 0, now(), now());
 
-INSERT INTO xxl_mq.xxl_mq_message (id, topic, data, `group`, partition_id, status, effect_time, consume_log, consume_instance_uuid, add_time, update_time)
-VALUES (1, 'topic_sample', 'hello world.', 'DEFAULT', 1, 0, now(), null, null, now(), now());
+INSERT INTO xxl_mq.xxl_mq_message (id, topic, data, partition_id, status, effect_time, consume_log, consume_instance_uuid, add_time, update_time)
+VALUES (1, 'topic_sample', 'hello world.', 1, 0, now(), null, null, now(), now());
 
 
 commit;

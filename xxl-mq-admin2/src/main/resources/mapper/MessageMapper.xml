@@ -6,7 +6,6 @@
     <resultMap id="Message" type="com.xxl.mq.admin.model.entity.Message" >
         <result column="id" property="id" />
         <result column="topic" property="topic" />
-        <result column="group" property="group" />
         <result column="partition_id" property="partitionId" />
         <result column="data" property="data" />
         <result column="status" property="status" />
@@ -20,7 +19,6 @@
     <sql id="Base_Column_List">
         t.`id`,
         t.`topic`,
-        t.`group`,
         t.`partition_id`,
         t.`data`,
         t.`status`,
@@ -34,7 +32,6 @@
     <insert id="insert" parameterType="java.util.Map" >
         INSERT INTO xxl_mq_message (
             `topic`,
-            `group`,
             `partition_id`,
             `data`,
             `status`,
@@ -46,7 +43,6 @@
         )
         VALUES(
                   #{message.topic} ,
-                  #{message.group} ,
                   #{message.partitionId} ,
                   #{message.data} ,
                   #{message.status} ,

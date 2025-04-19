@@ -22,11 +22,6 @@ public class MessageArchive implements Serializable {
     private String topic;
 
     /**
-    * 消息主题分组
-    */
-    private String group;
-
-    /**
     * 消息分片ID
     */
     private int partitionId;
@@ -81,14 +76,6 @@ public class MessageArchive implements Serializable {
 
     public void setTopic(String topic) {
         this.topic = topic;
-    }
-
-    public String getGroup() {
-        return group;
-    }
-
-    public void setGroup(String group) {
-        this.group = group;
     }
 
     public int getPartitionId() {

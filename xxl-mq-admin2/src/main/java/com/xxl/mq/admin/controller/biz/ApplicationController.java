@@ -3,6 +3,7 @@ package com.xxl.mq.admin.controller.biz;
 import com.xxl.mq.admin.annotation.Permission;
 import com.xxl.mq.admin.constant.consts.Consts;
 import com.xxl.mq.admin.model.entity.Application;
+import com.xxl.mq.admin.openapi.config.BrokerFactory;
 import com.xxl.mq.admin.service.ApplicationService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

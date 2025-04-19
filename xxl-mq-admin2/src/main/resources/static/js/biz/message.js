@@ -102,11 +102,6 @@ $(function() {
 				}
 			},
 			{
-				"title": 'Group',
-				"data": 'group',
-				"width":'10%'
-			},
-			{
 				"title": 'partitionId',
 				"data": 'partitionId',
 				"width":'10%'
@@ -173,6 +168,7 @@ $(function() {
 
         mainDataTable.fnDraw();
 	});
+	$('#data_filter .searchBtn').click();
 
 	// ---------- ---------- ---------- delete operation ---------- ---------- ----------
 	// delete

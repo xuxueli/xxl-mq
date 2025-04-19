@@ -8,7 +8,6 @@
         <result column="appname" property="appname" />
         <result column="uuid" property="uuid" />
         <result column="register_heartbeat" property="registerHeartbeat" />
-        <result column="registry_data" property="registryData" />
         <result column="add_time" property="addTime" />
         <result column="update_time" property="updateTime" />
     </resultMap>
@@ -18,7 +17,6 @@
         t.`appname`,
         t.`uuid`,
         t.`register_heartbeat`,
-        t.`registry_data`,
         t.`add_time`,
         t.`update_time`
     </sql>
@@ -28,7 +26,6 @@
             `appname`,
             `uuid`,
             `register_heartbeat`,
-            `registry_data`,
             `add_time`,
             `update_time`
         )
@@ -36,7 +33,6 @@
               #{instance.appname} ,
               #{instance.uuid} ,
               #{instance.registerHeartbeat} ,
-              #{instance.registryData} ,
               NOW() ,
               NOW()
           )
@@ -47,7 +43,6 @@
             `appname`,
             `uuid`,
             `register_heartbeat`,
-            `registry_data`,
             `add_time`,
             `update_time`
         )
@@ -55,13 +50,11 @@
                   #{instance.appname} ,
                   #{instance.uuid} ,
                   #{instance.registerHeartbeat} ,
-                  #{instance.registryData} ,
                   NOW() ,
                   NOW()
               )
         ON DUPLICATE KEY UPDATE
             `register_heartbeat` = #{instance.registerHeartbeat},
-            `registry_data` = #{instance.registryData},
             `update_time` = NOW()
     </insert>
 
@@ -79,7 +72,6 @@
             `appname` = #{instance.appname},
             `uuid` = #{instance.uuid},
             `register_heartbeat` = #{instance.registerHeartbeat},
-            `registry_data` = #{instance.registryData},
             `update_time` = NOW()
         WHERE `id` = #{instance.id}
     </update>

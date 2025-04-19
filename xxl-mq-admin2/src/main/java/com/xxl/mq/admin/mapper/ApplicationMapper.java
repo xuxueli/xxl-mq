@@ -35,6 +35,11 @@ public interface ApplicationMapper {
     public int update(@Param("application") Application application);
 
     /**
+     * 更新注册数据
+     */
+    public int  updateRegistryData(@Param("application") Application application);
+
+    /**
     * Load查询
     */
     public Application load(@Param("id") int id);

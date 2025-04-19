@@ -109,10 +109,6 @@
 									<div class="col-sm-10"><input type="text" class="form-control" name="topic" placeholder="请输入Topic" maxlength="100" ></div>
 								</div>
 								<div class="form-group">
-									<label for="lastname" class="col-sm-2 control-label">Group<font color="red">*</font></label>
-									<div class="col-sm-6"><input type="text" class="form-control" name="group" placeholder="请输入消息分组" maxlength="20" value="DEFAULT" ></div>
-								</div>
-								<div class="form-group">
 									<label for="lastname" class="col-sm-2 control-label">PartitionId<font color="red">*</font></label>
 									<div class="col-sm-6"><input type="number" class="form-control" name="partitionId" placeholder="请输入分区ID" value="1" ></div>
 								</div>
@@ -167,10 +163,6 @@
 								<div class="form-group">
 									<label for="lastname" class="col-sm-2 control-label">Topic<font color="red">*</font></label>
 									<div class="col-sm-10"><input type="text" class="form-control" name="topic" placeholder="请输入Topic" readonly ></div>
-								</div>
-								<div class="form-group">
-									<label for="lastname" class="col-sm-2 control-label">Group<font color="red">*</font></label>
-									<div class="col-sm-6"><input type="text" class="form-control" name="group" placeholder="请输入消息分组" readonly ></div>
 								</div>
 								<div class="form-group">
 									<label for="lastname" class="col-sm-2 control-label">PartitionId<font color="red">*</font></label>
