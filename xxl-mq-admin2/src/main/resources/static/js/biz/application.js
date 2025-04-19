@@ -50,7 +50,7 @@ $(function() {
 			{
 				"title": 'AppName（服务标识）',
 				"data": 'appname',
-				"width":'30%'
+				"width":'25%'
 			},
 			{
 				"title": '服务名称',
@@ -60,12 +60,25 @@ $(function() {
 			{
 				"title": '服务描述',
 				"data": 'desc',
-				"width":'35%',
+				"width":'30%',
 				"render": function ( data, type, row ) {
 					var result = data.length<20
 						?data
 						:data.substring(0, 20) + '...';
 					return '<span title="'+ data +'">'+ result +'</span>';
+				}
+			},
+			{
+				"title": '注册节点数',
+				"data": 'registryData',
+				"width":'10%',
+				"render": function ( data, type, row ) {
+					var registryInstanceSize = 0;
+					if (row.registryData && row.registryData.length >0 ) {
+						var registryDataObj = JSON.parse(row.registryData);
+						registryInstanceSize = Object.entries(registryDataObj.instancePartitionRange).length;
+					}
+					return registryInstanceSize;
 				}
 			}
 		],

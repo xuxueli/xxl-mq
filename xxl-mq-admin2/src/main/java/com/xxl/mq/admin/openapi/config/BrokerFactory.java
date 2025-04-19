@@ -349,7 +349,7 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
         if (topicData == null) {
             return null;
         }
-        return findPartitionRangeByAppname(topicData.getTopic());
+        return findPartitionRangeByAppname(topicData.getAppname());
     }
 
     /**
@@ -451,7 +451,11 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
                             }
                         }
                         // produce
+                        if (CollectionTool.isEmpty(messageList)) {
+                            continue;
+                        }
                         messageMapper.batchInsert(messageList);
+                        System.out.println(111);
                     }
                 },
                 50,

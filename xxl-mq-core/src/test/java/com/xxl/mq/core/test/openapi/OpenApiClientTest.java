@@ -62,6 +62,19 @@ public class OpenApiClientTest {
             Response<String> response = brokerService.registry(registryRequest);
             logger.info("response:{}", response);
         }
+
+        // 02
+        {
+            // param
+            RegistryRequest registryRequest = new RegistryRequest();
+            registryRequest.setAccessToken("defaultaccesstoken");
+            registryRequest.setAppname("xxl-mq-sample");
+            registryRequest.setInstanceUuid("uuid_03");
+
+            // invoke
+            Response<String> response = brokerService.registry(registryRequest);
+            logger.info("response:{}", response);
+        }
     }
 
     @Test
@@ -91,6 +104,21 @@ public class OpenApiClientTest {
                 new MessageData("topic_sample", "pk-111", "data111", System.currentTimeMillis()),
                 new MessageData("topic_sample", "pk-111", "data222", System.currentTimeMillis()+1000),
                 new MessageData("topic_sample", "pk-222", "data333", System.currentTimeMillis()+2000)
+        ));
+
+        Response<String> response = brokerService.produce(produceRequest);
+        logger.info("response:{}", response);
+    }
+
+    @Test
+    public void produce2Test() {
+        // client
+        BrokerService brokerService = buildClient();
+
+        ProduceRequest produceRequest = new ProduceRequest();
+        produceRequest.setAccessToken("defaultaccesstoken");
+        produceRequest.setMessageList(Arrays.asList(
+                new MessageData("topic_sample02", "pk-222", "data333", System.currentTimeMillis()+2000)
         ));
 
         Response<String> response = brokerService.produce(produceRequest);
