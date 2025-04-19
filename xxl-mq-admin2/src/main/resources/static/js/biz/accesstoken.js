@@ -14,8 +14,8 @@ $(function() {
 	        data : function ( d ) {
 	        	var obj = {};
                 obj.accessToken = $('#data_filter .accessToken').val();
-	        	obj.start = d.start;
-	        	obj.length = d.length;
+				obj.offset = d.start;
+				obj.pagesize = d.length;
                 return obj;
             },
 			// response data filter

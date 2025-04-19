@@ -10,6 +10,7 @@ import com.xxl.tool.core.MapTool;
 import com.xxl.tool.http.IPTool;
 import com.xxl.tool.jsonrpc.JsonRpcClient;
 import com.xxl.tool.response.Response;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,6 +124,42 @@ public class OpenApiClientTest {
 
         Response<String> response = brokerService.produce(produceRequest);
         logger.info("response:{}", response);
+    }
+
+    @Test
+    public void produce3Test() {
+        // client
+        BrokerService brokerService = buildClient();
+
+        // send 10W
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < 10000; i++) {
+            ProduceRequest produceRequest = new ProduceRequest();
+            produceRequest.setAccessToken("defaultaccesstoken");
+            produceRequest.setMessageList(Arrays.asList(
+                    new MessageData("topic_sample02", "pk-222", "data-"+i+"-1000", System.currentTimeMillis()+1000),
+                    new MessageData("topic_sample02", "pk-222", "data-"+i+"-2000", System.currentTimeMillis()+2000),
+                    new MessageData("topic_sample02", "pk-222", "data-"+i+"-3000", System.currentTimeMillis()+3000),
+                    new MessageData("topic_sample02", "pk-222", "data-"+i+"-4000", System.currentTimeMillis()+4000),
+                    new MessageData("topic_sample02", "pk-222", "data-"+i+"-5000", System.currentTimeMillis()+5000),
+                    new MessageData("topic_sample02", "pk-222", "data-"+i+"-6000", System.currentTimeMillis()+6000),
+                    new MessageData("topic_sample02", "pk-222", "data-"+i+"-7000", System.currentTimeMillis()+7000),
+                    new MessageData("topic_sample02", "pk-222", "data-"+i+"-8000", System.currentTimeMillis()+8000),
+                    new MessageData("topic_sample02", "pk-222", "data-"+i+"-9000", System.currentTimeMillis()+9000),
+                    new MessageData("topic_sample02", "pk-222", "data-"+i+"-10000", System.currentTimeMillis()+10000)
+            ));
+
+            Response<String> response = brokerService.produce(produceRequest);
+            if (!response.isSuccess()) {
+                logger.error("response:{}", response);
+            }
+            if (i / 1000 == 0) {
+                logger.info("send msg count:{}", i*10);
+            }
+        }
+        long cost = (System.currentTimeMillis()-start) / 1000;
+        logger.info("cost= {} s / 10W, qps = {}", cost, 10000*10/cost);
+
     }
 
     @Test

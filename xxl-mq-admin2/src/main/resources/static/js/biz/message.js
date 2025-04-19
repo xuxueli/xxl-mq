@@ -52,8 +52,8 @@ $(function() {
                 obj.topic = $('#data_filter .topic').val();
 				obj.status = $('#data_filter .status').val();
 				obj.filterTime = $('#data_filter .filterTime').val();
-	        	obj.start = d.start;
-	        	obj.length = d.length;
+	        	obj.offset = d.start;
+	        	obj.pagesize = d.length;
 
                 return obj;
             },

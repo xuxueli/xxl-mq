@@ -21,8 +21,8 @@ $(function() {
 	        	var obj = {};
                 obj.username = $('#data_filter .username').val();
                 obj.status = $('#data_filter .status').val();
-	        	obj.start = d.start;
-	        	obj.length = d.length;
+				obj.offset = d.start;
+				obj.pagesize = d.length;
                 return obj;
             },
 			// response data filter
