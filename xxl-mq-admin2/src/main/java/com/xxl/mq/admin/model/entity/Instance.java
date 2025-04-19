@@ -32,11 +32,6 @@ public class Instance implements Serializable {
     private Date registerHeartbeat;
 
     /**
-     * 注册数据
-     */
-    private String registryData;
-
-    /**
     * 新增时间
     */
     private Date addTime;
@@ -77,14 +72,6 @@ public class Instance implements Serializable {
 
     public void setRegisterHeartbeat(Date registerHeartbeat) {
         this.registerHeartbeat = registerHeartbeat;
-    }
-
-    public String getRegistryData() {
-        return registryData;
-    }
-
-    public void setRegistryData(String registryData) {
-        this.registryData = registryData;
     }
 
     public Date getAddTime() {

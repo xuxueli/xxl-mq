@@ -42,15 +42,13 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
 
     // ---------------------- instance ----------------------
     private static BrokerFactory instance;
-    @Autowired
-    private TopicMapper topicMapper;
 
     public static BrokerFactory getInstance() {
         return instance;
     }
 
 
-    // ---------------------- start / stop ----------------------
+    // ---------------------- resource ----------------------
 
     @Resource
     private BrokerService brokerService;
@@ -60,7 +58,10 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
     private AccessTokenMapper accessTokenMapper;
     @Resource
     private InstanceMapper instanceMapper;
+    @Autowired
+    private TopicMapper topicMapper;
 
+    // ---------------------- start / stop ----------------------
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -152,6 +153,7 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
     // ---------------------- Registry MessageQueue ----------------------
 
     private volatile MessageQueue<RegistryRequest> registryMessageQueue;
+    private volatile MessageQueue<RegistryRequest> registryRemoveMessageQueue;
 
     /**
      * start Registry MessageQueue (will stop with jvm)
@@ -162,20 +164,65 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
                 1000,
                 messages -> {
                     for (RegistryRequest registryRequest : messages) {
-                        // registry data
-                        RegistryRequest registryData = new RegistryRequest();
-                        registryData.setTopicGroup(registryRequest.getTopicGroup());
-
-                        String registryDate = GsonTool.toJson(registryData);
-
                         // instance
                         Instance newInstance = new Instance();
                         newInstance.setAppname(registryRequest.getAppname());
                         newInstance.setUuid(registryRequest.getInstanceUuid());
                         newInstance.setRegisterHeartbeat(new Date());
-                        newInstance.setRegistryData(registryDate);
 
                         instanceMapper.insertOrUpdate(newInstance);
+
+                        // init Application
+                        if (!applicationRegistryDataStore.containsKey(registryRequest.getAppname())) {
+                            Application application = new Application();
+                            application.setAppname(registryRequest.getAppname());
+                            application.setName(registryRequest.getAppname()+"服务");
+                            application.setDesc("初始化生成");
+                            application.setRegistryData(null);
+
+                            applicationMapper.insertIgnoreRepeat(application);
+                        }
+
+                        // init topic
+                        if (CollectionTool.isNotEmpty(registryRequest.getTopicList())) {
+                            for (String topicName : registryRequest.getTopicList()) {
+                                if (!topicStore.containsKey(topicName)) {
+                                    Topic topic = new Topic();
+                                    topic.setAppname(registryRequest.getAppname());
+                                    topic.setTopic(topicName);
+                                    topic.setDesc("初始化生成");
+                                    topic.setOwner("未知");
+                                    topic.setAlarmEmail(null);
+                                    topic.setStatus(TopicStatusEnum.NORMAL.getValue());
+                                    topic.setStoreStrategy(StoreStrategyEnum.UNITY_STORE.getValue());
+                                    topic.setArchiveStrategy(ArchiveStrategyEnum.RESERVE_7_DAY.getValue());
+                                    topic.setPartitionStrategy(PartitionRouteStrategyEnum.HASH.getValue());
+                                    topic.setLevel(TopicLevelStrategyEnum.LEVEL_1.getValue());
+                                    topic.setRetryStrategy(RetryStrategyEnum.FIXED_RETREAT.getValue());
+                                    topic.setRetryCount(0);
+                                    topic.setRetryInterval(0);
+                                    topic.setExecutionTimeout(-1);
+
+                                    topicMapper.insertIgnoreRepeat(topic);
+                                }
+                            }
+                        }
+                    }
+                },
+                1,
+                1);
+
+        registryRemoveMessageQueue = new MessageQueue<RegistryRequest>(
+                "registryRemoveMessageQueue",
+                1000,
+                messages -> {
+                    for (RegistryRequest registryRequest : messages) {
+                        // instance
+                        Instance instance = new Instance();
+                        instance.setAppname(registryRequest.getAppname());
+                        instance.setUuid(registryRequest.getInstanceUuid());
+
+                        instanceMapper.deleteInstance(instance);
                     }
                 },
                 1,
@@ -192,7 +239,17 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
         return registryMessageQueue.produce(registryRequest);
     }
 
-    // ---------------------- Registry LocalCache ----------------------
+    /**
+     * registry
+     *
+     * @param registryRequest
+     * @return
+     */
+    public boolean registryRemove(RegistryRequest registryRequest) {
+        return registryRemoveMessageQueue.produce(registryRequest);
+    }
+
+    // ---------------------- LocalCache（Topic + Application） ----------------------
 
     private volatile Map<String, Topic> topicStore = new ConcurrentHashMap<>();
     private volatile Map<String, ApplicationRegistryData> applicationRegistryDataStore = new ConcurrentHashMap<>();
@@ -202,75 +259,7 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
             @Override
             public void run() {
 
-                /**
-                 * 1、AppName + Topic：自动初始化
-                 *      - 处理增量：30s内在线节点
-                 *      - 初始化：
-                 *          - appname：注意去重、判断是否存在；
-                 *          - topic：默认同appname下 topic 信息相同；处理其中一个 appname 下topic即可；
-                 */
-                List<Instance> instanceList = instanceMapper.queryOnlineInstance(DateTool.addMilliseconds(new Date(), -3 * BEAT_TIME_INTERVAL));
-                if (CollectionTool.isNotEmpty(instanceList)) {
-
-                    // exist appname
-                    List<Application> existApplicationData = applicationMapper.findAll();
-                    List<String> existAppNameList = existApplicationData.stream().map(Application::getAppname).distinct().collect(Collectors.toList());
-
-                    // exist topic
-                    List<Topic> existTopicData = topicMapper.queryByStatus(TopicStatusEnum.NORMAL.getValue());
-                    List<String> existTopicNameList = existTopicData.stream().map(Topic::getTopic).distinct().collect(Collectors.toList());
-
-                    // do init
-                    for (Instance instance : instanceList) {
-
-                        // a、init appname
-                        if (!existAppNameList.contains(instance.getAppname())) {
-
-                            Application application = new Application();
-                            application.setAppname(instance.getAppname());
-                            application.setName(instance.getAppname()+"服务");
-                            application.setDesc("初始化数据");
-                            application.setRegistryData(null);
-
-                            applicationMapper.insertIgnoreRepeat(application);
-
-                            // avoid repeat
-                            existAppNameList.add(instance.getAppname());
-                        }
-
-                        // b、init topic
-                        RegistryRequest registryRequest = GsonTool.fromJson(instance.getRegistryData(), RegistryRequest.class);
-                        for (String topicName : registryRequest.getTopicGroup().keySet()) {
-                            if (!existTopicNameList.contains(topicName)) {
-
-                                Topic topic = new Topic();
-                                topic.setAppname(instance.getAppname());
-                                topic.setTopic(topicName);
-                                topic.setDesc("初始化数据");
-                                topic.setOwner("系统");
-                                topic.setAlarmEmail(null);
-                                topic.setStatus(TopicStatusEnum.NORMAL.getValue());
-                                topic.setStoreStrategy(StoreStrategyEnum.UNITY_STORE.getValue());
-                                topic.setArchiveStrategy(ArchiveStrategyEnum.RESERVE_7_DAY.getValue());
-                                topic.setPartitionStrategy(PartitionRouteStrategyEnum.HASH.getValue());
-                                topic.setLevel(TopicLevelStrategyEnum.LEVEL_1.getValue());
-                                topic.setRetryStrategy(RetryStrategyEnum.FIXED_RETREAT.getValue());
-                                topic.setRetryCount(0);
-                                topic.setRetryInterval(0);
-                                topic.setExecutionTimeout(-1);
-
-                                topicMapper.insertIgnoreRepeat(topic);
-
-                                // avoid repeat
-                                existTopicNameList.add(topicName);
-                            }
-                        }
-
-                    }
-
-                }
-
-                // 2、topic 缓存处理：查询全部
+                // 1、topic 缓存信息
                 List<Topic> topicList =topicMapper.queryByStatus(TopicStatusEnum.NORMAL.getValue());
                 Map<String, Topic> topicStoreNew = new ConcurrentHashMap<>();
                 if (CollectionTool.isNotEmpty(topicList)) {
@@ -284,27 +273,23 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
                     logger.info(">>>>>>>>>>> xxl-mq, registryLocalCacheThread found diff data, topicStoreNew:{}", topicStoreNewJson);
                 }
 
-                // 3、appname 维度缓存（ApplicationRegistryData）： instance注册及分区信息 + topic分组信息
+                // 2、appname 缓存信息
+                List<Instance> instanceList = instanceMapper.queryOnlineInstance(DateTool.addMilliseconds(new Date(), -3 * BEAT_TIME_INTERVAL));
                 Map<String, ApplicationRegistryData> applicationRegistryDataStoreNew = new ConcurrentHashMap<>();
                 if (CollectionTool.isNotEmpty(instanceList)) {
                     // group by appname
                     Map<String, List<Instance>> instanceListGroup = instanceList.stream().collect(Collectors.groupingBy(Instance::getAppname));
-                    // parse by appname
                     for (String appname : instanceListGroup.keySet()) {
+                        // instance uuid list, sorted
                         List<Instance> instanceListGroupAppname = instanceListGroup.get(appname);
-
-                        // a、instance, process partition rage
                         List<String> instanceUuidList =instanceListGroupAppname.stream().map(Instance::getUuid).sorted().collect(Collectors.toList());
-                        Map<String, PartitionUtil.PartitionRange> instancePartitionRange = PartitionUtil.allocatePartition(instanceUuidList);
 
-                        // b、topic, process topic group
-                        RegistryRequest registryRequest = GsonTool.fromJson(instanceListGroupAppname.get(0).getRegistryData(), RegistryRequest.class);
-                        Map<String, Set<String>> topicGroup = registryRequest.getTopicGroup();
+                        // partition of uuid
+                        TreeMap<String, PartitionUtil.PartitionRange> instancePartitionRange = PartitionUtil.allocatePartition(instanceUuidList);
 
-                        // build new cache
+                        // build cache data
                         ApplicationRegistryData applicationRegistryData = new ApplicationRegistryData();
                         applicationRegistryData = new ApplicationRegistryData();
-                        applicationRegistryData.setTopicGroup(topicGroup);
                         applicationRegistryData.setInstancePartitionRange(instancePartitionRange);
 
                         applicationRegistryDataStoreNew.put(appname, applicationRegistryData);
@@ -316,56 +301,55 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
                     logger.info(">>>>>>>>>>> xxl-mq, registryLocalCacheThread found diff data, applicationRegistryDataNew:{}", applicationRegistryDataNewJson);
                 }
 
+                // write registry_data for appname
+                List<Application> applicationList = applicationMapper.findAll();
+                for (Application application : applicationList) {
+                    ApplicationRegistryData registryDataNew = applicationRegistryDataStore.get(application.getAppname());
+                    String registryDataNewJson = registryDataNew!=null?GsonTool.toJson(registryDataNew):"";
+                    if (!registryDataNewJson.equals(application.getRegistryData())) {
+                        // do update
+                        application.setRegistryData(registryDataNewJson);
+                        applicationMapper.updateRegistryData(application);
+                    }
+                }
+
             }
         }, BEAT_TIME_INTERVAL, true);
         registryLocalCacheThread.start();
     }
 
     /**
-     * find topic group
+     * find partition range by topic
      *
      * @param topic
      * @return
      */
-    public Set<String> findTopicGroup(String topic) {
+    public PartitionUtil.PartitionRange findPartitionRangeByTopic(String topic) {
         Topic topicData = topicStore.get(topic);
         if (topicData == null) {
             return null;
         }
-
-        ApplicationRegistryData applicationRegistryData = applicationRegistryDataStore.get(topicData.getAppname());
-        if (applicationRegistryData == null) {
-            return null;
-        }
-        Map<String, Set<String>> topicGroup = applicationRegistryData.getTopicGroup();
-        if (topicGroup == null) {
-            return null;
-        }
-
-        return topicGroup.get(topic);
+        return findPartitionRangeByAppname(topicData.getTopic());
     }
 
     /**
-     * find partition range
+     * find partition range by appname
      *
-     * @param topic
+     * @param appname
      * @return
      */
-    public PartitionUtil.PartitionRange findPartitionRange(String topic) {
-        Topic topicData = topicStore.get(topic);
-        if (topicData == null) {
+    public PartitionUtil.PartitionRange findPartitionRangeByAppname(String appname) {
+        if (appname == null) {
             return null;
         }
 
-        ApplicationRegistryData applicationRegistryData = applicationRegistryDataStore.get(topicData.getAppname());
+        ApplicationRegistryData applicationRegistryData = applicationRegistryDataStore.get(appname);
         if (applicationRegistryData == null) {
             return null;
         }
+
         Map<String, PartitionUtil.PartitionRange> instancePartitionRange = applicationRegistryData.getInstancePartitionRange();
-        if (instancePartitionRange == null) {
-            return null;
-        }
-        return instancePartitionRange.get(topicData.getAppname());
+        return instancePartitionRange.get(appname);
     }
 
 }

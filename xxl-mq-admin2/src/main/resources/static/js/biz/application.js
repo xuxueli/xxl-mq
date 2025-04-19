@@ -152,9 +152,9 @@ $(function() {
 	// ---------- ---------- ---------- add operation ---------- ---------- ----------
 	// add validator method
 	jQuery.validator.addMethod("appnameValid", function(value, element) {
-		var valid = /^[a-z][a-z0-9_]*$/;
+		var valid = /^[a-z][a-z0-9-]*$/;
 		return this.optional(element) || valid.test(value);
-	}, '限制小写字母开头，由小写字母、数字和下划线组成' );
+	}, '限制小写字母开头，由小写字母、数字和中划线组成' );
 	// add
 	$("#data_operation .add").click(function(){
 		$('#addModal').modal({backdrop: false, keyboard: false}).modal('show');
@@ -316,5 +316,44 @@ $(function() {
 		$("#updateModal .form")[0].reset();
         $("#updateModal .form .form-group").removeClass("has-error");
 	});
+
+	// ---------- ---------- ---------- showRegistryInstance ---------- ---------- ----------
+	$("#data_operation").on('click', '.showRegistryInstance',function() {
+
+		// find select ids
+		var selectIds = $.dataTableSelect.selectIdsFind();
+		if (selectIds.length != 1) {
+			layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
+			return;
+		}
+		var row = tableData[ 'key' + selectIds[0] ];
+
+		// registry data (ApplicationRegistryData)
+		/**
+		 * // 用js解析下面json，生成表格html
+		 * {"instancePartitionRange":{"uuid_02":{"partitionIdFrom":5001,"partitionIdTo":10000},"uuid_01":{"partitionIdFrom":1,"partitionIdTo":5000}}}
+		 *
+		 *
+		 */
+		var html = '<table class="table table-bordered"><tbody>';
+		var index = 1;
+		if (row.registryData) {
+			var registryDataObj = JSON.parse(row.registryData);
+			html += '<tr><th>序号</th><th>注册节点/UUID</th><th>责任分区范围</th></tr>';
+			for (const [instanceUuid, partitionRange] of Object.entries(registryDataObj.instancePartitionRange)) {
+				html += '<tr>';
+				html += '<th>' + (index++) + '</th>';
+				html += '<td>' + instanceUuid + '</td>';	// <span class="badge bg-green" >
+				html += '<td>[' + partitionRange.partitionIdFrom + ", " + partitionRange.partitionIdTo + ']</td>';
+				html += '</tr>';
+			}
+		}
+		html += '</tbody></table>';
+		$('#showRegistryInstanceModel .data').html(html);
+
+		// show
+		$('#showRegistryInstanceModel').modal({backdrop: false, keyboard: false}).modal('show');
+	});
+
 
 });

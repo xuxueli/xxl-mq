@@ -20,13 +20,13 @@ public class PartitionUtil {
     }
 
     /**
-     * 计算每个 instance 分配的 partitionId 范围
+     * calculate each instance's partitionId range
      *
      * @param instanceList
      * @return
      */
-    public static Map<String, PartitionRange> allocatePartition(List<String> instanceList) {
-        Map<String, PartitionRange> partitionRanges = new HashMap<>();
+    public static TreeMap<String, PartitionRange> allocatePartition(List<String> instanceList) {
+        TreeMap<String, PartitionRange> partitionRanges = new TreeMap<>();
 
         int instanceCount = instanceList.size();                    // 总实例数
         int basePartitions = PARTITION_COUNT / instanceCount;       // 基本分区数数量

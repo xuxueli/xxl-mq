@@ -34,6 +34,14 @@ public interface InstanceMapper {
     public int delete(@Param("ids") List<Integer> ids);
 
     /**
+     * 删除实例
+     *
+     * @param instance
+     * @return
+     */
+    public int deleteInstance(@Param("instance") Instance instance);
+
+    /**
     * 更新
     */
     public int update(@Param("instance") Instance instance);

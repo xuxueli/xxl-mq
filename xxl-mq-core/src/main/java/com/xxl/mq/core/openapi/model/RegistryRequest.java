@@ -1,9 +1,7 @@
 package com.xxl.mq.core.openapi.model;
 
 import java.io.Serializable;
-import java.util.Map;
-import java.util.Set;
-
+import java.util.List;
 
 /**
  * Created by xuxueli on 16/8/28.
@@ -13,7 +11,7 @@ public class RegistryRequest extends BaseRequest implements Serializable {
 
     private String appname;
     private String instanceUuid;
-    private Map<String, Set<String>> topicGroup;
+    private List<String> topicList;
 
     public String getAppname() {
         return appname;
@@ -31,12 +29,12 @@ public class RegistryRequest extends BaseRequest implements Serializable {
         this.instanceUuid = instanceUuid;
     }
 
-    public Map<String, Set<String>> getTopicGroup() {
-        return topicGroup;
+    public List<String> getTopicList() {
+        return topicList;
     }
 
-    public void setTopicGroup(Map<String, Set<String>> topicGroup) {
-        this.topicGroup = topicGroup;
+    public void setTopicList(List<String> topicList) {
+        this.topicList = topicList;
     }
 
     @Override
@@ -44,7 +42,7 @@ public class RegistryRequest extends BaseRequest implements Serializable {
         return "RegistryRequest{" +
                 "appname='" + appname + '\'' +
                 ", instanceUuid='" + instanceUuid + '\'' +
-                ", topicGroup=" + topicGroup +
+                ", topicList=" + topicList +
                 '}';
     }
 

@@ -12,7 +12,6 @@ public class MessageAdaptor {
         Message message = new Message();
         message.setId(messageDTO.getId());
         message.setTopic(messageDTO.getTopic());
-        message.setGroup(messageDTO.getGroup());
         message.setPartitionId(messageDTO.getPartitionId());
         message.setData(messageDTO.getData());
         message.setStatus(messageDTO.getStatus());
@@ -28,7 +27,6 @@ public class MessageAdaptor {
         MessageDTO messageDTO = new MessageDTO();
         messageDTO.setId(message.getId());
         messageDTO.setTopic(message.getTopic());
-        messageDTO.setGroup(message.getGroup());
         messageDTO.setPartitionId(message.getPartitionId());
         messageDTO.setData(message.getData());
         messageDTO.setStatus(message.getStatus());
@@ -46,7 +44,6 @@ public class MessageAdaptor {
         MessageArchive messageArchive = new MessageArchive();
         messageArchive.setId(message.getId());
         messageArchive.setTopic(message.getTopic());
-        messageArchive.setGroup(message.getGroup());
         messageArchive.setPartitionId(message.getPartitionId());
         messageArchive.setData(message.getData());
         messageArchive.setStatus(message.getStatus());
@@ -62,7 +59,6 @@ public class MessageAdaptor {
         MessageArchiveDTO messageArchiveDTO = new MessageArchiveDTO();
         messageArchiveDTO.setId(messageArchive.getId());
         messageArchiveDTO.setTopic(messageArchive.getTopic());
-        messageArchiveDTO.setGroup(messageArchive.getGroup());
         messageArchiveDTO.setPartitionId(messageArchive.getPartitionId());
         messageArchiveDTO.setData(messageArchive.getData());
         messageArchiveDTO.setStatus(messageArchive.getStatus());

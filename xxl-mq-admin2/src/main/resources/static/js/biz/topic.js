@@ -334,7 +334,9 @@ $(function() {
 		$("#updateModal .form select[name='retryStrategy']").val( row.retryStrategy );
 		$("#updateModal .form input[name='retryCount']").val( row.retryCount );
 		$("#updateModal .form input[name='retryInterval']").val( row.retryInterval );
-		$("#updateModal .form input[name='executionTimeout']").val( row.executionTimeout );
+		if (row.executionTimeout && row.executionTimeout>0) {
+			$("#updateModal .form input[name='executionTimeout']").val( row.executionTimeout );
+		}
 		$("#updateModal .form select[name='level']").val( row.level );
 
 		// show
@@ -397,6 +399,13 @@ $(function() {
 			}
 		},
         submitHandler : function(form) {
+
+			// valid
+			var executionTimeout = $("#updateModal .form input[name='executionTimeout']").val();
+			if(!/^\d+$/.test(executionTimeout)) {
+				executionTimeout = 0;
+			}
+			$("#updateModal .form input[name='executionTimeout']").val(executionTimeout);
 
 			// request
 			var paramData = $("#updateModal .form").serializeArray();

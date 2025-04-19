@@ -125,14 +125,15 @@
 								<br>
 								<p style="margin: 0 0 10px;text-align: left;border-bottom: 1px solid #e5e5e5;color: gray;">存储路由</p>
 								<div class="form-group">
-									<label for="firstname" class="col-sm-2 control-label">存储策略<font color="red">*</font></label>
-									<div class="col-sm-4">
+									<label for="firstname" class="col-sm-2 control-label hide">存储策略<font color="red">*</font></label>
+									<div class="col-sm-4 hide">
 										<select class="form-control" name="storeStrategy" >
 											<#list StoreStrategyEnum as item>
 												<option value="${item.value}" >${item.desc}</option>
 											</#list>
 										</select>
 									</div>
+
 									<label for="firstname" class="col-sm-2 control-label">分区路由<font color="red">*</font></label>
 									<div class="col-sm-4">
 										<select class="form-control" name="partitionStrategy" >
@@ -141,8 +142,6 @@
 											</#list>
 										</select>
 									</div>
-								</div>
-								<div class="form-group">
 									<label for="firstname" class="col-sm-2 control-label">归档策略<font color="red">*</font></label>
 									<div class="col-sm-4">
 										<select class="form-control" name="archiveStrategy" >
@@ -231,14 +230,16 @@
 								<br>
 								<p style="margin: 0 0 10px;text-align: left;border-bottom: 1px solid #e5e5e5;color: gray;">存储路由</p>
 								<div class="form-group">
-									<label for="firstname" class="col-sm-2 control-label">存储策略<font color="red">*</font></label>
-									<div class="col-sm-4">
+									<label for="firstname" class="col-sm-2 control-label hide">存储策略<font color="red">*</font></label>
+									<div class="col-sm-4 hide">
 										<select class="form-control" name="storeStrategy" >
 											<#list StoreStrategyEnum as item>
 												<option value="${item.value}" >${item.desc}</option>
 											</#list>
 										</select>
 									</div>
+
+
 									<label for="firstname" class="col-sm-2 control-label">分区路由<font color="red">*</font></label>
 									<div class="col-sm-4">
 										<select class="form-control" name="partitionStrategy" >
@@ -247,8 +248,6 @@
 											</#list>
 										</select>
 									</div>
-								</div>
-								<div class="form-group">
 									<label for="firstname" class="col-sm-2 control-label">归档策略<font color="red">*</font></label>
 									<div class="col-sm-4">
 										<select class="form-control" name="archiveStrategy" >

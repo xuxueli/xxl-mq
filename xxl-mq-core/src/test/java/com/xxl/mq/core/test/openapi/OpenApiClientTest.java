@@ -11,10 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
 
-public class BrokerServiceTest {
-    private static Logger logger = LoggerFactory.getLogger(BrokerServiceTest.class);
+public class OpenApiClientTest {
+    private static Logger logger = LoggerFactory.getLogger(OpenApiClientTest.class);
 
     private static String url = "http://127.0.0.1:8080/xxl-mq-admin/openapi";
     private static String service = "brokerService";
@@ -38,10 +38,7 @@ public class BrokerServiceTest {
             registryRequest.setAccessToken("defaultaccesstoken");
             registryRequest.setAppname("xxl-mq-sample");
             registryRequest.setInstanceUuid("uuid_01");
-            registryRequest.setTopicGroup(MapTool.newHashMap(
-                    "topic01", new HashSet<>(Arrays.asList("default")),
-                    "topic02", new HashSet<>(Arrays.asList("uuid_01"))
-            ));
+            registryRequest.setTopicList(Arrays.asList("topic_sample", "topic_sample02"));
 
             // invoke
             Response<String> response = brokerService.registry(registryRequest);
@@ -55,16 +52,27 @@ public class BrokerServiceTest {
             registryRequest.setAccessToken("defaultaccesstoken");
             registryRequest.setAppname("xxl-mq-sample");
             registryRequest.setInstanceUuid("uuid_02");
-            registryRequest.setTopicGroup(MapTool.newHashMap(
-                    "topic01", new HashSet<>(Arrays.asList("default")),
-                    "topic02", new HashSet<>(Arrays.asList("uuid_02"))
-            ));
 
             // invoke
             Response<String> response = brokerService.registry(registryRequest);
             logger.info("response:{}", response);
         }
+    }
 
+    @Test
+    public void registryRemoveTest() throws InterruptedException {
+        // client
+        BrokerService brokerService = buildClient();
+
+        // param
+        RegistryRequest registryRequest = new RegistryRequest();
+        registryRequest.setAccessToken("defaultaccesstoken");
+        registryRequest.setAppname("xxl-mq-sample");
+        registryRequest.setInstanceUuid("uuid_02");
+
+        // invoke
+        Response<String> response = brokerService.registryRemove(registryRequest);
+        logger.info("response:{}", response);
     }
 
     @Test

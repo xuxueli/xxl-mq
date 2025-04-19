@@ -21,6 +21,14 @@ public interface BrokerService {
     public Response<String> registry(RegistryRequest registryRequest);
 
     /**
+     * registry remove instance
+     *
+     * @param registryRequest
+     * @return
+     */
+    public Response<String> registryRemove(RegistryRequest registryRequest);
+
+    /**
      * produce messages
      *
      * @param produceRequest
