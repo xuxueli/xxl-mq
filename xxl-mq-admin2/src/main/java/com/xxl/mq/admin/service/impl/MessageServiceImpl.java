@@ -10,7 +10,7 @@ import com.xxl.mq.admin.model.adaptor.MessageAdaptor;
 import com.xxl.mq.admin.model.dto.MessageDTO;
 import com.xxl.mq.admin.model.entity.*;
 import com.xxl.mq.admin.service.MessageService;
-import com.xxl.mq.admin.util.ConsumeLogUtil;
+import com.xxl.mq.core.util.ConsumeLogUtil;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.DateTool;
 import com.xxl.tool.core.StringTool;
@@ -61,7 +61,7 @@ public class MessageServiceImpl implements MessageService {
 
 		// save
 		message.setTopic(messageDTO.getTopic().trim());
-		ConsumeLogUtil.appendConsumeLog(message, "人工新建消息", GsonTool.toJson(message));
+		message.setConsumeLog(ConsumeLogUtil.appendConsumeLog(message.getConsumeLog(), "人工新建消息", GsonTool.toJson(message)));
 
 		messageMapper.insert(message);
 		return Response.ofSuccess();
@@ -92,7 +92,7 @@ public class MessageServiceImpl implements MessageService {
 		message.setData(messageDTO.getData());
 		message.setStatus(messageDTO.getStatus());
 		message.setEffectTime(DateTool.parseDateTime(messageDTO.getEffectTime()));
-		ConsumeLogUtil.appendConsumeLog(message, "人工修改消息", GsonTool.toJson(messageDTO));
+		message.setConsumeLog(ConsumeLogUtil.appendConsumeLog(message.getConsumeLog(), "人工修改消息", GsonTool.toJson(messageDTO)));
 
 		int ret = messageMapper.update(message);
 		return ret>0? Response.ofSuccess() : Response.ofFail();

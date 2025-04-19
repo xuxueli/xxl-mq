@@ -54,6 +54,36 @@
               )
     </insert>
 
+    <insert id="batchInsert" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO xxl_mq_message (
+            `topic`,
+            `partition_id`,
+            `data`,
+            `status`,
+            `effect_time`,
+            `consume_log`,
+            `consume_instance_uuid`,
+            `add_time`,
+            `update_time`
+        ) VALUES
+        <foreach collection ="messageList" item="message" index= "index" separator =",">
+            (
+                #{message.topic} ,
+                #{message.partitionId} ,
+                #{message.data} ,
+                #{message.status} ,
+                #{message.effectTime} ,
+                #{message.consumeLog} ,
+                #{message.consumeInstanceUuid} ,
+                NOW() ,
+                NOW()
+            )
+        </foreach >
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
     <delete id="delete" parameterType="java.util.Map" >
         DELETE FROM xxl_mq_message
         WHERE `id` in
@@ -141,16 +171,22 @@
         ORDER BY effectTime
     </select>
 
-    <select id="queryReportByTopic" resultType="java.util.Map" >
-        SELECT
-            DATE_FORMAT(`effect_time`,'%Y-%m-%d') effectTime,
-            COUNT(`id`) totalCount,
-            SUM(CASE WHEN (`status` = 2) then 1 else 0 end) as successTotal,
-            SUM(CASE WHEN `status` in (3, 4) then 1 else 0 end) as failTotal
-        FROM xxl_mq_message
-        WHERE effect_time BETWEEN #{startDate} and #{endDate}
-        GROUP BY effectTime
-        ORDER BY effectTime
-    </select>
+    <update id="batchUpdateStatus" parameterType="java.util.Map" >
+        UPDATE xxl_mq_message
+        SET
+            `status` =
+                <foreach collection="messageList" item="messageItem" index="index" separator=" " open="case id" close="end">
+                    when #{messageItem.id} then #{messageItem.status}
+                </foreach>
+            ,
+            `consume_log` =
+                <foreach collection="messageList" item="messageItem" index="index" separator=" " open="case id" close="end">
+                    when #{messageItem.id} then CONCAT(`consume_log`, #{messageItem.consumeLog})
+                </foreach>
+        WHERE `id` IN
+            <foreach collection="messageList" item="messageItem"  index="index" separator="," open="(" close=")">
+                #{messageItem.id}
+            </foreach>
+    </update>
 
 </mapper>

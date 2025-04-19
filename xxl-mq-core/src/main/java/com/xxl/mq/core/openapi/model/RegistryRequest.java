@@ -45,5 +45,4 @@ public class RegistryRequest extends BaseRequest implements Serializable {
                 ", topicList=" + topicList +
                 '}';
     }
-
 }

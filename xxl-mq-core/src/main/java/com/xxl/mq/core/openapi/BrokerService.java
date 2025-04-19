@@ -37,20 +37,20 @@ public interface BrokerService {
     public Response<String> produce(ProduceRequest produceRequest);
 
     /**
-     * pull messages (will lock)
-     *
-     * @param pullRequest
-     * @return
-     */
-    public Response<List<MessageData>> pull(PullRequest pullRequest);
-
-    /**
      * consume messages (callback)
      *
      * @param consumeRequest
      * @return
      */
     public Response<String> consume(ConsumeRequest consumeRequest);
+
+    /**
+     * pull messages (will lock)
+     *
+     * @param pullRequest
+     * @return
+     */
+    public Response<List<MessageData>> pull(PullRequest pullRequest);
 
 
 }

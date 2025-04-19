@@ -22,6 +22,11 @@ public interface MessageMapper {
     public int insert(@Param("message") Message message);
 
     /**
+     * 批量新增
+     */
+    public int batchInsert(@Param("messageList") List<Message> messageList);
+
+    /**
     * 删除
     */
     public int delete(@Param("ids") List<Long> ids);
@@ -72,6 +77,10 @@ public interface MessageMapper {
      * 查询报表
      */
     List<MessageReport> queryReport(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
-    List<MessageReport> queryReportByTopic(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+    /**
+     * 批量更新状态
+     */
+    public int batchUpdateStatus(@Param("messageList") List<Message> messageList);
 
 }

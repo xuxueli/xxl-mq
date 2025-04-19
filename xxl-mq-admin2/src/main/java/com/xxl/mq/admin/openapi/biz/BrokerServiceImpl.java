@@ -4,6 +4,7 @@ import com.xxl.mq.admin.openapi.config.BrokerFactory;
 import com.xxl.mq.core.openapi.BrokerService;
 import com.xxl.mq.core.openapi.model.*;
 import com.xxl.tool.core.CollectionTool;
+import com.xxl.tool.core.StringTool;
 import com.xxl.tool.response.Response;
 import org.springframework.stereotype.Service;
 
@@ -34,19 +35,21 @@ public class BrokerServiceImpl implements BrokerService {
      *          - Instance 写入；
      *          - Topic + AppName 新实体生成；
      *
-     * 2、本地缓存计算：时机，30s/次；
+     * 2、注册数据快照 + 本地缓存计算：时机，30s/次；
      *      a、注册数据快照：三次心跳范围内判断 appname维度活跃【Instance】；数据异构为【ApplicationRegistryData】，存储在 “xxl_mq_application#registry_data”；
      *      b、本地缓存：
      *          1、appname 缓存信息：Key 为 appname，Value 包括注册【Instance】信息；
      *          2、topic 缓存信息：Key 为 topic，Value 包含关联的 appname；
      *
      */
-
     @Override
     public Response<String> registry(RegistryRequest registryRequest) {
         // valid token
         if (!validAccessToken(registryRequest)) {
             return Response.ofFail("accessToken invalid");
+        }
+        if (StringTool.isBlank(registryRequest.getAppname()) || StringTool.isBlank(registryRequest.getInstanceUuid())) {
+            return Response.ofFail("appname or instanceUuid is empty.");
         }
 
         // invoke
@@ -68,11 +71,25 @@ public class BrokerServiceImpl implements BrokerService {
         return false;
     }
 
+    /**
+     * 2、注册摘除请求逻辑：入参【RegistryRequest】格式如下；影响注册数据快照。
+     *      <pre>
+     *      {
+     *          "accessToken":"xxx",
+     *          "appname":"xxx",
+     *          "instanceUuid":"uuid_01"
+     *      }
+     *      </pre>
+     *
+     */
     @Override
     public Response<String> registryRemove(RegistryRequest registryRequest) {
         // valid token
         if (!validAccessToken(registryRequest)) {
             return Response.ofFail("accessToken invalid");
+        }
+        if (StringTool.isBlank(registryRequest.getAppname()) || StringTool.isBlank(registryRequest.getInstanceUuid())) {
+            return Response.ofFail("appname or instanceUuid is empty.");
         }
 
         // invoke
@@ -87,8 +104,21 @@ public class BrokerServiceImpl implements BrokerService {
             return Response.ofFail("accessToken invalid");
         }
 
-        // todo
-        return null;
+        // invoke
+        boolean ret = BrokerFactory.getInstance().produce(produceRequest);
+        return ret? Response.ofSuccess() : Response.ofFail();
+    }
+
+    @Override
+    public Response<String> consume(ConsumeRequest consumeRequest) {
+        // valid token
+        if (!validAccessToken(consumeRequest)) {
+            return Response.ofFail("accessToken invalid");
+        }
+
+        // invoke
+        boolean ret = BrokerFactory.getInstance().consume(consumeRequest);
+        return ret? Response.ofSuccess() : Response.ofFail();
     }
 
     @Override
@@ -101,13 +131,4 @@ public class BrokerServiceImpl implements BrokerService {
         return null;
     }
 
-    @Override
-    public Response<String> consume(ConsumeRequest consumeRequest) {
-        // valid token
-        if (!validAccessToken(consumeRequest)) {
-            return Response.ofFail("accessToken invalid");
-        }
-
-        return null;
-    }
 }

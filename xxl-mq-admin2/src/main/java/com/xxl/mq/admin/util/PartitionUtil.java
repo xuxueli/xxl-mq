@@ -1,13 +1,20 @@
 package com.xxl.mq.admin.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.*;
 
 /**
  * Partition Util
  */
 public class PartitionUtil {
+    private static Logger logger = LoggerFactory.getLogger(PartitionUtil.class);
 
-    private static int PARTITION_COUNT = 10000;
+    /**
+     * max partition, The legal range is [1, 10000].
+     */
+    public static final int MAX_PARTITION = 10000;
 
     /**
      * valid PartitionId
@@ -16,7 +23,7 @@ public class PartitionUtil {
      * @return
      */
     public boolean validPartitionId(int partitionId) {
-        return partitionId>=1 && partitionId<=PARTITION_COUNT;
+        return partitionId >= 1 && partitionId <= MAX_PARTITION;
     }
 
     /**
@@ -29,8 +36,8 @@ public class PartitionUtil {
         TreeMap<String, PartitionRange> partitionRanges = new TreeMap<>();
 
         int instanceCount = instanceList.size();                    // 总实例数
-        int basePartitions = PARTITION_COUNT / instanceCount;       // 基本分区数数量
-        int extraPartitions = PARTITION_COUNT % instanceCount;      // 剩余分区数数量，
+        int basePartitions = MAX_PARTITION / instanceCount;       // 基本分区数数量
+        int extraPartitions = MAX_PARTITION % instanceCount;      // 剩余分区数数量，
         int currentPartition = 1;
 
         for (int i = 0; i < instanceCount; i++) {
@@ -47,10 +54,13 @@ public class PartitionUtil {
         return partitionRanges;
     }
 
-
+    /**
+     * Partition Range
+     */
     public static class PartitionRange {
         private int partitionIdFrom;
         private int partitionIdTo;
+
         public PartitionRange(int partitionIdFrom, int partitionIdTo) {
             this.partitionIdFrom = partitionIdFrom;
             this.partitionIdTo = partitionIdTo;
