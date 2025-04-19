@@ -189,4 +189,57 @@
             </foreach>
     </update>
 
+    <select id="pullQuery" parameterType="java.util.Map" resultMap="Message">
+        WITH PullTopicData AS (
+            SELECT
+                `id`,
+                `topic`,
+                `data`,
+                ROW_NUMBER() OVER (PARTITION BY `topic` ORDER BY `effect_time`) as rn
+            FROM xxl_mq_message
+            WHERE
+                `topic` IN
+                    <foreach collection="topicList" item="item" open="(" close=")" separator="," >
+                        #{item}
+                    </foreach>
+                AND `status` = #{status}
+                AND `partition_id` BETWEEN #{partitionIdFrom} AND #{partitionIdTo}
+                AND `effect_time` <![CDATA[ <= ]]> NOW()
+            ORDER BY `id` asc
+            LIMIT #{pagesize}
+        )
+        SELECT
+            `id`,
+            `topic`,
+            `data`
+        FROM PullTopicData
+        WHERE rn <![CDATA[ <= ]]> #{pagesize}
+    </select>
+
+    <update id="pullLock" parameterType="java.util.Map" >
+        UPDATE xxl_mq_message
+        SET
+            `status` = #{statuTo},
+            `consume_instance_uuid` = #{instanceUuid},
+            `update_time` = NOW()
+        WHERE `id` IN
+            <foreach collection="messageIdList" item="item" open="(" close=")" separator="," >
+                #{item}
+            </foreach>
+            AND status = #{statuFrom}
+    </update>
+
+    <select id="pullQueryByUuid" parameterType="java.util.Map" resultMap="Message">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_mq_message AS t
+        WHERE t.`topic` = #{topic}
+        AND `id` IN
+            <foreach collection="messageIdList" item="item" open="(" close=")" separator="," >
+                #{item}
+            </foreach>
+            AND status = #{status}
+            AND `consume_instance_uuid` = #{instanceUuid}
+    </select>
+
+
 </mapper>

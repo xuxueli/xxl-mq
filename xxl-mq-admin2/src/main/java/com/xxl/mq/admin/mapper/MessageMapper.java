@@ -83,4 +83,43 @@ public interface MessageMapper {
      */
     public int batchUpdateStatus(@Param("messageList") List<Message> messageList);
 
+    /**
+     * pullQuery
+     *
+     * @param topicList
+     * @param pagesize
+     * @return
+     */
+    public List<Message> pullQuery(@Param("topicList") List<String> topicList,
+                                   @Param("status") int status,
+                                   @Param("partitionIdFrom") int partitionIdFrom,
+                                   @Param("partitionIdTo") int partitionIdTo,
+                                   @Param("pagesize") int pagesize);
+
+    /**
+     * pullLock
+     *
+     * @param messageIdList
+     * @param instanceUuid
+     * @param statuFrom
+     * @param statuTo
+     * @return
+     */
+    public int pullLock(@Param("messageIdList") List<Long> messageIdList,
+                        @Param("instanceUuid") String instanceUuid,
+                        @Param("statuFrom") int statuFrom,
+                        @Param("statuTo")  int statuTo);
+
+    /**
+     * pullQueryByUuid
+     *
+     * @param messageIdList
+     * @param instanceUuid
+     * @param status
+     * @return
+     */
+    public List<Message> pullQueryByUuid(@Param("messageIdList") List<Long> messageIdList,
+                                         @Param("instanceUuid") String instanceUuid,
+                                         @Param("status") int status);
+
 }

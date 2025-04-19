@@ -3,12 +3,10 @@ package com.xxl.mq.admin.openapi.biz;
 import com.xxl.mq.admin.openapi.config.BrokerFactory;
 import com.xxl.mq.core.openapi.BrokerService;
 import com.xxl.mq.core.openapi.model.*;
-import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.response.Response;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -97,6 +95,19 @@ public class BrokerServiceImpl implements BrokerService {
         return ret? Response.ofSuccess() : Response.ofFail();
     }
 
+    /**
+     * 3、生产请求逻辑：入参【ProduceRequest】格式如下；影响注册数据快照。
+     *      <pre>
+     *          {
+     *              "messageList":[{
+     *                  "topic":"topic01",
+     *                  "partitionKey":"{分区Key，用于分区路由}",
+     *                  "data":"{消息数据}",
+     *                  "effectTime":{1234567890, 时间戳，毫秒}
+     *              }]
+     *          }
+     *      </pre>
+     */
     @Override
     public Response<String> produce(ProduceRequest produceRequest) {
         // valid token
@@ -109,6 +120,18 @@ public class BrokerServiceImpl implements BrokerService {
         return ret? Response.ofSuccess() : Response.ofFail();
     }
 
+    /**
+     * 4、消费请求逻辑：入参【ConsumeRequest】格式如下；影响注册数据快照。
+     *      <pre>
+     *          {
+     *              "messageList":[{
+     *                  "id":{111, 消息ID},
+     *                  "status":{2, 消息状态值，参考枚举：MessageStatusEnum },
+     *                  "consumeLog":{消息消费流水日志},
+     *              }]
+     *          }
+     *      </pre>
+     */
     @Override
     public Response<String> consume(ConsumeRequest consumeRequest) {
         // valid token
@@ -128,7 +151,8 @@ public class BrokerServiceImpl implements BrokerService {
             return Response.ofFail("accessToken invalid");
         }
 
-        return null;
+        // invoke
+        return BrokerFactory.getInstance().pull(pullRequest);
     }
 
 }

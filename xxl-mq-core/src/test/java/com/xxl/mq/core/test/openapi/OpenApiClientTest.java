@@ -1,10 +1,7 @@
 package com.xxl.mq.core.test.openapi;
 
 import com.xxl.mq.core.openapi.BrokerService;
-import com.xxl.mq.core.openapi.model.ConsumeRequest;
-import com.xxl.mq.core.openapi.model.MessageData;
-import com.xxl.mq.core.openapi.model.ProduceRequest;
-import com.xxl.mq.core.openapi.model.RegistryRequest;
+import com.xxl.mq.core.openapi.model.*;
 import com.xxl.mq.core.util.ConsumeLogUtil;
 import com.xxl.tool.core.MapTool;
 import com.xxl.tool.http.IPTool;
@@ -176,6 +173,21 @@ public class OpenApiClientTest {
         ));
 
         Response<String> response = brokerService.consume(consumeRequest);
+        logger.info("response:{}", response);
+    }
+
+    @Test
+    public void pullTest() {
+        // client
+        BrokerService brokerService = buildClient();
+
+        PullRequest pullRequest = new PullRequest();
+        pullRequest.setAccessToken("defaultaccesstoken");
+        pullRequest.setAppname("xxl-mq-sample");
+        pullRequest.setInstanceUuid("uuid_03");
+        pullRequest.setTopicList(Arrays.asList("topic_sample"));
+
+        Response<List<MessageData>> response = brokerService.pull(pullRequest);
         logger.info("response:{}", response);
     }
 

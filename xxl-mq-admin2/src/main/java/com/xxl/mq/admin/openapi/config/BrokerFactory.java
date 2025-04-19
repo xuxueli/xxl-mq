@@ -4,13 +4,10 @@ import com.xxl.mq.admin.constant.enums.*;
 import com.xxl.mq.admin.mapper.*;
 import com.xxl.mq.admin.model.dto.ApplicationRegistryData;
 import com.xxl.mq.admin.model.entity.*;
+import com.xxl.mq.core.openapi.model.*;
 import com.xxl.mq.core.util.ConsumeLogUtil;
 import com.xxl.mq.admin.util.PartitionUtil;
 import com.xxl.mq.core.openapi.BrokerService;
-import com.xxl.mq.core.openapi.model.ConsumeRequest;
-import com.xxl.mq.core.openapi.model.MessageData;
-import com.xxl.mq.core.openapi.model.ProduceRequest;
-import com.xxl.mq.core.openapi.model.RegistryRequest;
 import com.xxl.tool.concurrent.CyclicThread;
 import com.xxl.tool.concurrent.MessageQueue;
 import com.xxl.tool.core.CollectionTool;
@@ -19,6 +16,8 @@ import com.xxl.tool.core.MapTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.gson.GsonTool;
 import com.xxl.tool.jsonrpc.JsonRpcServer;
+import com.xxl.tool.response.Response;
+import com.xxl.tool.response.ResponseCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -339,20 +338,6 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
     }
 
     /**
-     * find partition range by topic
-     *
-     * @param topic
-     * @return
-     */
-    public Map<String, PartitionUtil.PartitionRange> findPartitionRangeByTopic(String topic) {
-        Topic topicData = topicStore.get(topic);
-        if (topicData == null) {
-            return null;
-        }
-        return findPartitionRangeByAppname(topicData.getAppname());
-    }
-
-    /**
      * find partition range by appname
      *
      * @param appname
@@ -370,6 +355,35 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
 
         Map<String, PartitionUtil.PartitionRange> instancePartitionRange = applicationRegistryData.getInstancePartitionRange();
         return instancePartitionRange;
+    }
+
+    /**
+     * find partition range by topic
+     *
+     * @param topic
+     * @return
+     */
+    public Map<String, PartitionUtil.PartitionRange> findPartitionRangeByTopic(String topic) {
+        Topic topicData = topicStore.get(topic);
+        if (topicData == null) {
+            return null;
+        }
+        return findPartitionRangeByAppname(topicData.getAppname());
+    }
+
+    /**
+     * find partition range by appname and instanceUuid
+     *
+     * @param appname
+     * @param instanceUuid
+     * @return
+     */
+    public PartitionUtil.PartitionRange findPartitionRangeByAppnameAndUuid(String appname, String instanceUuid) {
+        Map<String, PartitionUtil.PartitionRange> instancePartitionRange = findPartitionRangeByAppname(appname);
+        if (instancePartitionRange == null) {
+            return null;
+        }
+        return instancePartitionRange.get(instanceUuid);
     }
 
     // ---------------------- produce / consume MessageQueue ----------------------
@@ -498,6 +512,9 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
                         }
                         messageMapper.batchUpdateStatus(messageList);
                     }
+
+                    // todo，触发重试操作；
+
                 },
                 50,
                 20);
@@ -523,6 +540,62 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
         return consumeMessageQueue.produce(consumeRequest);
     }
 
-    // ---------------------- Registry MessageQueue ----------------------
+    /**
+     * pull message
+     *
+     * @param pullRequest
+     * @return
+     */
+    public Response<List<MessageData>> pull(PullRequest pullRequest) {
+
+        // valid
+        if (CollectionTool.isEmpty(pullRequest.getTopicList())
+                || StringTool.isBlank(pullRequest.getAppname())
+                || StringTool.isBlank(pullRequest.getInstanceUuid())) {
+            return Response.of(401, "Illegal parameters.");
+        }
+
+        // match partition
+        PartitionUtil.PartitionRange partitionRange = findPartitionRangeByAppnameAndUuid(pullRequest.getAppname(), pullRequest.getInstanceUuid());
+        if (partitionRange == null) {
+            return Response.of(402, "Current instanceUuid has not been assigned a partition.");
+        }
+
+        // 1、消息检索
+        int pagesize = 10;
+        List<Message> messageList = messageMapper.pullQuery(pullRequest.getTopicList(), MessageStatusEnum.NEW.getValue(), partitionRange.getPartitionIdFrom(), partitionRange.getPartitionIdTo(), pagesize);
+        if (CollectionTool.isEmpty(messageList)) {
+            return Response.ofSuccess();
+        }
+
+        // 2、消息锁定, with uuid
+        List<Long> messageIdList = messageList.stream().map(Message::getId).collect(Collectors.toList());
+        int count = messageMapper.pullLock(messageIdList, pullRequest.getInstanceUuid(), MessageStatusEnum.NEW.getValue(), MessageStatusEnum.RUNNING.getValue());
+
+        // 3、锁定消息检索, with uuid （锁定失败，过滤锁定成功数据）
+        if (count < messageList.size()) {
+            messageList = messageMapper.pullQueryByUuid(messageIdList, pullRequest.getInstanceUuid(), MessageStatusEnum.RUNNING.getValue());
+            if (CollectionTool.isEmpty(messageList)) {
+                // lock fail all
+                return Response.ofSuccess();
+            }
+        }
+
+        // adaptor
+        List<MessageData> messageDataList = new ArrayList<>();
+        for (Message message : messageList) {
+            MessageData messageData = new MessageData();
+            messageData.setId(message.getId());
+            messageData.setTopic(message.getTopic());
+            messageData.setData(message.getData());
+
+            // collect
+            messageDataList.add(messageData);
+        }
+        return Response.ofSuccess(messageDataList);
+    }
+
+    // ---------------------- other ----------------------
+
 
 }
