@@ -136,7 +136,7 @@ public class BrokerServiceImpl implements BrokerService {
         }
 
         // invoke
-        boolean ret = BrokerFactory.getInstance().getProduceMessageQueueHelper().produce(produceRequest);
+        boolean ret = BrokerFactory.getInstance().getMessageHelper().produce(produceRequest);
         return ret? Response.ofSuccess() : Response.ofFail();
     }
 
@@ -166,7 +166,7 @@ public class BrokerServiceImpl implements BrokerService {
         }
 
         // invoke
-        boolean ret = BrokerFactory.getInstance().getProduceMessageQueueHelper().consume(consumeRequest);
+        boolean ret = BrokerFactory.getInstance().getMessageHelper().consume(consumeRequest);
         return ret? Response.ofSuccess() : Response.ofFail();
     }
 
@@ -199,7 +199,7 @@ public class BrokerServiceImpl implements BrokerService {
         }
 
         // invoke
-        return BrokerFactory.getInstance().getProduceMessageQueueHelper().pull(pullRequest);
+        return BrokerFactory.getInstance().getMessageHelper().pull(pullRequest);
     }
 
 }

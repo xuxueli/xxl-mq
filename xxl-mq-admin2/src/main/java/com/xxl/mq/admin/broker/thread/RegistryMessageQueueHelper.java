@@ -32,6 +32,10 @@ public class RegistryMessageQueueHelper {
 
     /**
      * start Registry MessageQueue (will stop with jvm)
+     *
+     * remark：
+     *      1、Registry Write
+     *      2、RegistryRemove Write
      */
     public void start(){
         registryMessageQueue = new MessageQueue<RegistryRequest>(
@@ -48,7 +52,7 @@ public class RegistryMessageQueueHelper {
                         brokerFactory.getInstanceMapper().insertOrUpdate(newInstance);
 
                         // init Application
-                        if (brokerFactory.getRegistryLocalCacheThreadHelper().findApplication(registryRequest.getAppname()) == null) {
+                        if (brokerFactory.getLocalCacheThreadHelper().findApplication(registryRequest.getAppname()) == null) {
                             Application application = new Application();
                             application.setAppname(registryRequest.getAppname());
                             application.setName(registryRequest.getAppname()+"服务");
@@ -61,7 +65,7 @@ public class RegistryMessageQueueHelper {
                         // init topic
                         if (CollectionTool.isNotEmpty(registryRequest.getTopicList())) {
                             for (String topicName : registryRequest.getTopicList()) {
-                                if (brokerFactory.getRegistryLocalCacheThreadHelper().findTopic(topicName) == null) {
+                                if (brokerFactory.getLocalCacheThreadHelper().findTopic(topicName) == null) {
                                     Topic topic = new Topic();
                                     topic.setAppname(registryRequest.getAppname());
                                     topic.setTopic(topicName);

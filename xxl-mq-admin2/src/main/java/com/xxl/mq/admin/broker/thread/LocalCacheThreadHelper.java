@@ -28,13 +28,13 @@ import static com.xxl.mq.admin.broker.thread.AccessTokenThreadHelper.BEAT_TIME_I
  *
  * @author xuxueli
  */
-public class RegistryLocalCacheThreadHelper {
-    private static final Logger logger = LoggerFactory.getLogger(RegistryLocalCacheThreadHelper.class);
+public class LocalCacheThreadHelper {
+    private static final Logger logger = LoggerFactory.getLogger(LocalCacheThreadHelper.class);
 
     // ---------------------- init ----------------------
 
     private final BrokerFactory brokerFactory;
-    public RegistryLocalCacheThreadHelper(BrokerFactory brokerFactory) {
+    public LocalCacheThreadHelper(BrokerFactory brokerFactory) {
         this.brokerFactory = brokerFactory;
     }
 
@@ -44,12 +44,21 @@ public class RegistryLocalCacheThreadHelper {
     private volatile Map<String, Application> applicationStore = new ConcurrentHashMap<>();
     private volatile Map<String, ApplicationRegistryData> applicationRegistryDataStore = new ConcurrentHashMap<>();
 
+    /**
+     * start
+     *
+     * remark：
+     *      1、topic：缓存信息
+     *      2、注册Instance：缓存信息
+     *      3、appname：缓存信息
+     *      4、appname 注册信息更新（步骤2信息 write）
+     */
     public void start(){
         CyclicThread registryLocalCacheThread = new CyclicThread("registryLocalCacheThread", true, new Runnable() {
             @Override
             public void run() {
 
-                // 1、topic 缓存信息
+                // 1、topic：缓存信息
                 List<Topic> topicList = brokerFactory.getTopicMapper().queryByStatus(TopicStatusEnum.NORMAL.getValue());
                 Map<String, Topic> topicStoreNew = new ConcurrentHashMap<>();
                 if (CollectionTool.isNotEmpty(topicList)) {
@@ -63,7 +72,7 @@ public class RegistryLocalCacheThreadHelper {
                     logger.info(">>>>>>>>>>> xxl-mq, RegistryLocalCacheThreadHelper found diff data, topicStoreNew:{}", topicStoreNewJson);
                 }
 
-                // 2、appname(注册信息) 缓存信息
+                // 2、注册Instance：缓存信息
                 List<Instance> instanceList = brokerFactory.getInstanceMapper().queryOnlineInstance(DateTool.addMilliseconds(new Date(), -3 * BEAT_TIME_INTERVAL));
                 Map<String, ApplicationRegistryData> applicationRegistryDataStoreNew = new ConcurrentHashMap<>();
                 if (CollectionTool.isNotEmpty(instanceList)) {
@@ -91,7 +100,10 @@ public class RegistryLocalCacheThreadHelper {
                     logger.info(">>>>>>>>>>> xxl-mq, registryLocalCacheThread found diff data, applicationRegistryDataNew:{}", applicationRegistryDataNewJson);
                 }
 
-                // 3、appname(自身) 缓存信息 + 更新registry_data
+                /**
+                 * 3、appname：缓存信息
+                 * 4、appname 注册信息更新
+                 */
                 List<Application> applicationList = brokerFactory.getApplicationMapper().findAll();
                 Map<String, Application> applicationStoreNew = new ConcurrentHashMap<>();
                 for (Application application : applicationList) {

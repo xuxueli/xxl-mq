@@ -173,7 +173,7 @@ public class MessageServiceImpl implements MessageService {
 	}
 
 	/**
-	 * clean and archive (TODO, need daily cycle cleaning + report)
+	 * clean and archive
 	 *
 	 * @param isArchive
 	 * @param effectTimeFrom

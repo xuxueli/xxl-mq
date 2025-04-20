@@ -44,8 +44,14 @@ public class AccessTokenThreadHelper {
 
     /**
      * start AccessTokenThread (will stop with jvm)
+     *
+     * remark：
+     *      1、AccessToken Cache
      */
     public void start(){
+        /**
+         * 1、
+         */
         CyclicThread accessTokenThread = new CyclicThread("accessTokenThread", true, new Runnable() {
             @Override
             public void run() {

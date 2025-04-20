@@ -1,8 +1,8 @@
 package com.xxl.mq.admin.broker.config;
 
 import com.xxl.mq.admin.broker.thread.AccessTokenThreadHelper;
-import com.xxl.mq.admin.broker.thread.ProduceMessageQueueHelper;
-import com.xxl.mq.admin.broker.thread.RegistryLocalCacheThreadHelper;
+import com.xxl.mq.admin.broker.thread.MessageHelper;
+import com.xxl.mq.admin.broker.thread.LocalCacheThreadHelper;
 import com.xxl.mq.admin.broker.thread.RegistryMessageQueueHelper;
 import com.xxl.mq.admin.mapper.*;
 import com.xxl.mq.core.openapi.BrokerService;
@@ -73,8 +73,8 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
 
     private AccessTokenThreadHelper accessTokenThreadHelper;
     private RegistryMessageQueueHelper registryMessageQueueHelper;
-    private RegistryLocalCacheThreadHelper registryLocalCacheThreadHelper;
-    private ProduceMessageQueueHelper produceMessageQueueHelper;
+    private LocalCacheThreadHelper localCacheThreadHelper;
+    private MessageHelper messageHelper;
 
     public AccessTokenThreadHelper getAccessTokenThreadHelper() {
         return accessTokenThreadHelper;
@@ -84,12 +84,12 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
         return registryMessageQueueHelper;
     }
 
-    public RegistryLocalCacheThreadHelper getRegistryLocalCacheThreadHelper() {
-        return registryLocalCacheThreadHelper;
+    public LocalCacheThreadHelper getLocalCacheThreadHelper() {
+        return localCacheThreadHelper;
     }
 
-    public ProduceMessageQueueHelper getProduceMessageQueueHelper() {
-        return produceMessageQueueHelper;
+    public MessageHelper getMessageHelper() {
+        return messageHelper;
     }
 
     @Override
@@ -98,20 +98,22 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
         instance = this;
 
         // 1、AccessTokenThread
-        accessTokenThreadHelper = new AccessTokenThreadHelper(this);
+        accessTokenThreadHelper = new AccessTokenThreadHelper(this);        // 1 thread
         accessTokenThreadHelper.start();
 
         // 2、Registry MessageQueue
-        registryMessageQueueHelper = new RegistryMessageQueueHelper(this);
+        registryMessageQueueHelper = new RegistryMessageQueueHelper(this);  // 2 thread
         registryMessageQueueHelper.start();
 
         // 3、Registry LocalCache Thread
-        registryLocalCacheThreadHelper = new RegistryLocalCacheThreadHelper(this);
-        registryLocalCacheThreadHelper.start();
+        localCacheThreadHelper = new LocalCacheThreadHelper(this);          // 1 thread
+        localCacheThreadHelper.start();
 
         // 4、Produce MessageQueue
-        produceMessageQueueHelper = new ProduceMessageQueueHelper(this);
-        produceMessageQueueHelper.start();
+        messageHelper = new MessageHelper(this);                            // 50 + 20 + 1 thread
+        messageHelper.start();
+
+        // 6、ArchiveHelper ； TODO ，归档(清理实时表；) + 报表 + 邮件告警； 60s 一次；        // 1 thread
     }
 
     @Override
@@ -123,10 +125,10 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
         registryMessageQueueHelper.stop();
 
         // 3、Registry LocalCache Thread
-        registryLocalCacheThreadHelper.stop();
+        localCacheThreadHelper.stop();
 
         // 4、Produce MessageQueue
-        produceMessageQueueHelper.stop();
+        messageHelper.stop();
     }
 
     // ---------------------- openapi JsonRpcServer ----------------------
