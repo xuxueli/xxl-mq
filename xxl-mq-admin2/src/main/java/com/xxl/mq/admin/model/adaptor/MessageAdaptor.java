@@ -16,6 +16,7 @@ public class MessageAdaptor {
         message.setData(messageDTO.getData());
         message.setStatus(messageDTO.getStatus());
         message.setEffectTime(DateTool.parseDateTime(messageDTO.getEffectTime()));
+        message.setRetryCountRemain(messageDTO.getRetryCountRemain());
         message.setConsumeLog(messageDTO.getConsumeLog());
         message.setConsumeInstanceUuid(messageDTO.getConsumeInstanceUuid());
         message.setAddTime(messageDTO.getAddTime());
@@ -31,6 +32,7 @@ public class MessageAdaptor {
         messageDTO.setData(message.getData());
         messageDTO.setStatus(message.getStatus());
         messageDTO.setEffectTime(DateTool.formatDateTime(message.getEffectTime()));
+        message.setRetryCountRemain(messageDTO.getRetryCountRemain());
         messageDTO.setConsumeLog(message.getConsumeLog());
         messageDTO.setConsumeInstanceUuid(message.getConsumeInstanceUuid());
         messageDTO.setAddTime(message.getAddTime());
@@ -48,6 +50,7 @@ public class MessageAdaptor {
         messageArchive.setData(message.getData());
         messageArchive.setStatus(message.getStatus());
         messageArchive.setEffectTime(message.getEffectTime());
+        message.setRetryCountRemain(message.getRetryCountRemain());
         messageArchive.setConsumeLog(message.getConsumeLog());
         messageArchive.setConsumeInstanceUuid(message.getConsumeInstanceUuid());
         messageArchive.setAddTime(message.getAddTime());
@@ -63,6 +66,7 @@ public class MessageAdaptor {
         messageArchiveDTO.setData(messageArchive.getData());
         messageArchiveDTO.setStatus(messageArchive.getStatus());
         messageArchiveDTO.setEffectTime(DateTool.formatDateTime(messageArchive.getEffectTime()));
+        messageArchiveDTO.setRetryCountRemain(messageArchive.getRetryCountRemain());
         messageArchiveDTO.setConsumeLog(messageArchive.getConsumeLog());
         messageArchiveDTO.setConsumeInstanceUuid(messageArchive.getConsumeInstanceUuid());
         messageArchiveDTO.setAddTime(messageArchive.getAddTime());

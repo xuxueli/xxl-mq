@@ -42,6 +42,11 @@ public class MessageArchive implements Serializable {
     private Date effectTime;
 
     /**
+     * 剩余重试次数
+     */
+    private int retryCountRemain;
+
+    /**
     * 消费日志
     */
     private String consumeLog;
@@ -108,6 +113,14 @@ public class MessageArchive implements Serializable {
 
     public void setEffectTime(Date effectTime) {
         this.effectTime = effectTime;
+    }
+
+    public int getRetryCountRemain() {
+        return retryCountRemain;
+    }
+
+    public void setRetryCountRemain(int retryCountRemain) {
+        this.retryCountRemain = retryCountRemain;
     }
 
     public String getConsumeLog() {

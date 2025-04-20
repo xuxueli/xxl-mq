@@ -1,4 +1,4 @@
-package com.xxl.mq.admin.router;
+package com.xxl.mq.admin.broker.router;
 
 
 import com.xxl.mq.admin.util.PartitionUtil;

@@ -10,6 +10,7 @@
         <result column="data" property="data" />
         <result column="status" property="status" />
         <result column="effect_time" property="effectTime" />
+        <result column="retry_count_remain" property="retryCountRemain" />
         <result column="consume_log" property="consumeLog" />
         <result column="consume_instance_uuid" property="consumeInstanceUuid" />
         <result column="add_time" property="addTime" />
@@ -23,6 +24,7 @@
         t.`data`,
         t.`status`,
         t.`effect_time`,
+        t.`retry_count_remain`,
         t.`consume_log`,
         t.`consume_instance_uuid`,
         t.`add_time`,
@@ -36,6 +38,7 @@
             `data`,
             `status`,
             `effect_time`,
+            `retry_count_remain`,
             `consume_log`,
             `consume_instance_uuid`,
             `add_time`,
@@ -47,6 +50,7 @@
                   #{message.data} ,
                   #{message.status} ,
                   #{message.effectTime} ,
+                  #{message.retryCountRemain} ,
                   #{message.consumeLog} ,
                   #{message.consumeInstanceUuid} ,
                   NOW() ,
@@ -61,6 +65,7 @@
             `data`,
             `status`,
             `effect_time`,
+            `retry_count_remain`,
             `consume_log`,
             `consume_instance_uuid`,
             `add_time`,
@@ -73,6 +78,7 @@
                 #{message.data} ,
                 #{message.status} ,
                 #{message.effectTime} ,
+                #{message.retryCountRemain} ,
                 #{message.consumeLog} ,
                 #{message.consumeInstanceUuid} ,
                 NOW() ,

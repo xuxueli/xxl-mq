@@ -1,4 +1,4 @@
-package com.xxl.mq.admin.openapi;
+package com.xxl.mq.admin.broker.openapi;
 
 import com.xxl.mq.admin.annotation.Permission;
 import com.xxl.tool.jsonrpc.JsonRpcServer;

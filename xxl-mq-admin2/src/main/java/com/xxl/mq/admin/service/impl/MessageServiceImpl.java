@@ -58,6 +58,7 @@ public class MessageServiceImpl implements MessageService {
 		if (topic == null) {
 			return Response.ofFail("参数非法：Topic");
 		}
+		message.setRetryCountRemain(topic.getRetryCount());
 
 		// save
 		message.setTopic(messageDTO.getTopic().trim());
@@ -172,7 +173,7 @@ public class MessageServiceImpl implements MessageService {
 	}
 
 	/**
-	 * clean and archive (TODO, need daily cycle cleaning )
+	 * clean and archive (TODO, need daily cycle cleaning + report)
 	 *
 	 * @param isArchive
 	 * @param effectTimeFrom

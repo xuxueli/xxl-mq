@@ -1,12 +1,13 @@
-package com.xxl.mq.admin.openapi.biz;
+package com.xxl.mq.admin.broker.openapi.biz;
 
-import com.xxl.mq.admin.openapi.config.BrokerFactory;
+import com.xxl.mq.admin.broker.config.BrokerFactory;
 import com.xxl.mq.core.openapi.BrokerService;
 import com.xxl.mq.core.openapi.model.*;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.response.Response;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -17,16 +18,24 @@ import java.util.List;
 @Service
 public class BrokerServiceImpl implements BrokerService {
 
+    @Resource
+    private BrokerFactory instance;
 
     /**
      * 1、注册请求逻辑：
      *      a、注册请求数据格式：入参【RegistryRequest】格式如下；数据异构为【Instance】，存储在 “xxl_mq_instance”。
-     *      <pre>
+     *      <pre> // 请求
      *      {
      *          "accessToken":"xxx",
      *          "appname":"xxx",
      *          "instanceUuid":"uuid_01",
      *          "topicList":["topic01", "topic02"]
+     *      }
+     *      </pre>
+     *      <pre> // 响应
+     *      {
+     *          "code":200,
+     *          "msg":"success"
      *      }
      *      </pre>
      *      b、数据初始化：
@@ -51,7 +60,7 @@ public class BrokerServiceImpl implements BrokerService {
         }
 
         // invoke
-        boolean ret = BrokerFactory.getInstance().registry(registryRequest);
+        boolean ret = BrokerFactory.getInstance().getRegistryMessageQueueHelper().registry(registryRequest);
         return ret? Response.ofSuccess() : Response.ofFail();
     }
 
@@ -64,21 +73,26 @@ public class BrokerServiceImpl implements BrokerService {
         }
         if (requestParam instanceof BaseRequest) {
             BaseRequest baseRequest = (BaseRequest) requestParam;
-            return BrokerFactory.getInstance().validAccessToken(baseRequest.getAccessToken());
+            return BrokerFactory.getInstance().getAccessTokenThreadHelper().validAccessToken(baseRequest.getAccessToken());
         }
         return false;
     }
 
     /**
      * 2、注册摘除请求逻辑：入参【RegistryRequest】格式如下；影响注册数据快照。
-     *      <pre>
+     *      <pre> // 请求
      *      {
      *          "accessToken":"xxx",
      *          "appname":"xxx",
      *          "instanceUuid":"uuid_01"
      *      }
      *      </pre>
-     *
+     *      <pre> // 响应
+     *      {
+     *          "code":200,
+     *          "msg":"success"
+     *      }
+     *      </pre>
      */
     @Override
     public Response<String> registryRemove(RegistryRequest registryRequest) {
@@ -91,13 +105,13 @@ public class BrokerServiceImpl implements BrokerService {
         }
 
         // invoke
-        boolean ret = BrokerFactory.getInstance().registryRemove(registryRequest);
+        boolean ret = BrokerFactory.getInstance().getRegistryMessageQueueHelper().registryRemove(registryRequest);
         return ret? Response.ofSuccess() : Response.ofFail();
     }
 
     /**
      * 3、生产请求逻辑：入参【ProduceRequest】格式如下；影响注册数据快照。
-     *      <pre>
+     *      <pre> // 请求
      *          {
      *              "messageList":[{
      *                  "topic":"topic01",
@@ -106,6 +120,12 @@ public class BrokerServiceImpl implements BrokerService {
      *                  "effectTime":{1234567890, 时间戳，毫秒}
      *              }]
      *          }
+     *      </pre>
+     *      <pre> // 响应
+     *      {
+     *          "code":200,
+     *          "msg":"success"
+     *      }
      *      </pre>
      */
     @Override
@@ -116,13 +136,13 @@ public class BrokerServiceImpl implements BrokerService {
         }
 
         // invoke
-        boolean ret = BrokerFactory.getInstance().produce(produceRequest);
+        boolean ret = BrokerFactory.getInstance().getProduceMessageQueueHelper().produce(produceRequest);
         return ret? Response.ofSuccess() : Response.ofFail();
     }
 
     /**
      * 4、消费请求逻辑：入参【ConsumeRequest】格式如下；影响注册数据快照。
-     *      <pre>
+     *      <pre> // 请求
      *          {
      *              "messageList":[{
      *                  "id":{111, 消息ID},
@@ -130,6 +150,12 @@ public class BrokerServiceImpl implements BrokerService {
      *                  "consumeLog":{消息消费流水日志},
      *              }]
      *          }
+     *      </pre>
+     *      <pre> // 响应
+     *      {
+     *          "code":200,
+     *          "msg":"success"
+     *      }
      *      </pre>
      */
     @Override
@@ -140,10 +166,31 @@ public class BrokerServiceImpl implements BrokerService {
         }
 
         // invoke
-        boolean ret = BrokerFactory.getInstance().consume(consumeRequest);
+        boolean ret = BrokerFactory.getInstance().getProduceMessageQueueHelper().consume(consumeRequest);
         return ret? Response.ofSuccess() : Response.ofFail();
     }
 
+    /**
+     * 5、拉取消息请求逻辑：入参【PullRequest】格式如下；影响注册数据快照。
+     *      <pre> // 请求
+     *          {
+     *              "appname":"{appname}",
+     *              "instanceUuid":"{分区Key，用于分区路由}",
+     *              "topicList":["topic01", "topic02"]
+     *          }
+     *      </pre>
+     *      <pre> // 响应
+     *      {
+     *          "code":200,
+     *          "msg":"success",
+     *          "data":[{
+     *                  "topic":"topic01",
+     *                  "partitionKey":"{分区Key，用于分区路由}",
+     *                  "data":"{消息数据}",
+     *                  "effectTime":{1234567890, 时间戳，毫秒}
+     *          }]
+     *      </pre>
+     */
     @Override
     public Response<List<MessageData>> pull(PullRequest pullRequest) {
         // valid token
@@ -152,7 +199,7 @@ public class BrokerServiceImpl implements BrokerService {
         }
 
         // invoke
-        return BrokerFactory.getInstance().pull(pullRequest);
+        return BrokerFactory.getInstance().getProduceMessageQueueHelper().pull(pullRequest);
     }
 
 }

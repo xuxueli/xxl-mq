@@ -1,5 +1,6 @@
 package com.xxl.mq.admin.constant.enums;
 
+
 /**
  * Retry Strategy
  * @author xuxueli

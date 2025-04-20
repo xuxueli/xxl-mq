@@ -1,6 +1,6 @@
-package com.xxl.mq.admin.router.impl;
+package com.xxl.mq.admin.broker.router.impl;
 
-import com.xxl.mq.admin.router.PartitionRouter;
+import com.xxl.mq.admin.broker.router.PartitionRouter;
 import com.xxl.mq.admin.util.PartitionUtil;
 
 import java.util.Map;

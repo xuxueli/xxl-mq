@@ -167,9 +167,9 @@ public class OpenApiClientTest {
         ConsumeRequest consumeRequest = new ConsumeRequest();
         consumeRequest.setAccessToken("defaultaccesstoken");
         consumeRequest.setMessageList(Arrays.asList(
-                new MessageData(15, 2, ConsumeLogUtil.generateConsumeLog("消费消息", "aaaa，IP="+ IPTool.getIp())),
-                new MessageData(16, 3, ConsumeLogUtil.generateConsumeLog("消费消息", "bbbb，IP="+ IPTool.getIp())),
-                new MessageData(17, 4, ConsumeLogUtil.generateConsumeLog("消费消息", "cccc，IP="+ IPTool.getIp()))
+                new MessageData(15, "topic_sample", 2, ConsumeLogUtil.generateConsumeLog("消费消息", "aaaa，IP="+ IPTool.getIp())),
+                new MessageData(16, "topic_sample", 3, ConsumeLogUtil.generateConsumeLog("消费消息", "bbbb，IP="+ IPTool.getIp())),
+                new MessageData(17, "topic_sample", 4, ConsumeLogUtil.generateConsumeLog("消费消息", "cccc，IP="+ IPTool.getIp()))
         ));
 
         Response<String> response = brokerService.consume(consumeRequest);

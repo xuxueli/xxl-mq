@@ -1,7 +1,7 @@
 package com.xxl.mq.admin.constant.enums;
 
-import com.xxl.mq.admin.router.PartitionRouter;
-import com.xxl.mq.admin.router.impl.*;
+import com.xxl.mq.admin.broker.router.PartitionRouter;
+import com.xxl.mq.admin.broker.router.impl.*;
 
 /**
  * Partition Route Strategy
