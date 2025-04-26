@@ -62,6 +62,7 @@ public class ArchiveThreadHelper {
 
                 // 2、refresh daily message-report（within 3 days）       // TODO；real-time + archive data, generate info
                 boolean competeResult = false;  // true, competed success 2 refresh；false sleep 2 next period
+                // brokerFactory.getMessageReportMapper().
 
 
                 // 3、alarm by email

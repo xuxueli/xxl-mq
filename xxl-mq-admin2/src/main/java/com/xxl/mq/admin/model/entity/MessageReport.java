@@ -4,52 +4,71 @@ import java.util.Date;
 
 public class MessageReport {
 
-    private Date effectTime;
-    private long totalCount;
-    private long successTotal;
-    private long failTotal;
-    private long runningTotal;
+    private int id;
+    private Date produceDay;
+    private long runningCount;
+    private long sucCount;
+    private long failCount;
+    private Date updateTime;
 
-    public Date getEffectTime() {
-        return effectTime;
+    // other
+    private long totalCount;
+
+    public int getId() {
+        return id;
     }
 
-    public void setEffectTime(Date effectTime) {
-        this.effectTime = effectTime;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Date getProduceDay() {
+        return produceDay;
+    }
+
+    public void setProduceDay(Date produceDay) {
+        this.produceDay = produceDay;
+    }
+
+    public long getRunningCount() {
+        return runningCount;
+    }
+
+    public void setRunningCount(long runningCount) {
+        this.runningCount = runningCount;
+    }
+
+    public long getSucCount() {
+        return sucCount;
+    }
+
+    public void setSucCount(long sucCount) {
+        this.sucCount = sucCount;
+    }
+
+    public long getFailCount() {
+        return failCount;
+    }
+
+    public void setFailCount(long failCount) {
+        this.failCount = failCount;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 
     public long getTotalCount() {
-        return totalCount;
+        //return totalCount;
+        return runningCount + sucCount + failCount;
     }
 
     public void setTotalCount(long totalCount) {
         this.totalCount = totalCount;
-    }
-
-    public long getSuccessTotal() {
-        return successTotal;
-    }
-
-    public void setSuccessTotal(long successTotal) {
-        this.successTotal = successTotal;
-    }
-
-    public long getFailTotal() {
-        return failTotal;
-    }
-
-    public void setFailTotal(long failTotal) {
-        this.failTotal = failTotal;
-    }
-
-    public long getRunningTotal() {
-        // return runningTotal;
-        // calculte
-        return totalCount - successTotal - failTotal;
-    }
-
-    public void setRunningTotal(long runningTotal) {
-        this.runningTotal = runningTotal;
     }
 
 }

@@ -52,6 +52,8 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
     private MessageService messageService;
     @Resource
     private JavaMailSender mailSender;
+    @Resource
+    private MessageReportMapper messageReportMapper;
 
     public MessageMapper getMessageMapper() {
         return messageMapper;
@@ -78,6 +80,10 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
 
     public JavaMailSender getMailSender() {
         return mailSender;
+    }
+
+    public MessageReportMapper getMessageReportMapper() {
+        return messageReportMapper;
     }
 
     // ---------------------- start / stop ----------------------

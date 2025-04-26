@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.mq.admin.mapper.MessageReportMapper">
+
+    <resultMap id="MessageArchive" type="com.xxl.mq.admin.model.entity.MessageReport" >
+        <result column="id" property="id" />
+        <result column="produce_day" property="produceDay" />
+        <result column="running_count" property="runningCount" />
+        <result column="suc_count" property="sucCount" />
+        <result column="fail_count" property="failCount" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t.`id`,
+        t.`produce_day`,
+        t.`running_count`,
+        t.`suc_count`,
+        t.`fail_count`,
+        t.`update_time`
+    </sql>
+
+    <insert id="insert" parameterType="java.util.Map" >
+        INSERT INTO xxl_mq_message_report (
+            `produce_day`,
+            `running_count`,
+            `suc_count`,
+            `fail_count`,
+            `update_time`
+        )
+        VALUES(
+              #{messageReport.produceDay} ,
+              #{messageReport.runningCount} ,
+              #{messageReport.sucCount} ,
+              #{messageReport.failCount} ,
+              #{messageReport.updateTime}
+          )
+    </insert>
+    
+    <update id="update" parameterType="java.util.Map" >
+        UPDATE xxl_mq_message_report
+        SET
+            `running_count` = #{messageReport.runningCount},
+            `suc_count` = #{messageReport.sucCount},
+            `fail_count` = #{messageReport.failCount},
+            `update_time` = #{messageReport.updateTime}
+        WHERE `id` = #{messageReport.id}
+    </update>
+
+    <select id="load" parameterType="java.util.Map" resultMap="MessageArchive">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_mq_message_archive AS t
+        WHERE t.`produce_day` = #{produceDay}
+    </select>
+
+</mapper>

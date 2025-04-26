@@ -246,14 +246,14 @@ public class MessageServiceImpl implements MessageService {
 
 		if (CollectionTool.isNotEmpty(dayReportList)) {
 			for (MessageReport item: dayReportList) {
-				dayList.add(DateTool.formatDate(item.getEffectTime()));
-				dayRunningCountList.add(item.getRunningTotal());
-				daySuccessCountList.add(item.getSuccessTotal());
-				dayFailCountList.add(item.getFailTotal());
+				dayList.add(DateTool.formatDate(item.getProduceDay()));
+				dayRunningCountList.add(item.getRunningCount());
+				daySuccessCountList.add(item.getSucCount());
+				dayFailCountList.add(item.getFailCount());
 
-				runningTotal += item.getRunningTotal();
-				successTotal += item.getSuccessTotal();
-				failTotal += item.getFailTotal();
+				runningTotal += item.getRunningCount();
+				successTotal += item.getSucCount();
+				failTotal += item.getFailCount();
 			}
 		} else {
 			for (int i = -6; i <= 0; i++) {
