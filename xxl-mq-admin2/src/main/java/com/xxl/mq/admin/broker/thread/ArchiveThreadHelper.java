@@ -39,15 +39,14 @@ public class ArchiveThreadHelper {
         CyclicThread archiveThread = new CyclicThread("archiveThread", true, new Runnable() {
             @Override
             public void run() {
-                // TODO
-                // 1、
+                // 1、move real-time 2 archive-message
                 List<Topic> topicList = brokerFactory.getLocalCacheThreadHelper().findTopicAll();
                 for (Topic topic : topicList) {
                     brokerFactory.getMessageService().archive(topic.getTopic(), topic.getArchiveStrategy(), 10000);
                 }
 
+                // 2、refresh report       // TODO
 
-                // 2、
 
                 // 3、
             }

@@ -66,6 +66,17 @@ CREATE TABLE `xxl_mq_message_archive` (
     KEY `i_cuuid` (`consume_instance_uuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='消息数据归档表';
 
+CREATE TABLE `xxl_mq_message_report`(
+    `id`            int(11)         NOT NULL AUTO_INCREMENT,
+    `produce_day`   datetime        DEFAULT NULL COMMENT '生产-时间',
+    `running_count` int(11)         NOT NULL DEFAULT '0' COMMENT '运行中-日志数量',
+    `suc_count`     int(11)         NOT NULL DEFAULT '0' COMMENT '执行成功-日志数量',
+    `fail_count`    int(11)         NOT NULL DEFAULT '0' COMMENT '执行失败-日志数量',
+    `update_time`   datetime        DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `i_produce_day` (`produce_day`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='消息数据报表';
+
 ## —————————————————————— registry ——————————————————
 
 CREATE TABLE `xxl_mq_instance` (
