@@ -139,6 +139,8 @@ public interface MessageMapper {
 
     /**
      * retry 失败消息查询, 分批
+     *      1、failStatusList = 3、4
+     *      2、retry_count_remain > 0
      *
      * @param failStatusList
      * @param pagesize
@@ -175,5 +177,17 @@ public interface MessageMapper {
                                         @Param("stuckTime") Date stuckTime,
                                         @Param("failStatus") int failStatus,
                                         @Param("pagesize") int pagesize);
+
+    /**
+     * 查询失败总数
+     *
+     * @param topic
+     * @param dateFrom
+     * @param dateTo
+     * @return
+     */
+    public int queryFailCount(@Param("topic") String topic,
+                              @Param("dateFrom") Date dateFrom,
+                              @Param("dateTo") Date dateTo);
 
 }

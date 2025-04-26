@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 
 /**
- * xxl-job config
+ * xxl-mq config
  *
  * @author xuxueli 2017-04-28
  */
@@ -30,6 +30,9 @@ public class PropConfUtil implements InitializingBean {
     @Value("${xxl.mq.i18n}")
     private String i18n;
 
+    @Value("${spring.mail.from}")
+    private String mailFrom;
+
     public String getI18n() {
         if (!Arrays.asList("zh_CN", "zh_TC", "en").contains(i18n)) {
             return "zh_CN";
@@ -37,5 +40,8 @@ public class PropConfUtil implements InitializingBean {
         return i18n;
     }
 
+    public String getMailFrom() {
+        return mailFrom;
+    }
 
 }

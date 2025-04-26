@@ -305,5 +305,12 @@
         LIMIT #{pagesize}
     </update>
 
+    <select id="queryFailCount" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM xxl_mq_message AS t
+        WHERE t.`topic` = #{topic}
+            AND t.`add_time` <![CDATA[ >= ]]> #{dateFrom}
+            AND t.`add_time` <![CDATA[ <= ]]> #{dateTo}
+    </select>
 
 </mapper>

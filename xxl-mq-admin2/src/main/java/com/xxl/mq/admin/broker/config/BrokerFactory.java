@@ -12,6 +12,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mail.javamail.JavaMailSender;
 
 import javax.annotation.Resource;
 
@@ -49,6 +50,8 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
     private TopicMapper topicMapper;
     @Autowired
     private MessageService messageService;
+    @Resource
+    private JavaMailSender mailSender;
 
     public MessageMapper getMessageMapper() {
         return messageMapper;
@@ -71,6 +74,10 @@ public class BrokerFactory implements InitializingBean, DisposableBean {
     }
     public MessageService getMessageService() {
         return messageService;
+    }
+
+    public JavaMailSender getMailSender() {
+        return mailSender;
     }
 
     // ---------------------- start / stop ----------------------

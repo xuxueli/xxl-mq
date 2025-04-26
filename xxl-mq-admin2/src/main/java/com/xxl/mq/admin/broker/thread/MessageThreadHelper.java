@@ -197,7 +197,7 @@ public class MessageThreadHelper {
             @Override
             public void run() {
 
-                // 1、query stuck message , and mark fail
+                // 1、update stuck 2 fail, mark fail
                 int updateStuck2FailCount = 0;
                 int ret = brokerFactory.getMessageMapper().updateStuck2FailWithPage(
                         MessageStatusEnum.RUNNING.getValue(),
@@ -224,11 +224,11 @@ public class MessageThreadHelper {
                 // 2、query fail-message, and retry
                 int failRetryCount = 0;
                 List<Integer> failStatusList = Arrays.asList(MessageStatusEnum.EXECUTE_FAIL.getValue(), MessageStatusEnum.EXECUTE_TIMEOUT.getValue());
-                List<Message> retryAndStuckData = brokerFactory.getMessageMapper().queryRetryDataByPage(failStatusList, 50);
-                while (CollectionTool.isNotEmpty(retryAndStuckData)) {
-                    failRetryCount += retryAndStuckData.size();
+                List<Message> retryFailData = brokerFactory.getMessageMapper().queryRetryDataByPage(failStatusList, 50);
+                while (CollectionTool.isNotEmpty(retryFailData)) {
+                    failRetryCount += retryFailData.size();
                     // do retry
-                    failRetry(retryAndStuckData, failStatusList);
+                    failRetry(retryFailData, failStatusList);
 
                     // avoid too fast
                     try {
@@ -237,7 +237,7 @@ public class MessageThreadHelper {
                         // ignore
                     }
                     // next page
-                    retryAndStuckData = brokerFactory.getMessageMapper().queryRetryDataByPage(failStatusList, 50);
+                    retryFailData = brokerFactory.getMessageMapper().queryRetryDataByPage(failStatusList, 50);
                 }
                 logger.info(">>>>>>>>>>> failMessageProcessThread, failRetryCount: {}", failRetryCount);
 

@@ -73,6 +73,12 @@
 			<version>${mysql-connector-j.version}</version>
 		</dependency>
 
+		<!-- mail-starter -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
 		<!-- xxl-tool -->
 		<dependency>
 			<groupId>com.xuxueli</groupId>
