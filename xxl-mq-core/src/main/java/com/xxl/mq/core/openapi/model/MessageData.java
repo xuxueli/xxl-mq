@@ -58,10 +58,11 @@ public class MessageData implements Serializable {
 
     /**
      * 状态
-     *      MessageStatusEnum
-     *          EXECUTE_SUCCESS(2, "执行成功"),
-     *          EXECUTE_FAIL(3, "执行失败"),
-     *          EXECUTE_TIMEOUT(4, "超时失败")
+     *      NEW(0, "未消费"),
+     *      RUNNING(1, "消费中"),
+     *      EXECUTE_SUCCESS(2, "消费成功"),
+     *      EXECUTE_FAIL(3, "消费失败"),
+     *      EXECUTE_TIMEOUT(4, "消费超时失败");
      */
     private int status;
 

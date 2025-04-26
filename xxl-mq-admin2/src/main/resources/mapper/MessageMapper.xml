@@ -148,7 +148,7 @@
             </if>
     </select>
 
-    <select id="queryByStatus" parameterType="java.util.Map" resultMap="Message">
+    <select id="queryByTopicAndStatus" parameterType="java.util.Map" resultMap="Message">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_mq_message AS t
         WHERE t.`topic` = #{topic}
@@ -239,13 +239,70 @@
         SELECT <include refid="Base_Column_List" />
         FROM xxl_mq_message AS t
         WHERE t.`topic` = #{topic}
-        AND `id` IN
+        AND t.`id` IN
             <foreach collection="messageIdList" item="item" open="(" close=")" separator="," >
                 #{item}
             </foreach>
-            AND status = #{status}
-            AND `consume_instance_uuid` = #{instanceUuid}
+            AND t.`status` = #{status}
+            AND t.`consume_instance_uuid` = #{instanceUuid}
     </select>
+
+    <select id="queryRetryDataById" parameterType="java.util.Map" resultMap="Message">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_mq_message AS t
+        WHERE t.`id` IN
+            <foreach collection="messageIdList" item="item" open="(" close=")" separator="," >
+                #{item}
+            </foreach>
+        AND t.`status` IN
+            <foreach collection="statusList" item="item" open="(" close=")" separator="," >
+                #{item}
+            </foreach>
+        AND t.`retry_count_remain` <![CDATA[ > ]]> 0
+    </select>
+
+    <select id="queryRetryDataByPage" parameterType="java.util.Map" resultMap="Message">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_mq_message AS t
+        WHERE t.`status` IN
+                <foreach collection="failStatusList" item="item" open="(" close=")" separator="," >
+                    #{item}
+                </foreach>
+            AND t.`retry_count_remain` <![CDATA[ > ]]> 0
+        LIMIT #{pagesize}
+    </select>
+
+    <update id="batchFailRetry" parameterType="java.util.Map" >
+        UPDATE xxl_mq_message AS t
+        SET t.`status` = #{newStatus},
+            t.`effect_time` =
+                <foreach collection="failMessageList" item="messageItem" index="index" separator=" " open="case id" close="end">
+                    when #{messageItem.id} then #{messageItem.effectTime}
+                </foreach>
+            ,
+            t.`retry_count_remain` = retry_count_remain - 1,
+            t.`consume_log` = CONCAT( IFNULL(t.`consume_log`, '') , #{consumeLog} ),
+            t.`update_time` = NOW()
+        WHERE t.`id` IN
+                <foreach collection="failMessageList" item="messageItem" open="(" close=")" separator="," >
+                    #{messageItem.id}
+                </foreach>
+            AND t.`status` IN
+                <foreach collection="failStatusList" item="item" open="(" close=")" separator="," >
+                    #{item}
+                </foreach>
+            AND t.`retry_count_remain` <![CDATA[ > ]]> 0
+    </update>
+
+    <update id="updateStuck2FailWithPage" parameterType="java.util.Map" >
+        UPDATE xxl_mq_message
+        SET
+        `status` = #{failStatus},
+        `update_time` = NOW()
+        WHERE `status` = #{runningStatus}
+            AND update_time <![CDATA[ < ]]> #{stuckTime}
+        LIMIT #{pagesize}
+    </update>
 
 
 </mapper>

@@ -7,7 +7,6 @@ import com.xxl.tool.core.StringTool;
 import com.xxl.tool.response.Response;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -17,9 +16,6 @@ import java.util.List;
  */
 @Service
 public class BrokerServiceImpl implements BrokerService {
-
-    @Resource
-    private BrokerFactory instance;
 
     /**
      * 1、注册请求逻辑：

@@ -20,11 +20,13 @@ import com.xxl.tool.core.MapTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.gson.GsonTool;
 import com.xxl.tool.response.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
-import static com.xxl.mq.admin.broker.thread.AccessTokenThreadHelper.BEAT_TIME_INTERVAL;
 
 /**
  * prude message queue helper
@@ -32,6 +34,7 @@ import static com.xxl.mq.admin.broker.thread.AccessTokenThreadHelper.BEAT_TIME_I
  * @author xuxueli
  */
 public class MessageHelper {
+    private static final Logger logger = LoggerFactory.getLogger(MessageHelper.class);
 
     // ---------------------- init ----------------------
 
@@ -141,28 +144,22 @@ public class MessageHelper {
                 1000,
                 messages -> {
 
-                    // 1、filter and collect
-                    List<MessageData> validMessageTotal = new ArrayList<>();
-                    for (ConsumeRequest consumeRequest : messages) {
-                        // valid
-                        if (CollectionTool.isNotEmpty(consumeRequest.getMessageList())) {
-                            for (MessageData messageData : consumeRequest.getMessageList()) {
-                                if (messageData.getId() <=0 || messageData.getStatus()<=0) {
-                                    continue;
-                                }
-                                validMessageTotal.add(messageData);
-                            }
-                        }
-                    }
+                    // 1、filter fail message-list
+                    List<MessageData> validMessageTotal = messages.stream()
+                            .filter(consumeRequest -> CollectionTool.isNotEmpty(consumeRequest.getMessageList()))
+                            .flatMap(consumeRequest -> consumeRequest.getMessageList().stream())
+                            .filter(messageData -> messageData.getId()>0 && messageData.getStatus()>0)
+                            .collect(Collectors.toList());
                     if (CollectionTool.isEmpty(validMessageTotal)) {
                         return;
                     }
 
-                    // 2、batch write consume data, collect fail-message
-                    List<Message> failMessageList = new ArrayList<>();
-                    for (List<MessageData> validMessageDataList : CollectionTool.split(validMessageTotal, 50)) {
+                    // 2、batch write consume-result, collect fail-message
+                    List<Integer> failStatusList = Arrays.asList(MessageStatusEnum.EXECUTE_FAIL.getValue(), MessageStatusEnum.EXECUTE_TIMEOUT.getValue());
+                    List<Long> failMessageIdList = new ArrayList<>();
+                    for (List<MessageData> validMessageBatch : CollectionTool.split(validMessageTotal, 50)) {
                         List<Message> messageList = new ArrayList<>();
-                        for (MessageData messageData : validMessageDataList) {
+                        for (MessageData messageData : validMessageBatch) {
 
                             // adaptor
                             Message message = new Message();
@@ -175,9 +172,8 @@ public class MessageHelper {
                             messageList.add(message);
 
                             // fail-retry collect
-                            if (messageData.getStatus()==MessageStatusEnum.EXECUTE_FAIL.getValue()
-                                    || messageData.getStatus()==MessageStatusEnum.EXECUTE_TIMEOUT.getValue()) {
-                                failMessageList.add(message);
+                            if (failStatusList.contains(messageData.getStatus())) {
+                                failMessageIdList.add(message.getId());
                             }
                         }
                         brokerFactory.getMessageMapper().batchUpdateStatus(messageList);
@@ -185,65 +181,12 @@ public class MessageHelper {
 
                     /**
                      * 3、fail retry
-                     *      fail：status fail or timeout-fail
-                     *      process:    TODO , fail retry
-                     *          retryCount-1
-                     *          status：rollback 2 NEW
-                     *          effectTime
-                     *              long addSecond = 0;
-                     *              if (retryStrategyEnum == RetryStrategyEnum.FIXED_RETREAT) {
-                     *                  addSecond = retryInterval;
-                     *              } else if (retryStrategyEnum == RetryStrategyEnum.LINEAR_RETREAT) {
-                     *                  addSecond = retryInterval * (retryCount-retryCount_remain + 1);
-                     *              } else if (retryStrategyEnum == RetryStrategyEnum.EXPONENTIAL_RETREAT) {
-                     *                  addSecond = retryInterval * (int)Math.pow(2, (retryCount-retryCount_remain + 1));
-                     *              }
                      */
-                    if (CollectionTool.isNotEmpty(failMessageList)) {
-                        for (Message message : failMessageList) {
-
-                            // match topic
-                            Topic topic = brokerFactory.getLocalCacheThreadHelper().findTopic(message.getTopic());
-                            if (topic == null) {
-                                topic = new Topic();
-                                topic.setRetryInterval(3);
-                                topic.setRetryCount(3);
-                                topic.setRetryStrategy(RetryStrategyEnum.FIXED_RETREAT.getValue());
-                            }
-
-                            // data
-                            int retryInterval = 3;      // from topic
-                            int retryCount = 3;         // from topic
-                            int retryStrategy = -1;     // from topic
-
-                            int retryCount_remain = 1;  // from message
-                            if (retryCount_remain <=0 ) {
-                                continue;
-                            }
-
-                            // calculate retry info
-                            RetryStrategyEnum retryStrategyEnum = RetryStrategyEnum.match(retryStrategy, RetryStrategyEnum.FIXED_RETREAT);
-                            long addSecond = 0;
-                            if (retryStrategyEnum == RetryStrategyEnum.FIXED_RETREAT) {
-                                addSecond = retryInterval;
-                            } else if (retryStrategyEnum == RetryStrategyEnum.LINEAR_RETREAT) {
-                                addSecond = retryInterval * (retryCount-retryCount_remain + 1);
-                            } else if (retryStrategyEnum == RetryStrategyEnum.EXPONENTIAL_RETREAT) {
-                                addSecond = retryInterval * (int)Math.pow(2, (retryCount-retryCount_remain + 1));
-                            }
-                            Date newEffectTime = DateTool.addSeconds(new Date(), addSecond);
-                            int newStatus = MessageStatusEnum.NEW.getValue();
-                            int changeRetryCount  = -1;     // 限制大于0；
-
-                            // write retry data
-                            //message.setRetryCount( -1 );      // RetryCount change；
-                            message.setStatus(MessageStatusEnum.NEW.getValue());
-                            message.setEffectTime(newEffectTime);
-
-                        }
-
+                    if (CollectionTool.isNotEmpty(failMessageIdList)) {
+                        // query fail
+                        List<Message> failMessageList = brokerFactory.getMessageMapper().queryRetryDataById(failMessageIdList, failStatusList);
                         // fail retry
-                        //brokerFactory.getMessageMapper().batchFailRetry(failMessageList);
+                        failRetry(failMessageList, failStatusList);
                     }
 
                 },
@@ -254,27 +197,108 @@ public class MessageHelper {
             @Override
             public void run() {
 
-                /**
-                 * TODO, stuck process, 3s查询一次，直到查询不到结束；
-                 *
-                 * 1、find error message
-                 *      fail: fail-status && updatetime > 5s(avoid compete)
-                 *      stuck：running-status && updatetime > 5min （默认超时时间）
-                  */
-                List<Message> stuckMessageList = null;
+                // 1、query stuck message , and mark fail
+                int updateStuck2FailCount = 0;
+                int ret = brokerFactory.getMessageMapper().updateStuck2FailWithPage(
+                        MessageStatusEnum.RUNNING.getValue(),
+                        DateTool.addMinutes(new Date(), -5),
+                        MessageStatusEnum.EXECUTE_TIMEOUT.getValue(),
+                        500);
+                while (ret > 0) {
+                    updateStuck2FailCount += ret;
+                    // avoid too fast
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(500);
+                    } catch (InterruptedException e) {
+                        // ignore
+                    }
+                    // next page
+                    ret = brokerFactory.getMessageMapper().updateStuck2FailWithPage(
+                            MessageStatusEnum.RUNNING.getValue(),
+                            DateTool.addMinutes(new Date(), -5),
+                            MessageStatusEnum.EXECUTE_TIMEOUT.getValue(),
+                            50);
+                }
+                logger.info(">>>>>>>>>>> failMessageProcessThread, updateStuck2FailCount: {}", updateStuck2FailCount);
 
-                // 2、fail-message process，retry
+                // 2、query fail-message, and retry
+                int failRetryCount = 0;
+                List<Integer> failStatusList = Arrays.asList(MessageStatusEnum.EXECUTE_FAIL.getValue(), MessageStatusEnum.EXECUTE_TIMEOUT.getValue());
+                List<Message> retryAndStuckData = brokerFactory.getMessageMapper().queryRetryDataByPage(failStatusList, 50);
+                while (CollectionTool.isNotEmpty(retryAndStuckData)) {
+                    failRetryCount += retryAndStuckData.size();
+                    // do retry
+                    failRetry(retryAndStuckData, failStatusList);
 
-                // 3、stuck-message process，mark fail and fail-retry
+                    // avoid too fast
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(500);
+                    } catch (InterruptedException e) {
+                        // ignore
+                    }
+                    // next page
+                    retryAndStuckData = brokerFactory.getMessageMapper().queryRetryDataByPage(failStatusList, 50);
+                }
+                logger.info(">>>>>>>>>>> failMessageProcessThread, failRetryCount: {}", failRetryCount);
 
             }
-        }, 60 * 1000, true);
+        }, 10 * 1000, true);
         failMessageProcessThread.start();
 
     }
 
     public void stop(){
         // do nothing
+    }
+
+    /**
+     * fail retry
+     *
+     * @param failMessageList
+     */
+    private void failRetry(List<Message> failMessageList, List<Integer> failStatusList) {
+        if (CollectionTool.isEmpty(failMessageList)) {
+            return;
+        }
+
+        // fill retry info
+        for (Message message : failMessageList) {
+
+            // valid
+            Topic topic = brokerFactory.getLocalCacheThreadHelper().findTopic(message.getTopic());
+            if (topic == null) {
+                topic = new Topic();
+                topic.setRetryInterval(3);
+                topic.setRetryCount(3);
+                topic.setRetryStrategy(RetryStrategyEnum.FIXED_RETREAT.getValue());
+            }
+            int totalRetryCount = Math.max(topic.getRetryCount(), message.getRetryCountRemain());
+
+            // calculate retry info
+            RetryStrategyEnum retryStrategyEnum = RetryStrategyEnum.match(topic.getRetryStrategy(), RetryStrategyEnum.FIXED_RETREAT);
+            long delaySecond = 0;
+            if (retryStrategyEnum == RetryStrategyEnum.FIXED_RETREAT) {
+                delaySecond = topic.getRetryInterval();
+            } else if (retryStrategyEnum == RetryStrategyEnum.LINEAR_RETREAT) {
+                delaySecond = (long) topic.getRetryInterval() * (totalRetryCount - message.getRetryCountRemain() + 1);
+            } else if (retryStrategyEnum == RetryStrategyEnum.RANDOM_RETREAT) {
+                delaySecond = ThreadLocalRandom.current().nextInt(topic.getRetryInterval());
+            }
+            Date newEffectTime = DateTool.addSeconds(new Date(), delaySecond);
+
+            // write retry data
+            //message.setRetryCountRemain( message.getRetryCountRemain()-1 );
+            //message.setStatus(MessageStatusEnum.NEW.getValue());
+            //message.setConsumeLog(ConsumeLogUtil.appendConsumeLog(message.getConsumeLog(), "失败重试", null));
+            message.setEffectTime(newEffectTime);
+        }
+
+        // write retry
+        brokerFactory.getMessageMapper().batchFailRetry(failMessageList,
+                failStatusList,
+                MessageStatusEnum.NEW.getValue(),
+                ConsumeLogUtil.generateConsumeLog("失败重试", null)
+        );
     }
 
     // ---------------------- tool ----------------------

@@ -189,7 +189,7 @@ public class MessageServiceImpl implements MessageService {
 		int pageSize = 100;
 		int maxCycleCount = 100; 	// Avoid dead loops
 
-		List<Message> messageList = messageMapper.queryByStatus(topic, archiveStatusList, pageSize);
+		List<Message> messageList = messageMapper.queryByTopicAndStatus(topic, archiveStatusList, pageSize);
 		long archeveNum = 0;
 		while (maxCycleCount>0 && CollectionTool.isNotEmpty(messageList)){
 			// 1、clean termination message
@@ -209,7 +209,7 @@ public class MessageServiceImpl implements MessageService {
 			}
 
 			// next page
-			messageList = messageMapper.queryByStatus(topic, archiveStatusList, pageSize);
+			messageList = messageMapper.queryByTopicAndStatus(topic, archiveStatusList, pageSize);
 			maxCycleCount--;
 		}
 

@@ -8,8 +8,8 @@ package com.xxl.mq.admin.constant.enums;
 public enum RetryStrategyEnum {
 
     FIXED_RETREAT(1, "固定间隔重试"),
-    LINEAR_RETREAT(2, "线性退避重试"),
-    EXPONENTIAL_RETREAT(3, "指数退避重试");
+    LINEAR_RETREAT(2, "线性间隔重试"),
+    RANDOM_RETREAT(3, "随机间隔重试");
 
     private int value;
     private String desc;

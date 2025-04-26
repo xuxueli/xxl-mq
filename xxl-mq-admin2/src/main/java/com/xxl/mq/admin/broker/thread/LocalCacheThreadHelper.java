@@ -122,7 +122,7 @@ public class LocalCacheThreadHelper {
                 String applicationStoreNewJson = GsonTool.toJson(applicationStoreNew);
                 if (!applicationStoreNewJson.equals(GsonTool.toJson(applicationStore))) {
                     applicationStore = applicationStoreNew;
-                    logger.info(">>>>>>>>>>> xxl-mq, RegistryLocalCacheThreadHelper found diff data, applicationStore:{}", applicationStore);
+                    logger.info(">>>>>>>>>>> xxl-mq, RegistryLocalCacheThreadHelper found diff data, applicationStoreNewJson:{}", applicationStoreNewJson);
                 }
 
             }

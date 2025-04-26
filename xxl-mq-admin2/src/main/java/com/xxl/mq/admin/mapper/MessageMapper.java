@@ -64,9 +64,9 @@ public interface MessageMapper {
     /**
      * 根据状态查询消息
      */
-    public List<Message> queryByStatus(@Param("topic") String topic,
-                                       @Param("archiveStatusList") List<Integer> archiveStatusList,
-                                       @Param("pageSize") int pageSize);
+    public List<Message> queryByTopicAndStatus(@Param("topic") String topic,
+                                               @Param("archiveStatusList") List<Integer> archiveStatusList,
+                                               @Param("pageSize") int pageSize);
 
     /**
      * 查询总数
@@ -84,7 +84,7 @@ public interface MessageMapper {
     public int batchUpdateStatus(@Param("messageList") List<Message> messageList);
 
     /**
-     * pullQuery
+     * pull 查询消息，多个Topic分批查询
      *
      * @param topicList
      * @param pagesize
@@ -97,7 +97,7 @@ public interface MessageMapper {
                                    @Param("pagesize") int pagesize);
 
     /**
-     * pullLock
+     * pull 修改消息状态
      *
      * @param messageIdList
      * @param instanceUuid
@@ -111,7 +111,7 @@ public interface MessageMapper {
                         @Param("statuTo")  int statuTo);
 
     /**
-     * pullQueryByUuid
+     * pull 查询消息，根据uuid
      *
      * @param messageIdList
      * @param instanceUuid
@@ -121,5 +121,56 @@ public interface MessageMapper {
     public List<Message> pullQueryByUuid(@Param("messageIdList") List<Long> messageIdList,
                                          @Param("instanceUuid") String instanceUuid,
                                          @Param("status") int status);
+
+    /**
+     * retry 失败消息查询, 根据 id
+     *      1、status = 失败
+     *      2、retry_count_remain >0
+     *      3、id in 指定范围内
+     *
+     * @param messageIdList
+     * @return
+     */
+    List<Message> queryRetryDataById(@Param("messageIdList") List<Long> messageIdList,
+                                     @Param("statusList") List<Integer> statusList);
+
+    /**
+     * retry 失败消息查询, 分批
+     *
+     * @param failStatusList
+     * @param pagesize
+     * @return
+     */
+    List<Message> queryRetryDataByPage(@Param("failStatusList") List<Integer> failStatusList,
+                                       @Param("pagesize") int pagesize);
+
+    /**
+     * retry 失败消息批量修改，更新重试信息
+     *      1、status 改为初始化
+     *      2、retry_count_remain - 1
+     *      3、effect_time 按照指定策略延迟
+     *
+     * @param failMessageList
+     * @return
+     */
+    public int batchFailRetry(@Param("failMessageList") List<Message> failMessageList,
+                              @Param("failStatusList") List<Integer> failStatusList,
+                              @Param("newStatus") Integer newStatus,
+                              @Param("consumeLog") String consumeLog);
+
+
+    /**
+     * stuck 卡住状态任务 修改为 失败；
+     *
+     * @param runningStatus
+     * @param stuckTime
+     * @param failStatus
+     * @param pagesize
+     * @return
+     */
+    public int updateStuck2FailWithPage(@Param("runningStatus") Integer runningStatus,
+                                        @Param("stuckTime") Date stuckTime,
+                                        @Param("failStatus") int failStatus,
+                                        @Param("pagesize") int pagesize);
 
 }
