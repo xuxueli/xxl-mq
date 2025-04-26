@@ -62,11 +62,14 @@ public interface MessageMapper {
                              @Param("effectTimeEnd") Date effectTimeEnd);
 
     /**
-     * 根据状态查询消息
+     * 查询终止状态消息
+     *      1、topic
+     *      2、archiveStatusList：2、3、4
+     *      3、retry_count_remain = 0
      */
-    public List<Message> queryByTopicAndStatus(@Param("topic") String topic,
-                                               @Param("archiveStatusList") List<Integer> archiveStatusList,
-                                               @Param("pageSize") int pageSize);
+    public List<Message> queryFinishedData(@Param("topic") String topic,
+                                           @Param("archiveStatusList") List<Integer> archiveStatusList,
+                                           @Param("pageSize") int pageSize);
 
     /**
      * 查询总数

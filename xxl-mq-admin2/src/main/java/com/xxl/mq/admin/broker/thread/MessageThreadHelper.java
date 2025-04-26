@@ -33,13 +33,13 @@ import java.util.stream.Collectors;
  *
  * @author xuxueli
  */
-public class MessageHelper {
-    private static final Logger logger = LoggerFactory.getLogger(MessageHelper.class);
+public class MessageThreadHelper {
+    private static final Logger logger = LoggerFactory.getLogger(MessageThreadHelper.class);
 
     // ---------------------- init ----------------------
 
     private final BrokerFactory brokerFactory;
-    public MessageHelper(BrokerFactory brokerFactory) {
+    public MessageThreadHelper(BrokerFactory brokerFactory) {
         this.brokerFactory = brokerFactory;
     }
 
@@ -53,9 +53,9 @@ public class MessageHelper {
      * start
      *
      * remark：
-     *      1、Produce MessageQueue
-     *      2、Consume MessageQueue
-     *      3、FailMessage Process
+     *      1、Produce MessageQueue: batch write message to store
+     *      2、Consume MessageQueue: 1、batch write consume result to store；2、find fail-message and retry.
+     *      3、FailMessage Process: 1、find stuck message(running >5min), mark fail；2、find fail-message and retry.
      */
     public void start(){
         produceMessageQueue = new MessageQueue<ProduceRequest>(
@@ -242,7 +242,7 @@ public class MessageHelper {
                 logger.info(">>>>>>>>>>> failMessageProcessThread, failRetryCount: {}", failRetryCount);
 
             }
-        }, 10 * 1000, true);
+        }, 60 * 1000, true);
         failMessageProcessThread.start();
 
     }

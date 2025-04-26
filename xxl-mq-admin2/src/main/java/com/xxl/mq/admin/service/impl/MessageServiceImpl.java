@@ -137,7 +137,7 @@ public class MessageServiceImpl implements MessageService {
 	}
 
 	@Override
-	public Response<String> archive(String topic, Integer archiveStrategy) {
+	public Response<String> archive(String topic, Integer archiveStrategy, int maxCycleCount) {
 
 		// valid
 		Topic topicData = topicMapper.loadByTopic(topic);
@@ -150,57 +150,62 @@ public class MessageServiceImpl implements MessageService {
 		}
 
 		// archive
-		long cleanCount = 0;
-		switch (archiveStrategyEnum) {
-			case RESERVE_7_DAY:
-				cleanCount = cleanAndArchive(topic, true, DateTool.addDays(new Date(), -7));
-				break;
-			case RESERVE_30_DAY:
-				cleanCount = cleanAndArchive(topic, true, DateTool.addDays(new Date(), -30));
-				break;
-			case RESERVE_90_DAY:
-				cleanCount = cleanAndArchive(topic, true, DateTool.addDays(new Date(), -90));
-				break;
-			case RESERVE_FOREVER:
-				cleanCount = cleanAndArchive(topic, true, DateTool.addDays(new Date(), -90));
-				break;
-			case NONE:
-				cleanCount =cleanAndArchive(topic, false, null);
-				break;
-		}
-
+		long cleanCount = cleanAndArchive(topic, archiveStrategyEnum, maxCycleCount);
 		return Response.ofSuccess("操作成功，处理数据行数：" + cleanCount);
 	}
 
 	/**
 	 * clean and archive
-	 *
-	 * @param isArchive
-	 * @param effectTimeFrom
-	 * @return
 	 */
-	private long cleanAndArchive(String topic, boolean isArchive, Date effectTimeFrom){
+	private long cleanAndArchive(String topic, ArchiveStrategyEnum archiveStrategyEnum, int maxCycleCount){
+
+		// archive strategy param
+		boolean isArchive = false;
+		Date effectTimeFrom = new Date();
+		switch (archiveStrategyEnum) {
+			case RESERVE_7_DAY:
+				isArchive = true;
+				effectTimeFrom = DateTool.addDays(new Date(), -7);
+				break;
+			case RESERVE_30_DAY:
+				isArchive = true;
+				effectTimeFrom = DateTool.addDays(new Date(), -30);
+				break;
+			case RESERVE_90_DAY:
+				isArchive = true;
+				effectTimeFrom = DateTool.addDays(new Date(), -90);
+				break;
+			case RESERVE_FOREVER:
+				isArchive = true;
+				effectTimeFrom = DateTool.addDays(new Date(), -90);
+				break;
+			case NONE:
+				isArchive = false;
+				effectTimeFrom = null;
+				break;
+		}
+		Date finalEffectTimeFrom = effectTimeFrom;
 
 		// init param
 		List<Integer> archiveStatusList = Stream.of(MessageStatusEnum.EXECUTE_SUCCESS, MessageStatusEnum.EXECUTE_FAIL, MessageStatusEnum.EXECUTE_TIMEOUT)
 				.map(MessageStatusEnum::getValue)
 				.collect(Collectors.toList());
 
+		// do archive
 		int pageSize = 100;
-		int maxCycleCount = 100; 	// Avoid dead loops
+		long archiveNum = 0;
+		List<Message> messageList = messageMapper.queryFinishedData(topic, archiveStatusList, pageSize);
+		while (maxCycleCount>0 && CollectionTool.isNotEmpty(messageList)){			// maxCycleCount: Avoid dead loops
 
-		List<Message> messageList = messageMapper.queryByTopicAndStatus(topic, archiveStatusList, pageSize);
-		long archeveNum = 0;
-		while (maxCycleCount>0 && CollectionTool.isNotEmpty(messageList)){
-			// 1、clean termination message
+			// 1、clean finished message
 			List<Long> ids = messageList.stream().map(Message::getId).collect(Collectors.toList());
 			messageMapper.delete(ids);
-			archeveNum += ids.size();
+			archiveNum += ids.size();
 
 			// 2、write to archive table （new）
 			if (isArchive) {
 				List<MessageArchive> messageArchiveList = messageList.stream()
-						.filter(message -> message.getEffectTime().after(effectTimeFrom))
+						.filter(message -> message.getEffectTime().after(finalEffectTimeFrom))
 						.map(MessageAdaptor::adaptorToArchive)
 						.collect(Collectors.toList());
 				if (CollectionTool.isNotEmpty(messageArchiveList)) {
@@ -209,7 +214,7 @@ public class MessageServiceImpl implements MessageService {
 			}
 
 			// next page
-			messageList = messageMapper.queryByTopicAndStatus(topic, archiveStatusList, pageSize);
+			messageList = messageMapper.queryFinishedData(topic, archiveStatusList, pageSize);
 			maxCycleCount--;
 		}
 
@@ -222,7 +227,7 @@ public class MessageServiceImpl implements MessageService {
 			maxCycleCount--;
 		}
 
-		return archeveNum;
+		return archiveNum;
 	}
 
 	@Override

@@ -160,7 +160,7 @@ public class MessageController {
     @ResponseBody
     @Permission
     public Response<String> archive(String topic, Integer archiveStrategy){
-        return messageService.archive(topic, archiveStrategy);
+        return messageService.archive(topic, archiveStrategy, 100);
     }
 
 }

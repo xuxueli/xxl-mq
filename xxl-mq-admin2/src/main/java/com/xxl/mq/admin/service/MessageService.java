@@ -44,7 +44,7 @@ public interface MessageService {
     /**
      * 归档
      */
-    public Response<String> archive(String topic, Integer archiveStrategy);
+    public Response<String> archive(String topic, Integer archiveStrategy, int maxCycleCount);
 
     /**
      * 报表信息

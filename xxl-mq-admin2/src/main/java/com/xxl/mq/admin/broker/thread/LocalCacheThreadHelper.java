@@ -14,10 +14,7 @@ import com.xxl.tool.gson.GsonTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -144,6 +141,15 @@ public class LocalCacheThreadHelper {
      */
     public Topic findTopic(String topic) {
         return topicStore.get(topic);
+    }
+
+    /**
+     * find topic all
+     *
+     * @return
+     */
+    public List<Topic> findTopicAll() {
+        return new ArrayList<>(topicStore.values());
     }
 
     /**
