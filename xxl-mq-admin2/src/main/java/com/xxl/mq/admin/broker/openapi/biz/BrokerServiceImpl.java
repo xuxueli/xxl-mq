@@ -1,6 +1,6 @@
 package com.xxl.mq.admin.broker.openapi.biz;
 
-import com.xxl.mq.admin.broker.config.BrokerFactory;
+import com.xxl.mq.admin.broker.config.BrokerBootstrap;
 import com.xxl.mq.core.openapi.BrokerService;
 import com.xxl.mq.core.openapi.model.*;
 import com.xxl.tool.core.StringTool;
@@ -56,7 +56,7 @@ public class BrokerServiceImpl implements BrokerService {
         }
 
         // invoke
-        boolean ret = BrokerFactory.getInstance().getRegistryMessageQueueHelper().registry(registryRequest);
+        boolean ret = BrokerBootstrap.getInstance().getRegistryMessageQueueHelper().registry(registryRequest);
         return ret? Response.ofSuccess() : Response.ofFail();
     }
 
@@ -69,7 +69,7 @@ public class BrokerServiceImpl implements BrokerService {
         }
         if (requestParam instanceof BaseRequest) {
             BaseRequest baseRequest = (BaseRequest) requestParam;
-            return BrokerFactory.getInstance().getAccessTokenThreadHelper().validAccessToken(baseRequest.getAccessToken());
+            return BrokerBootstrap.getInstance().getAccessTokenThreadHelper().validAccessToken(baseRequest.getAccessToken());
         }
         return false;
     }
@@ -101,7 +101,7 @@ public class BrokerServiceImpl implements BrokerService {
         }
 
         // invoke
-        boolean ret = BrokerFactory.getInstance().getRegistryMessageQueueHelper().registryRemove(registryRequest);
+        boolean ret = BrokerBootstrap.getInstance().getRegistryMessageQueueHelper().registryRemove(registryRequest);
         return ret? Response.ofSuccess() : Response.ofFail();
     }
 
@@ -132,7 +132,7 @@ public class BrokerServiceImpl implements BrokerService {
         }
 
         // invoke
-        boolean ret = BrokerFactory.getInstance().getMessageThreadHelper().produce(produceRequest);
+        boolean ret = BrokerBootstrap.getInstance().getMessageThreadHelper().produce(produceRequest);
         return ret? Response.ofSuccess() : Response.ofFail();
     }
 
@@ -162,7 +162,7 @@ public class BrokerServiceImpl implements BrokerService {
         }
 
         // invoke
-        boolean ret = BrokerFactory.getInstance().getMessageThreadHelper().consume(consumeRequest);
+        boolean ret = BrokerBootstrap.getInstance().getMessageThreadHelper().consume(consumeRequest);
         return ret? Response.ofSuccess() : Response.ofFail();
     }
 
@@ -195,7 +195,7 @@ public class BrokerServiceImpl implements BrokerService {
         }
 
         // invoke
-        return BrokerFactory.getInstance().getMessageThreadHelper().pull(pullRequest);
+        return BrokerBootstrap.getInstance().getMessageThreadHelper().pull(pullRequest);
     }
 
 }

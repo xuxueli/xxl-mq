@@ -23,14 +23,14 @@ import javax.annotation.Resource;
  * @author xuxueli
  */
 @Configuration
-public class BrokerFactory implements InitializingBean, DisposableBean {
-    private static Logger logger = LoggerFactory.getLogger(BrokerFactory.class);
+public class BrokerBootstrap implements InitializingBean, DisposableBean {
+    private static Logger logger = LoggerFactory.getLogger(BrokerBootstrap.class);
 
 
     // ---------------------- instance ----------------------
-    private static BrokerFactory instance;
+    private static BrokerBootstrap instance;
 
-    public static BrokerFactory getInstance() {
+    public static BrokerBootstrap getInstance() {
         return instance;
     }
 

@@ -1,6 +1,6 @@
 package com.xxl.mq.admin.broker.thread;
 
-import com.xxl.mq.admin.broker.config.BrokerFactory;
+import com.xxl.mq.admin.broker.config.BrokerBootstrap;
 import com.xxl.mq.admin.constant.enums.MessageStatusEnum;
 import com.xxl.mq.admin.constant.enums.PartitionRouteStrategyEnum;
 import com.xxl.mq.admin.constant.enums.RetryStrategyEnum;
@@ -38,9 +38,9 @@ public class MessageThreadHelper {
 
     // ---------------------- init ----------------------
 
-    private final BrokerFactory brokerFactory;
-    public MessageThreadHelper(BrokerFactory brokerFactory) {
-        this.brokerFactory = brokerFactory;
+    private final BrokerBootstrap brokerBootstrap;
+    public MessageThreadHelper(BrokerBootstrap brokerBootstrap) {
+        this.brokerBootstrap = brokerBootstrap;
     }
 
     // ---------------------- start / stop ----------------------
@@ -84,9 +84,9 @@ public class MessageThreadHelper {
 
                             // 2.1、param
                             Date effectTime = messageData.getEffectTime()>0 ? new Date(messageData.getEffectTime()):new Date();
-                            Topic topicData = brokerFactory.getLocalCacheThreadHelper().findTopic(messageData.getTopic());
+                            Topic topicData = brokerBootstrap.getLocalCacheThreadHelper().findTopic(messageData.getTopic());
                             PartitionRouteStrategyEnum partitionRouteStrategyEnum = PartitionRouteStrategyEnum.match(topicData!=null?topicData.getPartitionStrategy():-1, PartitionRouteStrategyEnum.HASH);
-                            Map<String, PartitionUtil.PartitionRange> instancePartitionRange = brokerFactory.getLocalCacheThreadHelper().findPartitionRangeByTopic(messageData.getTopic());
+                            Map<String, PartitionUtil.PartitionRange> instancePartitionRange = brokerBootstrap.getLocalCacheThreadHelper().findPartitionRangeByTopic(messageData.getTopic());
 
                             // 2.2、route produce
                             if (PartitionRouteStrategyEnum.BROADCAST==partitionRouteStrategyEnum) {
@@ -133,7 +133,7 @@ public class MessageThreadHelper {
                         if (CollectionTool.isEmpty(messageList)) {
                             continue;
                         }
-                        brokerFactory.getMessageMapper().batchInsert(messageList);
+                        brokerBootstrap.getMessageMapper().batchInsert(messageList);
                     }
                 },
                 50,
@@ -176,7 +176,7 @@ public class MessageThreadHelper {
                                 failMessageIdList.add(message.getId());
                             }
                         }
-                        brokerFactory.getMessageMapper().batchUpdateStatus(messageList);
+                        brokerBootstrap.getMessageMapper().batchUpdateStatus(messageList);
                     }
 
                     /**
@@ -184,7 +184,7 @@ public class MessageThreadHelper {
                      */
                     if (CollectionTool.isNotEmpty(failMessageIdList)) {
                         // query fail
-                        List<Message> failMessageList = brokerFactory.getMessageMapper().queryRetryDataById(failMessageIdList, failStatusList);
+                        List<Message> failMessageList = brokerBootstrap.getMessageMapper().queryRetryDataById(failMessageIdList, failStatusList);
                         // fail retry
                         failRetry(failMessageList, failStatusList);
                     }
@@ -199,7 +199,7 @@ public class MessageThreadHelper {
 
                 // 1、update stuck 2 fail, mark fail
                 int updateStuck2FailCount = 0;
-                int ret = brokerFactory.getMessageMapper().updateStuck2FailWithPage(
+                int ret = brokerBootstrap.getMessageMapper().updateStuck2FailWithPage(
                         MessageStatusEnum.RUNNING.getValue(),
                         DateTool.addMinutes(new Date(), -5),
                         MessageStatusEnum.EXECUTE_TIMEOUT.getValue(),
@@ -213,7 +213,7 @@ public class MessageThreadHelper {
                         // ignore
                     }
                     // next page
-                    ret = brokerFactory.getMessageMapper().updateStuck2FailWithPage(
+                    ret = brokerBootstrap.getMessageMapper().updateStuck2FailWithPage(
                             MessageStatusEnum.RUNNING.getValue(),
                             DateTool.addMinutes(new Date(), -5),
                             MessageStatusEnum.EXECUTE_TIMEOUT.getValue(),
@@ -224,7 +224,7 @@ public class MessageThreadHelper {
                 // 2、query fail-message, and retry
                 int failRetryCount = 0;
                 List<Integer> failStatusList = Arrays.asList(MessageStatusEnum.EXECUTE_FAIL.getValue(), MessageStatusEnum.EXECUTE_TIMEOUT.getValue());
-                List<Message> retryFailData = brokerFactory.getMessageMapper().queryRetryDataByPage(failStatusList, 50);
+                List<Message> retryFailData = brokerBootstrap.getMessageMapper().queryRetryDataByPage(failStatusList, 50);
                 while (CollectionTool.isNotEmpty(retryFailData)) {
                     failRetryCount += retryFailData.size();
                     // do retry
@@ -237,7 +237,7 @@ public class MessageThreadHelper {
                         // ignore
                     }
                     // next page
-                    retryFailData = brokerFactory.getMessageMapper().queryRetryDataByPage(failStatusList, 50);
+                    retryFailData = brokerBootstrap.getMessageMapper().queryRetryDataByPage(failStatusList, 50);
                 }
                 logger.info(">>>>>>>>>>> failMessageProcessThread, failRetryCount: {}", failRetryCount);
 
@@ -265,7 +265,7 @@ public class MessageThreadHelper {
         for (Message message : failMessageList) {
 
             // valid
-            Topic topic = brokerFactory.getLocalCacheThreadHelper().findTopic(message.getTopic());
+            Topic topic = brokerBootstrap.getLocalCacheThreadHelper().findTopic(message.getTopic());
             if (topic == null) {
                 topic = new Topic();
                 topic.setRetryInterval(3);
@@ -294,7 +294,7 @@ public class MessageThreadHelper {
         }
 
         // write retry
-        brokerFactory.getMessageMapper().batchFailRetry(failMessageList,
+        brokerBootstrap.getMessageMapper().batchFailRetry(failMessageList,
                 failStatusList,
                 MessageStatusEnum.NEW.getValue(),
                 ConsumeLogUtil.generateConsumeLog("失败重试", null)
@@ -339,25 +339,25 @@ public class MessageThreadHelper {
         }
 
         // match partition
-        PartitionUtil.PartitionRange partitionRange = brokerFactory.getLocalCacheThreadHelper().findPartitionRangeByAppnameAndUuid(pullRequest.getAppname(), pullRequest.getInstanceUuid());
+        PartitionUtil.PartitionRange partitionRange = brokerBootstrap.getLocalCacheThreadHelper().findPartitionRangeByAppnameAndUuid(pullRequest.getAppname(), pullRequest.getInstanceUuid());
         if (partitionRange == null) {
             return Response.of(402, "Current instanceUuid has not been assigned a partition.");
         }
 
         // 1、消息检索
         int pagesize = 10;
-        List<Message> messageList = brokerFactory.getMessageMapper().pullQuery(pullRequest.getTopicList(), MessageStatusEnum.NEW.getValue(), partitionRange.getPartitionIdFrom(), partitionRange.getPartitionIdTo(), pagesize);
+        List<Message> messageList = brokerBootstrap.getMessageMapper().pullQuery(pullRequest.getTopicList(), MessageStatusEnum.NEW.getValue(), partitionRange.getPartitionIdFrom(), partitionRange.getPartitionIdTo(), pagesize);
         if (CollectionTool.isEmpty(messageList)) {
             return Response.ofSuccess();
         }
 
         // 2、消息锁定, with uuid
         List<Long> messageIdList = messageList.stream().map(Message::getId).collect(Collectors.toList());
-        int count = brokerFactory.getMessageMapper().pullLock(messageIdList, pullRequest.getInstanceUuid(), MessageStatusEnum.NEW.getValue(), MessageStatusEnum.RUNNING.getValue());
+        int count = brokerBootstrap.getMessageMapper().pullLock(messageIdList, pullRequest.getInstanceUuid(), MessageStatusEnum.NEW.getValue(), MessageStatusEnum.RUNNING.getValue());
 
         // 3、锁定消息检索, with uuid （锁定失败，过滤锁定成功数据）
         if (count < messageList.size()) {
-            messageList = brokerFactory.getMessageMapper().pullQueryByUuid(messageIdList, pullRequest.getInstanceUuid(), MessageStatusEnum.RUNNING.getValue());
+            messageList = brokerBootstrap.getMessageMapper().pullQueryByUuid(messageIdList, pullRequest.getInstanceUuid(), MessageStatusEnum.RUNNING.getValue());
             if (CollectionTool.isEmpty(messageList)) {
                 // lock fail all
                 return Response.ofSuccess();

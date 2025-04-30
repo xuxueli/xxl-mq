@@ -1,6 +1,6 @@
 package com.xxl.mq.admin.broker.thread;
 
-import com.xxl.mq.admin.broker.config.BrokerFactory;
+import com.xxl.mq.admin.broker.config.BrokerBootstrap;
 import com.xxl.mq.admin.constant.enums.TopicStatusEnum;
 import com.xxl.mq.admin.model.dto.ApplicationRegistryData;
 import com.xxl.mq.admin.model.entity.Application;
@@ -30,9 +30,9 @@ public class LocalCacheThreadHelper {
 
     // ---------------------- init ----------------------
 
-    private final BrokerFactory brokerFactory;
-    public LocalCacheThreadHelper(BrokerFactory brokerFactory) {
-        this.brokerFactory = brokerFactory;
+    private final BrokerBootstrap brokerBootstrap;
+    public LocalCacheThreadHelper(BrokerBootstrap brokerBootstrap) {
+        this.brokerBootstrap = brokerBootstrap;
     }
 
     // ---------------------- start / stop ----------------------
@@ -56,7 +56,7 @@ public class LocalCacheThreadHelper {
             public void run() {
 
                 // 1、topic：缓存信息
-                List<Topic> topicList = brokerFactory.getTopicMapper().queryByStatus(TopicStatusEnum.NORMAL.getValue());
+                List<Topic> topicList = brokerBootstrap.getTopicMapper().queryByStatus(TopicStatusEnum.NORMAL.getValue());
                 Map<String, Topic> topicStoreNew = new ConcurrentHashMap<>();
                 if (CollectionTool.isNotEmpty(topicList)) {
                     topicList.forEach(topic -> {
@@ -70,7 +70,7 @@ public class LocalCacheThreadHelper {
                 }
 
                 // 2、注册Instance：缓存信息
-                List<Instance> instanceList = brokerFactory.getInstanceMapper().queryOnlineInstance(DateTool.addMilliseconds(new Date(), -3 * BEAT_TIME_INTERVAL));
+                List<Instance> instanceList = brokerBootstrap.getInstanceMapper().queryOnlineInstance(DateTool.addMilliseconds(new Date(), -3 * BEAT_TIME_INTERVAL));
                 Map<String, ApplicationRegistryData> applicationRegistryDataStoreNew = new ConcurrentHashMap<>();
                 if (CollectionTool.isNotEmpty(instanceList)) {
                     // group by appname
@@ -101,7 +101,7 @@ public class LocalCacheThreadHelper {
                  * 3、appname：缓存信息
                  * 4、appname 注册信息更新
                  */
-                List<Application> applicationList = brokerFactory.getApplicationMapper().findAll();
+                List<Application> applicationList = brokerBootstrap.getApplicationMapper().findAll();
                 Map<String, Application> applicationStoreNew = new ConcurrentHashMap<>();
                 for (Application application : applicationList) {
                     // check and refresh registry_data
@@ -110,7 +110,7 @@ public class LocalCacheThreadHelper {
                     if (!registryDataNewJson.equals(application.getRegistryData())) {
                         // do update
                         application.setRegistryData(registryDataNewJson);
-                        brokerFactory.getApplicationMapper().updateRegistryData(application);
+                        brokerBootstrap.getApplicationMapper().updateRegistryData(application);
                     }
 
                     // build cache data

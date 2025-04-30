@@ -1,6 +1,6 @@
 package com.xxl.mq.admin.broker.thread;
 
-import com.xxl.mq.admin.broker.config.BrokerFactory;
+import com.xxl.mq.admin.broker.config.BrokerBootstrap;
 import com.xxl.mq.admin.constant.enums.AccessTokenStatuEnum;
 import com.xxl.mq.admin.model.entity.AccessToken;
 import com.xxl.tool.concurrent.CyclicThread;
@@ -25,9 +25,9 @@ public class AccessTokenThreadHelper {
 
     // ---------------------- init ----------------------
 
-    private final BrokerFactory brokerFactory;
-    public AccessTokenThreadHelper(BrokerFactory brokerFactory) {
-        this.brokerFactory = brokerFactory;
+    private final BrokerBootstrap brokerBootstrap;
+    public AccessTokenThreadHelper(BrokerBootstrap brokerBootstrap) {
+        this.brokerBootstrap = brokerBootstrap;
     }
 
     // ---------------------- start / stop ----------------------
@@ -60,7 +60,7 @@ public class AccessTokenThreadHelper {
                     ConcurrentSkipListSet<String> accessTokenStoreNew = new ConcurrentSkipListSet<>();
 
                     // query valid accesstoken data
-                    List<AccessToken> accessTokenList = brokerFactory.getAccessTokenMapper().queryValidityAccessToken(AccessTokenStatuEnum.NORMAL.getValue());
+                    List<AccessToken> accessTokenList = brokerBootstrap.getAccessTokenMapper().queryValidityAccessToken(AccessTokenStatuEnum.NORMAL.getValue());
                     if (CollectionTool.isNotEmpty(accessTokenList)) {
                         accessTokenStoreNew.addAll(accessTokenList.stream()
                                 .map(AccessToken::getAccessToken)

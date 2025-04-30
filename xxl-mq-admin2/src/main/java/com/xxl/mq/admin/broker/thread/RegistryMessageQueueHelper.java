@@ -1,6 +1,6 @@
 package com.xxl.mq.admin.broker.thread;
 
-import com.xxl.mq.admin.broker.config.BrokerFactory;
+import com.xxl.mq.admin.broker.config.BrokerBootstrap;
 import com.xxl.mq.admin.constant.enums.*;
 import com.xxl.mq.admin.model.entity.Application;
 import com.xxl.mq.admin.model.entity.Instance;
@@ -20,9 +20,9 @@ public class RegistryMessageQueueHelper {
 
     // ---------------------- init ----------------------
 
-    private final BrokerFactory brokerFactory;
-    public RegistryMessageQueueHelper(BrokerFactory brokerFactory) {
-        this.brokerFactory = brokerFactory;
+    private final BrokerBootstrap brokerBootstrap;
+    public RegistryMessageQueueHelper(BrokerBootstrap brokerBootstrap) {
+        this.brokerBootstrap = brokerBootstrap;
     }
 
     // ---------------------- start / stop ----------------------
@@ -49,23 +49,23 @@ public class RegistryMessageQueueHelper {
                         newInstance.setUuid(registryRequest.getInstanceUuid());
                         newInstance.setRegisterHeartbeat(new Date());
 
-                        brokerFactory.getInstanceMapper().insertOrUpdate(newInstance);
+                        brokerBootstrap.getInstanceMapper().insertOrUpdate(newInstance);
 
                         // init Application
-                        if (brokerFactory.getLocalCacheThreadHelper().findApplication(registryRequest.getAppname()) == null) {
+                        if (brokerBootstrap.getLocalCacheThreadHelper().findApplication(registryRequest.getAppname()) == null) {
                             Application application = new Application();
                             application.setAppname(registryRequest.getAppname());
                             application.setName(registryRequest.getAppname()+"服务");
                             application.setDesc("初始化生成");
                             application.setRegistryData(null);
 
-                            brokerFactory.getApplicationMapper().insertIgnoreRepeat(application);
+                            brokerBootstrap.getApplicationMapper().insertIgnoreRepeat(application);
                         }
 
                         // init topic
                         if (CollectionTool.isNotEmpty(registryRequest.getTopicList())) {
                             for (String topicName : registryRequest.getTopicList()) {
-                                if (brokerFactory.getLocalCacheThreadHelper().findTopic(topicName) == null) {
+                                if (brokerBootstrap.getLocalCacheThreadHelper().findTopic(topicName) == null) {
                                     Topic topic = new Topic();
                                     topic.setAppname(registryRequest.getAppname());
                                     topic.setTopic(topicName);
@@ -82,7 +82,7 @@ public class RegistryMessageQueueHelper {
                                     topic.setRetryInterval(0);
                                     topic.setExecutionTimeout(-1);
 
-                                    brokerFactory.getTopicMapper().insertIgnoreRepeat(topic);
+                                    brokerBootstrap.getTopicMapper().insertIgnoreRepeat(topic);
                                 }
                             }
                         }
@@ -101,7 +101,7 @@ public class RegistryMessageQueueHelper {
                         instance.setAppname(registryRequest.getAppname());
                         instance.setUuid(registryRequest.getInstanceUuid());
 
-                        brokerFactory.getInstanceMapper().deleteInstance(instance);
+                        brokerBootstrap.getInstanceMapper().deleteInstance(instance);
                     }
                 },
                 1,

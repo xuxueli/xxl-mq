@@ -1,6 +1,6 @@
 package com.xxl.mq.admin.broker.thread;
 
-import com.xxl.mq.admin.broker.config.BrokerFactory;
+import com.xxl.mq.admin.broker.config.BrokerBootstrap;
 import com.xxl.mq.admin.model.entity.Topic;
 import com.xxl.mq.admin.util.I18nUtil;
 import com.xxl.mq.admin.util.PropConfUtil;
@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 import javax.mail.internet.MimeMessage;
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -30,9 +29,9 @@ public class ArchiveThreadHelper {
 
     // ---------------------- init ----------------------
 
-    private final BrokerFactory brokerFactory;
-    public ArchiveThreadHelper(BrokerFactory brokerFactory) {
-        this.brokerFactory = brokerFactory;
+    private final BrokerBootstrap brokerBootstrap;
+    public ArchiveThreadHelper(BrokerBootstrap brokerBootstrap) {
+        this.brokerBootstrap = brokerBootstrap;
     }
 
     // ---------------------- start / stop ----------------------
@@ -53,16 +52,16 @@ public class ArchiveThreadHelper {
             @Override
             public void run() {
                 // 1、move real-time 2 archive-message
-                List<Topic> topicList = brokerFactory.getLocalCacheThreadHelper().findTopicAll();
+                List<Topic> topicList = brokerBootstrap.getLocalCacheThreadHelper().findTopicAll();
                 if (CollectionTool.isNotEmpty(topicList)) {
                     for (Topic topic : topicList) {
-                        brokerFactory.getMessageService().archive(topic.getTopic(), topic.getArchiveStrategy(), 10000);
+                        brokerBootstrap.getMessageService().archive(topic.getTopic(), topic.getArchiveStrategy(), 10000);
                     }
                 }
 
                 // 2、refresh daily message-report（within 3 days）       // TODO；real-time + archive data, generate info
                 boolean competeResult = false;  // true, competed success 2 refresh；false sleep 2 next period
-                // brokerFactory.getMessageReportMapper().
+                // brokerBootstrap.getMessageReportMapper().
 
 
                 // 3、alarm by email
@@ -72,7 +71,7 @@ public class ArchiveThreadHelper {
                     for (Topic topic : topicList) {
                         Date dateFrom = DateTool.addDays(new Date(), -5);
                         Date dateTo = new Date();
-                        int failCount = brokerFactory.getMessageMapper().queryFailCount(topic.getTopic(), dateFrom, dateTo);
+                        int failCount = brokerBootstrap.getMessageMapper().queryFailCount(topic.getTopic(), dateFrom, dateTo);
                         if (failCount <= 0) {
                             continue;
                         }
@@ -90,7 +89,7 @@ public class ArchiveThreadHelper {
 
                                 // make mail
                                 try {
-                                    MimeMessage mimeMessage = brokerFactory.getMailSender().createMimeMessage();
+                                    MimeMessage mimeMessage = brokerBootstrap.getMailSender().createMimeMessage();
 
                                     MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
                                     helper.setFrom(PropConfUtil.getSingle().getMailFrom(), personal);
@@ -98,7 +97,7 @@ public class ArchiveThreadHelper {
                                     helper.setSubject(title);
                                     helper.setText(content, true);
 
-                                    brokerFactory.getMailSender().send(mimeMessage);
+                                    brokerBootstrap.getMailSender().send(mimeMessage);
                                 } catch (Exception e) {
                                     logger.error(">>>>>>>>>>> xxl-mq, fail alarm email send error, topic:{}", topic.getTopic(), e);
                                 }
