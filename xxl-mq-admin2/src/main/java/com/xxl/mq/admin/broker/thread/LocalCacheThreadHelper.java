@@ -10,7 +10,9 @@ import com.xxl.mq.admin.util.PartitionUtil;
 import com.xxl.tool.concurrent.CyclicThread;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.DateTool;
+import com.xxl.tool.core.MapTool;
 import com.xxl.tool.gson.GsonTool;
+import com.xxl.tool.http.IPTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,21 +43,29 @@ public class LocalCacheThreadHelper {
     private volatile Map<String, Application> applicationStore = new ConcurrentHashMap<>();
     private volatile Map<String, ApplicationRegistryData> applicationRegistryDataStore = new ConcurrentHashMap<>();
 
+    private final String brokerAppname = "xxl-mq-admin";
+    private String brokerUuid = null;
+
     /**
      * start
      *
      * remark：
-     *      1、topic：缓存信息
-     *      2、注册Instance：缓存信息
-     *      3、appname：缓存信息
-     *      4、appname 注册信息更新（步骤2信息 write）
+     *      1、topic缓存：DB > cache
+     *      2、broker注册：refresh DB（For 集群节点感知）
+     *      3、Instance注册信息，构建缓存：DB > cache
+     *      4、Instance注册信息，写入Application：cache 》 DB
+     *      5、Application缓存：DB > cache
      */
     public void start(){
+        // init param
+        brokerUuid = IPTool.getIp() + ":"+ brokerBootstrap.getPort();
+
+        // start thread
         CyclicThread registryLocalCacheThread = new CyclicThread("registryLocalCacheThread", true, new Runnable() {
             @Override
             public void run() {
 
-                // 1、topic：缓存信息
+                // 1、topic缓存：DB > cache
                 List<Topic> topicList = brokerBootstrap.getTopicMapper().queryByStatus(TopicStatusEnum.NORMAL.getValue());
                 Map<String, Topic> topicStoreNew = new ConcurrentHashMap<>();
                 if (CollectionTool.isNotEmpty(topicList)) {
@@ -69,7 +79,14 @@ public class LocalCacheThreadHelper {
                     logger.info(">>>>>>>>>>> xxl-mq, RegistryLocalCacheThreadHelper found diff data, topicStoreNew:{}", topicStoreNewJson);
                 }
 
-                // 2、注册Instance：缓存信息
+                // 2、broker注册：refresh DB（For 集群节点感知）
+                Instance newInstance = new Instance();
+                newInstance.setAppname(brokerAppname);
+                newInstance.setUuid(brokerUuid);
+                newInstance.setRegisterHeartbeat(new Date());
+                brokerBootstrap.getInstanceMapper().insertOrUpdate(newInstance);
+
+                // 3、Instance注册信息，构建缓存：DB > cache
                 List<Instance> instanceList = brokerBootstrap.getInstanceMapper().queryOnlineInstance(DateTool.addMilliseconds(new Date(), -3 * BEAT_TIME_INTERVAL));
                 Map<String, ApplicationRegistryData> applicationRegistryDataStoreNew = new ConcurrentHashMap<>();
                 if (CollectionTool.isNotEmpty(instanceList)) {
@@ -97,10 +114,7 @@ public class LocalCacheThreadHelper {
                     logger.info(">>>>>>>>>>> xxl-mq, registryLocalCacheThread found diff data, applicationRegistryDataNew:{}", applicationRegistryDataNewJson);
                 }
 
-                /**
-                 * 3、appname：缓存信息
-                 * 4、appname 注册信息更新
-                 */
+                // 4、Instance注册信息，写入Application：cache 》 DB
                 List<Application> applicationList = brokerBootstrap.getApplicationMapper().findAll();
                 Map<String, Application> applicationStoreNew = new ConcurrentHashMap<>();
                 for (Application application : applicationList) {
@@ -116,6 +130,8 @@ public class LocalCacheThreadHelper {
                     // build cache data
                     applicationStoreNew.put(application.getAppname(), application);
                 }
+
+                // 5、Application缓存：DB > cache
                 String applicationStoreNewJson = GsonTool.toJson(applicationStoreNew);
                 if (!applicationStoreNewJson.equals(GsonTool.toJson(applicationStore))) {
                     applicationStore = applicationStoreNew;
@@ -168,7 +184,7 @@ public class LocalCacheThreadHelper {
      * @param appname
      * @return
      */
-    public Map<String, PartitionUtil.PartitionRange> findPartitionRangeByAppname(String appname) {
+    public TreeMap<String, PartitionUtil.PartitionRange> findPartitionRangeByAppname(String appname) {
         if (appname == null) {
             return null;
         }
@@ -178,7 +194,7 @@ public class LocalCacheThreadHelper {
             return null;
         }
 
-        Map<String, PartitionUtil.PartitionRange> instancePartitionRange = applicationRegistryData.getInstancePartitionRange();
+        TreeMap<String, PartitionUtil.PartitionRange> instancePartitionRange = applicationRegistryData.getInstancePartitionRange();
         return instancePartitionRange;
     }
 
@@ -188,7 +204,7 @@ public class LocalCacheThreadHelper {
      * @param topic
      * @return
      */
-    public Map<String, PartitionUtil.PartitionRange> findPartitionRangeByTopic(String topic) {
+    public TreeMap<String, PartitionUtil.PartitionRange> findPartitionRangeByTopic(String topic) {
         Topic topicData = topicStore.get(topic);
         if (topicData == null) {
             return null;
@@ -209,6 +225,16 @@ public class LocalCacheThreadHelper {
             return null;
         }
         return instancePartitionRange.get(instanceUuid);
+    }
+
+    /**
+     * is master broker node
+     *
+     * @return
+     */
+    public boolean isMasterBroker(){
+        TreeMap<String, PartitionUtil.PartitionRange> instancePartitionRange = findPartitionRangeByAppname("xxl-mq-admin");
+        return MapTool.isNotEmpty(instancePartitionRange) && brokerUuid.equals(instancePartitionRange.firstEntry().getKey());
     }
 
 }

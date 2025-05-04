@@ -49,6 +49,12 @@ public class ArchiveThreadHelper {
         CyclicThread archiveThread = new CyclicThread("archiveThread", true, new Runnable() {
             @Override
             public void run() {
+
+                // valid master
+                if (!brokerBootstrap.getLocalCacheThreadHelper().isMasterBroker()) {
+                    return;
+                }
+
                 // 1、move real-time 2 archive-message
                 List<Topic> topicList = brokerBootstrap.getLocalCacheThreadHelper().findTopicAll();
                 if (CollectionTool.isNotEmpty(topicList)) {
@@ -97,8 +103,7 @@ public class ArchiveThreadHelper {
                 }
 
                 // 3、alarm by topic
-                boolean clusterCompeteSuccess = true;  // todo，avoid concurrent competition in the cluster
-                if (clusterCompeteSuccess & CollectionTool.isNotEmpty(topicList)) {
+                if (CollectionTool.isNotEmpty(topicList)) {
                     for (Topic topic : topicList) {
                         // email alarm
                         Set<String> emailList = StringTool.isNotBlank(topic.getAlarmEmail())
@@ -126,7 +131,7 @@ public class ArchiveThreadHelper {
                                 MimeMessage mimeMessage = brokerBootstrap.getMailSender().createMimeMessage();
 
                                 MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-                                helper.setFrom(PropConfUtil.getSingle().getMailUsername());
+                                helper.setFrom(brokerBootstrap.getMailUsername());
                                 helper.setTo(email);
                                 helper.setSubject(title);
                                 helper.setText(content, true);

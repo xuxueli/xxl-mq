@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -36,6 +37,11 @@ public class BrokerBootstrap implements InitializingBean, DisposableBean {
 
     // ---------------------- resource ----------------------
 
+    @Value("${spring.mail.username}")
+    private String mailUsername;
+    @Value("${server.port}")
+    private int port;
+
     @Resource
     private BrokerService brokerService;
     @Autowired
@@ -56,6 +62,14 @@ public class BrokerBootstrap implements InitializingBean, DisposableBean {
     private JavaMailSender mailSender;
     @Resource
     private MessageReportMapper messageReportMapper;
+
+    public String getMailUsername() {
+        return mailUsername;
+    }
+
+    public int getPort() {
+        return port;
+    }
 
     public MessageMapper getMessageMapper() {
         return messageMapper;
