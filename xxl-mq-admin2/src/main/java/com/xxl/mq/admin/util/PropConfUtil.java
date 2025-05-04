@@ -30,8 +30,8 @@ public class PropConfUtil implements InitializingBean {
     @Value("${xxl.mq.i18n}")
     private String i18n;
 
-    @Value("${spring.mail.from}")
-    private String mailFrom;
+    @Value("${spring.mail.username}")
+    private String mailUsername;
 
     public String getI18n() {
         if (!Arrays.asList("zh_CN", "zh_TC", "en").contains(i18n)) {
@@ -40,8 +40,8 @@ public class PropConfUtil implements InitializingBean {
         return i18n;
     }
 
-    public String getMailFrom() {
-        return mailFrom;
+    public String getMailUsername() {
+        return mailUsername;
     }
 
 }

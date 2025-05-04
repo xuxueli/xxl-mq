@@ -117,8 +117,7 @@ public class ArchiveThreadHelper {
                         }
 
                         // email cotent
-                        String personal = I18nUtil.getString("admin_name_full");
-                        String title = "【监控报警】" + personal;
+                        String title = "【监控报警】" + I18nUtil.getString("admin_name_full");
                         String content = makeEmailConent(topic, failFrom, failTo);
 
                         // send mail
@@ -127,7 +126,7 @@ public class ArchiveThreadHelper {
                                 MimeMessage mimeMessage = brokerBootstrap.getMailSender().createMimeMessage();
 
                                 MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-                                helper.setFrom(PropConfUtil.getSingle().getMailFrom(), personal);
+                                helper.setFrom(PropConfUtil.getSingle().getMailUsername());
                                 helper.setTo(email);
                                 helper.setSubject(title);
                                 helper.setText(content, true);
@@ -162,8 +161,8 @@ public class ArchiveThreadHelper {
                 "      <tr>\n" +
                 "         <td width=\"20%\" >"+ "Topic" +"</td>\n" +
                 "         <td width=\"30%\" >"+ "主题描述" +"</td>\n" +
-                "         <td width=\"10%\" >"+ "开始时间" +"</td>\n" +
-                "         <td width=\"40%\" >"+ "结束时间" +"</td>\n" +
+                "         <td width=\"25%\" >"+ "开始时间" +"</td>\n" +
+                "         <td width=\"25%\" >"+ "结束时间" +"</td>\n" +
                 /*"         <td width=\"40%\" >"+ "失败次数" +"</td>\n" +*/
                 "      </tr>\n" +
                 "   </thead>\n" +
