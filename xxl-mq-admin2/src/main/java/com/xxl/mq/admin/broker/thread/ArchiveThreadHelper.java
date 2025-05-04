@@ -118,7 +118,7 @@ public class ArchiveThreadHelper {
 
                         // email cotent
                         String title = "【监控报警】" + I18nUtil.getString("admin_name_full");
-                        String content = makeEmailConent(topic, failFrom, failTo);
+                        String content = makeEmailConent(topic, failFrom, failTo, failCount);
 
                         // send mail
                         for (String email : emailList) {
@@ -154,25 +154,25 @@ public class ArchiveThreadHelper {
      *
      * @return
      */
-    private static String makeEmailConent(Topic topic, Date dateFrom, Date dateTo){
-        String mailBodyTemplate = "<h5>" + I18nUtil.getString("jobconf_monitor_detail") + "：</span>" +
+    private static String makeEmailConent(Topic topic, Date dateFrom, Date dateTo, long failCount){
+        String mailBodyTemplate = "<h5> 监控告警明细：</span>" +
                 "<table border=\"1\" cellpadding=\"3\" style=\"border-collapse:collapse; width:80%;\" >\n" +
                 "   <thead style=\"font-weight: bold;color: #ffffff;background-color: #ff8c00;\" >" +
                 "      <tr>\n" +
                 "         <td width=\"20%\" >"+ "Topic" +"</td>\n" +
-                "         <td width=\"30%\" >"+ "主题描述" +"</td>\n" +
-                "         <td width=\"25%\" >"+ "开始时间" +"</td>\n" +
-                "         <td width=\"25%\" >"+ "结束时间" +"</td>\n" +
-                /*"         <td width=\"40%\" >"+ "失败次数" +"</td>\n" +*/
+                "         <td width=\"25%\" >"+ "主题描述" +"</td>\n" +
+                "         <td width=\"20%\" >"+ "告警时间" +"</td>\n" +
+                "         <td width=\"15%\" >"+ "告警标题" +"</td>\n" +
+                "         <td width=\"20%\" >"+ "告警内容" +"</td>\n" +
                 "      </tr>\n" +
                 "   </thead>\n" +
                 "   <tbody>\n" +
                 "      <tr>\n" +
                 "         <td>"+ topic.getTopic() +"</td>\n" +
                 "         <td>"+ topic.getDesc() +"</td>\n" +
-                "         <td>"+ DateTool.formatDateTime(dateFrom) +"</td>\n" +
-                "         <td>"+ DateTool.formatDateTime(dateTo) +"</td>\n" +
-                /*"         <td>"+ failCount +"</td>\n" +*/
+                "         <td>"+ DateTool.formatDateTime(dateFrom) +" ~ \n"+DateTool.formatDateTime(dateTo) +"</td>\n" +
+                "         <td>消费失败</td>\n" +
+                "         <td>失败次数："+ failCount +"</td>\n" +
                 "      </tr>\n" +
                 "   </tbody>\n" +
                 "</table>";
