@@ -50,8 +50,14 @@
 
     <select id="load" parameterType="java.util.Map" resultMap="MessageArchive">
         SELECT <include refid="Base_Column_List" />
-        FROM xxl_mq_message_archive AS t
+        FROM xxl_mq_message_report AS t
         WHERE t.`produce_day` = #{produceDay}
+    </select>
+
+    <select id="queryReport" parameterType="java.util.Map" resultMap="MessageArchive">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_mq_message_report AS t
+        WHERE t.`produce_day` BETWEEN #{startDate} and #{endDate}
     </select>
 
 </mapper>

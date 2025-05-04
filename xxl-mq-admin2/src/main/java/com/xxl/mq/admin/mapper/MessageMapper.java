@@ -77,11 +77,6 @@ public interface MessageMapper {
     public int count();
 
     /**
-     * 查询报表
-     */
-    List<MessageReport> queryReport(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
-
-    /**
      * 批量更新状态
      */
     public int batchUpdateStatus(@Param("messageList") List<Message> messageList);

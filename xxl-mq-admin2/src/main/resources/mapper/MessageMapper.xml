@@ -166,7 +166,7 @@
         FROM xxl_mq_message AS t
     </select>
 
-    <select id="queryReport" resultType="com.xxl.mq.admin.model.entity.MessageReport" >
+    <!--<select id="queryReport" resultType="com.xxl.mq.admin.model.entity.MessageReport" >
         SELECT
             DATE_FORMAT(`effect_time`,'%Y-%m-%d') effectTime,
             COUNT(`id`) totalCount,
@@ -176,7 +176,7 @@
         WHERE effect_time BETWEEN #{startDate} and #{endDate}
         GROUP BY effectTime
         ORDER BY effectTime
-    </select>
+    </select>-->
 
     <update id="batchUpdateStatus" parameterType="java.util.Map" >
         UPDATE xxl_mq_message

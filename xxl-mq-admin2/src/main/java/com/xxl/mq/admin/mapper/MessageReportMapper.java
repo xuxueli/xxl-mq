@@ -30,4 +30,9 @@ public interface MessageReportMapper {
     */
     public MessageReport load(@Param("produceDay") Date produceDay);
 
+    /**
+     * 时间范围查询
+     */
+    List<MessageReport> queryReport(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
 }

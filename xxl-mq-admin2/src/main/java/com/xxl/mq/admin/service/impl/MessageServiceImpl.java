@@ -2,10 +2,7 @@ package com.xxl.mq.admin.service.impl;
 
 import com.xxl.mq.admin.constant.enums.ArchiveStrategyEnum;
 import com.xxl.mq.admin.constant.enums.MessageStatusEnum;
-import com.xxl.mq.admin.mapper.ApplicationMapper;
-import com.xxl.mq.admin.mapper.MessageArchiveMapper;
-import com.xxl.mq.admin.mapper.MessageMapper;
-import com.xxl.mq.admin.mapper.TopicMapper;
+import com.xxl.mq.admin.mapper.*;
 import com.xxl.mq.admin.model.adaptor.MessageAdaptor;
 import com.xxl.mq.admin.model.dto.MessageDTO;
 import com.xxl.mq.admin.model.entity.*;
@@ -35,6 +32,8 @@ public class MessageServiceImpl implements MessageService {
 
 	@Resource
 	private MessageMapper messageMapper;
+	@Resource
+	private MessageReportMapper messageReportMapper;
 	@Resource
 	private TopicMapper topicMapper;
 	@Resource
@@ -241,8 +240,7 @@ public class MessageServiceImpl implements MessageService {
 		int successTotal = 0;
 		int failTotal = 0;
 
-		List<MessageReport> dayReportList = messageMapper.queryReport(startDate, endDate);
-		/*List<MessageReport> dayReportListForArchive = messageMapper.queryReportByTopic(startDate, endDate);*/
+		List<MessageReport> dayReportList = messageReportMapper.queryReport(startDate, endDate);
 
 		if (CollectionTool.isNotEmpty(dayReportList)) {
 			for (MessageReport item: dayReportList) {
