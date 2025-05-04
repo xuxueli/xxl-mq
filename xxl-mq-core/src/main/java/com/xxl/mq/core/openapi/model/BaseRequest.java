@@ -8,14 +8,14 @@ import java.io.Serializable;
 public class BaseRequest implements Serializable {
     private static final long serialVersionUID = 42L;
 
-    private String accessToken;
+    private String accesstoken;
 
-    public String getAccessToken() {
-        return accessToken;
+    public String getAccesstoken() {
+        return accesstoken;
     }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+    public void setAccesstoken(String accesstoken) {
+        this.accesstoken = accesstoken;
     }
 
 }

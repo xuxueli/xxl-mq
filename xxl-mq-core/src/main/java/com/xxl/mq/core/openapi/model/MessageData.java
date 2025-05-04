@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * message data
  *
- * Created by xuxueli on 16/8/28.
+ * Created by xuxueli on 2025
  */
 public class MessageData implements Serializable {
     private static final long serialVersionUID = 42L;

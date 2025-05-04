@@ -3,18 +3,15 @@ package com.xxl.mq.core.test.openapi;
 import com.xxl.mq.core.openapi.BrokerService;
 import com.xxl.mq.core.openapi.model.*;
 import com.xxl.mq.core.util.ConsumeLogUtil;
-import com.xxl.tool.core.MapTool;
 import com.xxl.tool.http.IPTool;
 import com.xxl.tool.jsonrpc.JsonRpcClient;
 import com.xxl.tool.response.Response;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class OpenApiClientTest {
     private static Logger logger = LoggerFactory.getLogger(OpenApiClientTest.class);
@@ -38,7 +35,7 @@ public class OpenApiClientTest {
         {
             // param
             RegistryRequest registryRequest = new RegistryRequest();
-            registryRequest.setAccessToken("defaultaccesstoken");
+            registryRequest.setAccesstoken("defaultaccesstoken");
             registryRequest.setAppname("xxl-mq-sample");
             registryRequest.setInstanceUuid("uuid_01");
             registryRequest.setTopicList(Arrays.asList("topic_sample", "topic_sample02"));
@@ -52,7 +49,7 @@ public class OpenApiClientTest {
         {
             // param
             RegistryRequest registryRequest = new RegistryRequest();
-            registryRequest.setAccessToken("defaultaccesstoken");
+            registryRequest.setAccesstoken("defaultaccesstoken");
             registryRequest.setAppname("xxl-mq-sample");
             registryRequest.setInstanceUuid("uuid_02");
 
@@ -65,7 +62,7 @@ public class OpenApiClientTest {
         {
             // param
             RegistryRequest registryRequest = new RegistryRequest();
-            registryRequest.setAccessToken("defaultaccesstoken");
+            registryRequest.setAccesstoken("defaultaccesstoken");
             registryRequest.setAppname("xxl-mq-sample");
             registryRequest.setInstanceUuid("uuid_03");
 
@@ -82,7 +79,7 @@ public class OpenApiClientTest {
 
         // param
         RegistryRequest registryRequest = new RegistryRequest();
-        registryRequest.setAccessToken("defaultaccesstoken");
+        registryRequest.setAccesstoken("defaultaccesstoken");
         registryRequest.setAppname("xxl-mq-sample");
         registryRequest.setInstanceUuid("uuid_02");
 
@@ -97,7 +94,7 @@ public class OpenApiClientTest {
         BrokerService brokerService = buildClient();
 
         ProduceRequest produceRequest = new ProduceRequest();
-        produceRequest.setAccessToken("defaultaccesstoken");
+        produceRequest.setAccesstoken("defaultaccesstoken");
         produceRequest.setMessageList(Arrays.asList(
                 new MessageData("topic_sample", "pk-111", "data111", System.currentTimeMillis()),
                 new MessageData("topic_sample", "pk-111", "data222", System.currentTimeMillis()+1000),
@@ -114,7 +111,7 @@ public class OpenApiClientTest {
         BrokerService brokerService = buildClient();
 
         ProduceRequest produceRequest = new ProduceRequest();
-        produceRequest.setAccessToken("defaultaccesstoken");
+        produceRequest.setAccesstoken("defaultaccesstoken");
         produceRequest.setMessageList(Arrays.asList(
                 new MessageData("topic_sample02", "pk-222", "data333", System.currentTimeMillis()+2000)
         ));
@@ -132,7 +129,7 @@ public class OpenApiClientTest {
         long start = System.currentTimeMillis();
         for (int i = 0; i < 10000; i++) {
             ProduceRequest produceRequest = new ProduceRequest();
-            produceRequest.setAccessToken("defaultaccesstoken");
+            produceRequest.setAccesstoken("defaultaccesstoken");
             produceRequest.setMessageList(Arrays.asList(
                     new MessageData("topic_sample02", "pk-222", "data-"+i+"-1000", System.currentTimeMillis()+1000),
                     new MessageData("topic_sample02", "pk-222", "data-"+i+"-2000", System.currentTimeMillis()+2000),
@@ -165,7 +162,7 @@ public class OpenApiClientTest {
         BrokerService brokerService = buildClient();
 
         ConsumeRequest consumeRequest = new ConsumeRequest();
-        consumeRequest.setAccessToken("defaultaccesstoken");
+        consumeRequest.setAccesstoken("defaultaccesstoken");
         consumeRequest.setMessageList(Arrays.asList(
                 new MessageData(15, "topic_sample", 2, ConsumeLogUtil.generateConsumeLog("消费消息", "aaaa，IP="+ IPTool.getIp())),
                 new MessageData(16, "topic_sample", 3, ConsumeLogUtil.generateConsumeLog("消费消息", "bbbb，IP="+ IPTool.getIp())),
@@ -182,7 +179,7 @@ public class OpenApiClientTest {
         BrokerService brokerService = buildClient();
 
         PullRequest pullRequest = new PullRequest();
-        pullRequest.setAccessToken("defaultaccesstoken");
+        pullRequest.setAccesstoken("defaultaccesstoken");
         pullRequest.setAppname("xxl-mq-sample");
         pullRequest.setInstanceUuid("uuid_03");
         pullRequest.setTopicList(Arrays.asList("topic_sample"));

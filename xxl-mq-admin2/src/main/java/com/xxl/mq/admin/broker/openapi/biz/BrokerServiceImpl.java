@@ -69,7 +69,7 @@ public class BrokerServiceImpl implements BrokerService {
         }
         if (requestParam instanceof BaseRequest) {
             BaseRequest baseRequest = (BaseRequest) requestParam;
-            return BrokerBootstrap.getInstance().getAccessTokenThreadHelper().validAccessToken(baseRequest.getAccessToken());
+            return BrokerBootstrap.getInstance().getAccessTokenThreadHelper().validAccessToken(baseRequest.getAccesstoken());
         }
         return false;
     }
