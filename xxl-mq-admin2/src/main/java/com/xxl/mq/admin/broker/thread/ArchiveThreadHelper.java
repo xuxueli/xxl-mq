@@ -96,18 +96,22 @@ public class ArchiveThreadHelper {
                     }
                 }
 
-                // 3、alarm by email     // TODO；real-time + archive data, generate info
-                boolean competeResult = false;  // true, competed success 2 refresh；false sleep 2 next period
-                if (competeResult & CollectionTool.isNotEmpty(topicList)) {
-                    if (true) {
-                        return;
-                    }
-
-                    // alarm by topic
+                // 3、alarm by topic
+                boolean clusterCompeteSuccess = true;  // todo，avoid concurrent competition in the cluster
+                if (clusterCompeteSuccess & CollectionTool.isNotEmpty(topicList)) {
                     for (Topic topic : topicList) {
-                        Date dateFrom2 = DateTool.addDays(new Date(), -5);
-                        Date dateTo2 = new Date();
-                        int failCount = brokerBootstrap.getMessageMapper().queryFailCount(topic.getTopic(), dateTo2, dateTo2);
+                        // email alarm
+                        Set<String> emailList = StringTool.isNotBlank(topic.getAlarmEmail())
+                                ? Arrays.stream(topic.getAlarmEmail().split(",")).filter(StringTool::isNotBlank).collect(Collectors.toSet()) :
+                                null;
+                        if (emailList == null) {
+                            continue;
+                        }
+
+                        // filter fail count
+                        Date failFrom = DateTool.addMinutes(new Date(), -5);
+                        Date failTo = new Date();
+                        int failCount = brokerBootstrap.getMessageMapper().queryFailCount(topic.getTopic(), failFrom, failTo);
                         if (failCount <= 0) {
                             continue;
                         }
@@ -115,30 +119,24 @@ public class ArchiveThreadHelper {
                         // email cotent
                         String personal = I18nUtil.getString("admin_name_full");
                         String title = "【监控报警】" + personal;
-                        String content = makeEmailConent(topic, dateFrom, dateTo, failCount);
+                        String content = makeEmailConent(topic, failFrom, failTo);
 
-                        Set<String> emailList = StringTool.isNotBlank(topic.getAlarmEmail())
-                                ? Arrays.stream(topic.getAlarmEmail().split(",")).filter(StringTool::isNotBlank).collect(Collectors.toSet()) :
-                                null;
-                        if (CollectionTool.isNotEmpty(emailList)) {
-                            for (String email : emailList) {
+                        // send mail
+                        for (String email : emailList) {
+                            try {
+                                MimeMessage mimeMessage = brokerBootstrap.getMailSender().createMimeMessage();
 
-                                // make mail
-                                try {
-                                    MimeMessage mimeMessage = brokerBootstrap.getMailSender().createMimeMessage();
+                                MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+                                helper.setFrom(PropConfUtil.getSingle().getMailFrom(), personal);
+                                helper.setTo(email);
+                                helper.setSubject(title);
+                                helper.setText(content, true);
 
-                                    MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-                                    helper.setFrom(PropConfUtil.getSingle().getMailFrom(), personal);
-                                    helper.setTo(email);
-                                    helper.setSubject(title);
-                                    helper.setText(content, true);
-
-                                    brokerBootstrap.getMailSender().send(mimeMessage);
-                                } catch (Exception e) {
-                                    logger.error(">>>>>>>>>>> xxl-mq, fail alarm email send error, topic:{}", topic.getTopic(), e);
-                                }
-
+                                brokerBootstrap.getMailSender().send(mimeMessage);
+                            } catch (Exception e) {
+                                logger.error(">>>>>>>>>>> xxl-mq, fail alarm email send error, topic:{}", topic.getTopic(), e);
                             }
+
                         }
                     }
                 }
@@ -157,7 +155,7 @@ public class ArchiveThreadHelper {
      *
      * @return
      */
-    private static String makeEmailConent(Topic topic, Date dateFrom, Date dateTo, int failCount){
+    private static String makeEmailConent(Topic topic, Date dateFrom, Date dateTo){
         String mailBodyTemplate = "<h5>" + I18nUtil.getString("jobconf_monitor_detail") + "：</span>" +
                 "<table border=\"1\" cellpadding=\"3\" style=\"border-collapse:collapse; width:80%;\" >\n" +
                 "   <thead style=\"font-weight: bold;color: #ffffff;background-color: #ff8c00;\" >" +
@@ -166,7 +164,7 @@ public class ArchiveThreadHelper {
                 "         <td width=\"30%\" >"+ "主题描述" +"</td>\n" +
                 "         <td width=\"10%\" >"+ "开始时间" +"</td>\n" +
                 "         <td width=\"40%\" >"+ "结束时间" +"</td>\n" +
-                "         <td width=\"40%\" >"+ "失败次数" +"</td>\n" +
+                /*"         <td width=\"40%\" >"+ "失败次数" +"</td>\n" +*/
                 "      </tr>\n" +
                 "   </thead>\n" +
                 "   <tbody>\n" +
@@ -175,7 +173,7 @@ public class ArchiveThreadHelper {
                 "         <td>"+ topic.getDesc() +"</td>\n" +
                 "         <td>"+ DateTool.formatDateTime(dateFrom) +"</td>\n" +
                 "         <td>"+ DateTool.formatDateTime(dateTo) +"</td>\n" +
-                "         <td>"+ failCount +"</td>\n" +
+                /*"         <td>"+ failCount +"</td>\n" +*/
                 "      </tr>\n" +
                 "   </tbody>\n" +
                 "</table>";
