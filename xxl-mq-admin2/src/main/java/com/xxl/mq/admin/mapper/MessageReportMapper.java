@@ -23,7 +23,7 @@ public interface MessageReportMapper {
     /**
     * 更新
     */
-    public int update(@Param("messageReport") MessageReport messageReport);
+    /*public int update(@Param("messageReport") MessageReport messageReport);*/
 
     /**
     * Load查询

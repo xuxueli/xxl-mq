@@ -40,6 +40,8 @@ public class BrokerBootstrap implements InitializingBean, DisposableBean {
     private BrokerService brokerService;
     @Autowired
     private MessageMapper messageMapper;
+    @Autowired
+    private MessageArchiveMapper messageArchiveMapper;
     @Resource
     private ApplicationMapper applicationMapper;
     @Resource
@@ -84,6 +86,10 @@ public class BrokerBootstrap implements InitializingBean, DisposableBean {
 
     public MessageReportMapper getMessageReportMapper() {
         return messageReportMapper;
+    }
+
+    public MessageArchiveMapper getMessageArchiveMapper() {
+        return messageArchiveMapper;
     }
 
     // ---------------------- start / stop ----------------------

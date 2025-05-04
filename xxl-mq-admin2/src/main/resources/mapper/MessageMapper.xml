@@ -166,17 +166,18 @@
         FROM xxl_mq_message AS t
     </select>
 
-    <!--<select id="queryReport" resultType="com.xxl.mq.admin.model.entity.MessageReport" >
+    <select id="queryReport" resultType="com.xxl.mq.admin.model.entity.MessageReport" >
         SELECT
-            DATE_FORMAT(`effect_time`,'%Y-%m-%d') effectTime,
-            COUNT(`id`) totalCount,
-            SUM(CASE WHEN (`status` = 2) then 1 else 0 end) as successTotal,
-            SUM(CASE WHEN `status` in (3, 4) then 1 else 0 end) as failTotal
-        FROM xxl_mq_message
-        WHERE effect_time BETWEEN #{startDate} and #{endDate}
-        GROUP BY effectTime
-        ORDER BY effectTime
-    </select>-->
+            DATE_FORMAT(t.`add_time`,'%Y-%m-%d') produceDay,
+            SUM(CASE WHEN t.`status` = 0 then 1 else 0 end) as newCount,
+            SUM(CASE WHEN t.`status` = 1 then 1 else 0 end) as runningCount,
+            SUM(CASE WHEN t.`status` = 2 then 1 else 0 end) as sucCount,
+            SUM(CASE WHEN t.`status` in (3, 4) then 1 else 0 end) as failCount
+        FROM xxl_mq_message AS t
+        WHERE t.`add_time` BETWEEN #{startDate} and #{endDate}
+        GROUP BY t.`add_time`
+        ORDER BY t.`add_time`
+    </select>
 
     <update id="batchUpdateStatus" parameterType="java.util.Map" >
         UPDATE xxl_mq_message

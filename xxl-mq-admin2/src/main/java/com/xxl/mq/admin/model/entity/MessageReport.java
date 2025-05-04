@@ -6,6 +6,7 @@ public class MessageReport {
 
     private int id;
     private Date produceDay;
+    private long newCount;
     private long runningCount;
     private long sucCount;
     private long failCount;
@@ -28,6 +29,14 @@ public class MessageReport {
 
     public void setProduceDay(Date produceDay) {
         this.produceDay = produceDay;
+    }
+
+    public long getNewCount() {
+        return newCount;
+    }
+
+    public void setNewCount(long newCount) {
+        this.newCount = newCount;
     }
 
     public long getRunningCount() {
@@ -64,7 +73,7 @@ public class MessageReport {
 
     public long getTotalCount() {
         //return totalCount;
-        return runningCount + sucCount + failCount;
+        return newCount + runningCount + sucCount + failCount;
     }
 
     public void setTotalCount(long totalCount) {

@@ -1,6 +1,7 @@
 package com.xxl.mq.admin.mapper;
 
 import com.xxl.mq.admin.model.entity.MessageArchive;
+import com.xxl.mq.admin.model.entity.MessageReport;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -70,5 +71,10 @@ public interface MessageArchiveMapper {
                           @Param("isArchive") boolean isArchive,
                           @Param("effectTimeFrom") Date effectTimeFrom,
                           @Param("pageSize") int pageSize);
+
+    /**
+     * 查询报表
+     */
+    List<MessageReport> queryReport(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
 }

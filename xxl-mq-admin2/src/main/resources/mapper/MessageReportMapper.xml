@@ -6,6 +6,7 @@
     <resultMap id="MessageArchive" type="com.xxl.mq.admin.model.entity.MessageReport" >
         <result column="id" property="id" />
         <result column="produce_day" property="produceDay" />
+        <result column="new_count" property="newCount" />
         <result column="running_count" property="runningCount" />
         <result column="suc_count" property="sucCount" />
         <result column="fail_count" property="failCount" />
@@ -24,6 +25,7 @@
     <insert id="insert" parameterType="java.util.Map" >
         INSERT INTO xxl_mq_message_report (
             `produce_day`,
+            `new_count`,
             `running_count`,
             `suc_count`,
             `fail_count`,
@@ -31,14 +33,21 @@
         )
         VALUES(
               #{messageReport.produceDay} ,
+              #{messageReport.newCount} ,
               #{messageReport.runningCount} ,
               #{messageReport.sucCount} ,
               #{messageReport.failCount} ,
               #{messageReport.updateTime}
-          )
+        )
+        ON DUPLICATE KEY UPDATE
+            `new_count` = #{messageReport.newCount},
+            `running_count` = #{messageReport.runningCount},
+            `suc_count` = #{messageReport.sucCount},
+            `fail_count` = #{messageReport.failCount},
+            `update_time` = #{messageReport.updateTime}
     </insert>
     
-    <update id="update" parameterType="java.util.Map" >
+    <!--<update id="update" parameterType="java.util.Map" >
         UPDATE xxl_mq_message_report
         SET
             `running_count` = #{messageReport.runningCount},
@@ -46,7 +55,7 @@
             `fail_count` = #{messageReport.failCount},
             `update_time` = #{messageReport.updateTime}
         WHERE `id` = #{messageReport.id}
-    </update>
+    </update>-->
 
     <select id="load" parameterType="java.util.Map" resultMap="MessageArchive">
         SELECT <include refid="Base_Column_List" />

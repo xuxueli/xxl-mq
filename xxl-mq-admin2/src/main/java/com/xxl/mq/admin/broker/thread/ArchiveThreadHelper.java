@@ -1,6 +1,7 @@
 package com.xxl.mq.admin.broker.thread;
 
 import com.xxl.mq.admin.broker.config.BrokerBootstrap;
+import com.xxl.mq.admin.model.entity.MessageReport;
 import com.xxl.mq.admin.model.entity.Topic;
 import com.xxl.mq.admin.util.I18nUtil;
 import com.xxl.mq.admin.util.PropConfUtil;
@@ -13,10 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 import javax.mail.internet.MimeMessage;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -59,19 +57,57 @@ public class ArchiveThreadHelper {
                     }
                 }
 
-                // 2、refresh daily message-report（within 3 days）       // TODO；real-time + archive data, generate info
+                // 2、refresh daily message-report（within 3 days）
+                Date startOfToday = DateTool.setStartOfDay(new Date());
+                Date dateFrom = DateTool.addDays(startOfToday, -2);
+                Date dateTo = DateTool.addDays(startOfToday, 1);
+                List<MessageReport> messageReportList = brokerBootstrap.getMessageMapper().queryReport(dateFrom, dateTo);
+                List<MessageReport> messageReportList2 = brokerBootstrap.getMessageArchiveMapper().queryReport(dateFrom, dateTo);
+
+                Map<Date, MessageReport> reportMap = new HashMap<>();
+                for (MessageReport report : messageReportList) {
+                    MessageReport existingReport = reportMap.get(report.getProduceDay());
+                    if (existingReport == null) {
+                        reportMap.put(report.getProduceDay(), report);
+                    } else {
+                        existingReport.setNewCount(existingReport.getNewCount() + report.getNewCount());
+                        existingReport.setRunningCount(existingReport.getRunningCount() + report.getRunningCount());
+                        existingReport.setSucCount(existingReport.getSucCount() + report.getSucCount());
+                        existingReport.setFailCount(existingReport.getFailCount() + report.getFailCount());
+                    }
+                }
+                for (MessageReport report : messageReportList2) {
+                    MessageReport existingReport = reportMap.get(report.getProduceDay());
+                    if (existingReport == null) {
+                        reportMap.put(report.getProduceDay(), report);
+                    } else {
+                        existingReport.setNewCount(existingReport.getNewCount() + report.getNewCount());
+                        existingReport.setRunningCount(existingReport.getRunningCount() + report.getRunningCount());
+                        existingReport.setSucCount(existingReport.getSucCount() + report.getSucCount());
+                        existingReport.setFailCount(existingReport.getFailCount() + report.getFailCount());
+                    }
+                }
+
+                // write report
+                if (CollectionTool.isNotEmpty(reportMap.values())) {
+                    for (MessageReport messageReport : reportMap.values()) {
+                        messageReport.setUpdateTime(new Date());
+                        brokerBootstrap.getMessageReportMapper().insert(messageReport);
+                    }
+                }
+
+                // 3、alarm by email     // TODO；real-time + archive data, generate info
                 boolean competeResult = false;  // true, competed success 2 refresh；false sleep 2 next period
-                // brokerBootstrap.getMessageReportMapper().
-
-
-                // 3、alarm by email
                 if (competeResult & CollectionTool.isNotEmpty(topicList)) {
+                    if (true) {
+                        return;
+                    }
 
                     // alarm by topic
                     for (Topic topic : topicList) {
-                        Date dateFrom = DateTool.addDays(new Date(), -5);
-                        Date dateTo = new Date();
-                        int failCount = brokerBootstrap.getMessageMapper().queryFailCount(topic.getTopic(), dateFrom, dateTo);
+                        Date dateFrom2 = DateTool.addDays(new Date(), -5);
+                        Date dateTo2 = new Date();
+                        int failCount = brokerBootstrap.getMessageMapper().queryFailCount(topic.getTopic(), dateTo2, dateTo2);
                         if (failCount <= 0) {
                             continue;
                         }
@@ -106,6 +142,7 @@ public class ArchiveThreadHelper {
                         }
                     }
                 }
+
             }
         }, 5 * 60 * 1000, true);
         archiveThread.start();
