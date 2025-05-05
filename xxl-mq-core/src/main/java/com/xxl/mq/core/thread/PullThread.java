@@ -50,6 +50,7 @@ public class PullThread {
                         pullRequest.setTopicList(xxlMqBootstrap.getFreeConsumerTopicList());
 
                         // invoke
+                        // todo，范型兼容
                         Response<List<MessageData>> pullResponse = xxlMqBootstrap.loadBrokerClient().pull(pullRequest);
                         if (!pullResponse.isSuccess()) {
                             logger.error(">>>>>>>>>>> xxl-mq PullThread-pullThread pull fail, pullRequest:{}, pullResponse:{}", pullRequest, pullResponse);
