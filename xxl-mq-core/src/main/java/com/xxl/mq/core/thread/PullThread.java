@@ -3,9 +3,13 @@ package com.xxl.mq.core.thread;
 import com.xxl.mq.core.bootstrap.XxlMqBootstrap;
 import com.xxl.mq.core.openapi.model.MessageData;
 import com.xxl.mq.core.openapi.model.PullRequest;
+import com.xxl.tool.concurrent.CyclicThread;
+import com.xxl.tool.core.CollectionTool;
+import com.xxl.tool.response.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * pull thread
@@ -13,50 +17,70 @@ import java.util.concurrent.TimeUnit;
  * Created by xuxueli on 16/8/28.
  */
 public class PullThread {
+    private static final Logger logger = LoggerFactory.getLogger(PullThread.class);
 
-    private volatile boolean running = false;
-    private Thread pullThread = null;
+    public static final int PULL_INTERVAL = 10 * 1000;
 
     private final XxlMqBootstrap xxlMqBootstrap;
-
     public PullThread(final XxlMqBootstrap xxlMqBootstrap) {
         this.xxlMqBootstrap = xxlMqBootstrap;
     }
 
     public void start() {
-        running = true;
-        pullThread = new Thread(() -> {
-            while (running) {
 
-                PullRequest pullRequest = new PullRequest();
-                pullRequest.setAccesstoken(xxlMqBootstrap.getAccesstoken());
-                pullRequest.setTopicList(xxlMqBootstrap.getFreeConsumers());
+        CyclicThread pullThread = new CyclicThread(
+                "pullThread",
+                new Runnable() {
+                    @Override
+                    public void run() {
 
-                // todo
+                        // find idel consumer, stop them
+                        xxlMqBootstrap.stopIdleConsumerThead();
 
-                /*List<MessageData> msgList = xxlMqBootstrap.loadBrokerClient().pull(pullRequest);
-                //System.out.println("pull running , FreeConsumers = " + bootstrap.getFreeConsumers());
-                if (msgList != null && !msgList.isEmpty()) {
-                    for (MessageData msg : msgList) {
-                        ConsumerThread consumer = xxlMqBootstrap.getConsumer(msg.getTopic());
-                        if (consumer == null) {
-                            System.out.println("topic not found, msg = " + msg);
-                            continue;
+                        // exclude busy consumer, pass if all-busy
+                        if (CollectionTool.isEmpty(xxlMqBootstrap.getFreeConsumerTopicList())) {
+                            return;
                         }
-                        consumer.accept(msg);
-                        ;
+
+                        // request
+                        PullRequest pullRequest = new PullRequest();
+                        pullRequest.setAccesstoken(xxlMqBootstrap.getAccesstoken());
+                        pullRequest.setAppname(xxlMqBootstrap.getAppname());
+                        pullRequest.setInstanceUuid(xxlMqBootstrap.getInstanceUuid());
+                        pullRequest.setTopicList(xxlMqBootstrap.getFreeConsumerTopicList());
+
+                        // invoke
+                        Response<List<MessageData>> pullResponse = xxlMqBootstrap.loadBrokerClient().pull(pullRequest);
+                        if (!pullResponse.isSuccess()) {
+                            logger.error(">>>>>>>>>>> xxl-mq PullThread-pullThread pull fail, pullRequest:{}, pullResponse:{}", pullRequest, pullResponse);
+                            return;
+                        }
+
+                        // process
+                        List<MessageData> messageDataList = pullResponse.getData();
+                        if (CollectionTool.isNotEmpty(messageDataList)) {
+                            for (MessageData messageData : messageDataList) {
+                                try {
+                                    // lazy init consumer-thread
+                                    ConsumerThread consumerThread = xxlMqBootstrap.lazyInitConsumerThread(messageData.getTopic());
+                                    // accept message
+                                    consumerThread.accept(messageData);
+                                } catch (Exception e) {
+                                    logger.error(">>>>>>>>>>> xxl-mq PullThread message-accept error, messageData:{}", messageData, e);
+                                }
+                            }
+                        }
+
                     }
-                }*/
-                try {
-                    TimeUnit.MILLISECONDS.sleep(100);
-                } catch (InterruptedException e) {
-                }
-            }
-        });
+                },
+                PULL_INTERVAL,
+                true);
         pullThread.start();
+
     }
 
     public void stop() {
-        running = false;
+        // do something
     }
+
 }

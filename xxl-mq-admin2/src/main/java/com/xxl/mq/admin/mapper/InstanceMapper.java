@@ -69,4 +69,11 @@ public interface InstanceMapper {
      */
     public List<Instance> queryOnlineInstance(@Param("effectiveTime") Date effectiveTime);
 
+    /**
+     * 清理离线实例
+     *
+     * @param effectiveTime
+     * @return
+     */
+    public int deleteOfflineInstance(@Param("effectiveTime") Date effectiveTime);
 }

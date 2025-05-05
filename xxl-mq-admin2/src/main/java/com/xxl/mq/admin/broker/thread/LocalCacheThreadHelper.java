@@ -51,7 +51,8 @@ public class LocalCacheThreadHelper {
      *
      * remark：
      *      1、topic缓存：DB > cache
-     *      2、broker注册：refresh DB（For 集群节点感知）
+     *      2.1、Broker 注册写 Instance：refresh DB（For 集群节点感知）
+     *      2.2、过期清理 Instance：DB 清理
      *      3、Instance注册信息，构建缓存：DB > cache
      *      4、Instance注册信息，写入Application：cache 》 DB
      *      5、Application缓存：DB > cache
@@ -79,12 +80,15 @@ public class LocalCacheThreadHelper {
                     logger.info(">>>>>>>>>>> xxl-mq, RegistryLocalCacheThreadHelper found diff data, topicStoreNew:{}", topicStoreNewJson);
                 }
 
-                // 2、broker注册：refresh DB（For 集群节点感知）
+                // 2.1、Broker 注册写 Instance：refresh DB（For 集群节点感知）
                 Instance newInstance = new Instance();
                 newInstance.setAppname(brokerAppname);
                 newInstance.setUuid(brokerUuid);
                 newInstance.setRegisterHeartbeat(new Date());
                 brokerBootstrap.getInstanceMapper().insertOrUpdate(newInstance);
+
+                // 2.2、过期清理 Instance：DB 清理
+                brokerBootstrap.getInstanceMapper().deleteOfflineInstance(DateTool.addMilliseconds(new Date(), -3 * BEAT_TIME_INTERVAL));
 
                 // 3、Instance注册信息，构建缓存：DB > cache
                 List<Instance> instanceList = brokerBootstrap.getInstanceMapper().queryOnlineInstance(DateTool.addMilliseconds(new Date(), -3 * BEAT_TIME_INTERVAL));
