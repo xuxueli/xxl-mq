@@ -46,6 +46,8 @@ public class XxlMqBootstrap {
     private String accesstoken;
     private String appname;
     private int timeout;
+    private int pullBatchsize;
+    private int pullInterval;
 
     public String getAddress() {
         return address;
@@ -77,6 +79,22 @@ public class XxlMqBootstrap {
 
     public void setTimeout(int timeout) {
         this.timeout = timeout;
+    }
+
+    public int getPullBatchsize() {
+        return pullBatchsize;
+    }
+
+    public void setPullBatchsize(int pullBatchsize) {
+        this.pullBatchsize = pullBatchsize;
+    }
+
+    public int getPullInterval() {
+        return pullInterval;
+    }
+
+    public void setPullInterval(int pullInterval) {
+        this.pullInterval = pullInterval;
     }
 
 
@@ -115,6 +133,7 @@ public class XxlMqBootstrap {
         // 5、pullThread
         pullThread = new PullThread(this);
         pullThread.start();
+        logger.info(">>>>>>>>>>> xxl-mq XxlMqBootstrap started.");
     }
 
     public void stop() {
@@ -129,6 +148,7 @@ public class XxlMqBootstrap {
         for (String topic : consumerThreadRepository.keySet()) {
             stopConsumerThread(topic);
         }
+        logger.info(">>>>>>>>>>> xxl-mq XxlMqBootstrap stopped.");
     }
 
 

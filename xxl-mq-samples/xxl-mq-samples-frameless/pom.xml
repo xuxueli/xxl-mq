@@ -13,10 +13,25 @@
 
 
     <dependencies>
-        <!-- xxl-mq-client -->
+
+        <!-- slf4j -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-reload4j</artifactId>
+            <version>${slf4j-api.version}</version>
+        </dependency>
+        <!-- junit -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit-jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- xxl-mq-core -->
         <dependency>
             <groupId>com.xuxueli</groupId>
-            <artifactId>xxl-mq-client</artifactId>
+            <artifactId>xxl-mq-core</artifactId>
             <version>${parent.version}</version>
         </dependency>
     </dependencies>

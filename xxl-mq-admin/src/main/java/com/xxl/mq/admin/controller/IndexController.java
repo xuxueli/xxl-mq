@@ -1,24 +1,24 @@
 package com.xxl.mq.admin.controller;
 
-import com.xxl.mq.admin.controller.annotation.PermessionLimit;
-import com.xxl.mq.admin.controller.interceptor.PermissionInterceptor;
-import com.xxl.mq.admin.core.result.ReturnT;
-import com.xxl.mq.admin.service.IXxlMqMessageService;
+import com.xxl.mq.admin.annotation.Permission;
+import com.xxl.mq.admin.model.dto.LoginUserDTO;
+import com.xxl.mq.admin.service.MessageService;
+import com.xxl.mq.admin.service.impl.LoginService;
+import com.xxl.tool.core.StringTool;
+import com.xxl.tool.response.Response;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 /**
  * index controller
@@ -29,73 +29,77 @@ public class IndexController {
 
 
 	@Resource
-	private IXxlMqMessageService xxlMqMessageService;
+	private LoginService loginService;
+	@Resource
+	private MessageService messageService;
 
 
 	@RequestMapping("/")
-	public String index(Model model, HttpServletRequest request) {
+	@Permission
+	public String defaultpage(Model model) {
+		return "redirect:/index";
+	}
 
-		Map<String, Object> dashboardMap = xxlMqMessageService.dashboardInfo();
-		model.addAllAttributes(dashboardMap);
+	@RequestMapping("/index")
+	@Permission
+	public String index(HttpServletRequest request, Model model) {
+
+		// dashboardInfo
+		Map<String, Object> dashboardInfo = messageService.dashboardInfo();
+		model.addAttribute("dashboardInfo", dashboardInfo);
 
 		return "index";
 	}
 
 	@RequestMapping("/chartInfo")
 	@ResponseBody
-	public ReturnT<Map<String, Object>> chartInfo(Date startDate, Date endDate) {
-		ReturnT<Map<String, Object>> chartInfo = xxlMqMessageService.chartInfo(startDate, endDate);
-		return chartInfo;
+	@Permission
+	public Response<Map<String, Object>> chartInfo(@RequestParam("startDate") Date startDate, @RequestParam("endDate") Date endDate) {
+		return messageService.chartInfo(startDate, endDate);
 	}
 
-
-	@RequestMapping("/toLogin")
-	@PermessionLimit(limit=false)
-	public String toLogin(Model model, HttpServletRequest request) {
-		if (PermissionInterceptor.ifLogin(request)) {
-			return "redirect:/";
-		}
-		return "login";
-	}
-
-	@RequestMapping(value="login", method=RequestMethod.POST)
-	@ResponseBody
-	@PermessionLimit(limit=false)
-	public ReturnT<String> loginDo(HttpServletRequest request, HttpServletResponse response, String userName, String password, String ifRemember){
-		// valid
-		if (PermissionInterceptor.ifLogin(request)) {
-			return ReturnT.SUCCESS;
-		}
-
-		// param
-		if (userName==null || userName.trim().length()==0 || password==null || password.trim().length()==0){
-			return new ReturnT<String>(500, "请输入账号密码");
-		}
-		boolean ifRem = (ifRemember!=null && "on".equals(ifRemember))?true:false;
-
-		// do login
-		boolean loginRet = PermissionInterceptor.login(response, userName, password, ifRem);
-		if (!loginRet) {
-			return new ReturnT<String>(500, "账号密码错误");
-		}
-		return ReturnT.SUCCESS;
-	}
-
-	@RequestMapping(value="logout", method=RequestMethod.POST)
-	@ResponseBody
-	@PermessionLimit(limit=false)
-	public ReturnT<String> logout(HttpServletRequest request, HttpServletResponse response){
-		if (PermissionInterceptor.ifLogin(request)) {
-			PermissionInterceptor.logout(request, response);
-		}
-		return ReturnT.SUCCESS;
-	}
-	
 	@RequestMapping("/help")
+	@Permission
 	public String help() {
 		return "help";
 	}
 
+	@RequestMapping("/toLogin")
+	@Permission(login = false)
+	public ModelAndView toLogin(HttpServletRequest request, HttpServletResponse response,ModelAndView modelAndView) {
+		LoginUserDTO loginUserDTO = loginService.getLoginUser(request);
+		if (loginUserDTO != null) {
+			modelAndView.setView(new RedirectView("/",true,false));
+			return modelAndView;
+		}
+		return new ModelAndView("login");
+	}
+	
+	@RequestMapping(value="login", method=RequestMethod.POST)
+	@ResponseBody
+	@Permission(login=false)
+	public Response<String> loginDo(HttpServletRequest request, HttpServletResponse response, String userName, String password, String ifRemember){
+		boolean ifRem = StringTool.isNotBlank(ifRemember) && "on".equals(ifRemember);
+		return loginService.login(response, userName, password, ifRem);
+	}
+	
+	@RequestMapping(value="logout", method=RequestMethod.POST)
+	@ResponseBody
+	@Permission(login=false)
+	public Response<String> logout(HttpServletRequest request, HttpServletResponse response){
+		return loginService.logout(request, response);
+	}
+
+	@RequestMapping(value = "/errorpage")
+	@Permission(login = false)
+	public ModelAndView errorPage(HttpServletRequest request, HttpServletResponse response, ModelAndView mv) {
+
+		String exceptionMsg = "HTTP Status Code: "+response.getStatus();
+
+		mv.addObject("exceptionMsg", exceptionMsg);
+		mv.setViewName("common/common.errorpage");
+		return mv;
+	}
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
@@ -103,5 +107,5 @@ public class IndexController {
 		dateFormat.setLenient(false);
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
 	}
-
+	
 }

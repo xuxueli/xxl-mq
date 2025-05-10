@@ -7,6 +7,7 @@ package com.xxl.mq.core.context;
  */
 public class XxlMqContext {
 
+    private long id;
     private String data;
     private int status;;
     private String consumeLog;
@@ -15,10 +16,18 @@ public class XxlMqContext {
         status = 2;
         consumeLog = "";
     }
-    public XxlMqContext(String data) {
+    public XxlMqContext(long id, String data) {
         this.data = data;
         status = 2;
         consumeLog = "";
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getData() {

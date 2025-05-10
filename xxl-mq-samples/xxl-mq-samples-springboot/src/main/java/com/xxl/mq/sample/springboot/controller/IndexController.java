@@ -1,7 +1,6 @@
 package com.xxl.mq.sample.springboot.controller;
 
-import com.xxl.mq.client.message.XxlMqMessage;
-import com.xxl.mq.client.producer.XxlMqProducer;
+import com.xxl.mq.core.XxlMqHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,21 +33,21 @@ public class IndexController {
 			/**
 			 * 并行消费
 			 */
-			XxlMqProducer.produce(new XxlMqMessage(topic, data));
+			XxlMqHelper.produce(topic, data);
 
 		} else if (type == 1) {
 
 			/**
 			 * 串行消费
 			 */
-			XxlMqProducer.produce(new XxlMqMessage(topic, data, 1L));
+			XxlMqHelper.produce(topic, data, 1L);
 
 		} else if (type == 2) {
 
 			/**
 			 * 广播消费
 			 */
-			XxlMqProducer.broadcast(new XxlMqMessage(topic, data));
+			// TODO
 
 
 		} else if (type == 3) {
@@ -60,14 +59,14 @@ public class IndexController {
 			/**
 			 * 延时消息
 			 */
-			XxlMqProducer.produce(new XxlMqMessage(topic, data, effectTime));
+			XxlMqHelper.produce(topic, data, 1L);
 
 		} else if (type == 4) {
 
 			int msgNum = 10000;
 			long start = System.currentTimeMillis();
 			for (int i = 0; i < msgNum; i++) {
-				XxlMqProducer.produce(new XxlMqMessage("topic_1", "No:"+i));
+				XxlMqHelper.produce(topic, "No:"+i, 1L);
 			}
 			long end = System.currentTimeMillis();
 			return "Cost = " + (end-start);

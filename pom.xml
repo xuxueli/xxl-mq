@@ -14,9 +14,6 @@
 		<module>xxl-mq-admin</module>
 		<module>xxl-mq-core</module>
 		<module>xxl-mq-samples</module>
-
-		<module>xxl-mq-admin2</module>
-		<module>xxl-mq-client</module>
     </modules>
 
 	<properties>
@@ -86,7 +83,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
-				<module>xxl-mq-client</module>
+				<module>xxl-mq-core</module>
 			</modules>
 			<build>
 				<plugins>

@@ -61,7 +61,7 @@ public class MessageThread {
                         }
                     }
                 },
-                3,
+                5,
                 50);
 
         consumeMessageQueue = new MessageQueue<MessageData>(
@@ -88,7 +88,7 @@ public class MessageThread {
                         }
                     }
                 },
-                3,
+                5,
                 50);
     }
 
@@ -97,6 +97,12 @@ public class MessageThread {
      */
     public void stop() {
         // do something
+        if (produceMessageQueue != null) {
+            produceMessageQueue.stop();
+        }
+        if (consumeMessageQueue != null) {
+            consumeMessageQueue.stop();
+        }
     }
 
 

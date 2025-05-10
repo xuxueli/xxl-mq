@@ -74,7 +74,7 @@ public class ConsumerThread {
                         }
 
                         // set context
-                        XxlMqContext.setContext(new XxlMqContext(message.getData()));
+                        XxlMqContext.setContext(new XxlMqContext(message.getId(), message.getData()));
 
                         // consume
                         try {
@@ -86,7 +86,7 @@ public class ConsumerThread {
                                     FutureTask<Boolean> futureTask = new FutureTask<>(() -> {
 
                                         // reset context
-                                        XxlMqContext.setContext(new XxlMqContext(message.getData()));
+                                        XxlMqContext.setContext(new XxlMqContext(message.getId(), message.getData()));
 
                                         consumer.consume();
                                         return true;

@@ -78,11 +78,11 @@ public class RegistryThread {
             try {
                 Response<String> registryResponse = xxlMqBootstrap.loadBrokerClient().registryRemove(registryRequest);
                 if (registryResponse.isSuccess()) {
-                    logger.debug(">>>>>>>>>>> xxl-mq RegistryThread-cyclicRegistryThread registry success, registryParam:{}", registryRequest);
+                    logger.info(">>>>>>>>>>> xxl-mq RegistryThread-cyclicRegistryThread registryRemove success, registryParam:{}", registryRequest);
                     break;
                 }
             } catch (Exception e) {
-                logger.error(">>>>>>>>>>> xxl-mq RegistryThread-cyclicRegistryThread registry error, registryParam:{}", registryRequest, e);
+                logger.error(">>>>>>>>>>> xxl-mq RegistryThread-cyclicRegistryThread registryRemove error, registryParam:{}", registryRequest, e);
             }
         }
     }

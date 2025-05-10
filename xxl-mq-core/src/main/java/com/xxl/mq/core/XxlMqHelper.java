@@ -12,7 +12,7 @@ import com.xxl.mq.core.openapi.model.MessageData;
 public class XxlMqHelper {
 
 
-    // --------------------------------- consume ---------------------------------
+    // --------------------------------- get message data (for consumer) ---------------------------------
 
     /**
      * get message data
@@ -22,6 +22,9 @@ public class XxlMqHelper {
     public static String getMessageData() {
         return XxlMqContext.getContext().getData();
     }
+
+
+    // --------------------------------- set consume result (for consumer) ---------------------------------
 
     /**
      * consume success
@@ -68,7 +71,8 @@ public class XxlMqHelper {
         XxlMqContext.getContext().setConsumeLog(consumeLog);
     }
 
-    // --------------------------------- produce ---------------------------------
+
+    // --------------------------------- produce message (for producer) ---------------------------------
 
     /**
      * produce message

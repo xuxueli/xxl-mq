@@ -19,7 +19,6 @@ import java.util.List;
 public class PullThread {
     private static final Logger logger = LoggerFactory.getLogger(PullThread.class);
 
-    public static final int PULL_INTERVAL = 10 * 1000;
 
     private final XxlMqBootstrap xxlMqBootstrap;
     public PullThread(final XxlMqBootstrap xxlMqBootstrap) {
@@ -28,6 +27,18 @@ public class PullThread {
 
     public void start() {
 
+        // param process
+        int pullBatchsize = xxlMqBootstrap.getPullBatchsize();
+        int pullInterval = xxlMqBootstrap.getPullInterval();
+        if (!(pullBatchsize >=20 && pullBatchsize <= 500)) {
+            pullBatchsize = 100;
+        }
+        if (!(pullInterval >= 1000 && pullInterval <= 30 * 1000)) {
+            pullBatchsize = 3* 1000;
+        }
+
+        // init pull thread
+        final int finalPullBatchsize = pullBatchsize;
         CyclicThread pullThread = new CyclicThread(
                 "pullThread",
                 new Runnable() {
@@ -48,12 +59,17 @@ public class PullThread {
                         pullRequest.setAppname(xxlMqBootstrap.getAppname());
                         pullRequest.setInstanceUuid(xxlMqBootstrap.getInstanceUuid());
                         pullRequest.setTopicList(xxlMqBootstrap.getFreeConsumerTopicList());
+                        pullRequest.setBatchsize(finalPullBatchsize);
 
                         // invoke
-                        // todo，范型兼容
                         Response<List<MessageData>> pullResponse = xxlMqBootstrap.loadBrokerClient().pull(pullRequest);
                         if (!pullResponse.isSuccess()) {
-                            logger.error(">>>>>>>>>>> xxl-mq PullThread-pullThread pull fail, pullRequest:{}, pullResponse:{}", pullRequest, pullResponse);
+                            if (pullResponse.getCode() == 402) {
+                                // 402 : Current instanceUuid has not been assigned a partition.
+                                logger.debug(">>>>>>>>>>> xxl-mq PullThread-pullThread pull fail, pullRequest:{}, pullResponse:{}", pullRequest, pullResponse);
+                            } else {
+                                logger.error(">>>>>>>>>>> xxl-mq PullThread-pullThread pull fail, pullRequest:{}, pullResponse:{}", pullRequest, pullResponse);
+                            }
                             return;
                         }
 
@@ -74,7 +90,7 @@ public class PullThread {
 
                     }
                 },
-                PULL_INTERVAL,
+                pullBatchsize,
                 true);
         pullThread.start();
 

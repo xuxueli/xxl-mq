@@ -1,7 +1,7 @@
 ## 《分布式消息队列XXL-MQ》
 
 [![Actions Status](https://github.com/xuxueli/xxl-mq/workflows/Java%20CI/badge.svg)](https://github.com/xuxueli/xxl-mq/actions)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-mq-client/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-mq-client/)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-mq-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-mq-core/)
 [![GitHub release](https://img.shields.io/github/release/xuxueli/xxl-mq.svg)](https://github.com/xuxueli/xxl-mq/releases)
 [![GitHub stars](https://img.shields.io/github/stars/xuxueli/xxl-mq)](https://github.com/xuxueli/xxl-mq/)
 [![Docker pulls](https://img.shields.io/docker/pulls/xuxueli/xxl-mq-admin)](https://hub.docker.com/r/xuxueli/xxl-mq-admin/)
@@ -93,7 +93,7 @@ XXL-MQ是一款轻量级分布式消息队列，拥有 "水平扩展、高可用
 ```
 <dependency>
     <groupId>com.xuxueli</groupId>
-    <artifactId>xxl-mq-client</artifactId>
+    <artifactId>xxl-mq-core</artifactId>
     <version>{最新Release版本}</version>
 </dependency>
 ```
@@ -125,7 +125,7 @@ XXL-MQ是一款轻量级分布式消息队列，拥有 "水平扩展、高可用
 解压源码,按照maven格式将源码导入IDE, 使用maven进行编译即可，源码结构如下：
 
     - /xxl-mq-admin                 ：消息中心，提供消息Broker、服务注册、消息在线管理功能；
-    - /xxl-mq-client                ：客户端核心依赖, 提供API开发Producer和Consumer；
+    - /xxl-mq-core                ：客户端核心依赖, 提供API开发Producer和Consumer；
     - /xxl-mq-samples               ：接入项目参考示例, 可自行参考学习并使用；
         - /xxl-mq-samples-frameless     ：无框架示例项目，不依赖第三方框架，只需main方法即可启动运行；
         - /xxl-mq-samples-springboot    ：springboot版本示例项目；
@@ -216,7 +216,7 @@ docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl-mq
     作用：生产消息、消费消息；可直接部署，也可以将集成到现有业务项目中。
 
 #### 步骤一：maven依赖
-确认pom文件中引入了 "xxl-mq-client" 的maven依赖；
+确认pom文件中引入了 "xxl-mq-core" 的maven依赖；
 
 #### 步骤二："消息接入方"，属性配置
 消息接入方配置，配置文件地址：

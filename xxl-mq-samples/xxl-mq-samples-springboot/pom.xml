@@ -25,28 +25,26 @@
 
     <dependencies>
 
-        <!-- starter-web：spring-webmvc + autoconfigure + logback + yaml + tomcat -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <!-- starter-test：junit + spring-test + mockito -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
 
-        <!-- freemarker-starter -->
+        <!-- freemarker -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-freemarker</artifactId>
         </dependency>
 
-        <!-- xxl-mq-client -->
+        <!-- xxl-mq-core -->
         <dependency>
             <groupId>com.xuxueli</groupId>
-            <artifactId>xxl-mq-client</artifactId>
+            <artifactId>xxl-mq-core</artifactId>
             <version>${parent.version}</version>
         </dependency>
 
