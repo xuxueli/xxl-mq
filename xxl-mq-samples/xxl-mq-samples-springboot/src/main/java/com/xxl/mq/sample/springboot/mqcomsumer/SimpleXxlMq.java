@@ -7,6 +7,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
+ * XxlMq开发示例
+ *
+ * 开发步骤：
+ *      1、消费者开发：新增 MQ消费者方法；
+ *      2、注解配置：为 MQ消费者方法 添加注解 "@XxlMq(value="消费者 topic ", init = "消费者初始化方法", destroy = "消费者销毁方法")"，注解value值对应的是消息中心新建消息主题的 Topic 值。
+ *      3、消费结果：通过 "XxlMqHelper.consumeSuccess/consumeFail" 设置消费结果，默认执行成功；
+ *
  * Created by xuxueli on 16/8/28.
  */
 @Service

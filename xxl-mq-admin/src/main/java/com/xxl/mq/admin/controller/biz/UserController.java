@@ -68,16 +68,16 @@ public class UserController {
     @RequestMapping("/add")
     @ResponseBody
     @Permission(Consts.ADMIN_PERMISSION)
-    public Response<String> add(UserDTO xxlJobUser) {
-        return userService.insert(xxlJobUser);
+    public Response<String> add(UserDTO user) {
+        return userService.insert(user);
     }
 
     @RequestMapping("/update")
     @ResponseBody
     @Permission(Consts.ADMIN_PERMISSION)
-    public Response<String> update(HttpServletRequest request, UserDTO xxlJobUser) {
+    public Response<String> update(HttpServletRequest request, UserDTO userDTO) {
         LoginUserDTO loginUser = loginService.getLoginUser(request);
-        return userService.update(xxlJobUser, loginUser);
+        return userService.update(userDTO, loginUser);
     }
 
     @RequestMapping("/delete")

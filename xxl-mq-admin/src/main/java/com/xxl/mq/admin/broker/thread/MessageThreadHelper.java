@@ -168,7 +168,7 @@ public class MessageThreadHelper {
                             message.setId(messageData.getId());
                             message.setStatus(messageData.getStatus());
                             message.setTopic(messageData.getTopic());
-                            message.setConsumeLog( ConsumeLogUtil.HR_TAG +  ConsumeLogUtil.generateConsumeLog("消费消息", messageData.getConsumeLog() + "<br> Other：message status change to：" + MessageStatusEnum.match(messageData.getStatus(), null) ));
+                            message.setConsumeLog( ConsumeLogUtil.HR_TAG +  ConsumeLogUtil.generateConsumeLog("消费消息", messageData.getConsumeLog() ));
 
                             // collect
                             messageList.add(message);

@@ -73,13 +73,13 @@ public class XxlMqSpringBootstrap extends XxlMqBootstrap implements ApplicationC
                             }
                         });
             } catch (Throwable ex) {
-                logger.error("xxl-mq method-jobhandler resolve error for bean[" + beanDefinitionName + "].", ex);
+                logger.error("xxl-mq method-consumer resolve error for bean[" + beanDefinitionName + "].", ex);
             }
             if (annotatedMethods==null || annotatedMethods.isEmpty()) {
                 continue;
             }
 
-            // generate and regist method job handler
+            // generate and regist method consumer
             for (Map.Entry<Method, XxlMq> methodXxlMqEntry : annotatedMethods.entrySet()) {
                 Method executeMethod = methodXxlMqEntry.getKey();
                 XxlMq xxlMq = methodXxlMqEntry.getValue();

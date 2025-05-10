@@ -18,7 +18,7 @@ public interface UserService {
     /**
      * 新增
      */
-    public Response<String> insert(UserDTO xxlJobUser);
+    public Response<String> insert(UserDTO userDTO);
 
     /**
      * 删除
@@ -33,7 +33,7 @@ public interface UserService {
     /**
      * 更新
      */
-    public Response<String> update(UserDTO xxlJobUser, LoginUserDTO loginUser);
+    public Response<String> update(UserDTO userDTO, LoginUserDTO loginUser);
 
     /**
      * 修改密码

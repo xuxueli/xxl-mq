@@ -34,10 +34,10 @@ public class UserServiceImpl implements UserService {
      * 新增
      */
     @Override
-    public Response<String> insert(UserDTO xxlJobUser) {
+    public Response<String> insert(UserDTO userDTO) {
 
         // adapt
-        User user = UserAdaptor.adapt(xxlJobUser);
+        User user = UserAdaptor.adapt(userDTO);
 
         // valid empty
         if (user == null) {
@@ -112,10 +112,10 @@ public class UserServiceImpl implements UserService {
      * 更新
      */
     @Override
-    public Response<String> update(UserDTO xxlJobUser, LoginUserDTO loginUser) {
+    public Response<String> update(UserDTO userDTO, LoginUserDTO loginUser) {
 
         // adapt
-        User user = UserAdaptor.adapt(xxlJobUser);
+        User user = UserAdaptor.adapt(userDTO);
 
         // avoid opt login seft
         if (loginUser.getUsername().equals(user.getUsername())) {

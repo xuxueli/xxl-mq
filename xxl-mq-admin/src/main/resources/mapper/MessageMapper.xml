@@ -209,7 +209,7 @@
                 `id`,
                 `topic`,
                 `data`,
-                ROW_NUMBER() OVER (PARTITION BY `topic` ORDER BY `effect_time`) as rn
+                ROW_NUMBER() OVER (PARTITION BY `topic` ORDER BY `id`) as rn
             FROM xxl_mq_message
             WHERE
                 `topic` IN

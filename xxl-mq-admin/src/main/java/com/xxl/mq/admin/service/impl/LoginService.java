@@ -28,7 +28,7 @@ public class LoginService {
     public static final String LOGIN_IDENTITY_KEY = "XXL_MQ_LOGIN_IDENTITY";
 
     @Resource
-    private UserMapper xxlJobUserMapper;
+    private UserMapper userMapper;
 
     // ********************** for token **********************
 
@@ -72,7 +72,7 @@ public class LoginService {
         }
 
         // valid user, empty、status、passowrd
-        User user = xxlJobUserMapper.loadByUserName(username);
+        User user = userMapper.loadByUserName(username);
         if (user == null) {
             return Response.ofFail( I18nUtil.getString("login_param_unvalid") );
         }
@@ -122,7 +122,7 @@ public class LoginService {
                 logout(request, response);
             }
             if (loginUser != null) {
-                User dbUser = xxlJobUserMapper.loadByUserName(loginUser.getUsername());
+                User dbUser = userMapper.loadByUserName(loginUser.getUsername());
                 if (dbUser != null) {
                     if (loginUser.getPassword().equals(dbUser.getPassword())) {
                         return loginUser;

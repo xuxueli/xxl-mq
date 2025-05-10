@@ -11,13 +11,13 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-	public int insert(User xxlJobUser);
+	public int insert(User user);
 
 	public int delete(@Param("id") int id);
 
 	public int deleteByIds(@Param("ids") List<Integer> ids);
 
-	public int update(User xxlJobUser);
+	public int update(User user);
 
 	public User loadByUserName(@Param("username") String username);
 

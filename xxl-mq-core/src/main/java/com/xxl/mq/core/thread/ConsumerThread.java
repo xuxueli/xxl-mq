@@ -5,6 +5,7 @@ import com.xxl.mq.core.bootstrap.XxlMqBootstrap;
 import com.xxl.mq.core.consumer.IConsumer;
 import com.xxl.mq.core.context.XxlMqContext;
 import com.xxl.mq.core.openapi.model.MessageData;
+import com.xxl.tool.http.IPTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +69,7 @@ public class ConsumerThread {
 
                             // do callback
                             message.setStatus(0);   // not executed, renew orignal(0) status
-                            message.setConsumeLog("consumer-thread terminated, the message not executed and resumed.");
+                            message.setConsumeLog("consumer-thread terminated, the message not consumed and message-status change to：" + 0 );
                             xxlMqBootstrap.getMessageThread().consumeCallback(message);
                             return;
                         }
@@ -78,7 +79,7 @@ public class ConsumerThread {
 
                         // consume
                         try {
-                            int executeTimeout = 0;
+                            int executeTimeout = 0;     // todo；
                             if (executeTimeout > 0) {
                                 // limit timeout
                                 Thread futureThread = null;
@@ -115,7 +116,7 @@ public class ConsumerThread {
 
                             // do callback
                             message.setStatus(XxlMqContext.getContext().getStatus());
-                            message.setConsumeLog(XxlMqContext.getContext().getConsumeLog());
+                            message.setConsumeLog(XxlMqContext.getContext().getConsumeLog() + "; Other: consumer ip" + IPTool.getIp() + ", message-status change to：" + message.getStatus());
                             xxlMqBootstrap.getMessageThread().consumeCallback(message);
                         }
                     }

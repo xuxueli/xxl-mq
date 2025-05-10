@@ -33,11 +33,10 @@ public class IndexControllerTest extends AbstractSpringMvcTest {
   @Test
   public void testAdd() throws Exception {
     MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
-    parameters.add("jobGroup", "1");
-    parameters.add("triggerStatus", "-1");
+    parameters.add("topic", "");
 
     MvcResult ret = mockMvc.perform(
-        post("/jobinfo/pageList")
+        post("/topic/pageList")
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             //.content(paramsJson)
             .params(parameters)
