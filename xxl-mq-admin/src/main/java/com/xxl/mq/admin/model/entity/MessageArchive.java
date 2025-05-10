@@ -32,6 +32,11 @@ public class MessageArchive implements Serializable {
     private String data;
 
     /**
+     * 消息关联的 业务ID（用于结合“分区路由”生成 partitionId）
+     */
+    private long bizId;
+
+    /**
     * 状态
     */
     private int status;
@@ -97,6 +102,14 @@ public class MessageArchive implements Serializable {
 
     public void setData(String data) {
         this.data = data;
+    }
+
+    public long getBizId() {
+        return bizId;
+    }
+
+    public void setBizId(long bizId) {
+        this.bizId = bizId;
     }
 
     public int getStatus() {

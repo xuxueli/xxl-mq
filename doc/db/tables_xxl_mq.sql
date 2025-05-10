@@ -37,6 +37,7 @@ CREATE TABLE `xxl_mq_message`(
     `topic`                 varchar(100)    NOT NULL COMMENT '消息主题Topic',
     `partition_id`          int(11)         NOT NULL COMMENT '消息分片ID',
     `data`                  text            NOT NULL COMMENT '消息数据',
+    `biz_id`                bigint(20)      NOT NULL COMMENT '消息关联的业务ID',
     `status`                tinyint(4)      NOT NULL COMMENT '状态',
     `effect_time`           datetime        NOT NULL COMMENT '生效时间',
     `retry_count_remain`    int(11)         NOT NULL COMMENT '重试次数',
@@ -54,6 +55,7 @@ CREATE TABLE `xxl_mq_message_archive` (
     `topic`                 varchar(100)    NOT NULL COMMENT '消息主题Topic',
     `partition_id`          int(11)         NOT NULL COMMENT '消息分片ID',
     `data`                  text            NOT NULL COMMENT '消息数据',
+    `biz_id`                bigint(20)      NOT NULL COMMENT '消息关联的业务ID',
     `status`                tinyint(4)      NOT NULL COMMENT '状态',
     `effect_time`           datetime        NOT NULL COMMENT '生效时间',
     `retry_count_remain`    int(11)         NOT NULL COMMENT '重试次数',
@@ -143,10 +145,16 @@ INSERT INTO `xxl_mq_application` (id, appname, name, `desc`, add_time, update_ti
 VALUES (1, 'xxl-mq-sample', '示例服务', '示例服务，演示使用', '2025-01-18 20:03:13', '2025-01-18 20:03:13');
 
 INSERT INTO xxl_mq.xxl_mq_topic (id, topic, appname, `desc`, owner, alarm_email, status, store_strategy, archive_strategy, partition_strategy, retry_strategy, retry_count, retry_interval, level, execution_timeout, add_time, update_time)
-VALUES (1, 'topic_sample', 'xxl-mq-sample', '示例消息主题', '张三', '', 0, '0', '1', '1', '1', 0, 3, 1, 0, now(), now());
+VALUES (1, 'topic_sample', 'xxl-mq-sample', '示例1:全局并行消费', 'XXL', '', 0, '0', '1', '2', '1', 0, 3, 1, 0, now(), now()),
+       (2, 'topic_sample_02', 'xxl-mq-sample', '示例2:全局串行消费', 'XXL', '', 0, '0', '1', '4', '1', 0, 3, 1, 0, now(), now()),
+       (3, 'topic_sample_03', 'xxl-mq-sample', '示例3:串并行结合消费', 'XXL', '', 0, '0', '1', '1', '1', 0, 3, 1, 0, now(), now()),
+       (4, 'topic_sample_04', 'xxl-mq-sample', '示例4:广播消费', 'XXL', '', 0, '0', '1', '6', '1', 0, 3, 1, 0, now(), now()),
+       (5, 'topic_sample_05', 'xxl-mq-sample', '示例5:延时消息（模拟 延时3min）', 'XXL', '', 0, '0', '1', '1', '1', 0, 3, 1, 0, now(), now()),
+       (6, 'topic_sample_06', 'xxl-mq-sample', '示例6:失败重试消息（模拟 重试3次）', 'XXL', '', 0, '0', '1', '1', '1', 3, 3, 1, 0, now(), now()),
+       (7, 'topic_sample_07', 'xxl-mq-sample', '示例7:性能测试（模拟 生产10000条消息）', 'XXL', '', 0, '0', '1', '1', '1', 0, 3, 1, 0, now(), now());
 
-INSERT INTO xxl_mq.xxl_mq_message (id, topic, data, partition_id, status, effect_time, retry_count_remain, consume_log, consume_instance_uuid, add_time, update_time)
-VALUES (1, 'topic_sample', 'hello world.', 1, 0, now(), 0, null, null, now(), now());
+INSERT INTO xxl_mq.xxl_mq_message (id, topic, data, biz_id, partition_id, status, effect_time, retry_count_remain, consume_log, consume_instance_uuid, add_time, update_time)
+VALUES (1, 'topic_sample', 'hello world.', 0,1, 0, now(), 0, null, null, now(), now());
 
 
 commit;

@@ -8,6 +8,7 @@
         <result column="topic" property="topic" />
         <result column="partition_id" property="partitionId" />
         <result column="data" property="data" />
+        <result column="biz_id" property="bizId" />
         <result column="status" property="status" />
         <result column="effect_time" property="effectTime" />
         <result column="retry_count_remain" property="retryCountRemain" />
@@ -22,6 +23,7 @@
         t.`topic`,
         t.`partition_id`,
         t.`data`,
+        t.`biz_id`,
         t.`status`,
         t.`effect_time`,
         t.`retry_count_remain`,
@@ -36,6 +38,7 @@
             `topic`,
             `partition_id`,
             `data`,
+            `biz_id`,
             `status`,
             `effect_time`,
             `retry_count_remain`,
@@ -48,6 +51,7 @@
                   #{message.topic} ,
                   #{message.partitionId} ,
                   #{message.data} ,
+                  #{message.bizId} ,
                   #{message.status} ,
                   #{message.effectTime} ,
                   #{message.retryCountRemain} ,
@@ -63,6 +67,7 @@
             `topic`,
             `partition_id`,
             `data`,
+            `biz_id`,
             `status`,
             `effect_time`,
             `retry_count_remain`,
@@ -76,6 +81,7 @@
                 #{message.topic} ,
                 #{message.partitionId} ,
                 #{message.data} ,
+                #{message.bizId} ,
                 #{message.status} ,
                 #{message.effectTime} ,
                 #{message.retryCountRemain} ,

@@ -17,12 +17,12 @@ public interface PartitionRouter {
      * partition router
      *
      * @param topic
-     * @param partitionKey
+     * @param bizId
      * @param instancePartitionRange
      * @return
      */
     public abstract int route(String topic,
-                              String partitionKey,
+                              long bizId,
                               Map<String, PartitionUtil.PartitionRange> instancePartitionRange);
 
 }

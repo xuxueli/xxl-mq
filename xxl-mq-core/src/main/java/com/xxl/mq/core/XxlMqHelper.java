@@ -3,6 +3,7 @@ package com.xxl.mq.core;
 import com.xxl.mq.core.bootstrap.XxlMqBootstrap;
 import com.xxl.mq.core.context.XxlMqContext;
 import com.xxl.mq.core.openapi.model.MessageData;
+import com.xxl.tool.core.StringTool;
 
 /**
  * xxl-mq helper
@@ -80,17 +81,12 @@ public class XxlMqHelper {
      * @param topic
      * @param data
      * @param effectTime
-     * @param partitionKey
+     * @param bizId
      * @return
      */
-    public static boolean produce(String topic, String data, long effectTime, String partitionKey) {
-
-        MessageData messageData = new MessageData();
-        messageData.setTopic(topic);
-        messageData.setPartitionKey(partitionKey);
-        messageData.setData(data);
-        messageData.setEffectTime(effectTime);
-
+    public static boolean produce(String topic, String data, long effectTime, long bizId) {
+        // send message
+        MessageData messageData = new MessageData(topic, data, bizId, effectTime);
         return XxlMqBootstrap.getInstance().getMessageThread().produceSend(messageData);
     }
 
@@ -103,7 +99,19 @@ public class XxlMqHelper {
      * @return
      */
     public static boolean produce(String topic, String data, long effectTime) {
-        return produce(topic, data, effectTime, null);
+        return produce(topic, data, effectTime, 0);
+    }
+
+    /**
+     * produce message
+     *
+     * @param topic
+     * @param data
+     * @param bizId
+     * @return
+     */
+    public static boolean produce2(String topic, String data, long bizId) {
+        return produce(topic, data, -1, bizId);
     }
 
     /**
@@ -114,7 +122,7 @@ public class XxlMqHelper {
      * @return
      */
     public static boolean produce(String topic, String data) {
-        return produce(topic, data, System.currentTimeMillis(), null);
+        return produce(topic, data, -1, 0);
     }
 
 }

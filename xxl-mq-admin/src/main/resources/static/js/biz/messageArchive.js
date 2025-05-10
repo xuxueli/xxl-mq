@@ -102,8 +102,24 @@ $(function() {
 				}
 			},
 			{
+				"title": '消息数据',
+				"data": 'data',
+				"width":'20%',
+				"render": function ( data, type, row ) {
+					var result = data.length<20
+						?data
+						:data.substring(0, 20) + '...';
+					return '<span title="'+ data +'">'+ result +'</span>';
+				}
+			},
+			{
 				"title": 'partitionId',
 				"data": 'partitionId',
+				"width":'10%'
+			},
+			{
+				"title": '关联业务ID',
+				"data": 'bizId',
 				"width":'10%'
 			},
 			{

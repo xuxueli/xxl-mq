@@ -8,6 +8,7 @@
         <result column="topic" property="topic" />
         <result column="partition_id" property="partitionId" />
         <result column="data" property="data" />
+        <result column="biz_id" property="bizId" />
         <result column="status" property="status" />
         <result column="effect_time" property="effectTime" />
         <result column="consume_log" property="consumeLog" />
@@ -21,6 +22,7 @@
         t.`topic`,
         t.`partition_id`,
         t.`data`,
+        t.`biz_id`,
         t.`status`,
         t.`effect_time`,
         t.`consume_log`,
@@ -34,6 +36,7 @@
             `topic`,
             `partition_id`,
             `data`,
+            `biz_id`,
             `status`,
             `effect_time`,
             `consume_log`,
@@ -45,6 +48,7 @@
                   #{messageArchive.topic} ,
                   #{messageArchive.partitionId} ,
                   #{messageArchive.data} ,
+                  #{messageArchive.bizId} ,
                   #{messageArchive.status} ,
                   #{messageArchive.effectTime} ,
                   #{messageArchive.consumeLog} ,
@@ -114,6 +118,7 @@
             `topic`,
             `partition_id`,
             `data`,
+            `biz_id`,
             `status`,
             `effect_time`,
             `consume_log`,
@@ -128,6 +133,7 @@
                 #{item.topic} ,
                 #{item.partitionId} ,
                 #{item.data} ,
+                #{item.bizId} ,
                 #{item.status} ,
                 #{item.effectTime} ,
                 #{item.consumeLog} ,

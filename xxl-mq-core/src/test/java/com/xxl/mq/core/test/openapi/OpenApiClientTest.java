@@ -96,9 +96,9 @@ public class OpenApiClientTest {
         ProduceRequest produceRequest = new ProduceRequest();
         produceRequest.setAccesstoken("defaultaccesstoken");
         produceRequest.setMessageList(Arrays.asList(
-                new MessageData("topic_sample", "pk-111", "data111", System.currentTimeMillis()),
-                new MessageData("topic_sample", "pk-111", "data222", System.currentTimeMillis()+1000),
-                new MessageData("topic_sample", "pk-222", "data333", System.currentTimeMillis()+2000)
+                new MessageData("topic_sample", "data111", System.currentTimeMillis(), 0),
+                new MessageData("topic_sample", "data222", System.currentTimeMillis()+1000, 0),
+                new MessageData("topic_sample", "data333", System.currentTimeMillis()+2000, 0)
         ));
 
         Response<String> response = brokerService.produce(produceRequest);
@@ -113,7 +113,7 @@ public class OpenApiClientTest {
         ProduceRequest produceRequest = new ProduceRequest();
         produceRequest.setAccesstoken("defaultaccesstoken");
         produceRequest.setMessageList(Arrays.asList(
-                new MessageData("topic_sample02", "pk-222", "data333", System.currentTimeMillis()+2000)
+                new MessageData("topic_sample02", "data333", System.currentTimeMillis()+2000, 0)
         ));
 
         Response<String> response = brokerService.produce(produceRequest);
@@ -131,16 +131,16 @@ public class OpenApiClientTest {
             ProduceRequest produceRequest = new ProduceRequest();
             produceRequest.setAccesstoken("defaultaccesstoken");
             produceRequest.setMessageList(Arrays.asList(
-                    new MessageData("topic_sample02", "pk-222", "data-"+i+"-1000", System.currentTimeMillis()+1000),
-                    new MessageData("topic_sample02", "pk-222", "data-"+i+"-2000", System.currentTimeMillis()+2000),
-                    new MessageData("topic_sample02", "pk-222", "data-"+i+"-3000", System.currentTimeMillis()+3000),
-                    new MessageData("topic_sample02", "pk-222", "data-"+i+"-4000", System.currentTimeMillis()+4000),
-                    new MessageData("topic_sample02", "pk-222", "data-"+i+"-5000", System.currentTimeMillis()+5000),
-                    new MessageData("topic_sample02", "pk-222", "data-"+i+"-6000", System.currentTimeMillis()+6000),
-                    new MessageData("topic_sample02", "pk-222", "data-"+i+"-7000", System.currentTimeMillis()+7000),
-                    new MessageData("topic_sample02", "pk-222", "data-"+i+"-8000", System.currentTimeMillis()+8000),
-                    new MessageData("topic_sample02", "pk-222", "data-"+i+"-9000", System.currentTimeMillis()+9000),
-                    new MessageData("topic_sample02", "pk-222", "data-"+i+"-10000", System.currentTimeMillis()+10000)
+                    new MessageData("topic_sample02", "data-"+i+"-1000", System.currentTimeMillis()+1000, 0),
+                    new MessageData("topic_sample02", "data-"+i+"-2000", System.currentTimeMillis()+2000, 0),
+                    new MessageData("topic_sample02", "data-"+i+"-3000", System.currentTimeMillis()+3000, 0),
+                    new MessageData("topic_sample02", "data-"+i+"-4000", System.currentTimeMillis()+4000, 0),
+                    new MessageData("topic_sample02", "data-"+i+"-5000", System.currentTimeMillis()+5000, 0),
+                    new MessageData("topic_sample02", "data-"+i+"-6000", System.currentTimeMillis()+6000, 0),
+                    new MessageData("topic_sample02", "data-"+i+"-7000", System.currentTimeMillis()+7000, 0),
+                    new MessageData("topic_sample02", "data-"+i+"-8000", System.currentTimeMillis()+8000, 0),
+                    new MessageData("topic_sample02", "data-"+i+"-9000", System.currentTimeMillis()+9000, 0),
+                    new MessageData("topic_sample02", "data-"+i+"-10000", System.currentTimeMillis()+10000, 0)
             ));
 
             Response<String> response = brokerService.produce(produceRequest);

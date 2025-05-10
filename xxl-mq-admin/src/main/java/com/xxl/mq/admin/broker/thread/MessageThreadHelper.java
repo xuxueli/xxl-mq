@@ -103,6 +103,7 @@ public class MessageThreadHelper {
                                     message.setTopic(messageData.getTopic());
                                     message.setPartitionId(partitionId);
                                     message.setData(messageData.getData());
+                                    message.setBizId(messageData.getBizId());
                                     message.setStatus(MessageStatusEnum.NEW.getValue());
                                     message.setEffectTime(effectTime);
                                     message.setRetryCountRemain(topicData!=null?topicData.getRetryCount():0);
@@ -113,13 +114,14 @@ public class MessageThreadHelper {
                                     messageList.add(message);
                                 }
                             } else {
-                                int partitionId = partitionRouteStrategyEnum.getPartitionRouter().route(messageData.getTopic(), messageData.getPartitionKey(), instancePartitionRange);
+                                int partitionId = partitionRouteStrategyEnum.getPartitionRouter().route(messageData.getTopic(), messageData.getBizId(), instancePartitionRange);
 
                                 // adaptor
                                 Message message = new Message();
                                 message.setTopic(messageData.getTopic());
                                 message.setPartitionId(partitionId);
                                 message.setData(messageData.getData());
+                                message.setBizId(messageData.getBizId());
                                 message.setStatus(MessageStatusEnum.NEW.getValue());
                                 message.setEffectTime(effectTime);
                                 message.setRetryCountRemain(topicData!=null?topicData.getRetryCount():0);
@@ -166,7 +168,7 @@ public class MessageThreadHelper {
                             message.setId(messageData.getId());
                             message.setStatus(messageData.getStatus());
                             message.setTopic(messageData.getTopic());
-                            message.setConsumeLog(ConsumeLogUtil.HR_TAG+messageData.getConsumeLog());
+                            message.setConsumeLog( ConsumeLogUtil.HR_TAG +  ConsumeLogUtil.generateConsumeLog("消费消息", messageData.getConsumeLog() + "<br> Other：message status change to：" + MessageStatusEnum.match(messageData.getStatus(), null) ));
 
                             // collect
                             messageList.add(message);
@@ -301,7 +303,7 @@ public class MessageThreadHelper {
         brokerBootstrap.getMessageMapper().batchFailRetry(failMessageList,
                 failStatusList,
                 MessageStatusEnum.NEW.getValue(),
-                ConsumeLogUtil.generateConsumeLog("失败重试", null)
+                ConsumeLogUtil.HR_TAG + ConsumeLogUtil.generateConsumeLog("失败重试", "message status change to：" + MessageStatusEnum.NEW)
         );
     }
 

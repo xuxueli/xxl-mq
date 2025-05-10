@@ -37,7 +37,7 @@ public class CyclePartitionRouter implements PartitionRouter {
     }
 
     @Override
-    public int route(String topic, String partitionKey, Map<String, PartitionUtil.PartitionRange> instancePartitionRange) {
+    public int route(String topic, long bizId, Map<String, PartitionUtil.PartitionRange> instancePartitionRange) {
         int topicHashCode = topic.hashCode()>0
                 ?topic.hashCode()% MAX_PARTITION
                 :(topic.hashCode() & Integer.MAX_VALUE) % MAX_PARTITION;

@@ -14,6 +14,7 @@ public class MessageAdaptor {
         message.setTopic(messageDTO.getTopic());
         message.setPartitionId(messageDTO.getPartitionId());
         message.setData(messageDTO.getData());
+        message.setBizId(messageDTO.getBizId());
         message.setStatus(messageDTO.getStatus());
         message.setEffectTime(DateTool.parseDateTime(messageDTO.getEffectTime()));
         message.setRetryCountRemain(messageDTO.getRetryCountRemain());
@@ -30,6 +31,7 @@ public class MessageAdaptor {
         messageDTO.setTopic(message.getTopic());
         messageDTO.setPartitionId(message.getPartitionId());
         messageDTO.setData(message.getData());
+        messageDTO.setBizId(message.getBizId());
         messageDTO.setStatus(message.getStatus());
         messageDTO.setEffectTime(DateTool.formatDateTime(message.getEffectTime()));
         message.setRetryCountRemain(messageDTO.getRetryCountRemain());
@@ -48,6 +50,7 @@ public class MessageAdaptor {
         messageArchive.setTopic(message.getTopic());
         messageArchive.setPartitionId(message.getPartitionId());
         messageArchive.setData(message.getData());
+        messageArchive.setBizId(message.getBizId());
         messageArchive.setStatus(message.getStatus());
         messageArchive.setEffectTime(message.getEffectTime());
         message.setRetryCountRemain(message.getRetryCountRemain());
@@ -64,6 +67,7 @@ public class MessageAdaptor {
         messageArchiveDTO.setTopic(messageArchive.getTopic());
         messageArchiveDTO.setPartitionId(messageArchive.getPartitionId());
         messageArchiveDTO.setData(messageArchive.getData());
+        messageArchiveDTO.setBizId(messageArchive.getBizId());
         messageArchiveDTO.setStatus(messageArchive.getStatus());
         messageArchiveDTO.setEffectTime(DateTool.formatDateTime(messageArchive.getEffectTime()));
         messageArchiveDTO.setRetryCountRemain(messageArchive.getRetryCountRemain());

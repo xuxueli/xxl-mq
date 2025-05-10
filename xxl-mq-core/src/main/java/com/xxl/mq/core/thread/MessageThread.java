@@ -132,6 +132,9 @@ public class MessageThread {
         if (messageData.getEffectTime() < System.currentTimeMillis()) {
             messageData.setEffectTime(System.currentTimeMillis());
         }
+        if (messageData.getBizId() <= 0) {
+            messageData.setBizId(0);
+        }
 
         // invoke
         return produceMessageQueue.produce(messageData);

@@ -12,10 +12,10 @@ public class MessageData implements Serializable {
 
     public MessageData() {
     }
-    public MessageData(String topic, String partitionKey, String data, long effectTime) {
+    public MessageData(String topic, String data, long bizId, long effectTime) {
         this.topic = topic;
-        this.partitionKey = partitionKey;
         this.data = data;
+        this.bizId = bizId;
         this.effectTime = effectTime;
     }
     public MessageData(long id, String topic, int status, String consumeLog) {
@@ -41,15 +41,15 @@ public class MessageData implements Serializable {
     private String topic;
 
     /**
-     * 消息分片Key（用于结合“分区路由”生成 partitionId）
-     */
-    /*private int partitionId;*/
-    private String partitionKey;
-
-    /**
      * 消息数据
      */
     private String data;
+
+    /**
+     * 消息关联的 业务ID（用于结合“分区路由”生成 partitionId）
+     */
+    /*private int partitionId;*/
+    private long bizId;
 
     /**
      * 生效时间（时间戳；为空使用当前时间）
@@ -87,20 +87,20 @@ public class MessageData implements Serializable {
         this.topic = topic;
     }
 
-    public String getPartitionKey() {
-        return partitionKey;
-    }
-
-    public void setPartitionKey(String partitionKey) {
-        this.partitionKey = partitionKey;
-    }
-
     public String getData() {
         return data;
     }
 
     public void setData(String data) {
         this.data = data;
+    }
+
+    public long getBizId() {
+        return bizId;
+    }
+
+    public void setBizId(long bizId) {
+        this.bizId = bizId;
     }
 
     public long getEffectTime() {
@@ -132,8 +132,8 @@ public class MessageData implements Serializable {
         return "MessageData{" +
                 "id=" + id +
                 ", topic='" + topic + '\'' +
-                ", partitionKey='" + partitionKey + '\'' +
                 ", data='" + data + '\'' +
+                ", bizId='" + bizId + '\'' +
                 ", effectTime=" + effectTime +
                 ", status=" + status +
                 ", consumeLog='" + consumeLog + '\'' +

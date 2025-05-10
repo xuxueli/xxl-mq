@@ -25,12 +25,34 @@ public class SimpleXxlMq {
 
     @XxlMq("topic_sample_02")
     public void consume02() {
-        // consume message
-        String messageData = XxlMqHelper.getMessageData();
-        logger.info("topic[{}] consume message: {}", "topic_sample_02", messageData);
+        logger.info("topic[{}] consume message: {}", "topic_sample_02", XxlMqHelper.getMessageData());
+    }
 
-        // set consume result
-        XxlMqHelper.consumeFail("consume fail.");
+    @XxlMq("topic_sample_03")
+    public void consume03() {
+        logger.info("topic[{}] consume message: {}", "topic_sample_03", XxlMqHelper.getMessageData());
+    }
+
+    @XxlMq("topic_sample_04")
+    public void consume04() {
+        logger.info("topic[{}] consume message: {}", "topic_sample_04", XxlMqHelper.getMessageData());
+    }
+
+    @XxlMq("topic_sample_05")
+    public void consume05() {
+        logger.info("topic[{}] consume message: {}", "topic_sample_05", XxlMqHelper.getMessageData());
+    }
+
+    @XxlMq("topic_sample_06")
+    public void consume06() {
+        logger.info("topic[{}] consume message: {}", "topic_sample_06", XxlMqHelper.getMessageData());
+
+        XxlMqHelper.consumeFail("consumer fail~");
+    }
+
+    @XxlMq("topic_sample_07")
+    public void consume07() {
+        logger.info("topic[{}] consume message: {}", "topic_sample_07", XxlMqHelper.getMessageData());
     }
 
 }
