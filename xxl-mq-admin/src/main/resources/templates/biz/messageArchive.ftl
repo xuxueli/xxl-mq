@@ -20,7 +20,7 @@
 
 	<!-- left -->
 	<#-- biz start（2/5 left） -->
-	<@netCommon.commonLeft "/message" />
+	<@netCommon.commonLeft "/messageArchive" />
 	<#-- biz end（2/5 left） -->
 
 	<!-- right start -->

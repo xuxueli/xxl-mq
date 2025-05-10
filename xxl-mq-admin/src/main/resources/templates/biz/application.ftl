@@ -161,6 +161,7 @@
 						</div>
 						<div class="modal-body">
 							<div class="data" style="word-wrap: break-word;"></div>
+							<p style="color: darkgray">说明：a）分区最大范围，[1, 10000]；b）责任分区范围，表示该注册节点负责消费 partitionId 处于相关范围的消息数据。</p>
 						</div>
 						<div class="modal-footer">
 							<div class="text-center" >
