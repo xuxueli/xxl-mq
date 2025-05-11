@@ -632,17 +632,6 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
 
 ### 5.7 版本 v1.4.0 Release Notes[迭代中]
 - 1、【重构】XXL-MQ 核心代码重构，模块化设计实现，提升可扩展性与稳定性；
-
-### Tmp
-```
-流程：
-1、注册：topic+服务示例，注册（循环线程1，c），缓存发现（循环线程2，s）。  【DONE】
-2、send：生产消息（队列线程3，c队列），（队列线程4，s队列）。             【DONE】
-2、pull：批量锁定数据（循环线程5）。本地分发，异步执行（定制线程6，分组）。  【DONE】
-3、更新结果（队列线程7，c队列），（队列线程8，s队列）。                  【DONE】
-
-
-1、特性：
     - 存算分离：Broker 计算；Blade/Mysql 存储；
     - 水平扩展：无状态；
     - 高吞吐：并行计算、异步计算；（TPS：Blade 10W / Mysql单机1W）
@@ -654,75 +643,9 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
     - 失败告警：
     - AccessToken：
     - 容器化：
-2、设计：
-- Broker：
-    - Manage：控制台；
-        - Index：首页报表；                                                               【Todo；复用 Message归档 ；】
-        - User：服务授权;
-        - AccessToken：管理 +                         【DONE - 01: AccessToken本地缓存（Helper）】
-        - AppName：管理;                                                   
-        - Topic：Topic管理；  
-        - Message：Message管理 + 手动归档；                                               【TODO - 02: Message归档（Helper）；自动 Message + MessageArchive，滚动清理及归档；+报表声哼； + 重试最终失败-告警；】
-        - MessageArchive：MessageArchive查看 + 手动清理；        
-    - Registry：注册中心；                                    【DONE - 03: Registry注册（Helper）；注册心跳异步写 + 定期本地缓存（计算 + 更新至AppName/app&instance&topic）】
-    - OpenAPI：统一“Token验证”（http+gson；借助 xxl-tool 实现通用 http-rpc 能力；）
-        - a 、注册：app+topic初始化 + 节点心跳注册/摘除；        【DONE ： 转发 Registry注册（Helper） 】
-                  - 数据格式：
-                        - app01 : 
-                        - instanceUuid01：
-                        - topicList：
-                              - topic01 : default
-                              - topic02 : group02
-                  - RegistryData：存app表；
-                        - app01:
-                              - instanceList：
-                                    - instance01：partitionScope: [0-5000]
-                                    - instance02：partitionScope：[5001-10000]
-                              - topicList：
-                                    - topic01 : [default、group01、group02]
-                                    - topic02 : [default]
-                  - RegistryCache：30s一次；
-                        - topic01：
-                          - info：配置信息（app）；
-                          - instanceList：
-                                    - instance01：partitionScope: [0-5000]
-                                    - instance02：partitionScope：[5001-10000]
-                          - groupList：[default、group01、group02]
-                        - app01：基础信息；
-        - b、生产：                                       【DONE - 04: 消息处理（Helper）： 异步写 + 异步更新；】
-                  - 能力：异步队列，批量写入；处理group广播。
-                  - 数据格式：topic + group(null广播)  + partitionKey（null随机；partitionId [0, 10000]） + msgBody
-        - c、批量查询（锁定）：                           【DONE: 分topic查询 + 锁定；】
-                - 能力：多topic并行查询；单topic分片查询；能力，根据node分配10条，同时锁定。分配不到直接返回。
-                - pullAndLock：（topics，group +节点）【生成唯一标识，lock时写入；根据标识判断锁定值；】
-                      - 数据格式：
-                          - topic01 + group01 + clientId（计算partitionScope）
-                          - topic02 + group01 +
-                      - 查询逻辑：多topic并行查询 + 单topic分片查询 + 每topic每次取10个；
-                      - 锁定逻辑：针对查询出的数据，更新锁定态；注意超时释放；
-        - d、消费消息：异步队列，批量更新消费结果；         【DONE：转发 消息处理（Helper） 】
-- Client：
-    - Registry 组件：
-        - 数据：app + 节点UUID(IP+时间戳) + topics
-        - 动作：初始化（app + topics绑定） + 节点心跳 + 节点下线摘除；
-    - Producer 组件：
-        - 功能：直连Broker；发起消息生产；
-        - 性能：内存queue，批量异步推送；异常，写本地磁盘；（xxl-tool）
-        - 要点：
-            - 并行消息：指定 topic + group（固定） + partitionKey（随机），生产单条消息；借助 partitionKey 分片消费；
-            - 串行消息：指定 topic + group（固定） + partitionKey（固定>0），生产单条消息；固定 partitionKey 绑定固定节点消费；
-            - 广播消息：指定 topic + group（uuid） + partitionKey（随机）；根据在线 group 列表生产多条消息；
-    - Consumer 组件：
-      - 功能：查询消息，消费消息，回调消息；
-      - 性能：批量查询、批量回调；
-      - 要点：pullAndLock前过滤topic，空闲topic才查询；
-      - 属性：
-          - topic：绑定 Topic，只消费该topic的消息；
-          - group：绑定 Topic Group，group 维度隔离，只消费该group下消息；同一 topic 支持绑定多group，可借助 group 实效消息广播；
-    - ConsumerInvokeThread 组件：
-      - 功能：消费业务逻辑，执行线程；
-      - 要点：单Topic单线程；不同Topic隔离；
-```
+- 2、【增强】串行、并行、串并行结合、延时消息、重试消息、批量消息；
+
+
 
 ### TODO
 - 会考虑移除 mysql 强依赖的，迁移 jpa 进一步提升通用型。
@@ -740,7 +663,7 @@ transaction | 事务开关，开启消息事务性保证只会成功执行一次
 - 支持Rolling Log；
 - API服务：提供 restful 接口，用于消息生产、消费消费等场景；
 - 生产不丢：失败写磁盘文件；UUID，避免重复；
-- 消费不丢：pull锁定 》 消费后锁定；
+- 消费不丢：消息锁定逻辑调整。由“pull查询 + 前置锁定+消费后更新（先锁：不会重复消费）”，改为“先pull查询+消费后更新（不锁：可能重复消费）”；
 
 
 ## 六、其他

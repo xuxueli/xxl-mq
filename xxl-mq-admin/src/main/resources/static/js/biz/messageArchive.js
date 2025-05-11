@@ -253,5 +253,12 @@ $(function() {
 		$("#archiveModel .form")[0].reset();
 	});
 
+	// ---------- ---------- ---------- query archive message ---------- ---------- ----------
+
+	$("#data_operation .queryMessage").click(function(){
+		let topic = $('#data_filter .topic').val();
+		window.location.href = base_url + "/message?topic=" + topic;
+	});
+
 
 });

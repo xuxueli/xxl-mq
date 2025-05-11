@@ -52,7 +52,7 @@
                     <div class="info-box">
                         <span class="info-box-icon bg-red"><i class="fa fa-cubes"></i></span>
                         <div class="info-box-content">
-                            <span class="info-box-text">主题数量</span>
+                            <span class="info-box-text">消息主题数量</span>
                             <span class="info-box-number">${dashboardInfo.topicCount}</span>
                         </div>
                     </div>
@@ -61,7 +61,7 @@
                     <div class="info-box">
                         <span class="info-box-icon bg-green"><i class="fa fa-database"></i></span>
                         <div class="info-box-content">
-                            <span class="info-box-text">消息数量</span>
+                            <span class="info-box-text">消息数量(近一年)</span>
                             <span class="info-box-number">${dashboardInfo.messageCount}</span>
                         </div>
                     </div>

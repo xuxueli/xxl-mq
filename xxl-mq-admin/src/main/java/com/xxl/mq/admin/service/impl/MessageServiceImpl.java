@@ -231,24 +231,29 @@ public class MessageServiceImpl implements MessageService {
 
 	@Override
 	public Response<Map<String, Object>> chartInfo(Date startDate, Date endDate) {
-		// process
+
+		// param
 		List<String> dayList = new ArrayList<String>();
+		List<Long> dayNewCountList = new ArrayList<>();
 		List<Long> dayRunningCountList = new ArrayList<>();
 		List<Long> daySuccessCountList = new ArrayList<>();
 		List<Long> dayFailCountList = new ArrayList<>();
+		int newCountTotal = 0;
 		int runningTotal = 0;
 		int successTotal = 0;
 		int failTotal = 0;
 
+		// process data
 		List<MessageReport> dayReportList = messageReportMapper.queryReport(startDate, endDate);
-
 		if (CollectionTool.isNotEmpty(dayReportList)) {
 			for (MessageReport item: dayReportList) {
 				dayList.add(DateTool.formatDate(item.getProduceDay()));
+				dayNewCountList.add(item.getNewCount());
 				dayRunningCountList.add(item.getRunningCount());
 				daySuccessCountList.add(item.getSucCount());
 				dayFailCountList.add(item.getFailCount());
 
+				newCountTotal += item.getNewCount();
 				runningTotal += item.getRunningCount();
 				successTotal += item.getSucCount();
 				failTotal += item.getFailCount();
@@ -256,18 +261,22 @@ public class MessageServiceImpl implements MessageService {
 		} else {
 			for (int i = -6; i <= 0; i++) {
 				dayList.add(DateTool.formatDate(DateTool.addDays(new Date(), i)));
+				dayNewCountList.add(0L);
 				dayRunningCountList.add(0L);
 				daySuccessCountList.add(0L);
 				dayFailCountList.add(0L);
 			}
 		}
 
+		// result
 		Map<String, Object> result = new HashMap<>();
 		result.put("dayList", dayList);
+		result.put("dayNewCountList", dayNewCountList);
 		result.put("dayRunningCountList", dayRunningCountList);
 		result.put("daySuccessCountList", daySuccessCountList);
 		result.put("dayFailCountList", dayFailCountList);
 
+		result.put("newCountTotal", newCountTotal);
 		result.put("runningTotal", runningTotal);
 		result.put("successTotal", successTotal);
 		result.put("failTotal", failTotal);
@@ -281,8 +290,19 @@ public class MessageServiceImpl implements MessageService {
 		// load data
 		List<Application> applicationList = applicationMapper.findAll();
 		int topicCount = topicMapper.count();
-		int messageCount = messageMapper.count();
 
+		// load messageCount(1 years)
+		long messageCount = 0;
+		Date endDate = DateTool.setStartOfDay(DateTool.addDays(new Date(), 1));
+		Date startDate = DateTool.addYears(endDate, -1);
+		List<MessageReport> dayReportList = messageReportMapper.queryReport(startDate, endDate);
+		if (CollectionTool.isNotEmpty(dayReportList)) {
+			for (MessageReport item: dayReportList) {
+				messageCount += item.getTotalCount();
+			}
+		}
+
+		// result
 		Map<String, Object> result = new HashMap<>();
 		result.put("applicationCount", applicationList.size());
 		result.put("topicCount", topicCount);

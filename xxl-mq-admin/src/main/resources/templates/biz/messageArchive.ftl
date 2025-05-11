@@ -68,6 +68,7 @@
 						<div class="box-header" style="float: right" id="data_operation" >
 							<button class="btn btn-sm btn-danger archive" type="button">归档清理</button>
 							<button class="btn btn-sm btn-primary selectOnlyOne showConsumeLog" type="button">查看消费日志</button>
+							<button class="btn btn-sm btn-primary queryMessage" type="button">查看实时消息</button>
 						</div>
 						<div class="box-body" >
 							<table id="data_list" class="table table-bordered table-striped" width="100%" >

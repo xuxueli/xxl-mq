@@ -110,7 +110,7 @@ $(function () {
                 }
             },
             legend: {
-                data:['成功', '失败', '运行中']
+                data:['未消费', '消费中', '消费成功', '消费失败']
             },
             toolbox: {
                 feature: {
@@ -137,14 +137,27 @@ $(function () {
             ],
             series : [
                 {
-                    name:'成功',
+                    name:'未消费',
+                    type:'line',
+                    stack: 'Total',
+                    areaStyle: {normal: {}},
+                    data: data.data.dayNewCountList
+                },
+                {
+                    name:'消费中',
+                    type:'line',
+                    stack: 'Total',
+                    areaStyle: {normal: {}},
+                    data: data.data.dayRunningCountList
+                },{
+                    name:'消费成功',
                     type:'line',
                     stack: 'Total',
                     areaStyle: {normal: {}},
                     data: data.data.daySuccessCountList
                 },
                 {
-                    name:'失败',
+                    name:'消费失败',
                     type:'line',
                     stack: 'Total',
                     label: {
@@ -155,16 +168,9 @@ $(function () {
                     },
                     areaStyle: {normal: {}},
                     data: data.data.dayFailCountList
-                },
-                {
-                    name:'运行中',
-                    type:'line',
-                    stack: 'Total',
-                    areaStyle: {normal: {}},
-                    data: data.data.dayRunningCountList
                 }
             ],
-            color:['#00A65A', '#c23632', '#F39C12']
+            color:['#808080', '#F39C12', '#00A65A', '#c23632']
         };
 
         var lineChart = echarts.init(document.getElementById('lineChart'));
@@ -188,7 +194,7 @@ $(function () {
             legend: {
                 orient: 'vertical',
                 left: 'left',
-                data: ['成功', '失败', '运行中']
+                data: ['未消费', '消费中', '消费成功', '消费失败']
             },
             series : [
                 {
@@ -198,16 +204,19 @@ $(function () {
                     center: ['50%', '60%'],
                     data:[
                         {
-                            name:'成功',
+                            name:'未消费',
+                            value:data.data.newCountTotal
+                        },
+                        {
+                            name:'消费中',
+                            value:data.data.runningTotal
+                        },{
+                            name:'消费成功',
                             value:data.data.successTotal
                         },
                         {
-                            name:'失败',
+                            name:'消费失败',
                             value:data.data.failTotal
-                        },
-                        {
-                            name:'运行中',
-                            value:data.data.runningTotal
                         }
                     ],
                     itemStyle: {
@@ -219,7 +228,7 @@ $(function () {
                     }
                 }
             ],
-            color:['#00A65A', '#c23632', '#F39C12']
+            color:['#808080', '#F39C12', '#00A65A', '#c23632']
         };
         var pieChart = echarts.init(document.getElementById('pieChart'));
         pieChart.setOption(option);

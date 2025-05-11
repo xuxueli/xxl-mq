@@ -497,4 +497,11 @@ $(function() {
 	});
 
 
+	// ---------- ---------- ---------- query archive message ---------- ---------- ----------
+
+	$("#data_operation .queryMessageArchive").click(function(){
+		let topic = $('#data_filter .topic').val();
+		window.location.href = base_url + "/messageArchive?topic=" + topic;
+	});
+
 });
