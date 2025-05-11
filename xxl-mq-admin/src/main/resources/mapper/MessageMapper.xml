@@ -181,8 +181,8 @@
             SUM(CASE WHEN t.`status` in (3, 4) then 1 else 0 end) as failCount
         FROM xxl_mq_message AS t
         WHERE t.`add_time` BETWEEN #{startDate} and #{endDate}
-        GROUP BY t.`add_time`
-        ORDER BY t.`add_time`
+        GROUP BY produceDay
+        ORDER BY produceDay
     </select>
 
     <update id="batchUpdateStatus" parameterType="java.util.Map" >

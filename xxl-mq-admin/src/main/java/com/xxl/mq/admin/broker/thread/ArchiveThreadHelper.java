@@ -71,7 +71,7 @@ public class ArchiveThreadHelper {
                 List<MessageReport> messageReportList2 = brokerBootstrap.getMessageArchiveMapper().queryReport(dateFrom, dateTo);
 
                 Map<Date, MessageReport> reportMap = new HashMap<>();
-                for (MessageReport report : messageReportList) {
+                for (MessageReport report : messageReportList) {            // fill real-time data
                     MessageReport existingReport = reportMap.get(report.getProduceDay());
                     if (existingReport == null) {
                         reportMap.put(report.getProduceDay(), report);
@@ -82,7 +82,7 @@ public class ArchiveThreadHelper {
                         existingReport.setFailCount(existingReport.getFailCount() + report.getFailCount());
                     }
                 }
-                for (MessageReport report : messageReportList2) {
+                for (MessageReport report : messageReportList2) {           // fill archive data
                     MessageReport existingReport = reportMap.get(report.getProduceDay());
                     if (existingReport == null) {
                         reportMap.put(report.getProduceDay(), report);
@@ -91,6 +91,18 @@ public class ArchiveThreadHelper {
                         existingReport.setRunningCount(existingReport.getRunningCount() + report.getRunningCount());
                         existingReport.setSucCount(existingReport.getSucCount() + report.getSucCount());
                         existingReport.setFailCount(existingReport.getFailCount() + report.getFailCount());
+                    }
+                }
+                for (Date produceDay = dateFrom; produceDay.getTime() <= dateTo.getTime(); produceDay = DateTool.addDays(produceDay, 1)) {
+                    MessageReport report = reportMap.get(produceDay);
+                    if (report == null) {
+                        report = new MessageReport();
+                        report.setProduceDay(produceDay);
+                        report.setNewCount(0);
+                        report.setRunningCount(0);
+                        report.setSucCount(0);
+
+                        reportMap.put(report.getProduceDay(), report);      // fill none data
                     }
                 }
 
