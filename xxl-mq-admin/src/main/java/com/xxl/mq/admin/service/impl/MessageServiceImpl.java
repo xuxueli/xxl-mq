@@ -85,7 +85,7 @@ public class MessageServiceImpl implements MessageService {
 		// valid
 		Message message = messageMapper.load(messageDTO.getId());
 		if (message == null) {
-			return Response.ofFail("参数非法：消息ID");
+			return Response.ofFail("参数非法：消息ID（"+ messageDTO.getId() +"）");
 		}
 
 		// write

@@ -34,6 +34,8 @@ public class ArchiveThreadHelper {
 
     // ---------------------- start / stop ----------------------
 
+    private static final int ARCHIVE__INTERVAL = 30 * 60 * 1000;
+
     /**
      * start ArchiveThreadHelper (will stop with jvm)
      *
@@ -158,7 +160,7 @@ public class ArchiveThreadHelper {
                 }
 
             }
-        }, 5 * 60 * 1000, true);
+        }, ARCHIVE__INTERVAL, true);
         archiveThread.start();
     }
 

@@ -138,7 +138,9 @@ $(function() {
 							ret = $(this).html();
 						}
 					});
-					return ret;
+
+					const statueColor = ['#808080', '#F39C12', '#00A65A', '#c23632', '#c23632'];	// status: 0-4
+					return '<span style="color:'+ statueColor[data] +'" >'+ ret +'</span>';
 				}
 			},
 
