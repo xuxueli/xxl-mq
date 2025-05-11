@@ -31,10 +31,12 @@ public class TopicServiceImpl implements TopicService {
 	public Response<String> insert(Topic topic) {
 
 		// valid
-		if (topic == null) {
+		if (topic == null || StringTool.isBlank(topic.getTopic())) {
 			return Response.ofFail("必要参数缺失");
         }
+		topic.setTopic(topic.getTopic().trim());
 
+		// process
 		Topic existTopic = topicMapper.loadByTopic(topic.getTopic());
 		if (existTopic != null) {
 			return Response.ofFail("Topic已存在");
