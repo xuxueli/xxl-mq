@@ -4,6 +4,7 @@ import com.xxl.mq.admin.broker.config.BrokerBootstrap;
 import com.xxl.mq.admin.constant.enums.MessageStatusEnum;
 import com.xxl.mq.admin.constant.enums.PartitionRouteStrategyEnum;
 import com.xxl.mq.admin.constant.enums.RetryStrategyEnum;
+import com.xxl.mq.admin.constant.enums.TopicStatusEnum;
 import com.xxl.mq.admin.model.entity.Message;
 import com.xxl.mq.admin.model.entity.Topic;
 import com.xxl.mq.admin.util.PartitionUtil;
@@ -342,6 +343,20 @@ public class MessageThreadHelper {
                 || StringTool.isBlank(pullRequest.getAppname())
                 || StringTool.isBlank(pullRequest.getInstanceUuid())) {
             return Response.of(401, "Illegal parameters.");
+        }
+
+        // filter topic
+        List<String> validTopicList = new ArrayList<>();
+        for (String topic: pullRequest.getTopicList()) {
+            Topic topicData = brokerBootstrap.getLocalCacheThreadHelper().findTopic(topic);
+            if (topicData!=null && topicData.getStatus() == TopicStatusEnum.INACTIVE.getValue()) {
+                // inactive topic, pass
+                continue;
+            }
+            validTopicList.add(topic);
+        }
+        if (CollectionTool.isEmpty(validTopicList)) {
+            return Response.of(402, "Illegal parameter, not valid topic.");
         }
 
         // match partition

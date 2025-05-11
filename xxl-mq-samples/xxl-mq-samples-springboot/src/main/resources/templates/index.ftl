@@ -28,49 +28,49 @@
         </tr>
         <tr>
             <td>topic_sample</td>
-            <td>全局并行消费</td>
+            <td>全局并行消费：Topic 路由策略 = “轮询”</td>
             <td>
                 <input type="button" class="send" _type="1" value="触发生产" />
             </td>
         </tr>
         <tr>
             <td>topic_sample_02</td>
-            <td>全局串行消费</td>
+            <td>全局串行消费：Topic 路由策略 = “第一个”</td>
             <td>
                 <input type="button" class="send" _type="2" value="触发生产" />
             </td>
         </tr>
         <tr>
             <td>topic_sample_03</td>
-            <td>串并行结合消费</td>
+            <td>串并行结合消费：Topic 路由策略 = “Hash”；且生产消息时，自定义消息bizId（作为分区hash参数） </td>
             <td>
                 <input type="button" class="send" _type="3" value="触发生产" />
             </td>
         </tr>
         <tr>
             <td>topic_sample_04</td>
-            <td>广播消费</td>
+            <td>广播消费：Topic 路由策略 = “广播”</td>
             <td>
                 <input type="button" class="send" _type="4" value="触发生产" />
             </td>
         </tr>
         <tr>
             <td>topic_sample_05</td>
-            <td>延时消息（模拟 延时3min）</td>
+            <td>延时消息：生产消息时，生效时间设置为 3min 后；</td>
             <td>
                 <input type="button" class="send" _type="5" value="触发生产" />
             </td>
         </tr>
         <tr>
             <td>topic_sample_06</td>
-            <td>失败重试消息（模拟 重试3次）</td>
+            <td>失败重试消息：Topic 重试次数 = 3（自定义）；</td>
             <td>
                 <input type="button" class="send" _type="6" value="触发生产" />
             </td>
         </tr>
         <tr>
             <td>topic_sample_07</td>
-            <td>性能测试（模拟 生产10000条消息）</td>
+            <td>性能测试：批量发送消息，模拟生产 10000 条消息；</td>
             <td>
                 <input type="button" class="send" _type="7" value="触发生产" />
             </td>
