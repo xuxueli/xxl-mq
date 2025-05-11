@@ -200,7 +200,7 @@ public class MessageThreadHelper {
             @Override
             public void run() {
 
-                // 1、update stuck 2 fail, mark fail
+                // 1、update stuck 2 fail, mark fail     // todo, stuck 2 new (avoid lose message, need implement idempotent logic)
                 int updateStuck2FailCount = 0;
                 int ret = brokerBootstrap.getMessageMapper().updateStuck2FailWithPage(
                         MessageStatusEnum.RUNNING.getValue(),
