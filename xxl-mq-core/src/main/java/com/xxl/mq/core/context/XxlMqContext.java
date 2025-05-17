@@ -7,9 +7,29 @@ package com.xxl.mq.core.context;
  */
 public class XxlMqContext {
 
+    /**
+     * message id
+     */
     private long id;
+
+    /**
+     * message data
+     */
     private String data;
+
+    /**
+     * message status
+     *      NEW(0, "未消费"),
+     *      RUNNING(1, "消费中"),
+     *      EXECUTE_SUCCESS(2, "消费成功"),
+     *      EXECUTE_FAIL(3, "消费失败"),
+     *      EXECUTE_TIMEOUT(4, "消费超时失败");
+     */
     private int status;;
+
+    /**
+     * message consume log
+     */
     private String consumeLog;
 
     public XxlMqContext() {
@@ -17,6 +37,7 @@ public class XxlMqContext {
         consumeLog = "";
     }
     public XxlMqContext(long id, String data) {
+        this.id = id;
         this.data = data;
         status = 2;
         consumeLog = "";

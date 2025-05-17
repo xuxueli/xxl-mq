@@ -135,7 +135,7 @@
             <if test="effectTimeEnd != null">
                 AND t.effect_time <![CDATA[ <= ]]> #{effectTimeEnd}
             </if>
-        ORDER BY t.`id` ASC
+        ORDER BY t.`id` DESC
         LIMIT #{offset}, #{pagesize}
     </select>
 
@@ -196,6 +196,11 @@
             `consume_log` =
                 <foreach collection="messageList" item="messageItem" index="index" separator=" " open="case id" close="end">
                     when #{messageItem.id} then CONCAT(`consume_log`, #{messageItem.consumeLog})
+                </foreach>
+            ,
+            `consume_instance_uuid` =
+                <foreach collection="messageList" item="messageItem" index="index" separator=" " open="case id" close="end">
+                    when #{messageItem.id} then #{messageItem.consumeInstanceUuid}
                 </foreach>
         WHERE `id` IN
             <foreach collection="messageList" item="messageItem"  index="index" separator="," open="(" close=")">

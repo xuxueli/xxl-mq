@@ -5,6 +5,7 @@ import com.xxl.mq.core.bootstrap.XxlMqBootstrap;
 import com.xxl.mq.core.consumer.IConsumer;
 import com.xxl.mq.core.context.XxlMqContext;
 import com.xxl.mq.core.openapi.model.MessageData;
+import com.xxl.mq.core.util.ConsumeLogUtil;
 import com.xxl.tool.http.IPTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +70,7 @@ public class ConsumerThread {
 
                             // do callback
                             message.setStatus(0);   // not executed, renew orignal(0) status
-                            message.setConsumeLog("consumer-thread terminated, the message not consumed and message-status change to：" + 0 );
+                            message.setConsumeLog(ConsumeLogUtil.BR_TAG + "consumer-thread terminated, the message not consumed and message-status change to：" + 0 );
                             xxlMqBootstrap.getMessageThread().consumeCallback(message);
                             return;
                         }
@@ -114,9 +115,18 @@ public class ConsumerThread {
                             XxlMqHelper.consumeFail("consume error: "+ e.getMessage());
                         } finally {
 
-                            // do callback
+                            // cut log
+                            String consumeLog = XxlMqContext.getContext().getConsumeLog();
+                            consumeLog = (consumeLog!=null&&consumeLog.length()>500) ? (consumeLog.substring(0, 500) + "...") : consumeLog;
+
+                            // write result
                             message.setStatus(XxlMqContext.getContext().getStatus());
-                            message.setConsumeLog(XxlMqContext.getContext().getConsumeLog() + "; Other: consumer ip" + IPTool.getIp() + ", message-status change to：" + message.getStatus());
+                            message.setConsumeLog(consumeLog
+                                    + ConsumeLogUtil.BR_TAG
+                                    +"Other: IP = " + IPTool.getIp() + ", instanceUuid = "+ xxlMqBootstrap.getInstanceUuid() +" , message-status = " + message.getStatus());
+                            message.setConsumeInstanceUuid(xxlMqBootstrap.getInstanceUuid());
+
+                            // do callback
                             xxlMqBootstrap.getMessageThread().consumeCallback(message);
                         }
                     }

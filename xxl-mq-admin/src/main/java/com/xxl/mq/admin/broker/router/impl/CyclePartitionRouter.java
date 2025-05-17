@@ -3,6 +3,8 @@ package com.xxl.mq.admin.broker.router.impl;
 import com.xxl.mq.admin.broker.router.PartitionRouter;
 import com.xxl.mq.admin.util.PartitionUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,9 +40,16 @@ public class CyclePartitionRouter implements PartitionRouter {
 
     @Override
     public int route(String topic, long bizId, Map<String, PartitionUtil.PartitionRange> instancePartitionRange) {
+        // cycle id
         int topicHashCode = topic.hashCode()>0
                 ?topic.hashCode()% MAX_PARTITION
                 :(topic.hashCode() & Integer.MAX_VALUE) % MAX_PARTITION;
-        return calculate(topicHashCode);
+        int cycleId = calculate(topicHashCode);
+
+        // cycle key
+        List<String> keyList = new ArrayList<>(instancePartitionRange.keySet());
+        String cycleKey = keyList.get(cycleId%keyList.size());
+
+        return instancePartitionRange.get(cycleKey).getPartitionIdFrom();
     }
 }

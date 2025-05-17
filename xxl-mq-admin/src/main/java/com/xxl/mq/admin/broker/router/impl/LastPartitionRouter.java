@@ -8,6 +8,6 @@ import java.util.Map;
 public class LastPartitionRouter implements PartitionRouter {
     @Override
     public int route(String topic, long bizId, Map<String, PartitionUtil.PartitionRange> instancePartitionRange) {
-        return 10000;
+        return PartitionUtil.MAX_PARTITION;
     }
 }

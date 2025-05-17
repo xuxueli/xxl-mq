@@ -3,7 +3,6 @@ package com.xxl.mq.core;
 import com.xxl.mq.core.bootstrap.XxlMqBootstrap;
 import com.xxl.mq.core.context.XxlMqContext;
 import com.xxl.mq.core.openapi.model.MessageData;
-import com.xxl.tool.core.StringTool;
 
 /**
  * xxl-mq helper
@@ -14,6 +13,15 @@ public class XxlMqHelper {
 
 
     // --------------------------------- get message data (for consumer) ---------------------------------
+
+    /**
+     * get message data
+     *
+     * @return
+     */
+    public static long getMessageId() {
+        return XxlMqContext.getContext().getId();
+    }
 
     /**
      * get message data

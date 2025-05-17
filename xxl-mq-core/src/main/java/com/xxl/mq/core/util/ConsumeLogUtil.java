@@ -7,6 +7,7 @@ import java.util.Date;
 public class ConsumeLogUtil {
 
     public static final String HR_TAG = "<hr>";
+    public static final String BR_TAG = "<br>";
 
     /**
      * append ConsumeLog

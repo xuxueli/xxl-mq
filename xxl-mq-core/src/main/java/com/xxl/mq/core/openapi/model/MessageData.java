@@ -71,6 +71,11 @@ public class MessageData implements Serializable {
      */
     private String consumeLog;
 
+    /**
+     * 消费实例实例唯一标识
+     */
+    private String consumeInstanceUuid;
+
     public long getId() {
         return id;
     }
@@ -127,16 +132,26 @@ public class MessageData implements Serializable {
         this.consumeLog = consumeLog;
     }
 
+    public String getConsumeInstanceUuid() {
+        return consumeInstanceUuid;
+    }
+
+    public void setConsumeInstanceUuid(String consumeInstanceUuid) {
+        this.consumeInstanceUuid = consumeInstanceUuid;
+    }
+
     @Override
     public String toString() {
         return "MessageData{" +
                 "id=" + id +
                 ", topic='" + topic + '\'' +
                 ", data='" + data + '\'' +
-                ", bizId='" + bizId + '\'' +
+                ", bizId=" + bizId +
                 ", effectTime=" + effectTime +
                 ", status=" + status +
                 ", consumeLog='" + consumeLog + '\'' +
+                ", consumeInstanceUuid='" + consumeInstanceUuid + '\'' +
                 '}';
     }
+
 }

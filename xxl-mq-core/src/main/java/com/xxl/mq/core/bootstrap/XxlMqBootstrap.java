@@ -133,7 +133,7 @@ public class XxlMqBootstrap {
         // 5、pullThread
         pullThread = new PullThread(this);
         pullThread.start();
-        logger.info(">>>>>>>>>>> xxl-mq XxlMqBootstrap started.");
+        logger.info(">>>>>>>>>>> xxl-mq XxlMqBootstrap started, instanceUuid = " + instanceUuid);
     }
 
     public void stop() {

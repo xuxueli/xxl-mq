@@ -168,8 +168,9 @@ public class MessageThreadHelper {
                             Message message = new Message();
                             message.setId(messageData.getId());
                             message.setStatus(messageData.getStatus());
-                            message.setTopic(messageData.getTopic());
+                            //message.setTopic(messageData.getTopic());
                             message.setConsumeLog( ConsumeLogUtil.HR_TAG +  ConsumeLogUtil.generateConsumeLog("消费消息", messageData.getConsumeLog() ));
+                            message.setConsumeInstanceUuid(messageData.getConsumeInstanceUuid());
 
                             // collect
                             messageList.add(message);
@@ -372,16 +373,37 @@ public class MessageThreadHelper {
             return Response.ofSuccess();
         }
 
-        // 2、消息锁定, with uuid
-        List<Long> messageIdList = messageList.stream().map(Message::getId).collect(Collectors.toList());
-        int count = brokerBootstrap.getMessageMapper().pullLock(messageIdList, pullRequest.getInstanceUuid(), MessageStatusEnum.NEW.getValue(), MessageStatusEnum.RUNNING.getValue());
+        /**
+         * markAsProcessingOnFetch: 默认为 fasle；
+         *      true：两阶段更新，消费前后均更新消息；
+         *          1、流程：拉取时更新为 “RUNNING”，消费完成后，再根据结果更新状态。
+         *          2、优点：避免重复消费：RUNNING，等同于锁定状态；
+         *          3、缺点：
+         *              - 状态管理复杂：需要维护额外的状态流转逻辑；
+         *              - 可能出现丢消息：如果拉消息网络异常、消费端宕机且未及时恢复，“执行中”状态的消息可能会被挂起，需依赖超时机制来释放。       【解决方案：stuck-message 检测恢复机制】 >  标记失败( 消息丢失 / 默认机制 )  or 标记初始状态 ( 导致延迟 )
+         *          4、适用场景：需要严格保证消息不被重复消费的业务场景；例如订单支付、库存扣减等。
+         *      false：仅消费后更新；消费后更新为 “SUCCESS、FAIL”
+         *          1、流程：拉取消息时不修改状态；消费完成后，再根据结果更新状态。
+         *          2、优点：
+         *              - 简单易实现：不需要复杂的中间状态管理。
+         *              - 避免丢消息现象：支持并发消费：多个消费者可以同时处理不同消息，提高吞吐量。
+         *          3、缺点：
+         *              - 可能重复消费：如果消费失败但未通知消息系统，消息可能会被再次拉取。                         【解决方案：客户端幂等】借助消息 “msgId”，客户端进行幂等处理；
+         *          4、适用场景：对消息处理效率要求较高，且能够容忍短暂重复消费的场景。
+         */
+        boolean markAsProcessingOnFetch = false;
+        if (markAsProcessingOnFetch) {
+            // 2、消息锁定, with uuid
+            List<Long> messageIdList = messageList.stream().map(Message::getId).collect(Collectors.toList());
+            int count = brokerBootstrap.getMessageMapper().pullLock(messageIdList, pullRequest.getInstanceUuid(), MessageStatusEnum.NEW.getValue(), MessageStatusEnum.RUNNING.getValue());
 
-        // 3、锁定消息检索, with uuid （锁定失败，过滤锁定成功数据）
-        if (count < messageList.size()) {
-            messageList = brokerBootstrap.getMessageMapper().pullQueryByUuid(messageIdList, pullRequest.getInstanceUuid(), MessageStatusEnum.RUNNING.getValue());
-            if (CollectionTool.isEmpty(messageList)) {
-                // lock fail all
-                return Response.ofSuccess();
+            // 3、锁定消息检索, with uuid （锁定失败，过滤锁定成功数据）
+            if (count < messageList.size()) {
+                messageList = brokerBootstrap.getMessageMapper().pullQueryByUuid(messageIdList, pullRequest.getInstanceUuid(), MessageStatusEnum.RUNNING.getValue());
+                if (CollectionTool.isEmpty(messageList)) {
+                    // lock fail all
+                    return Response.ofSuccess();
+                }
             }
         }
 
