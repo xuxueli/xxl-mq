@@ -69,9 +69,16 @@ public class ConsumerThread {
                         if (scheduledExecutorService.isShutdown()) {
 
                             // do callback
-                            message.setStatus(0);   // not executed, renew orignal(0) status
-                            message.setConsumeLog(ConsumeLogUtil.BR_TAG + "consumer-thread terminated, the message not consumed and message-status change to：" + 0 );
-                            xxlMqBootstrap.getMessageThread().consumeCallback(message);
+                            String consumeLog = ConsumeLogUtil.BR_TAG + "consumer-thread terminated, the message not consumed and message-status change to：" + 0;
+                            xxlMqBootstrap.getMessageThread().consumeCallback(
+                                    new MessageData(
+                                            message.getId(),
+                                            message.getTopic(),
+                                            0,      // not executed, renew orignal(0) status
+                                            consumeLog,
+                                            null
+                                    )
+                            );
                             return;
                         }
 
@@ -115,19 +122,24 @@ public class ConsumerThread {
                             XxlMqHelper.consumeFail("consume error: "+ e.getMessage());
                         } finally {
 
-                            // cut log
+                            // cut biz log
                             String consumeLog = XxlMqContext.getContext().getConsumeLog();
                             consumeLog = (consumeLog!=null&&consumeLog.length()>500) ? (consumeLog.substring(0, 500) + "...") : consumeLog;
 
-                            // write result
-                            message.setStatus(XxlMqContext.getContext().getStatus());
-                            message.setConsumeLog(consumeLog
-                                    + ConsumeLogUtil.BR_TAG
-                                    +"Other: IP = " + IPTool.getIp() + ", instanceUuid = "+ xxlMqBootstrap.getInstanceUuid() +" , message-status = " + message.getStatus());
-                            message.setConsumeInstanceUuid(xxlMqBootstrap.getInstanceUuid());
+                            // append other log
+                            consumeLog += ConsumeLogUtil.BR_TAG
+                                    +"Other: IP = " + IPTool.getIp() + ", instanceUuid = "+ xxlMqBootstrap.getInstanceUuid() +" , message-status = " + message.getStatus();
 
                             // do callback
-                            xxlMqBootstrap.getMessageThread().consumeCallback(message);
+                            xxlMqBootstrap.getMessageThread().consumeCallback(
+                                    new MessageData(
+                                            message.getId(),
+                                            message.getTopic(),
+                                            XxlMqContext.getContext().getStatus(),
+                                            consumeLog,
+                                            xxlMqBootstrap.getInstanceUuid()
+                                    )
+                            );
                         }
                     }
                 },

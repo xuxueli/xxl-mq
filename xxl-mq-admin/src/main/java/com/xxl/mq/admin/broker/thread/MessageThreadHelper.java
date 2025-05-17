@@ -421,7 +421,8 @@ public class MessageThreadHelper {
             messageDataList.add(new MessageData(
                     message.getId(),
                     message.getTopic(),
-                    message.getData()));
+                    message.getData(),
+                    message.getEffectTime().getTime()));
         }
         return Response.ofSuccess(messageDataList);
     }

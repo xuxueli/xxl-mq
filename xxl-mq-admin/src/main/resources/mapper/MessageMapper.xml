@@ -214,6 +214,7 @@
                 `id`,
                 `topic`,
                 `data`,
+                `effect_time`,
                 ROW_NUMBER() OVER (PARTITION BY `topic` ORDER BY `id`) as rn
             FROM xxl_mq_message
             WHERE
@@ -230,7 +231,8 @@
         SELECT
             `id`,
             `topic`,
-            `data`
+            `data`,
+            `effect_time`
         FROM PullTopicData
         WHERE rn <![CDATA[ <= ]]> #{pagesize}
     </select>

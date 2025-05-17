@@ -18,16 +18,18 @@ public class MessageData implements Serializable {
         this.bizId = bizId;
         this.effectTime = effectTime;
     }
-    public MessageData(long id, String topic, int status, String consumeLog) {
+    public MessageData(long id, String topic, String data, long effectTime) {
+        this.id = id;
+        this.topic = topic;
+        this.data = data;
+        this.effectTime = effectTime;
+    }
+    public MessageData(long id, String topic, int status, String consumeLog, String consumeInstanceUuid) {
         this.id = id;
         this.topic = topic;
         this.status = status;
         this.consumeLog = consumeLog;
-    }
-    public MessageData(long id, String topic, String data) {
-        this.id = id;
-        this.topic = topic;
-        this.data = data;
+        this.consumeInstanceUuid = consumeInstanceUuid;
     }
 
     /**
