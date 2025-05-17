@@ -28,16 +28,16 @@
 		<maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
 		<maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
 
+		<!-- base -->
+		<slf4j-api.version>2.0.17</slf4j-api.version>
+		<junit-jupiter.version>5.12.2</junit-jupiter.version>
+
 		<!-- spring -->
 		<spring.version>5.3.39</spring.version>
 		<spring-boot.version>2.7.18</spring-boot.version>
 		<!-- database -->
 		<mybatis-spring-boot-starter.version>2.3.2</mybatis-spring-boot-starter.version>
 		<mysql-connector-j.version>9.2.0</mysql-connector-j.version>
-
-		<!-- base -->
-		<slf4j-api.version>2.0.17</slf4j-api.version>
-		<junit-jupiter.version>5.12.2</junit-jupiter.version>
 
 		<!-- xxl-tool( + support) -->
 		<xxl-tool.version>1.4.2</xxl-tool.version>
