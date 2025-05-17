@@ -368,7 +368,14 @@ public class MessageThreadHelper {
 
         // 1、消息检索
         int pagesize = pullRequest.getBatchsize();
-        List<Message> messageList = brokerBootstrap.getMessageMapper().pullQuery(pullRequest.getTopicList(), MessageStatusEnum.NEW.getValue(), partitionRange.getPartitionIdFrom(), partitionRange.getPartitionIdTo(), pagesize);
+        Date prePullTime = DateTool.addSeconds(new Date(), 30);
+        List<Message> messageList = brokerBootstrap.getMessageMapper().pullQuery(
+                pullRequest.getTopicList(),
+                MessageStatusEnum.NEW.getValue(),
+                partitionRange.getPartitionIdFrom(),
+                partitionRange.getPartitionIdTo(),
+                prePullTime,
+                pagesize);
         if (CollectionTool.isEmpty(messageList)) {
             return Response.ofSuccess();
         }

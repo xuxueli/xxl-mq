@@ -97,6 +97,7 @@ public interface MessageMapper {
                                    @Param("status") int status,
                                    @Param("partitionIdFrom") int partitionIdFrom,
                                    @Param("partitionIdTo") int partitionIdTo,
+                                   @Param("prePullTime") Date prePullTime,
                                    @Param("pagesize") int pagesize);
 
     /**

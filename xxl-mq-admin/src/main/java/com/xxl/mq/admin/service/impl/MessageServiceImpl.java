@@ -12,6 +12,7 @@ import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.DateTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.gson.GsonTool;
+import com.xxl.tool.response.ResponseCode;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -150,7 +151,7 @@ public class MessageServiceImpl implements MessageService {
 
 		// archive
 		long cleanCount = cleanAndArchive(topic, archiveStrategyEnum, maxCycleCount);
-		return Response.ofSuccess("操作成功，处理数据行数：" + cleanCount);
+		return Response.of(ResponseCode.CODE_200.getCode(),"操作成功，处理数据行数：" + cleanCount);
 	}
 
 	/**
@@ -219,7 +220,7 @@ public class MessageServiceImpl implements MessageService {
 
 		// 3、scroll clean archived data （old）
 		maxCycleCount = 100;
-		int count = messageArchiveMapper.batchClean(topic, isArchive, effectTimeFrom, pageSize);
+		int count = 1;
 		while (maxCycleCount>0 && count > 0) {
 			// next page
 			count = messageArchiveMapper.batchClean(topic, isArchive, effectTimeFrom, pageSize);

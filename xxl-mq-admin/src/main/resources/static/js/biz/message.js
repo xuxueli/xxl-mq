@@ -472,13 +472,19 @@ $(function() {
 		}
 
 		// invoke
+		var loadingIndex = layer.load(2, {	// 菊花
+			shade: [0.3, '#808080'] 		// 灰色背景，透明度 0.3
+		});
+		setTimeout(function(){
+			$('#archiveModel').modal('hide');
+		}, 50);
 		$.post(base_url + "/message/archive",  $("#archiveModel .form").serialize(), function(data, status) {
+			layer.close(loadingIndex);
 			if (data.code == "200") {
-				$('#archiveModel').modal('hide');
 				layer.open({
 					title: "系统提示",
 					btn: [ "确认" ],
-					content: "操作成功" ,
+					content: (data.msg || "操作成功" ) ,
 					icon: '1',
 					end: function(layero, index){
 						mainDataTable.fnDraw(false);

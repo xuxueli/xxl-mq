@@ -223,7 +223,7 @@
                     </foreach>
                 AND `status` = #{status}
                 AND `partition_id` BETWEEN #{partitionIdFrom} AND #{partitionIdTo}
-                AND `effect_time` <![CDATA[ <= ]]> NOW()
+                AND `effect_time` <![CDATA[ <= ]]> #{prePullTime}
             ORDER BY `id` asc
             LIMIT #{pagesize}
         )

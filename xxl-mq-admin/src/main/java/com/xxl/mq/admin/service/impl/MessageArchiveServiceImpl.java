@@ -12,6 +12,7 @@ import com.xxl.tool.core.DateTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
+import com.xxl.tool.response.ResponseCode;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -96,7 +97,7 @@ public class MessageArchiveServiceImpl implements MessageAichiveService {
 				break;
 		}
 
-		return Response.ofSuccess("操作成功，处理数据行数：" + cleanCount);
+		return Response.of(ResponseCode.CODE_200.getCode(), "操作成功，处理数据行数：" + cleanCount);
 	}
 
 	/**
@@ -109,10 +110,10 @@ public class MessageArchiveServiceImpl implements MessageAichiveService {
 	private long cleanAndArchive(String topic, boolean isArchive, Date effectTimeFrom){
 
 		// 3、scroll clean archived data （old）
-		int maxCycleCount = 100;
+		int maxCycleCount = 1000;
 		int pageSize = 100;
 		int archeveNum = 0;
-		int count = messageArchiveMapper.batchClean(topic, isArchive, effectTimeFrom, pageSize);
+		int count = 1;
 		while (maxCycleCount>0 && count > 0) {
 			// next page
 			count = messageArchiveMapper.batchClean(topic, isArchive, effectTimeFrom, pageSize);
