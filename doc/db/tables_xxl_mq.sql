@@ -151,7 +151,7 @@ VALUES (1, 'topic_sample', 'xxl-mq-sample', '示例1:全局并行消费', 'XXL',
        (4, 'topic_sample_04', 'xxl-mq-sample', '示例4:广播消费', 'XXL', '', 0, '0', '1', '6', '1', 0, 3, 1, 0, now(), now()),
        (5, 'topic_sample_05', 'xxl-mq-sample', '示例5:延时消息（模拟 延时3min）', 'XXL', '', 0, '0', '1', '1', '1', 0, 3, 1, 0, now(), now()),
        (6, 'topic_sample_06', 'xxl-mq-sample', '示例6:失败重试消息（模拟 重试3次）', 'XXL', '', 0, '0', '1', '1', '1', 3, 3, 1, 0, now(), now()),
-       (7, 'topic_sample_07', 'xxl-mq-sample', '示例7:性能测试（模拟 生产10000条消息）', 'XXL', '', 0, '0', '1', '1', '1', 0, 3, 1, 0, now(), now());
+       (7, 'topic_sample_07', 'xxl-mq-sample', '示例7:性能测试（模拟 生产10000条消息）', 'XXL', '', 0, '0', '1', '2', '1', 0, 3, 1, 0, now(), now());
 
 INSERT INTO xxl_mq.xxl_mq_message (id, topic, data, biz_id, partition_id, status, effect_time, retry_count_remain, consume_log, consume_instance_uuid, add_time, update_time)
 VALUES (1, 'topic_sample', 'hello world.', 0,1, 0, now(), 0, null, null, now(), now());
