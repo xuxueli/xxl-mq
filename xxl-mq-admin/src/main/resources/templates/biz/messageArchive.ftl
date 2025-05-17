@@ -220,20 +220,12 @@
 									<div class="col-sm-10 data"></div>
 								</div>
 								<div class="form-group">
-									<label for="lastname" class="col-sm-2 control-label">生效时间<font color="red">*</font></label>
-									<div class="col-sm-10 effectTime"></div>
-								</div>
-								<div class="form-group">
 									<label for="lastname" class="col-sm-2 control-label">新增时间<font color="red">*</font></label>
 									<div class="col-sm-10 addTime"></div>
 								</div>
 								<div class="form-group">
-									<label for="lastname" class="col-sm-2 control-label">更新时间<font color="red">*</font></label>
-									<div class="col-sm-10 updateTime"></div>
-								</div>
-								<div class="form-group">
-									<label for="lastname" class="col-sm-2 control-label">消费者实例<font color="red">*</font></label>
-									<div class="col-sm-10 consumeInstanceUuid"></div>
+									<label for="lastname" class="col-sm-2 control-label">生效时间<font color="red">*</font></label>
+									<div class="col-sm-10 effectTime"></div>
 								</div>
 								<div class="form-group">
 									<label for="lastname" class="col-sm-2 control-label">消费日志<font color="red">*</font></label>

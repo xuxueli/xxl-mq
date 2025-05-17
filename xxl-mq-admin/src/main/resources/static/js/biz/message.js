@@ -446,10 +446,8 @@ $(function() {
 		// show
 		$('#showConsumeLogModel .id').html(row.id);
 		$('#showConsumeLogModel .data').html(row.data);
-		$('#showConsumeLogModel .effectTime').html(row.effectTime);
 		$('#showConsumeLogModel .addTime').html( moment(row.addTime).format('YYYY-MM-DD HH:mm:ss') );
-		$('#showConsumeLogModel .updateTime').html( moment(row.updateTime).format('YYYY-MM-DD HH:mm:ss') );
-		$('#showConsumeLogModel .consumeInstanceUuid').html(row.consumeInstanceUuid);
+		$('#showConsumeLogModel .effectTime').html(row.effectTime);
 		$('#showConsumeLogModel .consumeLog').html(row.consumeLog);
 		$('#showConsumeLogModel').modal({backdrop: false, keyboard: false}).modal('show');
 
