@@ -188,14 +188,25 @@ public class BrokerServiceImpl implements BrokerService {
      *      </pre>
      */
     @Override
-    public Response<List<MessageData>> pull(PullRequest pullRequest) {
+    public Response<List<MessageData>> pullAndLock(PullRequest pullRequest) {
         // valid token
         if (!validAccessToken(pullRequest)) {
             return Response.ofFail("accessToken invalid");
         }
 
         // invoke
-        return BrokerBootstrap.getInstance().getMessageThreadHelper().pull(pullRequest);
+        return BrokerBootstrap.getInstance().getMessageThreadHelper().pullAndLock(pullRequest);
+    }
+
+    @Override
+    public Response<String> pullPreCheck(PullRequest pullRequest) {
+        // valid token
+        if (!validAccessToken(pullRequest)) {
+            return Response.ofFail("accessToken invalid");
+        }
+
+        // invoke
+        return BrokerBootstrap.getInstance().getMessageThreadHelper().pullPreCheck(pullRequest);
     }
 
 }

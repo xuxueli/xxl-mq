@@ -102,11 +102,11 @@ public class MessageServiceImpl implements MessageService {
 	/**
 	* Load查询
 	*/
-	@Override
+	/*@Override
 	public Response<Message> load(int id) {
 		Message record = messageMapper.load(id);
 		return Response.ofSuccess(record);
-	}
+	}*/
 
 	/**
 	* 分页查询

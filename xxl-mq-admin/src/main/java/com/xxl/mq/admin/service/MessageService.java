@@ -34,7 +34,7 @@ public interface MessageService {
     /**
     * Load查询
     */
-    public Response<Message> load(int id);
+    /*public Response<Message> load(int id);*/
 
     /**
     * 分页查询

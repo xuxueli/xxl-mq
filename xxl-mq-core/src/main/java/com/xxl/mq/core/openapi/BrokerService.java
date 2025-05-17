@@ -29,7 +29,7 @@ public interface BrokerService {
     public Response<String> registryRemove(RegistryRequest registryRequest);
 
     /**
-     * produce messages
+     * produce messages (new message)
      *
      * @param produceRequest
      * @return
@@ -37,7 +37,7 @@ public interface BrokerService {
     public Response<String> produce(ProduceRequest produceRequest);
 
     /**
-     * consume messages (callback)
+     * consume messages (callback message status)
      *
      * @param consumeRequest
      * @return
@@ -45,12 +45,19 @@ public interface BrokerService {
     public Response<String> consume(ConsumeRequest consumeRequest);
 
     /**
-     * pull messages (will lock)
+     * pull messages (will lock message)
      *
      * @param pullRequest
      * @return
      */
-    public Response<List<MessageData>> pull(PullRequest pullRequest);
+    public Response<List<MessageData>> pullAndLock(PullRequest pullRequest);
 
+    /**
+     * pull pre-check (check partition permission)
+     *
+     * @param pullRequest
+     * @return
+     */
+    public Response<String> pullPreCheck(PullRequest pullRequest);
 
 }

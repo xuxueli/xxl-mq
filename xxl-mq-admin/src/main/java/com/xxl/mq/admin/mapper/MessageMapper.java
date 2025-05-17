@@ -169,13 +169,13 @@ public interface MessageMapper {
      * stuck 卡住状态任务 修改为 失败；
      *
      * @param runningStatus
-     * @param stuckTime
+     * @param timeoutTime
      * @param failStatus
      * @param pagesize
      * @return
      */
-    public int updateStuck2FailWithPage(@Param("runningStatus") Integer runningStatus,
-                                        @Param("stuckTime") Date stuckTime,
+    public int updateRunningTimeout2Fail(@Param("runningStatus") Integer runningStatus,
+                                        @Param("timeoutTime") Date timeoutTime,
                                         @Param("failStatus") int failStatus,
                                         @Param("pagesize") int pagesize);
 

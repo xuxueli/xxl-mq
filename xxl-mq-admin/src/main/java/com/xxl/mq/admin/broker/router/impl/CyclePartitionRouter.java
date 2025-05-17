@@ -2,6 +2,7 @@ package com.xxl.mq.admin.broker.router.impl;
 
 import com.xxl.mq.admin.broker.router.PartitionRouter;
 import com.xxl.mq.admin.util.PartitionUtil;
+import com.xxl.tool.core.MapTool;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.xxl.mq.admin.util.PartitionUtil.MAX_PARTITION;
@@ -40,6 +42,13 @@ public class CyclePartitionRouter implements PartitionRouter {
 
     @Override
     public int route(String topic, long bizId, Map<String, PartitionUtil.PartitionRange> instancePartitionRange) {
+
+        // valid
+        if (MapTool.isEmpty(instancePartitionRange)) {
+            // instance empty, Adjust to random-router
+            return ThreadLocalRandom.current().nextInt(MAX_PARTITION);
+        }
+
         // cycle id
         int topicHashCode = topic.hashCode()>0
                 ?topic.hashCode()% MAX_PARTITION

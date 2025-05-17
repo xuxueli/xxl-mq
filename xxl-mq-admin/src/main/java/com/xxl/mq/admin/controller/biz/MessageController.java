@@ -116,12 +116,12 @@ public class MessageController {
     /**
     * Load查询
     */
-    @RequestMapping("/load")
+    /*@RequestMapping("/load")
     @ResponseBody
     @Permission
     public Response<Message> load(int id){
         return messageService.load(id);
-    }
+    }*/
 
     /**
     * 新增

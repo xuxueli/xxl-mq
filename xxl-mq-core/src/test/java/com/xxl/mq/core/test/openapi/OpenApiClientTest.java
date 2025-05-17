@@ -184,7 +184,7 @@ public class OpenApiClientTest {
         pullRequest.setInstanceUuid("uuid_03");
         pullRequest.setTopicList(Arrays.asList("topic_sample"));
 
-        Response<List<MessageData>> response = brokerService.pull(pullRequest);
+        Response<List<MessageData>> response = brokerService.pullAndLock(pullRequest);
         logger.info("response:{}", response);
     }
 

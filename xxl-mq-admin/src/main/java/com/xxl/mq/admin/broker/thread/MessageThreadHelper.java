@@ -201,9 +201,11 @@ public class MessageThreadHelper {
             @Override
             public void run() {
 
-                // 1、update stuck 2 fail, mark fail     // todo, stuck 2 new (avoid lose message, need implement idempotent logic)
+                /**
+                 * 1、find running-timeout（ running > 5min ） message, mark fail
+                 */
                 int updateStuck2FailCount = 0;
-                int ret = brokerBootstrap.getMessageMapper().updateStuck2FailWithPage(
+                int ret = brokerBootstrap.getMessageMapper().updateRunningTimeout2Fail(
                         MessageStatusEnum.RUNNING.getValue(),
                         DateTool.addMinutes(new Date(), -5),
                         MessageStatusEnum.EXECUTE_TIMEOUT.getValue(),
@@ -217,7 +219,7 @@ public class MessageThreadHelper {
                         // ignore
                     }
                     // next page
-                    ret = brokerBootstrap.getMessageMapper().updateStuck2FailWithPage(
+                    ret = brokerBootstrap.getMessageMapper().updateRunningTimeout2Fail(
                             MessageStatusEnum.RUNNING.getValue(),
                             DateTool.addMinutes(new Date(), -5),
                             MessageStatusEnum.EXECUTE_TIMEOUT.getValue(),
@@ -332,12 +334,12 @@ public class MessageThreadHelper {
     }
 
     /**
-     * pull message
+     * pull and lock message
      *
      * @param pullRequest
      * @return
      */
-    public Response<List<MessageData>> pull(PullRequest pullRequest) {
+    public Response<List<MessageData>> pullAndLock(PullRequest pullRequest) {
 
         // valid
         if (CollectionTool.isEmpty(pullRequest.getTopicList())
@@ -381,36 +383,44 @@ public class MessageThreadHelper {
         }
 
         /**
-         * markAsProcessingOnFetch: 默认为 fasle；
+         * markAsProcessingOnFetch: 默认为 true；
          *      true：两阶段更新，消费前后均更新消息；
          *          1、流程：拉取时更新为 “RUNNING”，消费完成后，再根据结果更新状态。
+         *              - pullQuery + pullLock (“RUNNING”)
+         *              - remoting http
+         *              - dispatch + consumer ( “SUCCESS”、“FAIL” )
          *          2、优点：避免重复消费：RUNNING，等同于锁定状态；
          *          3、缺点：
          *              - 状态管理复杂：需要维护额外的状态流转逻辑；
-         *              - 可能出现丢消息：如果拉消息网络异常、消费端宕机且未及时恢复，“执行中”状态的消息可能会被挂起，需依赖超时机制来释放。       【解决方案：stuck-message 检测恢复机制】 >  标记失败( 消息丢失 / 默认机制 )  or 标记初始状态 ( 导致延迟 )
+         *              - 可能出现丢消息：
+         *                  - 如果拉消息网络异常：丢消息；
+         *                  - 消费端宕机且未及时恢复：丢消息；“执行中”状态的消息可能会被挂起，需依赖超时机制来释放。       【解决方案：stuck-message 检测恢复机制】 >  标记失败( 消息丢失 / 默认机制 )  or 标记初始状态 ( 导致延迟 )
          *          4、适用场景：需要严格保证消息不被重复消费的业务场景；例如订单支付、库存扣减等。
          *      false：仅消费后更新；消费后更新为 “SUCCESS、FAIL”
          *          1、流程：拉取消息时不修改状态；消费完成后，再根据结果更新状态。
+         *              - pullQuery
+         *              - remoting http
+         *              - dispatch + consumer ( “SUCCESS”、“FAIL” )
          *          2、优点：
          *              - 简单易实现：不需要复杂的中间状态管理。
          *              - 避免丢消息现象：支持并发消费：多个消费者可以同时处理不同消息，提高吞吐量。
          *          3、缺点：
-         *              - 可能重复消费：如果消费失败但未通知消息系统，消息可能会被再次拉取。                         【解决方案：客户端幂等】借助消息 “msgId”，客户端进行幂等处理；
+         *              - 可能重复消费：
+         *                  消息结果异步回调，客户端无法感知回调速度和结果；会重复拉取消息，重复消费；
+         *                  如果消费失败但未通知消息系统，消息可能会被再次拉取。                         【解决方案：客户端幂等】借助消息 “msgId”，客户端进行幂等处理；
          *          4、适用场景：对消息处理效率要求较高，且能够容忍短暂重复消费的场景。
          */
-        boolean markAsProcessingOnFetch = false;
-        if (markAsProcessingOnFetch) {
-            // 2、消息锁定, with uuid
-            List<Long> messageIdList = messageList.stream().map(Message::getId).collect(Collectors.toList());
-            int count = brokerBootstrap.getMessageMapper().pullLock(messageIdList, pullRequest.getInstanceUuid(), MessageStatusEnum.NEW.getValue(), MessageStatusEnum.RUNNING.getValue());
+        /*boolean markAsProcessingOnFetch = true;*/
+        // 2、消息锁定, with uuid
+        List<Long> messageIdList = messageList.stream().map(Message::getId).collect(Collectors.toList());
+        int count = brokerBootstrap.getMessageMapper().pullLock(messageIdList, pullRequest.getInstanceUuid(), MessageStatusEnum.NEW.getValue(), MessageStatusEnum.RUNNING.getValue());
 
-            // 3、锁定消息检索, with uuid （锁定失败，过滤锁定成功数据）
-            if (count < messageList.size()) {
-                messageList = brokerBootstrap.getMessageMapper().pullQueryByUuid(messageIdList, pullRequest.getInstanceUuid(), MessageStatusEnum.RUNNING.getValue());
-                if (CollectionTool.isEmpty(messageList)) {
-                    // lock fail all
-                    return Response.ofSuccess();
-                }
+        // 3、锁定消息检索, with uuid （锁定失败，过滤锁定成功数据）
+        if (count < messageList.size()) {
+            messageList = brokerBootstrap.getMessageMapper().pullQueryByUuid(messageIdList, pullRequest.getInstanceUuid(), MessageStatusEnum.RUNNING.getValue());
+            if (CollectionTool.isEmpty(messageList)) {
+                // lock fail all
+                return Response.ofSuccess();
             }
         }
 
@@ -425,6 +435,25 @@ public class MessageThreadHelper {
                     message.getEffectTime().getTime()));
         }
         return Response.ofSuccess(messageDataList);
+    }
+
+    /**
+     * pull pre-check
+     */
+    public Response<String> pullPreCheck(PullRequest pullRequest) {
+
+        // valid
+        if (StringTool.isBlank(pullRequest.getAppname()) || StringTool.isBlank(pullRequest.getInstanceUuid())) {
+            return Response.of(401, "Illegal parameters.");
+        }
+
+        // match partition
+        PartitionUtil.PartitionRange partitionRange = brokerBootstrap.getLocalCacheThreadHelper().findPartitionRangeByAppnameAndUuid(pullRequest.getAppname(), pullRequest.getInstanceUuid());
+        if (partitionRange == null) {
+            return Response.of(402, "Current instanceUuid has not been assigned a partition.");
+        }
+
+        return Response.ofSuccess(partitionRange.getPartitionIdFrom() + "-" + partitionRange.getPartitionIdTo());
     }
 
 }

@@ -201,7 +201,8 @@
             `consume_instance_uuid` =
                 <foreach collection="messageList" item="messageItem" index="index" separator=" " open="case id" close="end">
                     when #{messageItem.id} then #{messageItem.consumeInstanceUuid}
-                </foreach>
+                </foreach>,
+            `update_time` = NOW()
         WHERE `id` IN
             <foreach collection="messageList" item="messageItem"  index="index" separator="," open="(" close=")">
                 #{messageItem.id}
@@ -225,8 +226,6 @@
                 AND `status` = #{status}
                 AND `partition_id` BETWEEN #{partitionIdFrom} AND #{partitionIdTo}
                 AND `effect_time` <![CDATA[ <= ]]> #{prePullTime}
-            ORDER BY `id` asc
-            LIMIT #{pagesize}
         )
         SELECT
             `id`,
@@ -309,13 +308,13 @@
             AND t.`retry_count_remain` <![CDATA[ > ]]> 0
     </update>
 
-    <update id="updateStuck2FailWithPage" parameterType="java.util.Map" >
+    <update id="updateRunningTimeout2Fail" parameterType="java.util.Map" >
         UPDATE xxl_mq_message
         SET
         `status` = #{failStatus},
         `update_time` = NOW()
         WHERE `status` = #{runningStatus}
-            AND update_time <![CDATA[ < ]]> #{stuckTime}
+            AND update_time <![CDATA[ < ]]> #{timeoutTime}
         LIMIT #{pagesize}
     </update>
 

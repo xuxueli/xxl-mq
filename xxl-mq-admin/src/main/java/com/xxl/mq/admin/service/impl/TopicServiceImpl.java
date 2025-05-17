@@ -35,6 +35,9 @@ public class TopicServiceImpl implements TopicService {
 			return Response.ofFail("必要参数缺失");
         }
 		topic.setTopic(topic.getTopic().trim());
+		if (topic.getExecutionTimeout() > 10 * 60) {
+			return Response.ofFail("超时时间不能超过10分钟");
+		}
 
 		// process
 		Topic existTopic = topicMapper.loadByTopic(topic.getTopic());
@@ -60,6 +63,13 @@ public class TopicServiceImpl implements TopicService {
 	*/
 	@Override
 	public Response<String> update(Topic topic) {
+
+		// valid
+		if (topic.getExecutionTimeout() > 10 * 60) {
+			return Response.ofFail("超时时间不能超过10分钟");
+		}
+
+		// process
 		int ret = topicMapper.update(topic);
 		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}

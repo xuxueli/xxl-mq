@@ -46,7 +46,7 @@ CREATE TABLE `xxl_mq_message`(
     `add_time`              datetime        NOT NULL COMMENT '新增时间',
     `update_time`           datetime        NOT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),
-    KEY `i_t_s_p_e` (`topic`, `status`, `partition_id`, `effect_time`),
+    KEY `i_t_s_p_e_i` (`topic`, `status`, `partition_id`, `effect_time`, `id`),
     KEY `i_cuuid` (`consume_instance_uuid`)
 ) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COMMENT ='消息数据表';
 
@@ -64,7 +64,7 @@ CREATE TABLE `xxl_mq_message_archive` (
     `add_time`              datetime        NOT NULL COMMENT '新增时间',
     `update_time`           datetime        NOT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),
-    KEY `i_t_s_p_e` (`topic`, `status`, `partition_id`, `effect_time`),
+    KEY `i_t_s_p_e_i` (`topic`, `status`, `partition_id`, `effect_time`, `id`),
     KEY `i_cuuid` (`consume_instance_uuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='消息数据归档表';
 

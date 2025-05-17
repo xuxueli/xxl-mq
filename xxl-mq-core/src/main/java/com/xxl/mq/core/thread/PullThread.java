@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * pull thread
@@ -34,7 +35,7 @@ public class PullThread {
             pullBatchsize = 100;
         }
         if (!(pullInterval >= 1000 && pullInterval <= 30 * 1000)) {
-            pullBatchsize = 3* 1000;
+            pullInterval = 3* 1000;
         }
 
         // init pull thread
@@ -49,7 +50,8 @@ public class PullThread {
                         xxlMqBootstrap.stopIdleConsumerThead();
 
                         // exclude busy consumer, pass if all-busy
-                        if (CollectionTool.isEmpty(xxlMqBootstrap.getFreeConsumerTopicList())) {
+                        List<String> freeConsumerTopicList = xxlMqBootstrap.getFreeConsumerTopicList();
+                        if (CollectionTool.isEmpty(freeConsumerTopicList)) {
                             return;
                         }
 
@@ -58,22 +60,34 @@ public class PullThread {
                         pullRequest.setAccesstoken(xxlMqBootstrap.getAccesstoken());
                         pullRequest.setAppname(xxlMqBootstrap.getAppname());
                         pullRequest.setInstanceUuid(xxlMqBootstrap.getInstanceUuid());
-                        pullRequest.setTopicList(xxlMqBootstrap.getFreeConsumerTopicList());
+                        pullRequest.setTopicList(freeConsumerTopicList);
                         pullRequest.setBatchsize(finalPullBatchsize);
 
-                        // invoke
-                        Response<List<MessageData>> pullResponse = xxlMqBootstrap.loadBrokerClient().pull(pullRequest);
-                        if (!pullResponse.isSuccess()) {
-                            if (pullResponse.getCode() == 402) {
-                                // 402 : Current instanceUuid has not been assigned a partition.
-                                logger.debug(">>>>>>>>>>> xxl-mq PullThread-pullThread pull fail, pullRequest:{}, pullResponse:{}", pullRequest, pullResponse);
-                            } else {
-                                logger.error(">>>>>>>>>>> xxl-mq PullThread-pullThread pull fail, pullRequest:{}, pullResponse:{}", pullRequest, pullResponse);
+                        // pull pre-check
+                        Response<String> pullPreCheckResponse = xxlMqBootstrap.loadBrokerClient().pullPreCheck(pullRequest);
+                        if (!pullPreCheckResponse.isSuccess()) {
+                            logger.debug(">>>>>>>>>>> xxl-mq PullThread pullPreCheck fail, pullRequest:{}, pullPreCheckResponse:{}", pullRequest, pullPreCheckResponse);
+                            try {
+                                TimeUnit.SECONDS.sleep(10);
+                            } catch (InterruptedException e) {
+                                logger.error(">>>>>>>>>>> xxl-mq PullThread pullPreCheck fail and sleep interrupted.", e);
                             }
                             return;
                         }
 
-                        // process
+                        // pull and lock
+                        Response<List<MessageData>> pullResponse = xxlMqBootstrap.loadBrokerClient().pullAndLock(pullRequest);
+                        if (!pullResponse.isSuccess()) {
+                            if (pullResponse.getCode() == 402) {
+                                // 402 : Current instanceUuid has not been assigned a partition.
+                                logger.debug(">>>>>>>>>>> xxl-mq PullThread pullAndLock fail, pullRequest:{}, pullResponse:{}", pullRequest, pullResponse);
+                            } else {
+                                logger.error(">>>>>>>>>>> xxl-mq PullThread pullAndLock fail, pullRequest:{}, pullResponse:{}", pullRequest, pullResponse);
+                            }
+                            return;
+                        }
+
+                        // dispatch consumer thread
                         List<MessageData> messageDataList = pullResponse.getData();
                         if (CollectionTool.isNotEmpty(messageDataList)) {
                             for (MessageData messageData : messageDataList) {
@@ -90,7 +104,7 @@ public class PullThread {
 
                     }
                 },
-                pullBatchsize,
+                pullInterval,
                 true);
         pullThread.start();
 
