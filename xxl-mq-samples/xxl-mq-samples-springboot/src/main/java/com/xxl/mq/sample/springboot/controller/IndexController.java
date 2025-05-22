@@ -28,32 +28,32 @@ public class IndexController {
 		if (type == 1) {
 
 			/**
-			 * 1、全局并行消费：
+			 * 1、并行消息：
 			 * 		实现方式：消息中心，Topic属性 “分区策略” 选择为 “轮询” 或 “随机”
 			 * 		测试Topic：	topic_sample
 			 */
-			XxlMqHelper.produce("topic_sample", "全局并行消费");
+			XxlMqHelper.produce("topic_sample", "并行消息");
 
 		} else if (type == 2) {
 
 			/**
-			 * 2、全局串行消费：
+			 * 2、串行消息：
 			 * 		实现方式：消息中心，Topic属性 “分区策略” 选择为 “第一个” 或 “最后一个”
 			 * 		测试Topic：topic_sample_02
 			 */
-			XxlMqHelper.produce("topic_sample_02", "全局串行消费");
+			XxlMqHelper.produce("topic_sample_02", "串行消息");
 
 		} else if (type == 3) {
 
 			/**
-			 * 3、串并行结合消费：
+			 * 3、分片消息：
 			 * 		实现方式：
-			 * 			a、消息中心，Topic属性 “分区策略” 选择为 “Hash”
-			 * 			b、客户端，消息生产时自定义设置 “BizId”。相同 BizId 的消息将会被Hash到同一个分区，由同一个消费者串行消费执行；不同 BizId 的消息数据，将会在多个分区并行执行；
+			 * 			a、消息中心：Topic 路由策略 = “Hash”；
+			 * 			b、客户端：生产消息时，自定义消息 “BizId”（作为 “分区hash“ 的 ”业务参数“ ）。相同 BizId 的消息将会被Hash到同一个分区，由同一个消费者串行消费执行；不同 BizId 的消息数据，将会在多个分区并行执行；
 			 * 		测试Topic：	topic_sample_03
 			 */
 			long bizId = 1000;
-			XxlMqHelper.produce("topic_sample_03", "串并行结合消费", -1, bizId);
+			XxlMqHelper.produce("topic_sample_03", "分片消息", -1, bizId);
 
 		} else if (type == 4) {
 

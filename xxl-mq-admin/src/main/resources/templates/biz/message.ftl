@@ -81,7 +81,7 @@
 							<button class="btn btn-sm btn-warning selectOnlyOne update" type="button"><i class="fa fa-edit"></i>${I18n.system_opt_edit}</button>
 							<button class="btn btn-sm btn-danger selectAny delete" type="button"><i class="fa fa-remove "></i>${I18n.system_opt_del}</button>
 							<button class="btn btn-sm btn-danger archive" type="button">归档</button>
-							<button class="btn btn-sm btn-primary selectOnlyOne showConsumeLog" type="button">查看消费日志</button>
+							<button class="btn btn-sm btn-primary selectOnlyOne showConsumeLog" type="button">查看消费轨迹</button>
 							<button class="btn btn-sm btn-default queryMessageArchive" type="button">查看归档消息</button>
 						</div>
 						<div class="box-body" >

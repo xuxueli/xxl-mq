@@ -259,6 +259,7 @@
             </foreach>
             AND t.`status` = #{status}
             AND t.`consume_instance_uuid` = #{instanceUuid}
+        ORDER BY t.`id` ASC
     </select>
 
     <select id="queryRetryDataById" parameterType="java.util.Map" resultMap="Message">

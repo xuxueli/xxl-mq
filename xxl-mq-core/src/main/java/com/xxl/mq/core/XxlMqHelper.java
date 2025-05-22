@@ -86,10 +86,10 @@ public class XxlMqHelper {
     /**
      * produce message
      *
-     * @param topic
-     * @param data
-     * @param effectTime
-     * @param bizId
+     * @param topic         message topic
+     * @param data          message data
+     * @param effectTime    message effect time
+     * @param bizId         for consumer hash
      * @return
      */
     public static boolean produce(String topic, String data, long effectTime, long bizId) {
@@ -101,9 +101,9 @@ public class XxlMqHelper {
     /**
      * produce message
      *
-     * @param topic
-     * @param data
-     * @param effectTime
+     * @param topic         message topic
+     * @param data          message data
+     * @param effectTime    message effect time
      * @return
      */
     public static boolean produce(String topic, String data, long effectTime) {
@@ -113,9 +113,9 @@ public class XxlMqHelper {
     /**
      * produce message
      *
-     * @param topic
-     * @param data
-     * @param bizId
+     * @param topic         message topic
+     * @param data          message data
+     * @param bizId         for consumer hash
      * @return
      */
     public static boolean produce2(String topic, String data, long bizId) {
@@ -125,8 +125,8 @@ public class XxlMqHelper {
     /**
      * produce message
      *
-     * @param topic
-     * @param data
+     * @param topic         message topic
+     * @param data          message data
      * @return
      */
     public static boolean produce(String topic, String data) {

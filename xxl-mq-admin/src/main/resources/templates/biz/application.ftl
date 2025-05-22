@@ -28,7 +28,7 @@
 		<!-- content-header -->
 		<section class="content-header">
 			<#-- biz start（3/5 name） -->
-			<h1>服务管理</h1>
+			<h1>消费者服务管理</h1>
 			<#-- biz end（3/5 name） -->
 		</section>
 

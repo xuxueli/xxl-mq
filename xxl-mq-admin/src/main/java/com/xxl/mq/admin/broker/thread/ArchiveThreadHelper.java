@@ -4,7 +4,6 @@ import com.xxl.mq.admin.broker.config.BrokerBootstrap;
 import com.xxl.mq.admin.model.entity.MessageReport;
 import com.xxl.mq.admin.model.entity.Topic;
 import com.xxl.mq.admin.util.I18nUtil;
-import com.xxl.mq.admin.util.PropConfUtil;
 import com.xxl.tool.concurrent.CyclicThread;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.DateTool;
@@ -34,7 +33,7 @@ public class ArchiveThreadHelper {
 
     // ---------------------- start / stop ----------------------
 
-    private static final int ARCHIVE__INTERVAL = 30 * 60 * 1000;
+    private static final int ARCHIVE_INTERVAL = 10 * 60 * 1000;
 
     /**
      * start ArchiveThreadHelper (will stop with jvm)
@@ -160,7 +159,7 @@ public class ArchiveThreadHelper {
                 }
 
             }
-        }, ARCHIVE__INTERVAL, true);
+        }, ARCHIVE_INTERVAL, true);
         archiveThread.start();
     }
 

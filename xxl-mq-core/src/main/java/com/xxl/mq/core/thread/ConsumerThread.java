@@ -58,6 +58,7 @@ public class ConsumerThread {
      * @param message
      */
     public void accept(MessageData message) {
+        // FIFO，when delay-time same
         scheduledExecutorService.schedule(
                 new Runnable() {
                     @Override

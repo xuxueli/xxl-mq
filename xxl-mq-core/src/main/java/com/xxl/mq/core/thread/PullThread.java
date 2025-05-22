@@ -35,7 +35,7 @@ public class PullThread {
             pullBatchsize = 100;
         }
         if (!(pullInterval >= 1000 && pullInterval <= 30 * 1000)) {
-            pullInterval = 3* 1000;
+            pullInterval = 1000;
         }
 
         // init pull thread

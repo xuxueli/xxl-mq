@@ -178,7 +178,9 @@ public class XxlMqBootstrap {
         // broker client
         List<String> addressList = Arrays.stream(address.split(",")).filter(StringTool::isNotBlank).collect(Collectors.toList());
         for (String url : addressList) {
-            JsonRpcClient jsonRpcClient = new JsonRpcClient(url, timeout);
+            String finalUrl = url + "/openapi";
+
+            JsonRpcClient jsonRpcClient = new JsonRpcClient(finalUrl, timeout);
             BrokerService brokerService = jsonRpcClient.proxy(service, BrokerService.class);
             clientList.add(brokerService);
         }

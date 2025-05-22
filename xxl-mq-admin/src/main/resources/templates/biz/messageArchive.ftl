@@ -67,7 +67,7 @@
 					<div class="box">
 						<div class="box-header" style="float: right" id="data_operation" >
 							<button class="btn btn-sm btn-danger archive" type="button">归档清理</button>
-							<button class="btn btn-sm btn-primary selectOnlyOne showConsumeLog" type="button">查看消费日志</button>
+							<button class="btn btn-sm btn-primary selectOnlyOne showConsumeLog" type="button">查看消费轨迹</button>
 							<button class="btn btn-sm btn-primary queryMessage" type="button">查看实时消息</button>
 						</div>
 						<div class="box-body" >
@@ -264,7 +264,7 @@
 									<div class="col-sm-10 consumeInstanceUuid">
 										<select class="form-control" name="archiveStrategy" >
 											<#list ArchiveStrategyEnum as item>
-												<option value="${item.value}" >${item.desc}</option>
+												<option value="${item.value}" <#if item_index == (ArchiveStrategyEnum?size - 1)>selected</#if> >${item.desc}</option>
 											</#list>
 										</select>
 									</div>
