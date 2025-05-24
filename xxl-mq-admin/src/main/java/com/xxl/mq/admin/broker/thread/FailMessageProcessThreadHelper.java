@@ -34,7 +34,7 @@ public class FailMessageProcessThreadHelper {
     /**
      * fail process interval, 60s
      */
-    public static final int FAIL_PROCESS_TIME_INTERVAL = 60 * 1000;
+    public static final int FAIL_PROCESS_TIME_INTERVAL = 3 * 60 * 1000;
 
     private volatile CyclicThread failMessageProcessThread;
 
