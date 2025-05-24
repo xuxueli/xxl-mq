@@ -22,7 +22,7 @@ public class XxlMqFramelessApplication {
             logger.info(">>>>>>>>>>> xxl-mq frameless started.");
 
             // produce
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 3; i++) {
                 XxlMqHelper.produce("topic_sample", "data-" + i);
             }
 

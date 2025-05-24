@@ -47,6 +47,7 @@ CREATE TABLE `xxl_mq_message`(
     `update_time`           datetime        NOT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),
     KEY `i_t_s_p_e_i` (`topic`, `status`, `partition_id`, `effect_time`, `id`),
+    KEY `i_t_s` (`topic`, `status`),
     KEY `i_cuuid` (`consume_instance_uuid`)
 ) ENGINE = InnoDB  DEFAULT CHARSET = utf8mb4 COMMENT ='消息数据表';
 

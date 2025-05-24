@@ -2,6 +2,7 @@ package com.xxl.mq.core.thread;
 
 import com.xxl.mq.core.XxlMqHelper;
 import com.xxl.mq.core.bootstrap.XxlMqBootstrap;
+import com.xxl.mq.core.constant.MessageStatusEnum;
 import com.xxl.mq.core.consumer.IConsumer;
 import com.xxl.mq.core.context.XxlMqContext;
 import com.xxl.mq.core.openapi.model.MessageData;
@@ -57,7 +58,7 @@ public class ConsumerThread {
      *
      * @param message
      */
-    public void accept(MessageData message) {
+    public void accept(final MessageData message) {
         // FIFO，when delay-time same
         scheduledExecutorService.schedule(
                 new Runnable() {
@@ -88,7 +89,7 @@ public class ConsumerThread {
 
                         // consume
                         try {
-                            int executeTimeout = 0;     // todo；
+                            int executeTimeout = message.getExecutionTimeout()!=null ?message.getExecutionTimeout():0;
                             if (executeTimeout > 0) {
                                 // limit timeout
                                 Thread futureThread = null;
@@ -108,7 +109,7 @@ public class ConsumerThread {
                                 } catch (TimeoutException e) {
 
                                     // fill result
-                                    XxlMqHelper.consumeTimeout("consume timeout.");
+                                    XxlMqHelper.consumeTimeout("consume fail, execute timeout.");
                                 } finally {
                                     futureThread.interrupt();
                                 }
@@ -128,8 +129,12 @@ public class ConsumerThread {
                             consumeLog = (consumeLog!=null&&consumeLog.length()>500) ? (consumeLog.substring(0, 500) + "...") : consumeLog;
 
                             // append other log
+                            MessageStatusEnum messageStatus = MessageStatusEnum.match(XxlMqContext.getContext().getStatus(), null);
                             consumeLog += ConsumeLogUtil.BR_TAG
-                                    +"Other: IP = " + IPTool.getIp() + ", instanceUuid = "+ xxlMqBootstrap.getInstanceUuid() +" , message-status = " + message.getStatus();
+                                    +"Other : IP = " + IPTool.getIp()
+                                    + ", instanceUuid = "+ xxlMqBootstrap.getInstanceUuid()
+                                    +" , message-status change to = "
+                                    + (messageStatus!=null?messageStatus.name():""+XxlMqContext.getContext().getStatus());
 
                             // do callback
                             xxlMqBootstrap.getMessageThread().consumeCallback(

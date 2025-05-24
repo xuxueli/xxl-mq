@@ -2,13 +2,10 @@ package com.xxl.mq.admin.controller.biz;
 
 import com.xxl.mq.admin.annotation.Permission;
 import com.xxl.mq.admin.constant.enums.ArchiveStrategyEnum;
-import com.xxl.mq.admin.constant.enums.MessageStatusEnum;
-import com.xxl.mq.admin.constant.enums.TopicStatusEnum;
-import com.xxl.mq.admin.model.adaptor.MessageAdaptor;
+import com.xxl.mq.core.constant.MessageStatusEnum;
 import com.xxl.mq.admin.model.dto.LoginUserDTO;
 import com.xxl.mq.admin.model.dto.MessageDTO;
 import com.xxl.mq.admin.model.entity.Application;
-import com.xxl.mq.admin.model.entity.Message;
 import com.xxl.mq.admin.service.ApplicationService;
 import com.xxl.mq.admin.service.MessageService;
 import com.xxl.mq.admin.service.impl.LoginService;

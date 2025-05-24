@@ -1,7 +1,7 @@
 package com.xxl.mq.admin.broker.thread;
 
 import com.xxl.mq.admin.broker.config.BrokerBootstrap;
-import com.xxl.mq.admin.constant.enums.MessageStatusEnum;
+import com.xxl.mq.core.constant.MessageStatusEnum;
 import com.xxl.mq.admin.model.entity.Message;
 import com.xxl.tool.concurrent.CyclicThread;
 import com.xxl.tool.core.CollectionTool;

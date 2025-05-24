@@ -733,14 +733,14 @@ API服务请求参考代码：com.xxl.mq.core.test.openapi.OpenApiClientTest
             {
               "id": {消息ID},
               "topic": "{消息主题Topic}",
-              "status": {消息状态：0-初始状态，1-消费中，2-消费成功，3-消费失败，4-消费超时失败},
+              "status": {消息状态：0-初始状态，1-消费中，2-消费成功，3-消费失败，4-消费超时},
               "consumeLog": "{消息消费日志，用于问题追溯，可选}",
               "consumeInstanceUuid": "{消费者服务实例UUID，可自定义，但需保持唯一}",
             },
             {
               "id": {消息ID},
               "topic": "{消息主题Topic}",
-              "status": {消息状态：0-初始状态，1-消费中，2-消费成功，3-消费失败，4-消费超时失败},
+              "status": {消息状态：0-初始状态，1-消费中，2-消费成功，3-消费失败，4-消费超时},
               "consumeLog": "{消息消费日志，用于问题追溯，可选}",
               "consumeInstanceUuid": "{消费者服务实例UUID，可自定义，但需保持唯一}"
             }

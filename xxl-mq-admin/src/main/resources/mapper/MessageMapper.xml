@@ -157,12 +157,18 @@
     <select id="queryFinishedData" parameterType="java.util.Map" resultMap="Message">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_mq_message AS t
-        WHERE t.`topic` = #{topic}
-            AND t.`status` in
-            <foreach collection="archiveStatusList" item="item" open="(" close=")" separator="," >
-                #{item}
-            </foreach>
-            AND t.`retry_count_remain` = 0
+        WHERE
+            (
+                t.`topic` = #{topic}
+                AND t.`status` in
+                <foreach collection="archiveStatusList" item="item" open="(" close=")" separator="," >
+                    #{item}
+                </foreach>
+                AND t.`retry_count_remain` = 0
+            ) OR (
+                t.`topic` = #{topic}
+                AND t.`status` = #{successStatus}
+            )
         ORDER BY t.`id` ASC
         LIMIT #{pageSize}
     </select>

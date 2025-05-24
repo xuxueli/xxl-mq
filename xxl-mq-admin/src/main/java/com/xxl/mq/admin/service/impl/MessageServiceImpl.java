@@ -1,7 +1,7 @@
 package com.xxl.mq.admin.service.impl;
 
 import com.xxl.mq.admin.constant.enums.ArchiveStrategyEnum;
-import com.xxl.mq.admin.constant.enums.MessageStatusEnum;
+import com.xxl.mq.core.constant.MessageStatusEnum;
 import com.xxl.mq.admin.mapper.*;
 import com.xxl.mq.admin.model.adaptor.MessageAdaptor;
 import com.xxl.mq.admin.model.dto.MessageDTO;
@@ -194,7 +194,7 @@ public class MessageServiceImpl implements MessageService {
 		// do archive
 		int pageSize = 100;
 		long archiveNum = 0;
-		List<Message> messageList = messageMapper.queryFinishedData(topic, archiveStatusList, pageSize);
+		List<Message> messageList = messageMapper.queryFinishedData(topic, archiveStatusList, MessageStatusEnum.EXECUTE_SUCCESS.getValue(),  pageSize);
 		while (maxCycleCount>0 && CollectionTool.isNotEmpty(messageList)){			// maxCycleCount: Avoid dead loops
 
 			// 1、clean finished message
@@ -214,7 +214,7 @@ public class MessageServiceImpl implements MessageService {
 			}
 
 			// next page
-			messageList = messageMapper.queryFinishedData(topic, archiveStatusList, pageSize);
+			messageList = messageMapper.queryFinishedData(topic, archiveStatusList, MessageStatusEnum.EXECUTE_SUCCESS.getValue(), pageSize);
 			maxCycleCount--;
 		}
 

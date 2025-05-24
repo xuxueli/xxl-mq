@@ -12,18 +12,22 @@ public class MessageData implements Serializable {
 
     public MessageData() {
     }
+    // for produce
     public MessageData(String topic, String data, long bizId, long effectTime) {
         this.topic = topic;
         this.data = data;
         this.bizId = bizId;
         this.effectTime = effectTime;
     }
-    public MessageData(long id, String topic, String data, long effectTime) {
+    // for pull
+    public MessageData(long id, String topic, String data, long effectTime, Integer executionTimeout) {
         this.id = id;
         this.topic = topic;
         this.data = data;
         this.effectTime = effectTime;
+        this.executionTimeout = executionTimeout;
     }
+    // for consume
     public MessageData(long id, String topic, int status, String consumeLog, String consumeInstanceUuid) {
         this.id = id;
         this.topic = topic;
@@ -64,7 +68,7 @@ public class MessageData implements Serializable {
      *      RUNNING(1, "消费中"),
      *      EXECUTE_SUCCESS(2, "消费成功"),
      *      EXECUTE_FAIL(3, "消费失败"),
-     *      EXECUTE_TIMEOUT(4, "消费超时失败");
+     *      EXECUTE_TIMEOUT(4, "消费超时");
      */
     private int status;
 
@@ -77,6 +81,9 @@ public class MessageData implements Serializable {
      * 消费实例实例唯一标识
      */
     private String consumeInstanceUuid;
+
+    // plugin : topic execution timeout
+    private Integer executionTimeout;
 
     public long getId() {
         return id;
@@ -142,6 +149,14 @@ public class MessageData implements Serializable {
         this.consumeInstanceUuid = consumeInstanceUuid;
     }
 
+    public Integer getExecutionTimeout() {
+        return executionTimeout;
+    }
+
+    public void setExecutionTimeout(Integer executionTimeout) {
+        this.executionTimeout = executionTimeout;
+    }
+
     @Override
     public String toString() {
         return "MessageData{" +
@@ -153,6 +168,7 @@ public class MessageData implements Serializable {
                 ", status=" + status +
                 ", consumeLog='" + consumeLog + '\'' +
                 ", consumeInstanceUuid='" + consumeInstanceUuid + '\'' +
+                ", executionTimeout=" + executionTimeout +
                 '}';
     }
 

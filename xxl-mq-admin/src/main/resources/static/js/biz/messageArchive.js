@@ -88,7 +88,7 @@ $(function() {
 			{
 				"title": '消息ID',
 				"data": 'id',
-				"width":'5%'
+				"width":'10%'
 			},
 			{
 				"title": 'Topic（消息主题）',
@@ -101,20 +101,25 @@ $(function() {
 					return '<span title="'+ data +'">'+ result +'</span>';
 				}
 			},
-			{
+			/*{
 				"title": '消息数据',
 				"data": 'data',
 				"width":'20%',
 				"render": function ( data, type, row ) {
-					var result = data.length<20
+					var result = data.length<10
 						?data
-						:data.substring(0, 20) + '...';
+						:data.substring(0, 10) + '...';
 					return '<span title="'+ data +'">'+ result +'</span>';
 				}
-			},
+			},*/
 			{
 				"title": 'partitionId',
 				"data": 'partitionId',
+				"width":'10%'
+			},
+			{
+				"title": '剩余重试次数',
+				"data": 'retryCountRemain',
 				"width":'10%'
 			},
 			{
@@ -123,9 +128,14 @@ $(function() {
 				"width":'10%'
 			},
 			{
+				"title": '新建时间',
+				"data": 'addTime',
+				"width":'13%'
+			},
+			{
 				"title": '生效时间',
 				"data": 'effectTime',
-				"width":'15%'
+				"width":'13%'
 			},
 			{
 				"title": '状态',
@@ -203,7 +213,7 @@ $(function() {
 		// show
 		$('#showConsumeLogModel .id').html(row.id);
 		$('#showConsumeLogModel .data').html(row.data);
-		$('#showConsumeLogModel .addTime').html( moment(row.addTime).format('YYYY-MM-DD HH:mm:ss') );
+		$('#showConsumeLogModel .addTime').html( row.addTime );		// moment(row.addTime).format('YYYY-MM-DD HH:mm:ss')
 		$('#showConsumeLogModel .effectTime').html(row.effectTime);
 		$('#showConsumeLogModel .consumeLog').html(row.consumeLog);
 		$('#showConsumeLogModel').modal({backdrop: false, keyboard: false}).modal('show');

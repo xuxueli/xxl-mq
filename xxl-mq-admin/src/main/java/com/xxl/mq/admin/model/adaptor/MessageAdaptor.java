@@ -20,8 +20,8 @@ public class MessageAdaptor {
         message.setRetryCountRemain(messageDTO.getRetryCountRemain());
         message.setConsumeLog(messageDTO.getConsumeLog());
         message.setConsumeInstanceUuid(messageDTO.getConsumeInstanceUuid());
-        message.setAddTime(messageDTO.getAddTime());
-        message.setUpdateTime(messageDTO.getUpdateTime());
+        message.setAddTime(DateTool.parseDateTime(messageDTO.getAddTime()));
+        message.setUpdateTime(DateTool.parseDateTime(messageDTO.getUpdateTime()));
         return message;
     }
 
@@ -37,8 +37,8 @@ public class MessageAdaptor {
         message.setRetryCountRemain(messageDTO.getRetryCountRemain());
         messageDTO.setConsumeLog(message.getConsumeLog());
         messageDTO.setConsumeInstanceUuid(message.getConsumeInstanceUuid());
-        messageDTO.setAddTime(message.getAddTime());
-        messageDTO.setUpdateTime(message.getUpdateTime());
+        messageDTO.setAddTime(DateTool.formatDateTime(message.getAddTime()));
+        messageDTO.setUpdateTime(DateTool.formatDateTime(message.getUpdateTime()));
         return messageDTO;
     }
 
@@ -73,8 +73,8 @@ public class MessageAdaptor {
         messageArchiveDTO.setRetryCountRemain(messageArchive.getRetryCountRemain());
         messageArchiveDTO.setConsumeLog(messageArchive.getConsumeLog());
         messageArchiveDTO.setConsumeInstanceUuid(messageArchive.getConsumeInstanceUuid());
-        messageArchiveDTO.setAddTime(messageArchive.getAddTime());
-        messageArchiveDTO.setUpdateTime(messageArchive.getUpdateTime());
+        messageArchiveDTO.setAddTime(DateTool.formatDateTime(messageArchive.getAddTime()));
+        messageArchiveDTO.setUpdateTime(DateTool.formatDateTime(messageArchive.getUpdateTime()));
         return messageArchiveDTO;
     }
 

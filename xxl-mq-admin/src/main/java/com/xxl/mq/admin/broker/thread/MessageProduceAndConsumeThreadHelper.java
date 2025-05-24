@@ -1,7 +1,7 @@
 package com.xxl.mq.admin.broker.thread;
 
 import com.xxl.mq.admin.broker.config.BrokerBootstrap;
-import com.xxl.mq.admin.constant.enums.MessageStatusEnum;
+import com.xxl.mq.core.constant.MessageStatusEnum;
 import com.xxl.mq.admin.constant.enums.PartitionRouteStrategyEnum;
 import com.xxl.mq.admin.constant.enums.RetryStrategyEnum;
 import com.xxl.mq.admin.constant.enums.TopicStatusEnum;
@@ -367,12 +367,18 @@ public class MessageProduceAndConsumeThreadHelper {
         // adaptor
         List<MessageData> messageDataList = new ArrayList<>();
         for (Message message : messageList) {
+
+            // find timeout
+            Topic topicData = brokerBootstrap.getLocalCacheThreadHelper().findTopic(message.getTopic());
+            Integer executionTimeout = topicData!=null?topicData.getExecutionTimeout():null;
+
             // collect
             messageDataList.add(new MessageData(
                     message.getId(),
                     message.getTopic(),
                     message.getData(),
-                    message.getEffectTime().getTime()));
+                    message.getEffectTime().getTime(),
+                    executionTimeout));
         }
         return Response.ofSuccess(messageDataList);
     }

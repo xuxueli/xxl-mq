@@ -69,6 +69,7 @@ public interface MessageMapper {
      */
     public List<Message> queryFinishedData(@Param("topic") String topic,
                                            @Param("archiveStatusList") List<Integer> archiveStatusList,
+                                           @Param("successStatus") Integer successStatus,
                                            @Param("pageSize") int pageSize);
 
     /**

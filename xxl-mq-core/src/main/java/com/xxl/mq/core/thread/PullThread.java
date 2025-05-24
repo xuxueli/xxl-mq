@@ -88,19 +88,7 @@ public class PullThread {
                         }
 
                         // dispatch consumer thread
-                        List<MessageData> messageDataList = pullResponse.getData();
-                        if (CollectionTool.isNotEmpty(messageDataList)) {
-                            for (MessageData messageData : messageDataList) {
-                                try {
-                                    // lazy init consumer-thread
-                                    ConsumerThread consumerThread = xxlMqBootstrap.lazyInitConsumerThread(messageData.getTopic());
-                                    // accept message
-                                    consumerThread.accept(messageData);
-                                } catch (Exception e) {
-                                    logger.error(">>>>>>>>>>> xxl-mq PullThread message-accept error, messageData:{}", messageData, e);
-                                }
-                            }
-                        }
+                        dispatchConsumer(pullResponse.getData());
 
                     }
                 },
@@ -112,6 +100,30 @@ public class PullThread {
 
     public void stop() {
         // do something
+    }
+
+
+    /**
+     * dispatch consumer thread
+     */
+    private void dispatchConsumer(List<MessageData> messageDataList) {
+
+        // check
+        if (CollectionTool.isEmpty(messageDataList)) {
+            return;
+        }
+
+        // do dispatch
+        for (MessageData messageData : messageDataList) {
+            try {
+                // lazy init consumer-thread
+                ConsumerThread consumerThread = xxlMqBootstrap.lazyInitConsumerThread(messageData.getTopic());
+                // accept message
+                consumerThread.accept(messageData);
+            } catch (Exception e) {
+                logger.error(">>>>>>>>>>> xxl-mq PullThread message-accept error, messageData:{}", messageData, e);
+            }
+        }
     }
 
 }
