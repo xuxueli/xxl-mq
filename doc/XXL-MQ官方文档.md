@@ -305,7 +305,7 @@ API：com.xxl.mq.core.XxlMqHelper.produce
  * 		实现方式：消息中心，Topic属性 “分区策略” 选择为 “轮询” 或 “随机”
  * 		测试Topic：	topic_sample
  */
-XxlMqHelper.produce("topic_sample", "全局并行消费");
+XxlMqHelper.produce("topic_sample", "并行消费");
 
 
 /**
@@ -313,7 +313,7 @@ XxlMqHelper.produce("topic_sample", "全局并行消费");
  * 		实现方式：消息中心，Topic属性 “分区策略” 选择为 “第一个” 或 “最后一个”
  * 		测试Topic：topic_sample_02
  */
-XxlMqHelper.produce("topic_sample_02", "全局串行消费");
+XxlMqHelper.produce("topic_sample_02", "串行消费");
 
 
 /**
@@ -324,7 +324,7 @@ XxlMqHelper.produce("topic_sample_02", "全局串行消费");
  * 		测试Topic：	topic_sample_03
  */
 long bizId = 1000;
-XxlMqHelper.produce("topic_sample_03", "串并行结合消费", -1, bizId);
+XxlMqHelper.produce("topic_sample_03", "分片消息", -1, bizId);
 
 
 /**
