@@ -13,7 +13,6 @@ import com.xxl.mq.core.openapi.model.MessageData;
 import com.xxl.mq.core.openapi.model.ProduceRequest;
 import com.xxl.mq.core.openapi.model.PullRequest;
 import com.xxl.mq.core.util.ConsumeLogUtil;
-import com.xxl.tool.concurrent.CyclicThread;
 import com.xxl.tool.concurrent.MessageQueue;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.DateTool;
@@ -26,7 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -34,13 +32,13 @@ import java.util.stream.Collectors;
  *
  * @author xuxueli
  */
-public class MessageThreadHelper {
-    private static final Logger logger = LoggerFactory.getLogger(MessageThreadHelper.class);
+public class MessageProduceAndConsumeThreadHelper {
+    private static final Logger logger = LoggerFactory.getLogger(MessageProduceAndConsumeThreadHelper.class);
 
     // ---------------------- init ----------------------
 
     private final BrokerBootstrap brokerBootstrap;
-    public MessageThreadHelper(BrokerBootstrap brokerBootstrap) {
+    public MessageProduceAndConsumeThreadHelper(BrokerBootstrap brokerBootstrap) {
         this.brokerBootstrap = brokerBootstrap;
     }
 
@@ -48,7 +46,6 @@ public class MessageThreadHelper {
 
     private volatile MessageQueue<ProduceRequest> produceMessageQueue;
     private volatile MessageQueue<ConsumeRequest> consumeMessageQueue;
-    private volatile CyclicThread failMessageProcessThread;
 
     /**
      * start
@@ -56,7 +53,6 @@ public class MessageThreadHelper {
      * remark：
      *      1、Produce MessageQueue: batch write message to store
      *      2、Consume MessageQueue: 1、batch write consume result to store；2、find fail-message and retry.
-     *      3、FailMessage Process: 1、find stuck message(running >5min), mark fail；2、find fail-message and retry.
      */
     public void start(){
         produceMessageQueue = new MessageQueue<ProduceRequest>(
@@ -197,76 +193,21 @@ public class MessageThreadHelper {
                 30,
                 50);
 
-        failMessageProcessThread = new CyclicThread("failMessageProcessThread", true, new Runnable() {
-            @Override
-            public void run() {
-
-                /**
-                 * 1、find running-timeout（ running > 5min ） message, mark fail
-                 */
-                int updateStuck2FailCount = 0;
-                int ret = brokerBootstrap.getMessageMapper().updateRunningTimeout2Fail(
-                        MessageStatusEnum.RUNNING.getValue(),
-                        DateTool.addMinutes(new Date(), -5),
-                        MessageStatusEnum.EXECUTE_TIMEOUT.getValue(),
-                        500);
-                while (ret > 0) {
-                    updateStuck2FailCount += ret;
-                    // avoid too fast
-                    try {
-                        TimeUnit.MILLISECONDS.sleep(500);
-                    } catch (InterruptedException e) {
-                        // ignore
-                    }
-                    // next page
-                    ret = brokerBootstrap.getMessageMapper().updateRunningTimeout2Fail(
-                            MessageStatusEnum.RUNNING.getValue(),
-                            DateTool.addMinutes(new Date(), -5),
-                            MessageStatusEnum.EXECUTE_TIMEOUT.getValue(),
-                            50);
-                }
-                if (updateStuck2FailCount > 0) {
-                    logger.info(">>>>>>>>>>> failMessageProcessThread, updateStuck2FailCount: {}", updateStuck2FailCount);
-                }
-
-                // 2、query fail-message, and retry
-                int failRetryCount = 0;
-                List<Integer> failStatusList = Arrays.asList(MessageStatusEnum.EXECUTE_FAIL.getValue(), MessageStatusEnum.EXECUTE_TIMEOUT.getValue());
-                List<Message> retryFailData = brokerBootstrap.getMessageMapper().queryRetryDataByPage(failStatusList, 50);
-                while (CollectionTool.isNotEmpty(retryFailData)) {
-                    failRetryCount += retryFailData.size();
-                    // do retry
-                    failRetry(retryFailData, failStatusList);
-
-                    // avoid too fast
-                    try {
-                        TimeUnit.MILLISECONDS.sleep(500);
-                    } catch (InterruptedException e) {
-                        // ignore
-                    }
-                    // next page
-                    retryFailData = brokerBootstrap.getMessageMapper().queryRetryDataByPage(failStatusList, 50);
-                }
-                if (failRetryCount > 0) {
-                    logger.info(">>>>>>>>>>> failMessageProcessThread, failRetryCount: {}", failRetryCount);
-                }
-
-            }
-        }, 60 * 1000, true);
-        failMessageProcessThread.start();
-
     }
 
     public void stop(){
         // do nothing
     }
 
+
+    // ---------------------- tool ----------------------
+
     /**
      * fail retry
      *
      * @param failMessageList
      */
-    private void failRetry(List<Message> failMessageList, List<Integer> failStatusList) {
+    public void failRetry(List<Message> failMessageList, List<Integer> failStatusList) {
         if (CollectionTool.isEmpty(failMessageList)) {
             return;
         }
@@ -311,7 +252,6 @@ public class MessageThreadHelper {
         );
     }
 
-    // ---------------------- tool ----------------------
 
     /**
      * produce message

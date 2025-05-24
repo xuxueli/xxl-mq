@@ -21,13 +21,13 @@ import java.util.stream.Collectors;
  *
  * @author xuxueli
  */
-public class ArchiveThreadHelper {
-    private static final Logger logger = LoggerFactory.getLogger(ArchiveThreadHelper.class);
+public class ArchiveAndAlarmThreadHelper {
+    private static final Logger logger = LoggerFactory.getLogger(ArchiveAndAlarmThreadHelper.class);
 
     // ---------------------- init ----------------------
 
     private final BrokerBootstrap brokerBootstrap;
-    public ArchiveThreadHelper(BrokerBootstrap brokerBootstrap) {
+    public ArchiveAndAlarmThreadHelper(BrokerBootstrap brokerBootstrap) {
         this.brokerBootstrap = brokerBootstrap;
     }
 

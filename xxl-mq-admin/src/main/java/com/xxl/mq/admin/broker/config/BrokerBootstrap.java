@@ -111,8 +111,9 @@ public class BrokerBootstrap implements InitializingBean, DisposableBean {
     private AccessTokenThreadHelper accessTokenThreadHelper;
     private RegistryMessageQueueHelper registryMessageQueueHelper;
     private LocalCacheThreadHelper localCacheThreadHelper;
-    private MessageThreadHelper messageThreadHelper;
-    private ArchiveThreadHelper archiveThreadHelper;
+    private MessageProduceAndConsumeThreadHelper messageProduceAndConsumeThreadHelper;
+    private ArchiveAndAlarmThreadHelper archiveThreadHelper;
+    private FailMessageProcessThreadHelper failMessageProcessThreadHelper;
 
     public AccessTokenThreadHelper getAccessTokenThreadHelper() {
         return accessTokenThreadHelper;
@@ -126,8 +127,8 @@ public class BrokerBootstrap implements InitializingBean, DisposableBean {
         return localCacheThreadHelper;
     }
 
-    public MessageThreadHelper getMessageThreadHelper() {
-        return messageThreadHelper;
+    public MessageProduceAndConsumeThreadHelper getMessageProduceAndConsumeThreadHelper() {
+        return messageProduceAndConsumeThreadHelper;
     }
 
     @Override
@@ -148,12 +149,16 @@ public class BrokerBootstrap implements InitializingBean, DisposableBean {
         localCacheThreadHelper.start();
 
         // 4、Produce MessageQueue
-        messageThreadHelper = new MessageThreadHelper(this);                // 50 + 20/ poll； 1 thread / 60s
-        messageThreadHelper.start();
+        messageProduceAndConsumeThreadHelper = new MessageProduceAndConsumeThreadHelper(this);                // 50 + 20/ poll； 1 thread / 60s
+        messageProduceAndConsumeThreadHelper.start();
 
         // 5、ArchiveHelper ；                                                           // 1 thread   / 60s
-        archiveThreadHelper = new ArchiveThreadHelper(this);
+        archiveThreadHelper = new ArchiveAndAlarmThreadHelper(this);
         archiveThreadHelper.start();
+
+        // 6、FailMessageProcessThreadHelper
+        failMessageProcessThreadHelper = new FailMessageProcessThreadHelper(this);
+        failMessageProcessThreadHelper.start();
     }
 
     @Override
@@ -168,10 +173,13 @@ public class BrokerBootstrap implements InitializingBean, DisposableBean {
         localCacheThreadHelper.stop();
 
         // 4、Produce MessageQueue
-        messageThreadHelper.stop();
+        messageProduceAndConsumeThreadHelper.stop();
 
         // 5、ArchiveHelper
         archiveThreadHelper.stop();
+
+        // 6、FailMessageProcessThreadHelper
+        failMessageProcessThreadHelper.stop();
     }
 
     // ---------------------- openapi JsonRpcServer ----------------------
