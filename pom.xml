@@ -141,6 +141,13 @@
 						<extensions>true</extensions>
 						<configuration>
 							<publishingServerId>central</publishingServerId>
+							<excludeArtifacts>
+								<artifact>xxl-mq-admin</artifact>
+								<artifact>xxl-mq-samples</artifact>
+								<artifact>xxl-mq-samples</artifact>
+								<artifact>xxl-mq-samples-frameless</artifact>
+								<artifact>xxl-mq-samples-springboot</artifact>
+							</excludeArtifacts>
 						</configuration>
 					</plugin>
 				</plugins>
