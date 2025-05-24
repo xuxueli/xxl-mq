@@ -38,7 +38,7 @@
 		<spring-boot.version>2.7.18</spring-boot.version>
 		<!-- database -->
 		<mybatis-spring-boot-starter.version>2.3.2</mybatis-spring-boot-starter.version>
-		<mysql-connector-j.version>9.2.0</mysql-connector-j.version>
+		<mysql-connector-j.version>9.3.0</mysql-connector-j.version>
 
 		<!-- xxl-tool( + support) -->
 		<xxl-tool.version>1.4.2</xxl-tool.version>
