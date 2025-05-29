@@ -49,6 +49,9 @@ public class XxlMqBootstrap {
     private int pullBatchsize;
     private int pullInterval;
 
+    //messageData length limit -1 is not limited
+    private int dataMaxLength = -1;
+
     public String getAddress() {
         return address;
     }
@@ -97,6 +100,14 @@ public class XxlMqBootstrap {
         this.pullInterval = pullInterval;
     }
 
+
+    public int getDataMaxLength() {
+        return dataMaxLength;
+    }
+
+    public void setDataMaxLength(int dataMaxLength) {
+        this.dataMaxLength = dataMaxLength;
+    }
 
     // --------------------------------- start / stop ---------------------------------
 
