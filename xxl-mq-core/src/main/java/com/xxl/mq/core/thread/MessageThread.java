@@ -118,6 +118,7 @@ public class MessageThread {
 
         // valid
         if (messageData == null || StringTool.isBlank(messageData.getTopic())) {
+            logger.error(">>>>>>>>>>> xxl-mq MessageThread-produceSend messageData.getTopic() is null");
             return false;
         }
         if (messageData.getTopic().length() > 100) {
