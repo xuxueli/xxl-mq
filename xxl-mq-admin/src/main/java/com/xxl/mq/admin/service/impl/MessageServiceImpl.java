@@ -116,11 +116,11 @@ public class MessageServiceImpl implements MessageService {
 		PageModel<MessageDTO> pageModel = new PageModel<>();
 
 		// valid
-		if (StringTool.isBlank(topic)) {
-			pageModel.setPageData(new ArrayList<>());
-			pageModel.setTotalCount(0);
-			return pageModel;
-		}
+//		if (StringTool.isBlank(topic)) {
+//			pageModel.setPageData(new ArrayList<>());
+//			pageModel.setTotalCount(0);
+//			return pageModel;
+//		}
 
 		// page
 		List<Message> pageList = messageMapper.pageList(offset, pagesize, topic, status, effectTimeStart, effectTimeEnd);

@@ -89,7 +89,10 @@
     <select id="pageList" parameterType="java.util.Map" resultMap="MessageArchive">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_mq_message_archive AS t
-        WHERE `topic` = #{topic}
+        WHERE 1=1
+            <if test="topic != null and topic != ''">
+               AND `topic` = #{topic}
+            </if>
             <if test="effectTimeStart != null">
                 AND t.effect_time <![CDATA[ >= ]]> #{effectTimeStart}
             </if>
@@ -103,7 +106,10 @@
     <select id="pageListCount" parameterType="java.util.Map" resultType="int">
         SELECT count(1)
         FROM xxl_mq_message_archive AS t
-        WHERE `topic` = #{topic}
+        WHERE  1=1
+            <if test="topic != null and topic != ''">
+                AND `topic` = #{topic}
+            </if>
             <if test="effectTimeStart != null">
                 AND t.effect_time <![CDATA[ >= ]]> #{effectTimeStart}
             </if>
