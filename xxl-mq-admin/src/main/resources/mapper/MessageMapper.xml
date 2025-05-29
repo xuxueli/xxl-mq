@@ -125,7 +125,10 @@
     <select id="pageList" parameterType="java.util.Map" resultMap="Message">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_mq_message AS t
-        WHERE t.`topic` = #{topic}
+        WHERE 1=1
+            <if test="topic != null and topic != ''">
+                AND t.`topic` = #{topic}
+            </if>
             <if test="status gt -1">
                 AND t.status = #{status}
             </if>
@@ -142,7 +145,10 @@
     <select id="pageListCount" parameterType="java.util.Map" resultType="int">
         SELECT count(1)
         FROM xxl_mq_message AS t
-        WHERE t.`topic` = #{topic}
+        WHERE  1=1
+            <if test="topic != null and topic != ''">
+                AND t.`topic` = #{topic}
+            </if>
             <if test="status gt -1">
                 AND t.status = #{status}
             </if>

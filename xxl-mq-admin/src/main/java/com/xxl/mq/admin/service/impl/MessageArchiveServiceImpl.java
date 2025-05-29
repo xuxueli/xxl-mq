@@ -44,11 +44,11 @@ public class MessageArchiveServiceImpl implements MessageAichiveService {
 		PageModel<MessageArchiveDTO> pageModel = new PageModel<>();
 
 		// valid
-		if (StringTool.isBlank(topic)) {
-			pageModel.setPageData(new ArrayList<>());
-			pageModel.setTotalCount(0);
-			return pageModel;
-		}
+//		if (StringTool.isBlank(topic)) {
+//			pageModel.setPageData(new ArrayList<>());
+//			pageModel.setTotalCount(0);
+//			return pageModel;
+//		}
 
 		// page
 		List<MessageArchive> pageList = messageArchiveMapper.pageList(offset, pagesize, topic, effectTimeStart, effectTimeEnd);

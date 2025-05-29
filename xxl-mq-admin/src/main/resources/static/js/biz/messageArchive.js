@@ -189,9 +189,9 @@ $(function() {
 
 		// valid
 		if (!$('#data_filter .topic').val()) {
-			layer.msg('请输入Topic');
-			//layer.msg('请输入Topic', {icon: 2, time: 3000});
-			return;
+			// layer.msg('请输入Topic');
+			// //layer.msg('请输入Topic', {icon: 2, time: 3000});
+			// return;
 		}
 
         mainDataTable.fnDraw();
