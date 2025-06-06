@@ -118,16 +118,21 @@ public class MessageThread {
 
         // valid
         if (messageData == null || StringTool.isBlank(messageData.getTopic())) {
+            logger.error(">>>>>>>>>>> xxl-mq MessageThread-produceSend messageData.getTopic() is null");
             return false;
         }
         if (messageData.getTopic().length() > 100) {
+            logger.error(">>>>>>>>>>> xxl-mq MessageThread-produceSend messageData.getTopic().length() > 100");
             return false;
         }
         if (messageData.getData()==null ) {
             messageData.setData("");
         }
-        if (messageData.getData().length()>4000) {
-            return false;
+        if (xxlMqBootstrap.getDataMaxLength()!=-1) {
+            if (messageData.getData().length()>xxlMqBootstrap.getDataMaxLength()) {
+                logger.error(">>>>>>>>>>> xxl-mq MessageThread-produceSend messageData.getData().length() > xxlMqBootstrap.getDataMaxLength()");
+                return false;
+            }
         }
         if (messageData.getEffectTime() < System.currentTimeMillis()) {
             messageData.setEffectTime(System.currentTimeMillis());
