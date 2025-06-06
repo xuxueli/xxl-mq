@@ -337,6 +337,7 @@
         WHERE t.`topic` = #{topic}
             AND t.`add_time` <![CDATA[ >= ]]> #{dateFrom}
             AND t.`add_time` <![CDATA[ <= ]]> #{dateTo}
+            AND t.`status` IN (3, 4)  -- 添加失败状态过滤
     </select>
 
 </mapper>
