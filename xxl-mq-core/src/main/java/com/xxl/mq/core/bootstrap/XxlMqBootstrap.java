@@ -133,17 +133,22 @@ public class XxlMqBootstrap {
         // 2、build broker client
         buildBrokerClient();
 
-        // 3、registryThread
-        registryThread = new RegistryThread(this);
-        registryThread.start();
+        // empty consumers do not need to register
+        if(!this.consumerRepository.isEmpty()){
+
+            // 3、registryThread
+            registryThread = new RegistryThread(this);
+            registryThread.start();
+
+            // 5、pullThread
+            pullThread = new PullThread(this);
+            pullThread.start();
+        }
 
         // 4、messageThread
         messageThread = new MessageThread(this);
         messageThread.start();
 
-        // 5、pullThread
-        pullThread = new PullThread(this);
-        pullThread.start();
         logger.info(">>>>>>>>>>> xxl-mq XxlMqBootstrap started, instanceUuid = " + instanceUuid);
     }
 
