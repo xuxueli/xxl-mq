@@ -49,6 +49,9 @@ public class XxlMqBootstrap {
     private int pullBatchsize;
     private int pullInterval;
 
+    //messageData length limit -1 is not limited
+    private int dataMaxLength = -1;
+
     public String getAddress() {
         return address;
     }
@@ -98,6 +101,14 @@ public class XxlMqBootstrap {
     }
 
 
+    public int getDataMaxLength() {
+        return dataMaxLength;
+    }
+
+    public void setDataMaxLength(int dataMaxLength) {
+        this.dataMaxLength = dataMaxLength;
+    }
+
     // --------------------------------- start / stop ---------------------------------
 
     private String instanceUuid;
@@ -122,17 +133,22 @@ public class XxlMqBootstrap {
         // 2、build broker client
         buildBrokerClient();
 
-        // 3、registryThread
-        registryThread = new RegistryThread(this);
-        registryThread.start();
+        // empty consumers do not need to register
+        if(!this.consumerRepository.isEmpty()){
+
+            // 3、registryThread
+            registryThread = new RegistryThread(this);
+            registryThread.start();
+
+            // 5、pullThread
+            pullThread = new PullThread(this);
+            pullThread.start();
+        }
 
         // 4、messageThread
         messageThread = new MessageThread(this);
         messageThread.start();
 
-        // 5、pullThread
-        pullThread = new PullThread(this);
-        pullThread.start();
         logger.info(">>>>>>>>>>> xxl-mq XxlMqBootstrap started, instanceUuid = " + instanceUuid);
     }
 
