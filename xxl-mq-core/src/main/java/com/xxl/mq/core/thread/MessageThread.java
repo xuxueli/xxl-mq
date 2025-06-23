@@ -6,6 +6,7 @@ import com.xxl.mq.core.openapi.model.MessageData;
 import com.xxl.mq.core.openapi.model.ProduceRequest;
 import com.xxl.tool.concurrent.MessageQueue;
 import com.xxl.tool.core.StringTool;
+import com.xxl.tool.exception.BizException;
 import com.xxl.tool.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,15 +119,18 @@ public class MessageThread {
 
         // valid
         if (messageData == null || StringTool.isBlank(messageData.getTopic())) {
+            logger.error(">>>>>>>>>>> xxl-mq MessageThread-produceSend fail, message topic is null", new BizException("message topic is null"));
             return false;
         }
         if (messageData.getTopic().length() > 100) {
+            logger.error(">>>>>>>>>>> xxl-mq MessageThread-produceSend fail, message topic is too long（>100): topic = {}", messageData.getTopic(), new BizException("message topic is too long"));
             return false;
         }
         if (messageData.getData()==null ) {
             messageData.setData("");
         }
         if (messageData.getData().length()>4000) {
+            logger.error(">>>>>>>>>>> xxl-mq MessageThread-produceSend fail, message data is too long（>4000): topic = {}", messageData.getTopic(), new BizException("message data is too long"));
             return false;
         }
         if (messageData.getEffectTime() < System.currentTimeMillis()) {
