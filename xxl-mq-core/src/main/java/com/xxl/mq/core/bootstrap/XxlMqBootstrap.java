@@ -138,16 +138,23 @@ public class XxlMqBootstrap {
 
     public void stop() {
         // 1、registryThread
-        registryThread.stop();
+        if (registryThread != null) {
+            registryThread.stop();
+        }
 
         // 2、messageThread
-        messageThread.stop();
+        if (messageThread != null) {
+            messageThread.stop();
+        }
 
         // 3、pullThread + consumerThread
-        pullThread.stop();
-        for (String topic : consumerThreadRepository.keySet()) {
-            stopConsumerThread(topic);
+        if (pullThread != null) {
+            pullThread.stop();
+            for (String topic : consumerThreadRepository.keySet()) {
+                stopConsumerThread(topic);
+            }
         }
+
         logger.info(">>>>>>>>>>> xxl-mq XxlMqBootstrap stopped.");
     }
 
