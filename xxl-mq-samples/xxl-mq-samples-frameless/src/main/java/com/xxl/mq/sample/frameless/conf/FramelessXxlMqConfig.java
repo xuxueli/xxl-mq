@@ -36,8 +36,9 @@ public class FramelessXxlMqConfig {
         xxlMqBootstrap.setAccesstoken(xxlMqProp.getProperty("xxl.mq.admin.accesstoken"));
         xxlMqBootstrap.setAppname(xxlMqProp.getProperty("xxl.mq.client.appname"));
         xxlMqBootstrap.setTimeout(PropTool.getInt(xxlMqProp, "xxl.mq.client.timeout"));
-        xxlMqBootstrap.setPullBatchsize(PropTool.getInt(xxlMqProp, "xxl.mq.client.pull.batchsize"));
-        xxlMqBootstrap.setPullInterval(PropTool.getInt(xxlMqProp, "xxl.mq.client.pull.interval"));
+        xxlMqBootstrap.setConsumerEnabled(PropTool.getBoolean(xxlMqProp, "xxl.mq.client.consumer.enabled"));
+        xxlMqBootstrap.setPullBatchsize(PropTool.getInt(xxlMqProp, "xxl.mq.client.consumer.pull.batchsize"));
+        xxlMqBootstrap.setPullInterval(PropTool.getInt(xxlMqProp, "xxl.mq.client.consumer.pull.interval"));
 
         /**
          * set xxl-mq bean list, will scan consumer-method with @XxlMq

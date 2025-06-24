@@ -38,6 +38,7 @@ public class MessageThread {
      * start
      */
     public void start() {
+        // produce messages (new message)
         produceMessageQueue = new MessageQueue<MessageData>(
                 "produceMessageQueue",
                 messages -> {
@@ -65,6 +66,7 @@ public class MessageThread {
                 5,
                 50);
 
+        // consume messages (callback message status)
         consumeMessageQueue = new MessageQueue<MessageData>(
                 "consumeMessageQueue",
                 messages -> {

@@ -46,6 +46,7 @@ public class XxlMqBootstrap {
     private String accesstoken;
     private String appname;
     private int timeout;
+    private Boolean consumerEnabled;
     private int pullBatchsize;
     private int pullInterval;
 
@@ -71,6 +72,14 @@ public class XxlMqBootstrap {
 
     public void setAppname(String appname) {
         this.appname = appname;
+    }
+
+    public Boolean getConsumerEnabled() {
+        return consumerEnabled;
+    }
+
+    public void setConsumerEnabled(Boolean consumerEnabled) {
+        this.consumerEnabled = consumerEnabled;
     }
 
     public int getTimeout() {
@@ -101,8 +110,9 @@ public class XxlMqBootstrap {
     // --------------------------------- start / stop ---------------------------------
 
     private String instanceUuid;
-    private RegistryThread registryThread = null;
     private MessageThread messageThread = null;
+    private RegistryThread registryThread = null;
+
     private PullThread pullThread = null;
 
     public String getInstanceUuid() {
@@ -122,15 +132,21 @@ public class XxlMqBootstrap {
         // 2、build broker client
         buildBrokerClient();
 
-        // 3、registryThread
-        registryThread = new RegistryThread(this);
-        registryThread.start();
-
-        // 4、messageThread
+        // 3、messageThread (for producer and consumer callback)
         messageThread = new MessageThread(this);
         messageThread.start();
 
-        // 5、pullThread
+        // valid consumer-swtich, the following module not need init if turn off
+        if (consumerEnabled!=null && !consumerEnabled) {
+            logger.info(">>>>>>>>>>> xxl-mq XxlMqBootstrap consumerEnabled = {}, consumers will not work.", consumerEnabled);
+            return;
+        }
+
+        // 4、registryThread (only for consumer)
+        registryThread = new RegistryThread(this);
+        registryThread.start();
+
+        // 5、pullThread (only for consumer)
         pullThread = new PullThread(this);
         pullThread.start();
         logger.info(">>>>>>>>>>> xxl-mq XxlMqBootstrap started, instanceUuid = " + instanceUuid);
