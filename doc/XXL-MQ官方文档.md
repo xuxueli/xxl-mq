@@ -241,11 +241,12 @@ xxl.mq.admin.accesstoken=defaultaccesstoken
 xxl.mq.client.appname=xxl-mq-sample
 # 客户端通讯超时时间[选填]，单位秒；默认3s；
 xxl.mq.client.timeout=3000
-# 客户端批量拉消息批次大小[选填]，默认100；
-xxl.mq.client.pull.batchsize=100；合法区间 [20, 500]
-## xxl-mq, client pull interval
+# 客户端消费者启用开关[选填]，默认true/启用；如果关闭，则客户端将不再拉取消息消费；
+xxl.mq.client.consumer.enabled=true
+# 客户端批量拉消息批次大小[选填]，默认100；合法区间 [20, 500]
+xxl.mq.client.consumer.pull.batchsize=100
 # 客户端拉消息批次间隔时间[选填]，单位毫秒；默认3000ms；合法区间 [1000, 30000]
-xxl.mq.client.pull.interval=1000
+xxl.mq.client.consumer.pull.interval=1000
 ```
     
 #### 步骤三："消息接入方" 组件配置
