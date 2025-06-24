@@ -19,9 +19,11 @@ public class XxlMqConfig {
     private String appname;
     @Value("${xxl.mq.client.timeout}")
     private int timeout;
-    @Value("${xxl.mq.client.pull.batchsize}")
+    @Value("${xxl.mq.client.consumer.enabled}")
+    private Boolean consumerEnabled;
+    @Value("${xxl.mq.client.consumer.pull.batchsize}")
     private int batchsize;
-    @Value("${xxl.mq.client.pull.interval}")
+    @Value("${xxl.mq.client.consumer.pull.interval}")
     private int interval;
 
 
@@ -33,6 +35,7 @@ public class XxlMqConfig {
         xxlMqBootstrap.setAccesstoken(accesstoken);
         xxlMqBootstrap.setAppname(appname);
         xxlMqBootstrap.setTimeout(timeout);
+        xxlMqBootstrap.setConsumerEnabled(consumerEnabled);
         xxlMqBootstrap.setPullBatchsize(batchsize);
         xxlMqBootstrap.setPullInterval(interval);
 
