@@ -20,8 +20,8 @@ public class MessageAdaptor {
         message.setRetryCountRemain(messageDTO.getRetryCountRemain());
         message.setConsumeLog(messageDTO.getConsumeLog());
         message.setConsumeInstanceUuid(messageDTO.getConsumeInstanceUuid());
-        message.setAddTime(DateTool.parseDateTime(messageDTO.getAddTime()));
-        message.setUpdateTime(DateTool.parseDateTime(messageDTO.getUpdateTime()));
+        /*message.setAddTime(DateTool.parseDateTime(messageDTO.getAddTime()));
+        message.setUpdateTime(DateTool.parseDateTime(messageDTO.getUpdateTime()));*/
         return message;
     }
 

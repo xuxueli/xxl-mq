@@ -173,4 +173,16 @@
         ORDER BY produceDay
     </select>
 
+    <select id="queryFailCount" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM xxl_mq_message_archive AS t
+        WHERE t.`topic` = #{topic}
+        AND t.`status` IN
+        <foreach collection="failStatusList" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
+        AND t.`add_time` <![CDATA[ >= ]]> #{dateFrom}
+        AND t.`add_time` <![CDATA[ <= ]]> #{dateTo}
+    </select>
+
 </mapper>

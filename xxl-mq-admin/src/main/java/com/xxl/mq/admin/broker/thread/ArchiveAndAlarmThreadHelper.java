@@ -4,6 +4,7 @@ import com.xxl.mq.admin.broker.config.BrokerBootstrap;
 import com.xxl.mq.admin.model.entity.MessageReport;
 import com.xxl.mq.admin.model.entity.Topic;
 import com.xxl.mq.admin.util.I18nUtil;
+import com.xxl.mq.core.constant.MessageStatusEnum;
 import com.xxl.tool.concurrent.CyclicThread;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.DateTool;
@@ -127,9 +128,12 @@ public class ArchiveAndAlarmThreadHelper {
                         }
 
                         // filter fail count
-                        Date failFrom = DateTool.addMinutes(new Date(), -5);
+                        Date failFrom = DateTool.addMilliseconds(new Date(), -1 * ARCHIVE_INTERVAL);
                         Date failTo = new Date();
-                        int failCount = brokerBootstrap.getMessageMapper().queryFailCount(topic.getTopic(), failFrom, failTo);
+                        List<Integer> failStatusList = Arrays.asList(MessageStatusEnum.EXECUTE_FAIL.getValue(), MessageStatusEnum.EXECUTE_TIMEOUT.getValue());
+
+                        int failCount = brokerBootstrap.getMessageMapper().queryFailCount(topic.getTopic(), failStatusList, failFrom, failTo);
+                        failCount += brokerBootstrap.getMessageArchiveMapper().queryFailCount(topic.getTopic(), failStatusList, failFrom, failTo);
                         if (failCount <= 0) {
                             continue;
                         }

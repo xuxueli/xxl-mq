@@ -77,4 +77,19 @@ public interface MessageArchiveMapper {
      */
     List<MessageReport> queryReport(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
+    /**
+     * 查询失败总数
+     *      1、failStatusList = 3、4
+     *
+     * @param topic
+     * @param failStatusList
+     * @param dateFrom
+     * @param dateTo
+     * @return
+     */
+    public int queryFailCount(@Param("topic") String topic,
+                              @Param("failStatusList") List<Integer> failStatusList,
+                              @Param("dateFrom") Date dateFrom,
+                              @Param("dateTo") Date dateTo);
+
 }
