@@ -114,6 +114,24 @@ public class XxlMqBootstrap {
     private RegistryThread registryThread = null;
 
     private PullThread pullThread = null;
+    private int consumerThreadPoolSize = 1;
+    private int consumerThreadPoolMaxSize = 1;
+
+    public int getConsumerThreadPoolSize() {
+        return consumerThreadPoolSize;
+    }
+
+    public void setConsumerThreadPoolSize(int consumerThreadPoolSize) {
+        this.consumerThreadPoolSize = consumerThreadPoolSize;
+    }
+
+    public int getConsumerThreadPoolMaxSize() {
+        return consumerThreadPoolMaxSize;
+    }
+
+    public void setConsumerThreadPoolMaxSize(int consumerThreadPoolMaxSize) {
+        this.consumerThreadPoolMaxSize = consumerThreadPoolMaxSize;
+    }
 
     public String getInstanceUuid() {
         return instanceUuid;
