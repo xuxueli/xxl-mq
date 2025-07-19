@@ -1,7 +1,7 @@
 ## 《分布式消息队列XXL-MQ》
 
 [![Actions Status](https://github.com/xuxueli/xxl-mq/workflows/Java%20CI/badge.svg)](https://github.com/xuxueli/xxl-mq/actions)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-mq-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-mq-core/)
+[![Maven Central](https://img.shields.io/maven-central/v/com.xuxueli/xxl-mq-core)](https://central.sonatype.com/artifact/com.xuxueli/xxl-mq-core)
 [![GitHub release](https://img.shields.io/github/release/xuxueli/xxl-mq.svg)](https://github.com/xuxueli/xxl-mq/releases)
 [![GitHub stars](https://img.shields.io/github/stars/xuxueli/xxl-mq)](https://github.com/xuxueli/xxl-mq/)
 [![Docker pulls](https://img.shields.io/docker/pulls/xuxueli/xxl-mq-admin)](https://hub.docker.com/r/xuxueli/xxl-mq-admin/)

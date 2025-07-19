@@ -10,8 +10,8 @@
         <a href="https://github.com/xuxueli/xxl-mq/actions">
             <img src="https://github.com/xuxueli/xxl-mq/workflows/Java%20CI/badge.svg" >
         </a>
-        <a href="https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-mq/">
-            <img src="https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-mq/badge.svg" >
+        <a href="https://central.sonatype.com/artifact/com.xuxueli/xxl-mq-core">
+            <img src="https://img.shields.io/maven-central/v/com.xuxueli/xxl-mq-core" >
         </a>
         <a href="https://github.com/xuxueli/xxl-mq/releases">
             <img src="https://img.shields.io/github/release/xuxueli/xxl-mq.svg" >
