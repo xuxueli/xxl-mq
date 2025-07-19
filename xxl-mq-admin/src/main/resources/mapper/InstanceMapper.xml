@@ -107,8 +107,8 @@
     </select>
 
     <delete id="deleteOfflineInstance" parameterType="java.util.Map" >
-        DELETE FROM xxl_mq_instance AS t
-        WHERE t.`register_heartbeat` <![CDATA[ < ]]>  #{effectiveTime}
+        DELETE FROM xxl_mq_instance
+        WHERE `register_heartbeat` <![CDATA[ < ]]>  #{effectiveTime}
     </delete>
 
 </mapper>
