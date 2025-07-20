@@ -99,10 +99,6 @@ Kafka、RabbitMQ等流行消息中间件，具备高吞吐及高性能等优势�
 [https://github.com/xuxueli/xxl-mq](https://github.com/xuxueli/xxl-mq) | [Download](https://github.com/xuxueli/xxl-mq/releases)
 [https://gitee.com/xuxueli0323/xxl-mq](https://gitee.com/xuxueli0323/xxl-mq) | [Download](https://gitee.com/xuxueli0323/xxl-mq/releases)  
 
-
-#### 技术交流
-- [社区交流](https://www.xuxueli.com/page/community.html)
-
 #### 中央仓库地址
 
 ```
@@ -114,12 +110,14 @@ Kafka、RabbitMQ等流行消息中间件，具备高吞吐及高性能等优势�
 </dependency>
 ```
 
+#### 技术交流
+- [社区交流](https://www.xuxueli.com/page/community.html)
+
 ### 1.5 环境
 
-- Maven3+
-- Jdk1.8+
-- Mysql8.0+
-
+- Maven：3.9+
+- Jdk：8+
+- Mysql：8.0+
 
 ## 二、快速入门
 
