@@ -948,6 +948,7 @@ API服务请求参考代码：com.xxl.mq.core.test.openapi.OpenApiClientTest
 ### v1.5.0 特性[2025-08-16]
 - 1、【升级】项目升级 SpringBoot3 + JDK17；
 - 2、【升级】升级多项依赖至较新版本，如springboot、spring、jakarta等，适配JDK17；
+- 3、【新增】归档消息支持状态筛选(ISSUE-46)。
 
 ### v1.5.1 Release Notes[迭代中]
 - 1、【TODO】消费者线程优化：单消费者支持多线程并行消费；

@@ -48,6 +48,17 @@
 								<input type="text" class="form-control topic" autocomplete="on" placeholder="请输入消息Topic，精确匹配" <#if topic??>value="${topic}" </#if>  >
 							</div>
 						</div>
+						<div class="col-xs-2">
+							<div class="input-group">
+								<span class="input-group-addon">状态</span>
+								<select class="form-control status" >
+									<option value="-1" >全部</option>
+									<#list MessageStatusEnum as item>
+										<option value="${item.value}" >${item.desc}</option>
+									</#list>
+								</select>
+							</div>
+						</div>
 						<div class="col-xs-5">
 							<div class="input-group">
 								<span class="input-group-addon">生效时间</span>

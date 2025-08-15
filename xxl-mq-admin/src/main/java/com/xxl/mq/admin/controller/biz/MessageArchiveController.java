@@ -90,6 +90,7 @@ public class MessageArchiveController {
     public Response<PageModel<MessageArchiveDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                            @RequestParam(required = false, defaultValue = "10") int pagesize,
                                                            @RequestParam(required = false) String topic,
+                                                           @RequestParam(required = false) int status,
                                                            @RequestParam(required = false) String filterTime) {
 
         // parse param
@@ -104,7 +105,7 @@ public class MessageArchiveController {
         }
 
         // page query
-        PageModel<MessageArchiveDTO> pageModel = messageAichiveService.pageList(offset, pagesize, topic, effectTimeStart, effectTimeEnd);
+        PageModel<MessageArchiveDTO> pageModel = messageAichiveService.pageList(offset, pagesize, topic, status, effectTimeStart, effectTimeEnd);
         return Response.ofSuccess(pageModel);
     }
 

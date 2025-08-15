@@ -40,10 +40,11 @@ public interface MessageArchiveMapper {
      * 分页查询Data
      */
     public List<MessageArchive> pageList(@Param("offset") int offset,
-                                  @Param("pagesize") int pagesize,
-                                  @Param("topic") String topic,
-                                  @Param("effectTimeStart") Date effectTimeStart,
-                                  @Param("effectTimeEnd") Date effectTimeEnd);
+                                         @Param("pagesize") int pagesize,
+                                         @Param("topic") String topic,
+                                         @Param("status") int status,
+                                         @Param("effectTimeStart") Date effectTimeStart,
+                                         @Param("effectTimeEnd") Date effectTimeEnd);
 
     /**
      * 分页查询Count
@@ -51,6 +52,7 @@ public interface MessageArchiveMapper {
     public int pageListCount(@Param("offset") int offset,
                              @Param("pagesize") int pagesize,
                              @Param("topic") String topic,
+                             @Param("status") int status,
                              @Param("effectTimeStart") Date effectTimeStart,
                              @Param("effectTimeEnd") Date effectTimeEnd);
 

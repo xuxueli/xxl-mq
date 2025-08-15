@@ -40,7 +40,7 @@ public class MessageArchiveServiceImpl implements MessageAichiveService {
 	* 分页查询
 	*/
 	@Override
-	public PageModel<MessageArchiveDTO> pageList(int offset, int pagesize, String topic, Date effectTimeStart, Date effectTimeEnd) {
+	public PageModel<MessageArchiveDTO> pageList(int offset, int pagesize, String topic, int status, Date effectTimeStart, Date effectTimeEnd) {
 		PageModel<MessageArchiveDTO> pageModel = new PageModel<>();
 
 		// valid
@@ -51,8 +51,8 @@ public class MessageArchiveServiceImpl implements MessageAichiveService {
 		}
 
 		// page
-		List<MessageArchive> pageList = messageArchiveMapper.pageList(offset, pagesize, topic, effectTimeStart, effectTimeEnd);
-		int totalCount = messageArchiveMapper.pageListCount(offset, pagesize, topic, effectTimeStart, effectTimeEnd);
+		List<MessageArchive> pageList = messageArchiveMapper.pageList(offset, pagesize, topic, status, effectTimeStart, effectTimeEnd);
+		int totalCount = messageArchiveMapper.pageListCount(offset, pagesize, topic, status, effectTimeStart, effectTimeEnd);
 
 		// adaptor
 		List<MessageArchiveDTO> pageListForDTO = pageList.stream().map(MessageAdaptor::adaptorToArchiveDto).collect(Collectors.toList());
