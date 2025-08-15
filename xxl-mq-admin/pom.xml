@@ -86,6 +86,13 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 
+		<!-- xxl-sso -->
+		<dependency>
+			<groupId>com.xuxueli</groupId>
+			<artifactId>xxl-sso-core</artifactId>
+			<version>${xxl-sso.version}</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
