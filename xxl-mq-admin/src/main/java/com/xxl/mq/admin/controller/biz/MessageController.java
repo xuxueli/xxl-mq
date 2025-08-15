@@ -1,14 +1,12 @@
 package com.xxl.mq.admin.controller.biz;
 
-import com.xxl.mq.admin.annotation.Permission;
 import com.xxl.mq.admin.constant.enums.ArchiveStrategyEnum;
 import com.xxl.mq.core.constant.MessageStatusEnum;
-import com.xxl.mq.admin.model.dto.LoginUserDTO;
 import com.xxl.mq.admin.model.dto.MessageDTO;
 import com.xxl.mq.admin.model.entity.Application;
 import com.xxl.mq.admin.service.ApplicationService;
 import com.xxl.mq.admin.service.MessageService;
-import com.xxl.mq.admin.service.impl.LoginService;
+import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.core.DateTool;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,6 +25,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
 
+import static com.xxl.mq.admin.controller.biz.MessageArchiveController.findPermissionApplication;
+
 /**
 * Message Controller
 *
@@ -40,14 +40,12 @@ public class MessageController {
     private MessageService messageService;
     @Resource
     private ApplicationService applicationService;
-    @Resource
-    private LoginService loginService;
 
     /**
     * 页面
     */
     @RequestMapping
-    @Permission
+    @XxlSso
     public String index(Model model, HttpServletRequest request, String topic) {
 
         // Enum
@@ -55,7 +53,7 @@ public class MessageController {
         model.addAttribute("ArchiveStrategyEnum", ArchiveStrategyEnum.values());
 
         // appname
-        List<Application> applicationList = findPermissionApplication(request);
+        List<Application> applicationList = findPermissionApplication(request, applicationService);
         model.addAttribute("applicationList", applicationList);
 
         // param
@@ -65,29 +63,11 @@ public class MessageController {
     }
 
     /**
-     * find permission application list
-     * @param request
-     * @return
-     */
-    private List<Application> findPermissionApplication(HttpServletRequest request){
-        List<Application> applicationList = applicationService.findAll().getData();
-        if (!loginService.isAdmin(request)) {
-            LoginUserDTO loginUser = loginService.getLoginUser(request);
-            List<String> appnameList = loginUser.getPermission()!=null? Arrays.asList(loginUser.getPermission().split(",")):new ArrayList<>();
-            applicationList = applicationList
-                    .stream()
-                    .filter(application -> appnameList.contains(application.getAppname()))
-                    .collect(Collectors.toList());
-        }
-        return applicationList;
-    }
-
-    /**
     * 分页查询
     */
     @RequestMapping("/pageList")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<PageModel<MessageDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                     @RequestParam(required = false, defaultValue = "10") int pagesize,
                                                     @RequestParam(required = false) String topic,
@@ -115,7 +95,7 @@ public class MessageController {
     */
     /*@RequestMapping("/load")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<Message> load(int id){
         return messageService.load(id);
     }*/
@@ -125,7 +105,7 @@ public class MessageController {
     */
     @RequestMapping("/insert")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<String> insert(MessageDTO messageDTO){
         return messageService.insert(messageDTO);
     }
@@ -135,7 +115,7 @@ public class MessageController {
     */
     @RequestMapping("/delete")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<String> delete(@RequestParam("ids[]") List<Long> ids){
         return messageService.delete(ids);
     }
@@ -145,7 +125,7 @@ public class MessageController {
     */
     @RequestMapping("/update")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<String> update(MessageDTO messageDTO){
         return messageService.update(messageDTO);
     }
@@ -155,7 +135,7 @@ public class MessageController {
      */
     @RequestMapping("/archive")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<String> archive(String topic, Integer archiveStrategy){
         return messageService.archive(topic, archiveStrategy, 1000);
     }

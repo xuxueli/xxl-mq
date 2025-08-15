@@ -1,6 +1,6 @@
 package com.xxl.mq.admin.broker.openapi;
 
-import com.xxl.mq.admin.annotation.Permission;
+import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.jsonrpc.JsonRpcServer;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +17,7 @@ public class OpenApiController {
 
     @RequestMapping("/openapi")
     @ResponseBody
-    @Permission(login = false)
+    @XxlSso(login = false)
     public String api(@RequestBody(required = false) String requestBody){
         return jsonRpcServer.invoke(requestBody);
     }

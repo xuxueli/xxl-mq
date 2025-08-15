@@ -1,6 +1,5 @@
 package com.xxl.mq.admin.service;
 
-import com.xxl.mq.admin.model.dto.LoginUserDTO;
 import com.xxl.mq.admin.model.dto.UserDTO;
 import com.xxl.mq.admin.model.entity.User;
 import com.xxl.tool.response.PageModel;
@@ -28,22 +27,27 @@ public interface UserService {
     /**
      * 删除
      */
-    Response<String> deleteByIds(List<Integer> userIds, LoginUserDTO loginUser);
+    Response<String> deleteByIds(List<Integer> userIds, int optUserId);
 
     /**
      * 更新
      */
-    public Response<String> update(UserDTO userDTO, LoginUserDTO loginUser);
+    public Response<String> update(UserDTO userDTO, String optUserName);
 
     /**
      * 修改密码
      */
-    public Response<String> updatePwd(LoginUserDTO loginUser, String password);
+    public Response<String> updatePwd(String optUserName, String password);
 
     /**
      * Load查询
      */
     public Response<User> loadByUserName(String username);
+
+    /**
+     * Load查询
+     */
+    public Response<User> loadById(int id);
 
     /**
      * 授权权限
@@ -54,5 +58,10 @@ public interface UserService {
      * 分页查询
      */
     public PageModel<UserDTO> pageList(int offset, int pagesize, String username, int status);
+
+    /**
+     * 更新token
+     */
+    public Response<String> updateToken(int id, String token);
 
 }

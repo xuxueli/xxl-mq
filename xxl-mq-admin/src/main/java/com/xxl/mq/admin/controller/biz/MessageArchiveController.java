@@ -1,15 +1,17 @@
 package com.xxl.mq.admin.controller.biz;
 
-import com.xxl.mq.admin.annotation.Permission;
 import com.xxl.mq.admin.constant.enums.ArchiveStrategyEnum;
+import com.xxl.mq.admin.constant.enums.RoleEnum;
 import com.xxl.mq.core.constant.MessageStatusEnum;
-import com.xxl.mq.admin.model.dto.LoginUserDTO;
 import com.xxl.mq.admin.model.dto.MessageArchiveDTO;
 import com.xxl.mq.admin.model.entity.Application;
 import com.xxl.mq.admin.service.ApplicationService;
 import com.xxl.mq.admin.service.MessageAichiveService;
-import com.xxl.mq.admin.service.impl.LoginService;
+import com.xxl.sso.core.annotation.XxlSso;
+import com.xxl.sso.core.helper.XxlSsoHelper;
+import com.xxl.sso.core.model.LoginInfo;
 import com.xxl.tool.core.DateTool;
+import com.xxl.tool.core.MapTool;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 import org.springframework.stereotype.Controller;
@@ -39,14 +41,12 @@ public class MessageArchiveController {
     private MessageAichiveService messageAichiveService;
     @Resource
     private ApplicationService applicationService;
-    @Resource
-    private LoginService loginService;
 
     /**
     * 页面
     */
     @RequestMapping
-    @Permission
+    @XxlSso
     public String index(Model model, HttpServletRequest request, String topic) {
 
         // Enum
@@ -54,7 +54,7 @@ public class MessageArchiveController {
         model.addAttribute("ArchiveStrategyEnum", ArchiveStrategyEnum.values());
 
         // appname
-        List<Application> applicationList = findPermissionApplication(request);
+        List<Application> applicationList = findPermissionApplication(request, applicationService);
         model.addAttribute("applicationList", applicationList);
 
         // param
@@ -68,11 +68,15 @@ public class MessageArchiveController {
      * @param request
      * @return
      */
-    private List<Application> findPermissionApplication(HttpServletRequest request){
+    public static List<Application> findPermissionApplication(HttpServletRequest request, ApplicationService applicationService){
         List<Application> applicationList = applicationService.findAll().getData();
-        if (!loginService.isAdmin(request)) {
-            LoginUserDTO loginUser = loginService.getLoginUser(request);
-            List<String> appnameList = loginUser.getPermission()!=null? Arrays.asList(loginUser.getPermission().split(",")):new ArrayList<>();
+
+        // check role - admin
+        Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
+        if (!XxlSsoHelper.hasRole(loginInfoResponse.getData(), RoleEnum.ADMIN.getValue()).isSuccess()) {
+            // parse appname from login-info
+            List<String> appnameList = MapTool.isNotEmpty(loginInfoResponse.getData().getExtraInfo())
+                    ? Arrays.asList(loginInfoResponse.getData().getExtraInfo().get("appnameList").split(",")):new ArrayList<>();
             applicationList = applicationList
                     .stream()
                     .filter(application -> appnameList.contains(application.getAppname()))
@@ -86,7 +90,7 @@ public class MessageArchiveController {
     */
     @RequestMapping("/pageList")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<PageModel<MessageArchiveDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                            @RequestParam(required = false, defaultValue = "10") int pagesize,
                                                            @RequestParam(required = false) String topic,
@@ -115,7 +119,7 @@ public class MessageArchiveController {
      */
     @RequestMapping("/archiveClean")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<String> archiveClean(String topic, Integer archiveStrategy){
         return messageAichiveService.clean(topic, archiveStrategy);
     }

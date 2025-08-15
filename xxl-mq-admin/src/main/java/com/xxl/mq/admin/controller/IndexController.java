@@ -1,10 +1,7 @@
 package com.xxl.mq.admin.controller;
 
-import com.xxl.mq.admin.annotation.Permission;
-import com.xxl.mq.admin.model.dto.LoginUserDTO;
 import com.xxl.mq.admin.service.MessageService;
-import com.xxl.mq.admin.service.impl.LoginService;
-import com.xxl.tool.core.StringTool;
+import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.response.Response;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
@@ -12,7 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,21 +23,17 @@ import java.util.*;
 @Controller
 public class IndexController {
 
-
-	@Resource
-	private LoginService loginService;
 	@Resource
 	private MessageService messageService;
 
-
 	@RequestMapping("/")
-	@Permission
+	@XxlSso
 	public String defaultpage(Model model) {
 		return "redirect:/index";
 	}
 
 	@RequestMapping("/index")
-	@Permission
+	@XxlSso
 	public String index(HttpServletRequest request, Model model) {
 
 		// dashboardInfo
@@ -53,45 +45,20 @@ public class IndexController {
 
 	@RequestMapping("/chartInfo")
 	@ResponseBody
-	@Permission
+	@XxlSso
 	public Response<Map<String, Object>> chartInfo(@RequestParam("startDate") Date startDate, @RequestParam("endDate") Date endDate) {
 		return messageService.chartInfo(startDate, endDate);
 	}
 
 	@RequestMapping("/help")
-	@Permission
+	@XxlSso
 	public String help() {
 		return "help";
 	}
 
-	@RequestMapping("/toLogin")
-	@Permission(login = false)
-	public ModelAndView toLogin(HttpServletRequest request, HttpServletResponse response,ModelAndView modelAndView) {
-		LoginUserDTO loginUserDTO = loginService.getLoginUser(request);
-		if (loginUserDTO != null) {
-			modelAndView.setView(new RedirectView("/",true,false));
-			return modelAndView;
-		}
-		return new ModelAndView("login");
-	}
-	
-	@RequestMapping(value="login", method=RequestMethod.POST)
-	@ResponseBody
-	@Permission(login=false)
-	public Response<String> loginDo(HttpServletRequest request, HttpServletResponse response, String userName, String password, String ifRemember){
-		boolean ifRem = StringTool.isNotBlank(ifRemember) && "on".equals(ifRemember);
-		return loginService.login(response, userName, password, ifRem);
-	}
-	
-	@RequestMapping(value="logout", method=RequestMethod.POST)
-	@ResponseBody
-	@Permission(login=false)
-	public Response<String> logout(HttpServletRequest request, HttpServletResponse response){
-		return loginService.logout(request, response);
-	}
 
 	@RequestMapping(value = "/errorpage")
-	@Permission(login = false)
+	@XxlSso(login = false)
 	public ModelAndView errorPage(HttpServletRequest request, HttpServletResponse response, ModelAndView mv) {
 
 		String exceptionMsg = "HTTP Status Code: "+response.getStatus();
