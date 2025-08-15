@@ -79,7 +79,7 @@ public class SimpleLoginStore implements LoginStore {
         List<String> roleList = roleEnum!=null? Arrays.asList(roleEnum.getValue()) :null;
 
         // fill extraInfo (appname list)
-        Map<String, String> extraInfo = MapTool.newHashMap("appnameList", xxlBootUser.getData().getPermission());
+        Map<String, String> extraInfo = MapTool.newHashMap("appnameList", xxlBootUser.getData().getAppnames());
 
         // fill data of loginInfo
         loginInfo.setUserName(xxlBootUser.getData().getUsername());

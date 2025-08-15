@@ -14,7 +14,7 @@ public class User {
 	private int status;				// 状态：0-正常、1-停用
 	private String realName;		// 真实姓名
 	private String role;			// 角色：ADMIN-管理员，NORMAL-普通用户
-	private String permission;		// 权限：服务ID列表，多个逗号分割
+	private String appnames;		// 授权服务：服务ID列表，多个逗号分割
 	private Date addTime;
 	private Date updateTime;
 
@@ -75,12 +75,12 @@ public class User {
 		this.role = role;
 	}
 
-	public String getPermission() {
-		return permission;
+	public String getAppnames() {
+		return appnames;
 	}
 
-	public void setPermission(String permission) {
-		this.permission = permission;
+	public void setAppnames(String appnames) {
+		this.appnames = appnames;
 	}
 
 	public Date getAddTime() {

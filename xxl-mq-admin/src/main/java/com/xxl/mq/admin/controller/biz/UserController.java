@@ -87,12 +87,12 @@ public class UserController {
         return userService.deleteByIds(ids, Integer.parseInt(loginInfoResponse.getData().getUserId()));
     }
 
-    @RequestMapping("/grantPermission")
+    @RequestMapping("/grantAppnames")
     @ResponseBody
     @XxlSso(role = Consts.ADMIN_ROLE)
-    public Response<String> grantPermission(@RequestParam("username") String username,
-                                            @RequestParam("permission") String permission) {
-        return userService.grantPermission(username, permission);
+    public Response<String> grantAppnames(@RequestParam("username") String username,
+                                          @RequestParam("appnames") String appnames) {
+        return userService.grantAppnames(username, appnames);
     }
 
     @RequestMapping("/updatePwd")

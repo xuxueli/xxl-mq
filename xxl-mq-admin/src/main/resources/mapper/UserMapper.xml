@@ -11,7 +11,7 @@
 	    <result column="status" property="status" />
 		<result column="real_name" property="realName" />
 		<result column="role" property="role" />
-		<result column="permission" property="permission" />
+		<result column="appnames" property="appnames" />
 		<result column="add_time" property="addTime" />
 		<result column="update_time" property="updateTime" />
 	</resultMap>
@@ -24,7 +24,7 @@
 		t.status,
 		t.real_name,
 		t.role,
-		t.permission,
+		t.appnames,
 		t.add_time,
 		t.update_time
 	</sql>
@@ -37,7 +37,7 @@
 			status,
 			real_name,
 			role,
-			permission,
+			appnames,
 			add_time,
 			update_time
 		) VALUES (
@@ -47,7 +47,7 @@
 			 #{status},
 			 #{realName},
 			 #{role},
-			 #{permission},
+			 #{appnames},
 			 NOW(),
 			 NOW()
 		 );
@@ -78,7 +78,7 @@
 			status = #{status},
 			real_name = #{realName},
 			role = #{role},
-			permission = #{permission}
+			appnames = #{appnames}
 		WHERE id = #{id}
 	</update>
 
