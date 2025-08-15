@@ -79,7 +79,7 @@
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
 
-		<!-- xxl-tool -->
+		<!-- xxl-mq -->
 		<dependency>
 			<groupId>com.xuxueli</groupId>
 			<artifactId>xxl-mq-core</artifactId>

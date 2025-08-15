@@ -7,7 +7,7 @@ import com.xxl.mq.admin.service.ApplicationService;
 import com.xxl.tool.core.StringTool;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;

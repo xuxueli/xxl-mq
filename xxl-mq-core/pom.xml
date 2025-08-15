@@ -17,19 +17,6 @@
 
     <dependencies>
 
-        <!-- xxl-tool -->
-        <dependency>
-            <groupId>com.xuxueli</groupId>
-            <artifactId>xxl-tool</artifactId>
-            <version>${xxl-tool.version}</version>
-        </dependency>
-        <!-- gson -->
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>${gson.version}</version>
-        </dependency>
-
         <!-- slf4j-reload4j -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -43,6 +30,13 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${junit-jupiter.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- xxl-tool -->
+        <dependency>
+            <groupId>com.xuxueli</groupId>
+            <artifactId>xxl-tool</artifactId>
+            <version>${xxl-tool.version}</version>
         </dependency>
 
         <!-- spring support (provided) -->
