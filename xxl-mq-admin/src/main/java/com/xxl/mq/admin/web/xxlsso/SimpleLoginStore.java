@@ -1,12 +1,12 @@
 package com.xxl.mq.admin.web.xxlsso;
 
-import com.xxl.mq.admin.constant.enums.RoleEnum;
 import com.xxl.mq.admin.model.entity.User;
 import com.xxl.mq.admin.service.UserService;
 import com.xxl.sso.core.model.LoginInfo;
 import com.xxl.sso.core.store.LoginStore;
 import com.xxl.sso.core.token.TokenHelper;
 import com.xxl.tool.core.MapTool;
+import com.xxl.tool.core.StringTool;
 import com.xxl.tool.response.Response;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
@@ -75,8 +75,9 @@ public class SimpleLoginStore implements LoginStore {
         }
 
         // find role
-        RoleEnum roleEnum = RoleEnum.matchByValue(xxlBootUser.getData().getRole());
-        List<String> roleList = roleEnum!=null? Arrays.asList(roleEnum.getValue()) :null;
+        List<String> roleList = StringTool.isNotBlank(xxlBootUser.getData().getRole())
+                ? Arrays.asList(xxlBootUser.getData().getRole())
+                :null;
 
         // fill extraInfo (appname list)
         Map<String, String> extraInfo = MapTool.newHashMap("appnameList", xxlBootUser.getData().getAppnames());
