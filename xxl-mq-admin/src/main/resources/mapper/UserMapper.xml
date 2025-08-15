@@ -7,7 +7,7 @@
 		<result column="id" property="id" />
 		<result column="username" property="username" />
 	    <result column="password" property="password" />
-	    <result column="user_token" property="userToken" />
+	    <result column="token" property="token" />
 	    <result column="status" property="status" />
 		<result column="real_name" property="realName" />
 		<result column="role" property="role" />
@@ -20,7 +20,7 @@
 		t.id,
 		t.username,
 		t.password,
-		t.user_token,
+		t.token,
 		t.status,
 		t.real_name,
 		t.role,
@@ -33,7 +33,7 @@
 		INSERT INTO xxl_mq_user (
 			username,
 			password,
-			user_token,
+			token,
 			status,
 			real_name,
 			role,
@@ -43,7 +43,7 @@
 		) VALUES (
 			 #{username},
 			 #{password},
-			 #{userToken},
+			 #{token},
 			 #{status},
 			 #{realName},
 			 #{role},
@@ -74,7 +74,7 @@
 			<if test="password != null and password != ''">
 				password = #{password},
 			</if>
-			user_token = #{userToken},
+			token = #{token},
 			status = #{status},
 			real_name = #{realName},
 			role = #{role},
@@ -115,5 +115,11 @@
 			</if>
 		</trim>
 	</select>
+
+	<update id="updateToken" parameterType="com.xxl.mq.admin.model.entity.User" >
+		UPDATE xxl_mq_user
+		SET token = #{token}
+		WHERE id = #{id}
+	</update>
 
 </mapper>
