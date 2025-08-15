@@ -349,8 +349,8 @@ $(function() {
         $("#updateModal .form .form-group").removeClass("has-error");
 	});
 
-	// ---------- ---------- ---------- grant permission ---------- ---------- ----------
-	$("#data_operation .grantPermission").click(function(){
+	// ---------- ---------- ---------- grant appnames ---------- ---------- ----------
+	$("#data_operation .grantAppnames").click(function(){
 
 		// find select ids
 		var selectIds = $.dataTableSelect.selectIdsFind();
@@ -362,12 +362,12 @@ $(function() {
 
 		// fill data
 		$("#grantAppnamesModal .form input[name='username']").val(row.username)
-		var permissionDataChoose;
-		if (row.permission) {
-			permissionDataChoose = $(row.permission.split(","));
+		var appnameDataChoose;
+		if (row.appnames) {
+			appnameDataChoose = $(row.appnames.split(","));
 		}
 		$("#grantAppnamesModal .form input[name='application']").each(function () {
-			if ( $.inArray($(this).val(), permissionDataChoose) > -1 ) {
+			if ( $.inArray($(this).val(), appnameDataChoose) > -1 ) {
 				$(this).prop("checked",true).iCheck('update');
 			} else {
 				$(this).prop("checked",false).iCheck('update');
@@ -399,6 +399,8 @@ $(function() {
 					content: '操作成功' ,
 					end: function(layero, index){
 						$('#grantAppnamesModal').modal('hide');
+
+						mainDataTable.fnDraw(false);
 					}
 				});
 			} else {
