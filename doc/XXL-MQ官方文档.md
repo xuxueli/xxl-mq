@@ -840,7 +840,7 @@ API服务请求参考代码：com.xxl.mq.core.test.openapi.OpenApiClientTest
 
 
 ## 六、版本更新日志
-### v1.1.0 新特性
+### v1.1.0 Release Notes
 - 1、简单易用: 一行代码即可发布一条消息; 一行注解即可订阅一个消息主题;
 - 2、部署简单: 除ZK之外不依赖第三方服务;
 - 3、三种消息模式: TOPIC(广播消息)模型、QUEUE(并发队列)模型 和 SERIAL_QUEUE(串行队列)模型,下文将会详细讲解:
@@ -852,7 +852,7 @@ API服务请求参考代码：com.xxl.mq.core.test.openapi.OpenApiClientTest
 - 8、Delay执行: 支持设置消息的延迟生效时间, 到达设置的Delay执行时间时该消息才会被消费 ,提供DelayQueue的功能;
 - 9、消息重试: 支持设置消息的重试次数, 在消息执行失败后将会按照设置的值进行消息重试执行,直至重试次数耗尽或者执行成功;
 
-### v1.1.1 特性
+### v1.1.1 Release Notes
 - 1、项目groupId改为com.xuxueli，为推送maven中央仓库做准备；
 - 2、项目推送Maven中央仓库；
 - 3、底层系统优化，CleanCode等；
@@ -951,8 +951,20 @@ API服务请求参考代码：com.xxl.mq.core.test.openapi.OpenApiClientTest
 - 3、【新增】归档消息支持状态筛选(ISSUE-46);
 
 ### v1.5.1 Release Notes[迭代中]
-- 1、【TODO】消费者线程优化：单消费者支持多线程并行消费；
-- 2、【TODO】消息管理界面优化：支持 生效时间、新增时间 多种排序方式；
+- 1、【安全】登录安全升级，密码加密处理算法从Md5改为Sha256；
+```
+// 1、用户表password字段需要调整长度，执行如下命令
+ALTER TABLE xxl_mq_user
+    MODIFY COLUMN `password` varchar(100) NOT NULL COMMENT '密码加密信息';
+    
+// 2、存量用户密码需要修改，可执行如下命令将密码初始化 “123456”；也可以自行通过 “SHA256Tool.sha256” 工具生成其他初始化密码；
+UPDATE xxl_mq_user t SET t.password = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' WHERE t.username = {用户名};
+```
+- 2、【优化】登录态持久化逻辑调整，简化代码逻辑；
+- 3、【优化】异常页面处理逻辑优化，新增兜底落地页配置；
+- 4、【优化】登录信息页面空值处理优化，避免空值影响ftl渲染；
+- 5、【TODO】消费者线程优化：单消费者支持多线程并行消费；
+- 6、【TODO】消息管理界面优化：支持 生效时间、新增时间 多种排序方式；
 
 
 ### TODO
