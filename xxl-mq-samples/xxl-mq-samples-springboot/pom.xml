@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.xuxueli</groupId>
         <artifactId>xxl-mq-samples</artifactId>
-        <version>1.5.1-SNAPSHOT</version>
+        <version>1.6.0</version>
     </parent>
     <artifactId>xxl-mq-samples-springboot</artifactId>
     <packaging>jar</packaging>
@@ -45,7 +45,7 @@
         <dependency>
             <groupId>com.xuxueli</groupId>
             <artifactId>xxl-mq-core</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
     </dependencies>
