@@ -1,4 +1,4 @@
-package com.xxl.mq.sample.springboot.mqcomsumer;
+package com.xxl.mq.sample.springboot.consumer;
 
 import com.xxl.mq.core.XxlMqHelper;
 import com.xxl.mq.core.consumer.annotation.XxlMq;
