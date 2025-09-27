@@ -621,7 +621,7 @@
 						end: function(layero, index){
 
 							// refresh
-							$('#data_filter .searchBtn2').click();
+							$('#data_filter .searchBtn').click();
 						}
 					});
 				} else {
