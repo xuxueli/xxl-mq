@@ -29,6 +29,9 @@
 					<div class="col-xs-1">
 						<button class="btn btn-block btn-primary searchBtn" >${I18n.system_search}</button>
 					</div>
+					<div class="col-xs-1">
+						<button class="btn btn-block btn-default resetBtn" >${I18n.system_reset}</button>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -37,7 +40,7 @@
 		<div class="row">
 			<div class="col-xs-12">
 				<div class="box">
-					<div class="box-header" style="float: right" id="data_operation" >
+					<div class="box-header pull-left" id="data_operation" >
 						<button class="btn btn-sm btn-info add" type="button"><i class="fa fa-plus" ></i>${I18n.system_opt_add}</button>
 						<button class="btn btn-sm btn-warning selectOnlyOne update" type="button"><i class="fa fa-edit"></i>${I18n.system_opt_edit}</button>
 						<button class="btn btn-sm btn-danger selectAny delete" type="button"><i class="fa fa-remove "></i>${I18n.system_opt_del}</button>

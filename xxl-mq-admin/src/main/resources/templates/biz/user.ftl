@@ -357,10 +357,6 @@
 				$('#addModal .form input[name="roleId"]').prop('checked', false).iCheck('update');
 			},
 			readFormData: function() {
-				// get roleids
-				var roleIds = $('#addModal .form input[name="roleId"]:checked').map(function() {
-					return this.value;
-				}).get();
 
 				// request
 				return {

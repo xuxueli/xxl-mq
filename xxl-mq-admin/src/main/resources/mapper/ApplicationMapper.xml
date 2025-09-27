@@ -116,6 +116,14 @@
     <select id="pageListCount" parameterType="java.util.Map" resultType="int">
         SELECT count(1)
         FROM xxl_mq_application AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="appname != null and appname != ''">
+                AND t.appname like CONCAT(CONCAT('%', #{appname}), '%')
+            </if>
+            <if test="name != null and name != ''">
+                AND t.name like CONCAT(CONCAT('%', #{name}), '%')
+            </if>
+        </trim>
     </select>
 
     <select id="findAll" parameterType="java.util.Map" resultMap="Application">
