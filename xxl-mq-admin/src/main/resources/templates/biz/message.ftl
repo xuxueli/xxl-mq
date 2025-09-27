@@ -328,17 +328,16 @@
 			endDate: rangesConf['本月'][1]*/
 		});
 
-		// reset filter
-		$('#data_filter .resetBtn').on('click', function(){
+		// init filter
+		function initFilter(){
 			$("#data_filter .filterTime").data("daterangepicker").setStartDate( rangesConf['本月'][0] );
 			$("#data_filter .filterTime").data("daterangepicker").setEndDate( rangesConf['本月'][1] );
 
 			<#if topic??>
 			$("#data_filter .topic").val( '${topic}' );
 			</#if>
-		});
-		// init filter
-		$('#data_filter .resetBtn').click();
+		}
+		initFilter();
 
 		// ---------- ---------- ---------- main table  ---------- ---------- ----------
 
@@ -356,6 +355,23 @@
 				obj.start = params.offset;
 				obj.length = params.limit;
 				return obj;
+			},
+			searchHandler: function(){
+				// valid
+				if (!$("#data_filter .topic").val()) {
+					layer.msg('请输入Topic');
+					return;
+				}
+				$.adminTable.table.bootstrapTable('refresh');
+			},
+			resetHandler: function(){
+				// reset
+				$('#data_filter input[type="text"]').val('');
+				$('#data_filter select').each(function() {
+					$(this).prop('selectedIndex', 0);
+				});
+				// init
+				initFilter();
 			},
 			columns:[
 				{
@@ -605,7 +621,7 @@
 						end: function(layero, index){
 
 							// refresh
-							$('#data_filter .searchBtn').click();
+							$('#data_filter .searchBtn2').click();
 						}
 					});
 				} else {
