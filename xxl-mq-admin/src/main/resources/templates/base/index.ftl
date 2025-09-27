@@ -174,8 +174,8 @@
 
 <!-- 6-script start -->
 <@netCommon.commonScript />
-<script src="${request.contextPath}/static/biz/common/admin.tab.js"></script>
-<script src="${request.contextPath}/static/biz/common/admin.setting.js"></script>
+<script src="${request.contextPath}/static/biz/common/admin.tab.js?v=${I18n.admin_version}"></script>
+<script src="${request.contextPath}/static/biz/common/admin.setting.js?v=${I18n.admin_version}"></script>
 <script>
     $(function () {
         // init admin tab

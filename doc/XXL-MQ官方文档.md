@@ -968,6 +968,7 @@ API服务请求参考代码：com.xxl.mq.core.test.openapi.OpenApiClientTest
 ### v1.7.0 Release Notes[2025-09-27]
 - 1、【重构】UI框架重构升级，提升交互体验；
 - 2、【优化】调整资源加载逻辑，移除不必要的拦截器逻辑，提升页面加载效率；
+- 3、【升级】升级多项依赖至较新版本；
 
 ### v1.8.0 Release Notes[ING]
 - 1、【TODO】消费者线程优化：单消费者支持多线程并行消费；
