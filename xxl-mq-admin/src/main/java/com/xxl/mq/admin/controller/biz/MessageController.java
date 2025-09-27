@@ -1,6 +1,7 @@
 package com.xxl.mq.admin.controller.biz;
 
 import com.xxl.mq.admin.constant.enums.ArchiveStrategyEnum;
+import com.xxl.mq.admin.util.I18nUtil;
 import com.xxl.mq.core.constant.MessageStatusEnum;
 import com.xxl.mq.admin.model.dto.MessageDTO;
 import com.xxl.mq.admin.model.entity.Application;
@@ -8,6 +9,7 @@ import com.xxl.mq.admin.service.ApplicationService;
 import com.xxl.mq.admin.service.MessageService;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.core.DateTool;
+import com.xxl.tool.core.StringTool;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -77,12 +79,17 @@ public class MessageController {
         // parse param
         Date effectTimeStart = null;
         Date effectTimeEnd = null;
-        if (filterTime!=null && filterTime.trim().length()>0) {
-            String[] temp = filterTime.split(" - ");
-            if (temp!=null && temp.length == 2) {
-                effectTimeStart = DateTool.parseDateTime(temp[0]);
-                effectTimeEnd = DateTool.parseDateTime(temp[1]);
+        if (StringTool.isNotBlank(filterTime)) {
+            List<String> tempArr = StringTool.split(filterTime, " - ");
+            if (tempArr.size() == 2) {
+                effectTimeStart = DateTool.parseDateTime(tempArr.get(0));
+                effectTimeEnd = DateTool.parseDateTime(tempArr.get(1));
             }
+        }
+
+        // valid
+        if (StringTool.isBlank(topic)) {
+            return Response.ofFail(I18nUtil.getString("system_please_input") +"Topic");
         }
 
         // page query
