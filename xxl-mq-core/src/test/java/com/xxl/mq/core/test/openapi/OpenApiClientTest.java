@@ -21,7 +21,7 @@ public class OpenApiClientTest {
     private BrokerService buildClient(){
         String finalUrl = url + "/openapi";
 
-        JsonRpcClient jsonRpcClient = new JsonRpcClient(finalUrl, 3 * 1000);
+        JsonRpcClient jsonRpcClient = JsonRpcClient.newClient().url(finalUrl).timeout(3 * 1000);
         BrokerService brokerService = jsonRpcClient.proxy(service, BrokerService.class);
         return brokerService;
     }
