@@ -186,7 +186,7 @@ public class BrokerBootstrap implements InitializingBean, DisposableBean {
 
     @Bean
     public JsonRpcServer jsonRpcServer() {
-        JsonRpcServer jsonRpcServer = new JsonRpcServer();
+        JsonRpcServer jsonRpcServer = JsonRpcServer.newServer();
         jsonRpcServer.register("brokerService", brokerService);
 
         return jsonRpcServer;
