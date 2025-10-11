@@ -37,7 +37,6 @@ public class RegistryThread {
 
                 // param
                 RegistryRequest registryRequest = new RegistryRequest();
-                registryRequest.setAccesstoken(xxlMqBootstrap.getAccesstoken());
                 registryRequest.setAppname(xxlMqBootstrap.getAppname());
                 registryRequest.setInstanceUuid(xxlMqBootstrap.getInstanceUuid());
                 registryRequest.setTopicList(xxlMqBootstrap.getAllConsumerTopicList());
@@ -68,7 +67,6 @@ public class RegistryThread {
 
         // param
         RegistryRequest registryRequest = new RegistryRequest();
-        registryRequest.setAccesstoken(xxlMqBootstrap.getAccesstoken());
         registryRequest.setAppname(xxlMqBootstrap.getAppname());
         registryRequest.setInstanceUuid(xxlMqBootstrap.getInstanceUuid());
         registryRequest.setTopicList(xxlMqBootstrap.getAllConsumerTopicList());

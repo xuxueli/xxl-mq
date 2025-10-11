@@ -352,8 +352,8 @@
 				obj.topic = $('#data_filter .topic').val();
 				obj.status = $('#data_filter .status').val();
 				obj.filterTime = $('#data_filter .filterTime').val();
-				obj.start = params.offset;
-				obj.length = params.limit;
+				obj.offset = params.offset;
+				obj.pagesize = params.limit;
 				return obj;
 			},
 			searchHandler: function(){

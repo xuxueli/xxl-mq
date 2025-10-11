@@ -57,7 +57,6 @@ public class PullThread {
 
                         // request
                         PullRequest pullRequest = new PullRequest();
-                        pullRequest.setAccesstoken(xxlMqBootstrap.getAccesstoken());
                         pullRequest.setAppname(xxlMqBootstrap.getAppname());
                         pullRequest.setInstanceUuid(xxlMqBootstrap.getInstanceUuid());
                         pullRequest.setTopicList(freeConsumerTopicList);

@@ -1,5 +1,6 @@
 package com.xxl.mq.core.bootstrap;
 
+import com.xxl.mq.core.constant.Const;
 import com.xxl.mq.core.consumer.IConsumer;
 import com.xxl.mq.core.consumer.annotation.XxlMq;
 import com.xxl.mq.core.consumer.impl.MethodConsumer;
@@ -10,7 +11,7 @@ import com.xxl.mq.core.thread.PullThread;
 import com.xxl.mq.core.thread.RegistryThread;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.exception.BizException;
-import com.xxl.tool.jsonrpc.JsonRpcClient;
+import com.xxl.tool.http.HttpTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -177,7 +178,6 @@ public class XxlMqBootstrap {
 
     // --------------------------------- client ---------------------------------
 
-    private final String service = "brokerService";
     private final List<BrokerService> clientList = new ArrayList<>();
 
     /**
@@ -202,12 +202,12 @@ public class XxlMqBootstrap {
         List<String> addressList = Arrays.stream(address.split(",")).filter(StringTool::isNotBlank).toList();
         for (String url : addressList) {
             String finalUrl = url + "/openapi";
-
-            BrokerService brokerService = JsonRpcClient
-                    .newClient()
+            BrokerService brokerService = HttpTool.createClient()
                     .url(finalUrl)
                     .timeout(timeout)
-                    .proxy(service, BrokerService.class);
+                    .header(Const.XXL_MQ_ACCESS_TOKEN, accesstoken)
+                    .proxy(BrokerService.class);
+
             clientList.add(brokerService);
         }
     }

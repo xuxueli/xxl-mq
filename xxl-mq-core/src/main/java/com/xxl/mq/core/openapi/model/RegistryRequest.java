@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by xuxueli on 16/8/28.
  */
-public class RegistryRequest extends BaseRequest implements Serializable {
+public class RegistryRequest implements Serializable {
     private static final long serialVersionUID = 42L;
 
     private String appname;

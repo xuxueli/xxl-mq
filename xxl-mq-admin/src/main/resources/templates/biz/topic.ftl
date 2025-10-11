@@ -313,8 +313,8 @@
 				var obj = {};
 				obj.appname = $('#data_filter .appname').val();
 				obj.topic = $('#data_filter .topic').val();
-				obj.start = params.offset;
-				obj.length = params.limit;
+				obj.offset = params.offset;
+				obj.pagesize = params.limit;
 				return obj;
 			},
 			columns:[

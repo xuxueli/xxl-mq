@@ -47,10 +47,7 @@ public class BrokerServiceImpl implements BrokerService {
      */
     @Override
     public Response<String> registry(RegistryRequest registryRequest) {
-        // valid token
-        if (!validAccessToken(registryRequest)) {
-            return Response.ofFail("accessToken invalid");
-        }
+        // valid
         if (StringTool.isBlank(registryRequest.getAppname()) || StringTool.isBlank(registryRequest.getInstanceUuid())) {
             return Response.ofFail("appname or instanceUuid is empty.");
         }
@@ -58,20 +55,6 @@ public class BrokerServiceImpl implements BrokerService {
         // invoke
         boolean ret = BrokerBootstrap.getInstance().getRegistryMessageQueueHelper().registry(registryRequest);
         return ret? Response.ofSuccess() : Response.ofFail();
-    }
-
-    /**
-     * valid accessToken
-     */
-    private boolean validAccessToken(Object requestParam) {
-        if (requestParam == null) {
-            return false;
-        }
-        if (requestParam instanceof BaseRequest) {
-            BaseRequest baseRequest = (BaseRequest) requestParam;
-            return BrokerBootstrap.getInstance().getAccessTokenThreadHelper().validAccessToken(baseRequest.getAccesstoken());
-        }
-        return false;
     }
 
     /**
@@ -92,10 +75,7 @@ public class BrokerServiceImpl implements BrokerService {
      */
     @Override
     public Response<String> registryRemove(RegistryRequest registryRequest) {
-        // valid token
-        if (!validAccessToken(registryRequest)) {
-            return Response.ofFail("accessToken invalid");
-        }
+        // valid
         if (StringTool.isBlank(registryRequest.getAppname()) || StringTool.isBlank(registryRequest.getInstanceUuid())) {
             return Response.ofFail("appname or instanceUuid is empty.");
         }
@@ -126,11 +106,6 @@ public class BrokerServiceImpl implements BrokerService {
      */
     @Override
     public Response<String> produce(ProduceRequest produceRequest) {
-        // valid token
-        if (!validAccessToken(produceRequest)) {
-            return Response.ofFail("accessToken invalid");
-        }
-
         // invoke
         boolean ret = BrokerBootstrap.getInstance().getMessageProduceAndConsumeThreadHelper().produce(produceRequest);
         return ret? Response.ofSuccess() : Response.ofFail();
@@ -156,11 +131,6 @@ public class BrokerServiceImpl implements BrokerService {
      */
     @Override
     public Response<String> consume(ConsumeRequest consumeRequest) {
-        // valid token
-        if (!validAccessToken(consumeRequest)) {
-            return Response.ofFail("accessToken invalid");
-        }
-
         // invoke
         boolean ret = BrokerBootstrap.getInstance().getMessageProduceAndConsumeThreadHelper().consume(consumeRequest);
         return ret? Response.ofSuccess() : Response.ofFail();
@@ -189,22 +159,12 @@ public class BrokerServiceImpl implements BrokerService {
      */
     @Override
     public Response<List<MessageData>> pullAndLock(PullRequest pullRequest) {
-        // valid token
-        if (!validAccessToken(pullRequest)) {
-            return Response.ofFail("accessToken invalid");
-        }
-
         // invoke
         return BrokerBootstrap.getInstance().getMessageProduceAndConsumeThreadHelper().pullAndLock(pullRequest);
     }
 
     @Override
     public Response<String> pullPreCheck(PullRequest pullRequest) {
-        // valid token
-        if (!validAccessToken(pullRequest)) {
-            return Response.ofFail("accessToken invalid");
-        }
-
         // invoke
         return BrokerBootstrap.getInstance().getMessageProduceAndConsumeThreadHelper().pullPreCheck(pullRequest);
     }

@@ -3,19 +3,15 @@ package com.xxl.mq.admin.broker.config;
 import com.xxl.mq.admin.broker.thread.*;
 import com.xxl.mq.admin.mapper.*;
 import com.xxl.mq.admin.service.MessageService;
-import com.xxl.mq.core.openapi.BrokerService;
-import com.xxl.tool.jsonrpc.JsonRpcServer;
+import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
-
-import jakarta.annotation.Resource;
 
 
 /**
@@ -42,8 +38,8 @@ public class BrokerBootstrap implements InitializingBean, DisposableBean {
     @Value("${server.port}")
     private int port;
 
-    @Resource
-    private BrokerService brokerService;
+    /*@Resource
+    private BrokerService brokerService;*/
     @Autowired
     private MessageMapper messageMapper;
     @Autowired
@@ -184,13 +180,13 @@ public class BrokerBootstrap implements InitializingBean, DisposableBean {
 
     // ---------------------- openapi JsonRpcServer ----------------------
 
-    @Bean
+    /*@Bean
     public JsonRpcServer jsonRpcServer() {
         JsonRpcServer jsonRpcServer = JsonRpcServer.newServer();
         jsonRpcServer.register("brokerService", brokerService);
 
         return jsonRpcServer;
-    }
+    }*/
 
     // ---------------------- other ----------------------
 

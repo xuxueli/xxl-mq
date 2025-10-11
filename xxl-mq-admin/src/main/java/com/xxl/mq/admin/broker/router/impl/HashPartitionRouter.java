@@ -11,8 +11,8 @@ public class HashPartitionRouter implements PartitionRouter {
     @Override
     public int route(String topic, long bizId, Map<String, PartitionUtil.PartitionRange> instancePartitionRange) {
         String hashKey = topic + "_"+ bizId;
-        return hashKey.hashCode()>0
+        return 1 + hashKey.hashCode()>0
                 ?hashKey.hashCode()% MAX_PARTITION
-                :(hashKey.hashCode() & Integer.MAX_VALUE) % MAX_PARTITION;
+                :(hashKey.hashCode() & Integer.MAX_VALUE) % MAX_PARTITION;      // range：[0, MAX_PARTITION)]
     }
 }

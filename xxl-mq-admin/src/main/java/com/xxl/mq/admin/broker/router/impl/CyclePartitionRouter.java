@@ -53,12 +53,12 @@ public class CyclePartitionRouter implements PartitionRouter {
         int topicHashCode = topic.hashCode()>0
                 ?topic.hashCode()% MAX_PARTITION
                 :(topic.hashCode() & Integer.MAX_VALUE) % MAX_PARTITION;
-        int cycleId = calculate(topicHashCode);
+        int topicConsumerCount = calculate(topicHashCode);
 
         // cycle key
         List<String> keyList = new ArrayList<>(instancePartitionRange.keySet());
-        String cycleKey = keyList.get(cycleId%keyList.size());
+        String cycleKey = keyList.get(topicConsumerCount%keyList.size());
 
-        return instancePartitionRange.get(cycleKey).getPartitionIdFrom();
+        return instancePartitionRange.get(cycleKey).getPartitionIdFrom();   // range：instance-partition [from, to]
     }
 }

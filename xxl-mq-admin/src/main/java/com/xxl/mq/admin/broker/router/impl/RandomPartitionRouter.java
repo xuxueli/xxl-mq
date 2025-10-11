@@ -11,6 +11,6 @@ import static com.xxl.mq.admin.util.PartitionUtil.MAX_PARTITION;
 public class RandomPartitionRouter implements PartitionRouter {
     @Override
     public int route(String topic, long bizId, Map<String, PartitionUtil.PartitionRange> instancePartitionRange) {
-        return ThreadLocalRandom.current().nextInt(MAX_PARTITION);
+        return 1 + ThreadLocalRandom.current().nextInt(MAX_PARTITION);      // range：[1, 10000]
     }
 }

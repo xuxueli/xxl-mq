@@ -45,7 +45,6 @@ public class MessageThread {
 
                     // param
                     ProduceRequest produceRequest = new ProduceRequest();
-                    produceRequest.setAccesstoken(xxlMqBootstrap.getAccesstoken());
                     produceRequest.setMessageList(messages);
 
                     // retry 3 times
@@ -73,7 +72,6 @@ public class MessageThread {
 
                     // param
                     ConsumeRequest consumeRequest = new ConsumeRequest();
-                    consumeRequest.setAccesstoken(xxlMqBootstrap.getAccesstoken());
                     consumeRequest.setMessageList(messages);
 
                     // retry 3 times
