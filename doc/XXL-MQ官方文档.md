@@ -613,30 +613,25 @@ API服务请求参考代码：com.xxl.mq.core.test.openapi.OpenApiClientTest
 说明：客户端（消费端）注册时使用，消息中心会实时感知注册成功的消费者进行分区分配及消息路由；
 
 ------
+地址格式：{消息中心根地址}/openapi/registry
+
+Header：
+    XXL_MQ_ACCESS_TOKEN : {消息中心通讯AccessToken}
+
 请求数据JSON格式，放置在 RequestBody：
     {
-      "service": "brokerService",
-      "method": "registryRemove",
-      "params": [
-        {
-          "accesstoken": "{消息中心通讯TOKEN}",
-          "appname": "{消费者服务appkey}",
-          "instanceUuid": "{消费者服务实例UUID，可自定义，但需保持唯一}",
-          "topicList": [
+        "appname": "{消费者服务appkey}",
+        "instanceUuid": "{消费者服务实例UUID，可自定义，但需保持唯一}",
+        "topicList": [
             "{消息主题Topic",
             "{消息主题Topic}"
-          ]
-        }
-      ]
+        ]
     }
 
 响应数据JSON格式：
     {
-        "error":"",                             // 系统异常信息，默认为空；非空时表示发生系统异常；
-        "data":{
-            "code":200,                         // 业务状态码；200 表示正常、其他失败；
-            "msg":""                            // 业务错误提示消息；
-        }
+        "code":200,                         // 业务状态码；200 表示正常、其他失败；
+        "msg":""                            // 业务错误提示消息；
     }
 ```
 
@@ -645,32 +640,25 @@ API服务请求参考代码：com.xxl.mq.core.test.openapi.OpenApiClientTest
 说明：客户端（消费端）注册摘除时使用，消息中心会实时感知注册成功的消费者进行分区分配及消息路由；
 
 ------
-地址格式：{消息中心根地址}/openapi
+地址格式：{消息中心根地址}/openapi/registryRemove
+
+Header：
+    XXL_MQ_ACCESS_TOKEN : {消息中心通讯AccessToken}
 
 请求数据JSON格式，放置在 RequestBody：
     {
-      "service": "brokerService",
-      "method": "registryRemove",
-      "params": [
-        {
-          "accesstoken": "{消息中心通讯TOKEN}",
-          "appname": "{消费者服务appkey}",
-          "instanceUuid": "{消费者服务实例UUID，可自定义，但需保持唯一}",
-          "topicList": [
+        "appname": "{消费者服务appkey}",
+        "instanceUuid": "{消费者服务实例UUID，可自定义，但需保持唯一}",
+        "topicList": [
             "{消息主题Topic}",
             "{消息主题Topic}"
-          ]
-        }
-      ]
+        ]
     }
 
 响应数据JSON格式：
     {
-        "error":"",                             // 系统异常信息，默认为空；非空时表示发生系统异常；
-        "data":{
-            "code":200,                         // 业务状态码；200 表示正常、其他失败；
-            "msg":""                            // 业务错误提示消息；
-        }
+        "code":200,                         // 业务状态码；200 表示正常、其他失败；
+        "msg":""                            // 业务错误提示消息；
     }
 ```
 
@@ -679,40 +667,33 @@ API服务请求参考代码：com.xxl.mq.core.test.openapi.OpenApiClientTest
 说明：生产消息时使用，支持批量消息生产；
 
 ------
-地址格式：{消息中心根地址}/openapi
+地址格式：{消息中心根地址}/openapi/produce
+
+Header：
+    XXL_MQ_ACCESS_TOKEN : {消息中心通讯AccessToken}
 
 请求数据JSON格式，放置在 RequestBody：
     {
-      "service": "brokerService",
-      "method": "produce",
-      "params": [
-        {
-          "accesstoken": "{消息中心通讯TOKEN}",
-          "messageList": [
+        "messageList": [
             {
-              "topic": "{消息主题Topic}",
-              "data": "{消息数据}",
-              "bizId": {业务参数ID，选填；仅Topic路由策略为“Hash”时生效，用于分区路由},
-              "effectTime": {消息生效时间，选填，为空时表示立即生效；格式为时间戳/毫秒}
+                "topic": "{消息主题Topic}",
+                "data": "{消息数据}",
+                "bizId": {业务参数ID，选填；仅Topic路由策略为“Hash”时生效，用于分区路由},
+                "effectTime": {消息生效时间，选填，为空时表示立即生效；格式为时间戳/毫秒}
             },
             {
-              "topic": "{消息主题Topic}",
-              "data": "{消息数据}",
-              "bizId": {业务参数ID，选填；仅Topic路由策略为“Hash”时生效，用于分区路由},
-              "effectTime":  {消息生效时间，选填，为空时表示立即生效；格式为时间戳/毫秒}
+                "topic": "{消息主题Topic}",
+                "data": "{消息数据}",
+                "bizId": {业务参数ID，选填；仅Topic路由策略为“Hash”时生效，用于分区路由},
+                "effectTime":  {消息生效时间，选填，为空时表示立即生效；格式为时间戳/毫秒}
             }
-          ]
-        }
-      ]
+        ]
     }
 
 响应数据JSON格式：
     {
-        "error":"",                             // 系统异常信息，默认为空；非空时表示发生系统异常；
-        "data":{
-            "code":200,                         // 业务状态码；200 表示正常、其他失败；
-            "msg":""                            // 业务错误提示消息；
-        }
+        "code":200,                         // 业务状态码；200 表示正常、其他失败；
+        "msg":""                            // 业务错误提示消息；
     }
 ```
 
@@ -721,42 +702,35 @@ API服务请求参考代码：com.xxl.mq.core.test.openapi.OpenApiClientTest
 说明：消费消息时使用，支持批量回调消息消费结果；
 
 ------
-地址格式：{消息中心根地址}/openapi
+地址格式：{消息中心根地址}/openapi/produce
+
+Header：
+    XXL_MQ_ACCESS_TOKEN : {消息中心通讯AccessToken}
 
 请求数据JSON格式，放置在 RequestBody：
     {
-      "service": "brokerService",
-      "method": "consume",
-      "params": [
-        {
-          "accesstoken": "{消息中心通讯TOKEN}",
-          "messageList": [
+        "messageList": [
             {
-              "id": {消息ID},
-              "topic": "{消息主题Topic}",
-              "status": {消息状态：0-初始状态，1-消费中，2-消费成功，3-消费失败，4-消费超时},
-              "consumeLog": "{消息消费日志，用于问题追溯，可选}",
-              "consumeInstanceUuid": "{消费者服务实例UUID，可自定义，但需保持唯一}",
+                "id": {消息ID},
+                "topic": "{消息主题Topic}",
+                "status": {消息状态：0-初始状态，1-消费中，2-消费成功，3-消费失败，4-消费超时},
+                "consumeLog": "{消息消费日志，用于问题追溯，可选}",
+                "consumeInstanceUuid": "{消费者服务实例UUID，可自定义，但需保持唯一}",
             },
             {
-              "id": {消息ID},
-              "topic": "{消息主题Topic}",
-              "status": {消息状态：0-初始状态，1-消费中，2-消费成功，3-消费失败，4-消费超时},
-              "consumeLog": "{消息消费日志，用于问题追溯，可选}",
-              "consumeInstanceUuid": "{消费者服务实例UUID，可自定义，但需保持唯一}"
+                "id": {消息ID},
+                "topic": "{消息主题Topic}",
+                "status": {消息状态：0-初始状态，1-消费中，2-消费成功，3-消费失败，4-消费超时},
+                "consumeLog": "{消息消费日志，用于问题追溯，可选}",
+                "consumeInstanceUuid": "{消费者服务实例UUID，可自定义，但需保持唯一}"
             }
-          ]
-        }
-      ]
+        ]
     }
 
 响应数据JSON格式：
     {
-        "error":"",                             // 系统异常信息，默认为空；非空时表示发生系统异常；
-        "data":{
-            "code":200,                         // 业务状态码；200 表示正常、其他失败；
-            "msg":""                            // 业务错误提示消息；
-        }
+        "code":200,                         // 业务状态码；200 表示正常、其他失败；
+        "msg":""                            // 业务错误提示消息；
     }
 ```
 
@@ -765,33 +739,26 @@ API服务请求参考代码：com.xxl.mq.core.test.openapi.OpenApiClientTest
 说明：Pull消息前置校验，包括分区、实例ID、消费者appkey等合法校验；
 
 ------
-地址格式：{消息中心根地址}/openapi
+地址格式：{消息中心根地址}/openapi/pullPreCheck
+
+Header：
+    XXL_MQ_ACCESS_TOKEN : {消息中心通讯AccessToken}
 
 请求数据JSON格式，放置在 RequestBody：
     {
-      "service": "brokerService",
-      "method": "pullPreCheck",
-      "params": [
-        {
-          "accesstoken": "{消息中心通讯TOKEN}",
-          "appname": "{消费者服务appkey}",
-          "instanceUuid": "{消费者服务实例UUID，可自定义，但需保持唯一}",
-          "topicList": [
+        "appname": "{消费者服务appkey}",
+        "instanceUuid": "{消费者服务实例UUID，可自定义，但需保持唯一}",
+        "topicList": [
             "{消息主题Topic}",
             "{消息主题Topic}"
-          ],
-          "batchsize": {批量拉取消息数量}
-        }
-      ]
+        ],
+        "batchsize": {批量拉取消息数量}
     }
 
 响应数据JSON格式：
     {
-        "error":"",                             // 系统异常信息，默认为空；非空时表示发生系统异常；
-        "data":{
-            "code":200,                         // 业务状态码；200 表示正常、其他失败；
-            "msg":""                            // 业务错误提示消息；
-        }
+        "code":200,                         // 业务状态码；200 表示正常、其他失败；
+        "msg":""                            // 业务错误提示消息；
     }
 ```
 
@@ -800,41 +767,34 @@ API服务请求参考代码：com.xxl.mq.core.test.openapi.OpenApiClientTest
 说明：Pull消息数据，同时会将Pull成功消息改为“消费中”状态避免重复拉取；
 
 ------
-地址格式：{消息中心根地址}/openapi
+地址格式：{消息中心根地址}/openapi/pullAndLock
+
+Header：
+    XXL_MQ_ACCESS_TOKEN : {消息中心通讯AccessToken}
 
 请求数据JSON格式，放置在 RequestBody：
     {
-      "service": "brokerService",
-      "method": "pullAndLock",
-      "params": [
-        {
-          "accesstoken": "{消息中心通讯TOKEN}",
-          "appname": "{消费者服务appkey}",
-          "instanceUuid": "{消费者服务实例UUID，可自定义，但需保持唯一}",
-          "topicList": [
+        "appname": "{消费者服务appkey}",
+        "instanceUuid": "{消费者服务实例UUID，可自定义，但需保持唯一}",
+        "topicList": [
             "{消息主题Topic}",
             "{消息主题Topic}"
-          ],
-          "batchsize": {批量拉取消息数量}
-        }
-      ]
+        ],
+        "batchsize": {批量拉取消息数量}
     }
 
 响应数据JSON格式：
     {
-        "error":"",                             // 系统异常信息，默认为空；非空时表示发生系统异常；
-        "data":{
-            "code":200,                         // 业务状态码；200 表示正常、其他失败；
-            "msg":"",                            // 业务错误提示消息；
-            "data":[
-                {
-                  "id": {消息ID},
-                  "topic": "{消息主题Topic}",
-                  "data": "{消息数据}",
-                  "effectTime":  {消息生效时间，格式为时间戳/毫秒}
-                }
-            ]
-        }
+        "code":200,                         // 业务状态码；200 表示正常、其他失败；
+        "msg":"",                           // 业务错误提示消息；
+        "data":[
+            {
+              "id": {消息ID},
+              "topic": "{消息主题Topic}",
+              "data": "{消息数据}",
+              "effectTime":  {消息生效时间，格式为时间戳/毫秒}
+            }
+        ]
     }
 ```
 
@@ -972,13 +932,12 @@ API服务请求参考代码：com.xxl.mq.core.test.openapi.OpenApiClientTest
 - 4、【修复】服务管理接口优化，解决搜索参数不生效问题；
 - 5、【升级】升级多项依赖至较新版本；
 
-### v1.8.0 Release Notes[ING]
+### v1.8.0 Release Notes[2025-10-08]
 - 1、【升级】通讯组件升级，标准化RESTful格式通讯协议以及鉴权逻辑；
 - 2、【优化】数据表格组件分页字段规范，统一前后端交互字段；
 - 3、【优化】TAB组件逻辑优化，避免小概率情况下首页加载失败问题；
 - 4、【修复】Hash路由策略逻辑调整，避免小概率情况下分区分配异常问题；
 - 4、【升级】升级多项依赖至较新版本；
-
 
 
 ### TODO
