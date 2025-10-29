@@ -50,7 +50,7 @@ public class OpenApiController {
             return Response.ofFail("accessToken invalid");
         }
 
-        // invoke
+        // dispatch request
         try {
             switch (uri) {
                 case "registry":

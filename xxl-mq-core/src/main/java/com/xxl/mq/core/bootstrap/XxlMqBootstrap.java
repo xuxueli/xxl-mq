@@ -187,7 +187,6 @@ public class XxlMqBootstrap {
         if (StringTool.isBlank(address)) {
             throw new BizException("xxl-mq bootstrap address can not be empty.");
         }
-
         if (StringTool.isBlank(accesstoken)) {
             throw new BizException("xxl-mq bootstrap accesstoken can not be empty.");
         }
