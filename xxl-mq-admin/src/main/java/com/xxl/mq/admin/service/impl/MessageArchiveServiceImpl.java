@@ -45,8 +45,8 @@ public class MessageArchiveServiceImpl implements MessageAichiveService {
 
 		// valid
 		if (StringTool.isBlank(topic)) {
-			pageModel.setPageData(new ArrayList<>());
-			pageModel.setTotalCount(0);
+			pageModel.setData(new ArrayList<>());
+			pageModel.setTotal(0);
 			return pageModel;
 		}
 
@@ -58,8 +58,8 @@ public class MessageArchiveServiceImpl implements MessageAichiveService {
 		List<MessageArchiveDTO> pageListForDTO = pageList.stream().map(MessageAdaptor::adaptorToArchiveDto).collect(Collectors.toList());
 
 		// result
-		pageModel.setPageData(pageListForDTO);
-		pageModel.setTotalCount(totalCount);
+		pageModel.setData(pageListForDTO);
+		pageModel.setTotal(totalCount);
 
 		return pageModel;
 	}
@@ -97,7 +97,7 @@ public class MessageArchiveServiceImpl implements MessageAichiveService {
 				break;
 		}
 
-		return Response.of(ResponseCode.CODE_200.getCode(), "操作成功，处理数据行数：" + cleanCount);
+		return Response.of(ResponseCode.SUCCESS.getCode(), "操作成功，处理数据行数：" + cleanCount);
 	}
 
 	/**

@@ -92,8 +92,8 @@ public class TopicServiceImpl implements TopicService {
 
 		// valid
 		if (StringTool.isBlank(appname)) {
-			pageModel.setPageData(new ArrayList<>());
-			pageModel.setTotalCount(0);
+			pageModel.setData(new ArrayList<>());
+			pageModel.setTotal(0);
 			return pageModel;
 		}
 
@@ -101,8 +101,8 @@ public class TopicServiceImpl implements TopicService {
 		List<Topic> pageList = topicMapper.pageList(offset, pagesize, appname, topic);
 		int totalCount = topicMapper.pageListCount(offset, pagesize, appname, topic);
 
-		pageModel.setPageData(pageList);
-		pageModel.setTotalCount(totalCount);
+		pageModel.setData(pageList);
+		pageModel.setTotal(totalCount);
 
 		return pageModel;
 	}
