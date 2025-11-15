@@ -235,6 +235,7 @@ docker run -e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl_mq
 xxl.mq.admin.address=http://127.0.0.1:8080/xxl-mq-admin
 # 通讯TOKEN [必填]：非空时启用；
 xxl.mq.admin.accesstoken=defaultaccesstoken
+
 # 客户端AppName [必填]：与消息主题/Topic自动绑定；
 xxl.mq.client.appname=xxl-mq-sample
 # 客户端通讯超时时间[选填]，单位秒；默认3s；
