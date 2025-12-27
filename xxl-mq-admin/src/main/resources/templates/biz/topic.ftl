@@ -569,13 +569,12 @@
 
 		$("#data_operation").on('click', '.updateStatus',function() {
 
-			// get select rows
-			let rows = $.adminTable.table.bootstrapTable('getSelections');
-			if (rows.length <= 0) {
+			// get selectIds
+			let selectIds = $.adminTable.selectIds();
+			if (selectIds.length <= 0) {
 				layer.msg(I18n.system_please_choose + I18n.system_data);
 				return;
 			}
-			let selectIds = rows.map(row => row.id);
 
 			// confirm
 			layer.confirm( '确认修改状态 ?', {
@@ -617,9 +616,8 @@
 		// ---------- ---------- ---------- query Message ---------- ---------- ----------
 
 		$("#data_operation .queryMessage").click(function(){
-			// get select rows
-			var rows = $.adminTable.table.bootstrapTable('getSelections');
-			// find select row
+			// get selectRows
+			var rows = $.adminTable.selectRows();
 			if (rows.length !== 1) {
 				layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
 				return;
@@ -629,13 +627,11 @@
 			// open tab
 			let url = base_url + "/message?topic=" + row.topic;
 			openTab(url, '消息管理', false);
-
 		});
 
 		$("#data_operation .queryMessageArchive").click(function(){
-			// get select rows
-			var rows = $.adminTable.table.bootstrapTable('getSelections');
-			// find select row
+			// get selectRows
+			var rows = $.adminTable.selectRows();
 			if (rows.length !== 1) {
 				layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
 				return;
