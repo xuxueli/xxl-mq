@@ -941,7 +941,7 @@ Header：
 - 5、【升级】升级多项依赖至较新版本；
 
 ### v1.9.0 Release Notes[ING]
-- 1、【升级】升级多项maven依赖至较新版本，如 springboot、spring、mybatis、xxl-sso 等；
+- 1、【升级】升级至 SpringBoot4；升级多项maven依赖至较新版本，如 spring、groovy、mybatis、xxl-sso 等；
 - 2、【优化】增加主题皮肤选项并优化界面交互；
 - 3、【优化】表格交互优化：优化分页显示配置；禁用分页循环；多选行操作优化/默认单选；
 - 4、【TODO】消息管理界面优化：支持 生效时间、新增时间 多种排序方式；
