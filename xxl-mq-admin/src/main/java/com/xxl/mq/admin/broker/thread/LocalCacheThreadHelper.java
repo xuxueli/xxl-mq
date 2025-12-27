@@ -50,11 +50,12 @@ public class LocalCacheThreadHelper {
      * start
      *
      * remark：
-     *      1、topic缓存：DB > cache
-     *      2.1、Broker 注册写 Instance：refresh DB（For 集群节点感知）
-     *      2.2、过期清理 Instance：DB 清理
-     *      3、Instance注册信息，构建缓存：DB > cache
-     *      4、Instance注册信息，写入Application：cache 》 DB
+     *      1、Topic缓存同步：DB > Cache
+     *      2、Broker(Instance)数据更新：
+     *      2.1、Broker 注册写 Instance：refresh DB（For Broker集群节点感知）
+     *      2.2、Broker 过期清理 Instance：DB 清理
+     *      3、Appname-Instance缓存更新：DB > Cache
+     *      4、Appname-Instance写入Application：Cache 》 DB
      *      5、Application缓存：DB > cache
      */
     public void start(){
@@ -66,7 +67,7 @@ public class LocalCacheThreadHelper {
             @Override
             public void run() {
 
-                // 1、topic缓存：DB > cache
+                // 1、Topic缓存同步：DB > Cache
                 List<Topic> topicList = brokerBootstrap.getTopicMapper().queryByStatus(TopicStatusEnum.NORMAL.getValue());
                 Map<String, Topic> topicStoreNew = new ConcurrentHashMap<>();
                 if (CollectionTool.isNotEmpty(topicList)) {
@@ -80,53 +81,55 @@ public class LocalCacheThreadHelper {
                     logger.info(">>>>>>>>>>> xxl-mq, RegistryLocalCacheThreadHelper found diff data, topicStoreNew:{}", topicStoreNewJson);
                 }
 
-                // 2.1、Broker 注册写 Instance：refresh DB（For 集群节点感知）
+                // 2、Broker(Instance)数据更新：
+                // 2.1、Broker 注册写 Instance：refresh DB（For Broker集群节点感知）
                 Instance newInstance = new Instance();
                 newInstance.setAppname(brokerAppname);
                 newInstance.setUuid(brokerUuid);
                 newInstance.setRegisterHeartbeat(new Date());
                 brokerBootstrap.getInstanceMapper().insertOrUpdate(newInstance);
 
-                // 2.2、过期清理 Instance：DB 清理
+                // 2.2、Broker 过期清理 Instance：DB 清理
                 brokerBootstrap.getInstanceMapper().deleteOfflineInstance(DateTool.addMilliseconds(new Date(), -3 * BEAT_TIME_INTERVAL));
 
-                // 3、Instance注册信息，构建缓存：DB > cache
+                // 3、Appname-Instance缓存更新：DB > Cache
                 List<Instance> instanceList = brokerBootstrap.getInstanceMapper().queryOnlineInstance(DateTool.addMilliseconds(new Date(), -3 * BEAT_TIME_INTERVAL));
                 Map<String, ApplicationRegistryData> applicationRegistryDataStoreNew = new ConcurrentHashMap<>();
                 if (CollectionTool.isNotEmpty(instanceList)) {
                     // group by appname
                     Map<String, List<Instance>> instanceListGroup = instanceList.stream().collect(Collectors.groupingBy(Instance::getAppname));
                     for (String appname : instanceListGroup.keySet()) {
-                        // instance uuid list, sorted
+                        // instance-uuid list of eath appname, sorted
                         List<Instance> instanceListGroupAppname = instanceListGroup.get(appname);
                         List<String> instanceUuidList =instanceListGroupAppname.stream().map(Instance::getUuid).sorted().collect(Collectors.toList());
 
-                        // partition of uuid
+                        // partition of with uuid
                         TreeMap<String, PartitionUtil.PartitionRange> instancePartitionRange = PartitionUtil.allocatePartition(instanceUuidList);
 
-                        // build cache data
+                        // build appname-registry cache-data
                         ApplicationRegistryData applicationRegistryData = new ApplicationRegistryData();
-                        applicationRegistryData = new ApplicationRegistryData();
                         applicationRegistryData.setInstancePartitionRange(instancePartitionRange);
 
+                        // write cache
                         applicationRegistryDataStoreNew.put(appname, applicationRegistryData);
                     }
                 }
+                // if cache changed, update cache
                 String applicationRegistryDataNewJson = GsonTool.toJson(applicationRegistryDataStoreNew);
                 if (!applicationRegistryDataNewJson.equals(GsonTool.toJson(applicationRegistryDataStore))) {
                     applicationRegistryDataStore = applicationRegistryDataStoreNew;
                     logger.info(">>>>>>>>>>> xxl-mq, registryLocalCacheThread found diff data, applicationRegistryDataNew:{}", applicationRegistryDataNewJson);
                 }
 
-                // 4、Instance注册信息，写入Application：cache 》 DB
+                // 4、Appname-Instance写入Application：Cache 》 DB
                 List<Application> applicationList = brokerBootstrap.getApplicationMapper().findAll();
                 Map<String, Application> applicationStoreNew = new ConcurrentHashMap<>();
                 for (Application application : applicationList) {
-                    // check and refresh registry_data
+                    // check if changed
                     ApplicationRegistryData registryDataNew = applicationRegistryDataStore.get(application.getAppname());
                     String registryDataNewJson = registryDataNew!=null?GsonTool.toJson(registryDataNew):"";
                     if (!registryDataNewJson.equals(application.getRegistryData())) {
-                        // do update
+                        // changed, update DB
                         application.setRegistryData(registryDataNewJson);
                         brokerBootstrap.getApplicationMapper().updateRegistryData(application);
                     }
