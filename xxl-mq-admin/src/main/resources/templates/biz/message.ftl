@@ -21,7 +21,7 @@
 		<div class="box" style="margin-bottom:9px;">
 			<div class="box-body">
 				<div class="row" id="data_filter" >
-					<div class="col-xs-3">
+					<div class="col-xs-2">
 						<div class="input-group">
 							<span class="input-group-addon">Topic</span>
 							<input type="text" class="form-control topic" autocomplete="on" placeholder="请输入消息Topic，精确匹配"  >
@@ -44,7 +44,7 @@
 							</select>
 						</div>
 					</div>
-					<div class="col-xs-3">
+					<div class="col-xs-4">
 						<div class="input-group">
 							<span class="input-group-addon">生效时间</span>
 							<input type="text" class="form-control filterTime" readonly >
