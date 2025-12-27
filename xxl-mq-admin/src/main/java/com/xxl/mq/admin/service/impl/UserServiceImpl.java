@@ -9,7 +9,7 @@ import com.xxl.mq.admin.service.UserService;
 import com.xxl.mq.admin.util.I18nUtil;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.StringTool;
-import com.xxl.tool.encrypt.SHA256Tool;
+import com.xxl.tool.crypto.Sha256Tool;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 import org.springframework.stereotype.Service;
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
             return Response.ofFail( I18nUtil.getString("system_lengh_limit")+"[4-20]" );
         }
         // md5 password
-        String passwordHash = SHA256Tool.sha256(user.getPassword());
+        String passwordHash = Sha256Tool.sha256(user.getPassword());
         user.setPassword(passwordHash);
 
         // valid user role
@@ -129,7 +129,7 @@ public class UserServiceImpl implements UserService {
                 return Response.ofFail(  I18nUtil.getString("system_lengh_limit")+"[4-20]" );
             }
             // md5 password
-            String passwordHash = SHA256Tool.sha256(user.getPassword());
+            String passwordHash = Sha256Tool.sha256(user.getPassword());
             user.setPassword(passwordHash);
         } else {
             user.setPassword(null);
@@ -163,8 +163,8 @@ public class UserServiceImpl implements UserService {
         }
 
         // md5 password
-        String oldPasswordHash = SHA256Tool.sha256(oldPassword);
-        String passwordHash = SHA256Tool.sha256(password);
+        String oldPasswordHash = Sha256Tool.sha256(oldPassword);
+        String passwordHash = Sha256Tool.sha256(password);
 
         // valid old pwd
         User existUser = userMapper.loadByUserName(optUserName);

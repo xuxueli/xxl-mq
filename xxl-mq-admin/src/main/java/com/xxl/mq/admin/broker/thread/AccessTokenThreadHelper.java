@@ -5,7 +5,7 @@ import com.xxl.mq.admin.constant.enums.AccessTokenStatuEnum;
 import com.xxl.mq.admin.model.entity.AccessToken;
 import com.xxl.tool.concurrent.CyclicThread;
 import com.xxl.tool.core.CollectionTool;
-import com.xxl.tool.gson.GsonTool;
+import com.xxl.tool.json.GsonTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -10,7 +10,7 @@ import com.xxl.mq.core.thread.MessageThread;
 import com.xxl.mq.core.thread.PullThread;
 import com.xxl.mq.core.thread.RegistryThread;
 import com.xxl.tool.core.StringTool;
-import com.xxl.tool.exception.BizException;
+import com.xxl.tool.error.BizException;
 import com.xxl.tool.http.HttpTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

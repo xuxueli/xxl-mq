@@ -6,7 +6,7 @@ import com.xxl.mq.core.openapi.model.MessageData;
 import com.xxl.mq.core.openapi.model.ProduceRequest;
 import com.xxl.tool.concurrent.MessageQueue;
 import com.xxl.tool.core.StringTool;
-import com.xxl.tool.exception.BizException;
+import com.xxl.tool.error.BizException;
 import com.xxl.tool.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
