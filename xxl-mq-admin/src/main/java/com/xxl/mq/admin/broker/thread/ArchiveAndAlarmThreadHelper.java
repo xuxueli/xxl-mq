@@ -60,6 +60,8 @@ public class ArchiveAndAlarmThreadHelper {
                 // 1、move real-time 2 archive-message
                 List<Topic> topicList = brokerBootstrap.getLocalCacheThreadHelper().findTopicAll();
                 if (CollectionTool.isNotEmpty(topicList)) {
+                    // process topic archive: sort by level
+                    topicList.sort(Comparator.comparingInt(Topic::getLevel));
                     for (Topic topic : topicList) {
                         brokerBootstrap.getMessageService().archive(topic.getTopic(), topic.getArchiveStrategy(), 10000);
                     }

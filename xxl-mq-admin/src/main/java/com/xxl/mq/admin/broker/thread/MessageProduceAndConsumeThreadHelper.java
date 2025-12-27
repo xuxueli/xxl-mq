@@ -55,7 +55,7 @@ public class MessageProduceAndConsumeThreadHelper {
      *      2、Consume MessageQueue: 1、batch write consume result to store；2、find fail-message and retry.
      */
     public void start(){
-        produceMessageQueue = new MessageQueue<ProduceRequest>(
+        produceMessageQueue = new MessageQueue<>(
                 "produceMessageQueue",
                 5000,
                 messages -> {
