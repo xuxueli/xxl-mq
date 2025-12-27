@@ -93,6 +93,9 @@
             <if test="status gt -1">
                 AND t.status = #{status}
             </if>
+            <if test="bizId gt 0">
+                AND t.biz_id = #{bizId}
+            </if>
             <if test="effectTimeStart != null">
                 AND t.effect_time <![CDATA[ >= ]]> #{effectTimeStart}
             </if>
@@ -109,6 +112,9 @@
         WHERE `topic` = #{topic}
             <if test="status gt -1">
                 AND t.status = #{status}
+            </if>
+            <if test="bizId gt 0">
+                AND t.biz_id = #{bizId}
             </if>
             <if test="effectTimeStart != null">
                 AND t.effect_time <![CDATA[ >= ]]> #{effectTimeStart}

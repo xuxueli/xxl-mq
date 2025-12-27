@@ -16,7 +16,7 @@ public interface MessageAichiveService {
     /**
     * 分页查询
     */
-    public PageModel<MessageArchiveDTO> pageList(int offset, int pagesize, String topic, int status, Date effectTimeStart, Date effectTimeEnd);
+    public PageModel<MessageArchiveDTO> pageList(int offset, int pagesize, String topic, int status, long bizId, Date effectTimeStart, Date effectTimeEnd);
 
     /**
      * 清理

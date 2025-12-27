@@ -43,6 +43,7 @@ public interface MessageArchiveMapper {
                                          @Param("pagesize") int pagesize,
                                          @Param("topic") String topic,
                                          @Param("status") int status,
+                                         @Param("bizId") long bizId,
                                          @Param("effectTimeStart") Date effectTimeStart,
                                          @Param("effectTimeEnd") Date effectTimeEnd);
 
@@ -53,6 +54,7 @@ public interface MessageArchiveMapper {
                              @Param("pagesize") int pagesize,
                              @Param("topic") String topic,
                              @Param("status") int status,
+                             @Param("bizId") long bizId,
                              @Param("effectTimeStart") Date effectTimeStart,
                              @Param("effectTimeEnd") Date effectTimeEnd);
 

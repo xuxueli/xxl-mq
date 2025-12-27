@@ -21,10 +21,16 @@
 		<div class="box" style="margin-bottom:9px;">
 			<div class="box-body">
 				<div class="row" id="data_filter" >
-					<div class="col-xs-4">
+					<div class="col-xs-2">
 						<div class="input-group">
 							<span class="input-group-addon">Topic</span>
 							<input type="text" class="form-control topic" autocomplete="on" placeholder="请输入消息Topic，精确匹配" <#if topic??>value="${topic}" </#if>  >
+						</div>
+					</div>
+					<div class="col-xs-2">
+						<div class="input-group">
+							<span class="input-group-addon">业务ID</span>
+							<input type="number" class="form-control bizId" autocomplete="on" placeholder="请输入业务ID" >
 						</div>
 					</div>
 					<div class="col-xs-2">
@@ -357,6 +363,7 @@
 				var obj = {};
 				obj.topic = $('#data_filter .topic').val();
 				obj.status = $('#data_filter .status').val();
+				obj.bizId = $('#data_filter .bizId').val();
 				obj.filterTime = $('#data_filter .filterTime').val();
 				obj.offset = params.offset;
 				obj.pagesize = params.limit;
