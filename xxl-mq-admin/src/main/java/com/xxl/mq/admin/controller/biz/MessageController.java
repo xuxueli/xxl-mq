@@ -74,9 +74,11 @@ public class MessageController {
                                                     @RequestParam(required = false, defaultValue = "10") int pagesize,
                                                     @RequestParam(required = false) String topic,
                                                     @RequestParam(required = false) int status,
+                                                    @RequestParam(required = false) Long bizId,
                                                     @RequestParam(required = false) String filterTime) {
 
         // parse param
+        bizId = (bizId!=null && bizId>0)?bizId:0L;
         Date effectTimeStart = null;
         Date effectTimeEnd = null;
         if (StringTool.isNotBlank(filterTime)) {
@@ -93,7 +95,7 @@ public class MessageController {
         }
 
         // page query
-        PageModel<MessageDTO> pageModel = messageService.pageList(offset, pagesize, topic, status, effectTimeStart, effectTimeEnd);
+        PageModel<MessageDTO> pageModel = messageService.pageList(offset, pagesize, topic, status, bizId, effectTimeStart, effectTimeEnd);
         return Response.ofSuccess(pageModel);
     }
 

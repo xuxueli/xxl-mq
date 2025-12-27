@@ -112,7 +112,7 @@ public class MessageServiceImpl implements MessageService {
 	* 分页查询
 	*/
 	@Override
-	public PageModel<MessageDTO> pageList(int offset, int pagesize, String topic, int status, Date effectTimeStart, Date effectTimeEnd) {
+	public PageModel<MessageDTO> pageList(int offset, int pagesize, String topic, int status, long bizId, Date effectTimeStart, Date effectTimeEnd) {
 		PageModel<MessageDTO> pageModel = new PageModel<>();
 
 		// valid
@@ -123,8 +123,8 @@ public class MessageServiceImpl implements MessageService {
 		}
 
 		// page
-		List<Message> pageList = messageMapper.pageList(offset, pagesize, topic, status, effectTimeStart, effectTimeEnd);
-		int totalCount = messageMapper.pageListCount(offset, pagesize, topic, status, effectTimeStart, effectTimeEnd);
+		List<Message> pageList = messageMapper.pageList(offset, pagesize, topic, status, bizId, effectTimeStart, effectTimeEnd);
+		int totalCount = messageMapper.pageListCount(offset, pagesize, topic, status, bizId, effectTimeStart, effectTimeEnd);
 
 		// adaptor
 		List<MessageDTO> pageListForDTO = pageList.stream().map(MessageAdaptor::adaptor).collect(Collectors.toList());
