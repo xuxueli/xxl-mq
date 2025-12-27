@@ -60,6 +60,7 @@
 				<div class="box">
 					<div class="box-header pull-left" id="data_operation" >
 						<button class="btn btn-sm btn-danger archive" type="button">归档清理</button>
+						｜
 						<button class="btn btn-sm btn-primary selectOnlyOne showConsumeLog" type="button">查看消费轨迹</button>
 						<button class="btn btn-sm btn-primary queryMessage" type="button">查看实时消息</button>
 					</div>
@@ -480,7 +481,7 @@
 
 		$("#data_operation").on('click', '.archive',function() {
 			let topic = $('#data_filter .topic').val();
-			$("#archiveModel .form input[name='topic']").val( topic );
+			$("#archiveModel [name='topic']").val( topic );
 			// show
 			$('#archiveModel').modal({backdrop: false, keyboard: false}).modal('show');
 		});
