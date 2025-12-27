@@ -357,7 +357,7 @@
 					align: 'left',
 					formatter: function (value, row, index) {
 						let ret = value;
-						$("#addModal .form select[name='partitionStrategy']").children("option").each(function() {
+						$("#addModal [name='partitionStrategy']").children("option").each(function() {
 							if ($(this).val() === row.partitionStrategy+"") {
 								ret = $(this).html();
 							}
@@ -372,7 +372,7 @@
 					align: 'left',
 					formatter: function(value, row, index) {
 						var ret = value
-						$("#addModal .form select[name='retryStrategy']").children("option").each(function() {
+						$("#addModal [name='retryStrategy']").children("option").each(function() {
 							if ($(this).val() === row.retryStrategy+"") {
 								ret = $(this).html();
 							}
@@ -474,11 +474,11 @@
 			},
 			readFormData: function() {
 				// valid
-				var executionTimeout = $("#addModal .form input[name='executionTimeout']").val();
+				var executionTimeout = $("#addModal [name='executionTimeout']").val();
 				if(!/^\d+$/.test(executionTimeout)) {
 					executionTimeout = 0;
 				}
-				$("#addModal .form input[name='executionTimeout']").val(executionTimeout);
+				$("#addModal [name='executionTimeout']").val(executionTimeout);
 
 				// request
 				return $("#addModal .form").serializeArray();
@@ -493,22 +493,22 @@
 			writeFormData: function(row) {
 
 				// base data
-				$("#updateModal .form input[name='id']").val( row.id );
-				$("#updateModal .form input[name='appname']").val( row.appname );
-				$("#updateModal .form input[name='topic']").val( row.topic );
-				$("#updateModal .form input[name='desc']").val( row.desc );
-				$("#updateModal .form input[name='owner']").val( row.owner );
-				$("#updateModal .form input[name='alarmEmail']").val( row.alarmEmail );
-				$("#updateModal .form select[name='storeStrategy']").val( row.storeStrategy );
-				$("#updateModal .form select[name='partitionStrategy']").val( row.partitionStrategy );
-				$("#updateModal .form select[name='archiveStrategy']").val( row.archiveStrategy );
-				$("#updateModal .form select[name='retryStrategy']").val( row.retryStrategy );
-				$("#updateModal .form input[name='retryCount']").val( row.retryCount );
-				$("#updateModal .form input[name='retryInterval']").val( row.retryInterval );
+				$("#updateModal [name='id']").val( row.id );
+				$("#updateModal [name='appname']").val( row.appname );
+				$("#updateModal [name='topic']").val( row.topic );
+				$("#updateModal [name='desc']").val( row.desc );
+				$("#updateModal [name='owner']").val( row.owner );
+				$("#updateModal [name='alarmEmail']").val( row.alarmEmail );
+				$("#updateModal [name='storeStrategy']").val( row.storeStrategy );
+				$("#updateModal [name='partitionStrategy']").val( row.partitionStrategy );
+				$("#updateModal [name='archiveStrategy']").val( row.archiveStrategy );
+				$("#updateModal [name='retryStrategy']").val( row.retryStrategy );
+				$("#updateModal [name='retryCount']").val( row.retryCount );
+				$("#updateModal [name='retryInterval']").val( row.retryInterval );
 				if (row.executionTimeout && row.executionTimeout>0) {
-					$("#updateModal .form input[name='executionTimeout']").val( row.executionTimeout );
+					$("#updateModal [name='executionTimeout']").val( row.executionTimeout );
 				}
-				$("#updateModal .form select[name='level']").val( row.level );
+				$("#updateModal [name='level']").val( row.level );
 			},
 			rules : {
 				desc : {
@@ -554,11 +554,11 @@
 			},
 			readFormData: function() {
 				// valid
-				var executionTimeout = $("#updateModal .form input[name='executionTimeout']").val();
+				var executionTimeout = $("#updateModal [name='executionTimeout']").val();
 				if(!/^\d+$/.test(executionTimeout)) {
 					executionTimeout = 0;
 				}
-				$("#updateModal .form input[name='executionTimeout']").val(executionTimeout);
+				$("#updateModal [name='executionTimeout']").val(executionTimeout);
 
 				// request
 				return $("#updateModal .form").serializeArray();
