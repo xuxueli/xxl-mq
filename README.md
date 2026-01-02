@@ -38,7 +38,7 @@ XXL-MQ is a lightweight distributed message queue framework, With featuring "lig
 It supports multiple message types including "parallel messages, serial messages, sharded messages, broadcast messages, delayed messages, and failed retry messages".
 Now, it's already open source, real "out-of-the-box".
 
-XXL-MQ是一个轻量级分布式消息队列，具备“轻量级、分布式、高吞吐（单机TPS 10W+）、海量消息（亿级）” 等特性，支持 “并行消息、串行消息、分片消息、广播消息、延迟消息、失败重试消息”多消息类型，现已开放源代码，开箱即用。
+XXL-MQ是一个轻量级分布式消息队列，具备“轻量级、分布式、高吞吐、海量消息” 等特性，支持 “并行消息、串行消息、分片消息、广播消息、延迟消息、失败重试消息”多消息类型，现已开放源代码，开箱即用。
 
 
 ## Documentation
@@ -50,8 +50,8 @@ XXL-MQ是一个轻量级分布式消息队列，具备“轻量级、分布式�
 - 2、轻量级: 除存储层（可选，支持MySQL/TiDB），无第三方依赖；部署及运维低成本、轻量级。
 - 3、水平扩展：得益于存算分离系统设计，消息中心为无状态服务；消息中心（Broker）及消费者（Client）均支持集群扩展部署，线形提升消息生产及吞吐能力；
 - 4、高可用/HA：消息中心内置注册发现能力，支持Broker服务以及Topic消费者动态注册；消息中心与消费者单节点故障时，可自动摘除故障节点，实现消息吞吐及消费故障转移；
-- 5、高吞吐：消息生产及消费链路进行批量、并行及异步系统设计，消息存储进行冷数据及时清理归档设计，实现消息高吞吐（Mysql存储单机吞吐1W；TiDB存储单机吞吐10W）。
-- 6、海量消息：消息存储基于DB实现，支持Mysql、TiDB多存储介质；消息存储进行冷热设计，并滚动式清理归档，支持海量消息堆积（Mysql存储支持千万级；TiDB存储支持10亿级/理论无上限）。
+- 5、高吞吐：消息生产及消费链路进行批量、并行及异步系统设计，消息存储进行冷数据及时清理归档设计，实现消息高吞吐且支持水平扩容（Mysql存储单机吞吐10W/秒；TiDB存储单机吞吐50W/秒）；
+- 6、海量消息：消息存储基于DB实现，支持Mysql、TiDB多存储介质；消息存储进行冷热设计，支持海量消息堆积（Mysql存储支持亿级；TiDB存储支持100亿级）；支持滚动式清理归档，开启后理论无容量上限；
 - 7、存算分离：消息中心（Broker）设计为无状态服务，提供主题及消息控制台管理能力以及消息RPC服务能力，与消息存储层解耦；
 - 8、跨语言/OpenAPI：提供语言无关的消息中心 OpenAPI（RESTFUL 格式），提供消息生产、拉取及消费等能力，实现多语言支持；
 - 9、实时性：消息中心与消费者基于JsonRpc进行吞吐消费，支持毫秒级生产投递、秒级消费感知，延迟消息基于时间轮机制支持零延迟消费感知；
