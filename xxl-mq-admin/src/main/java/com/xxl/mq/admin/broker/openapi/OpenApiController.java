@@ -31,7 +31,8 @@ public class OpenApiController {
     @XxlSso(login = false)
     public Response<?> api(HttpServletRequest request,
                            @PathVariable("uri") String uri,
-                           @RequestHeader(Const.XXL_MQ_ACCESS_TOKEN) String accesstoken,
+                           @RequestHeader(name = Const.XXL_MQ_ACCESS_TOKEN, required = false) String accesstoken,
+                           @RequestHeader(name = "XXL_MQ_ACCESS_TOKEN", required = false) String accesstokenOld,    // todo, will be removed in the future
                            @RequestBody(required = false) String requestBody){
 
         // valid param
@@ -46,7 +47,8 @@ public class OpenApiController {
         }
 
         // valid token
-        if (!BrokerBootstrap.getInstance().getAccessTokenThreadHelper().validAccessToken(accesstoken)) {
+        if (!BrokerBootstrap.getInstance().getAccessTokenThreadHelper().validAccessToken(accesstoken)
+            &&!BrokerBootstrap.getInstance().getAccessTokenThreadHelper().validAccessToken(accesstokenOld)) {
             return Response.ofFail("accessToken invalid");
         }
 

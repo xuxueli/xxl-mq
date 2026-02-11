@@ -10,7 +10,7 @@ public class Const {
     /**
      * access_token of xxl-mq
      */
-    public static final String XXL_MQ_ACCESS_TOKEN = "XXL_MQ_ACCESS_TOKEN";
+    public static final String XXL_MQ_ACCESS_TOKEN = "XXL-MQ-ACCESS-TOKEN";
 
 
 }

@@ -654,7 +654,7 @@ API服务请求参考代码：com.xxl.mq.core.test.openapi.OpenApiClientTest
 地址格式：{消息中心根地址}/openapi/registry
 
 Header：
-    XXL_MQ_ACCESS_TOKEN : {消息中心通讯AccessToken}
+    XXL-MQ-ACCESS-TOKEN : {消息中心通讯AccessToken}
 
 请求数据JSON格式，放置在 RequestBody：
     {
@@ -681,7 +681,7 @@ Header：
 地址格式：{消息中心根地址}/openapi/registryRemove
 
 Header：
-    XXL_MQ_ACCESS_TOKEN : {消息中心通讯AccessToken}
+    XXL-MQ-ACCESS-TOKEN : {消息中心通讯AccessToken}
 
 请求数据JSON格式，放置在 RequestBody：
     {
@@ -708,7 +708,7 @@ Header：
 地址格式：{消息中心根地址}/openapi/produce
 
 Header：
-    XXL_MQ_ACCESS_TOKEN : {消息中心通讯AccessToken}
+    XXL-MQ-ACCESS-TOKEN : {消息中心通讯AccessToken}
 
 请求数据JSON格式，放置在 RequestBody：
     {
@@ -743,7 +743,7 @@ Header：
 地址格式：{消息中心根地址}/openapi/produce
 
 Header：
-    XXL_MQ_ACCESS_TOKEN : {消息中心通讯AccessToken}
+    XXL-MQ-ACCESS-TOKEN : {消息中心通讯AccessToken}
 
 请求数据JSON格式，放置在 RequestBody：
     {
@@ -780,7 +780,7 @@ Header：
 地址格式：{消息中心根地址}/openapi/pullPreCheck
 
 Header：
-    XXL_MQ_ACCESS_TOKEN : {消息中心通讯AccessToken}
+    XXL-MQ-ACCESS-TOKEN : {消息中心通讯AccessToken}
 
 请求数据JSON格式，放置在 RequestBody：
     {
@@ -808,7 +808,7 @@ Header：
 地址格式：{消息中心根地址}/openapi/pullAndLock
 
 Header：
-    XXL_MQ_ACCESS_TOKEN : {消息中心通讯AccessToken}
+    XXL-MQ-ACCESS-TOKEN : {消息中心通讯AccessToken}
 
 请求数据JSON格式，放置在 RequestBody：
     {
@@ -985,7 +985,8 @@ Header：
 
 ### v1.9.1 Release Notes[ING]
 - 1、【优化】Topic消费者服务隔离，限制消息中心绑定的Appname才允许消费（ISSUE-53）；
-- 2、【ING】注册节点完善：展示IP、时间等扩展信息；
+- 2、【优化】消息中心OpenAPI校验token调整，由“XXL_MQ_ACCESS_TOKEN”调整为“XXL-MQ-ACCESS-TOKEN”，兼容nginx代理场景参数传递（本版本兼容旧版本参数，客户端不需要升级）；
+- 3、【ING】注册节点完善：展示IP、时间等扩展信息；
 
 
 ### TODO
