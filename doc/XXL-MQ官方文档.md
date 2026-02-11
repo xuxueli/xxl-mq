@@ -986,7 +986,9 @@ Header：
 ### v1.9.1 Release Notes[ING]
 - 1、【优化】Topic消费者服务隔离，限制消息中心绑定的Appname才允许消费（ISSUE-53）；
 - 2、【优化】消息中心OpenAPI校验token调整，由“XXL_MQ_ACCESS_TOKEN”调整为“XXL-MQ-ACCESS-TOKEN”，兼容nginx代理场景参数传递（本版本兼容旧版本参数，客户端不需要升级）；
-- 3、【ING】注册节点完善：展示IP、时间等扩展信息；
+- 3、【升级】升级多项maven依赖至较新版本，如 spring、mybatis 等；
+- 4、【ING】注册节点完善：展示IP、时间等扩展信息；
+- 5、【ING】消费者限流；
 
 
 ### TODO

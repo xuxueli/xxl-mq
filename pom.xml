@@ -25,21 +25,21 @@
 		<maven.compiler.target>17</maven.compiler.target>
 		<maven.test.skip>true</maven.test.skip>
 		<!-- plugin -->
-		<maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+		<maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
 		<maven-source-plugin.version>3.4.0</maven-source-plugin.version>
 		<maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
 		<maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
-		<central-publishing-maven-plugin.version>0.9.0</central-publishing-maven-plugin.version>
+		<central-publishing-maven-plugin.version>0.10.0</central-publishing-maven-plugin.version>
 		<!-- base -->
 		<slf4j-api.version>2.0.17</slf4j-api.version>
-		<junit-jupiter.version>6.0.1</junit-jupiter.version>
+		<junit-jupiter.version>6.0.2</junit-jupiter.version>
 
 		<!-- spring -->
-		<spring-boot.version>4.0.1</spring-boot.version>
-		<spring.version>7.0.2</spring.version>
+		<spring-boot.version>4.0.2</spring-boot.version>
+		<spring.version>7.0.3</spring.version>
 		<!-- mybatis & db -->
-		<mybatis-spring-boot-starter.version>4.0.0</mybatis-spring-boot-starter.version>
-		<mysql-connector-j.version>9.5.0</mysql-connector-j.version>
+		<mybatis-spring-boot-starter.version>4.0.1</mybatis-spring-boot-starter.version>
+		<mysql-connector-j.version>9.6.0</mysql-connector-j.version>
 
 		<!-- xxl-sso -->
 		<xxl-sso.version>2.3.2</xxl-sso.version>
