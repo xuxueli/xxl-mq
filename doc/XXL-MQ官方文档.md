@@ -636,6 +636,36 @@ XXL-MQ 采用分区式路由和存储机制、以及动态分区分配和消费�
 
 至此，消费者消费平衡（责任分区分配）和消息拉取和消费完成。
 
+### 4.8 Docker Compose 快速部署 
+
+支持通过 Docker Compose 方式部署并启动 XXL-MQ，包括：数据库、调度中心、示例执行器。
+
+- 第一步：克隆 XXL-MQ
+```
+git clone --branch "$(curl -s https://api.github.com/repos/xuxueli/xxl-mq/releases/latest | jq -r .tag_name)" https://github.com/xuxueli/xxl-mq.git
+```
+
+- 第二步：构建 XXL-MQ
+```
+// 注意：如下命令需要在项目仓库根目录执行
+mvn clean package -Dmaven.test.skip=true
+```
+
+- 第三步：配置 XXL-MQ
+```
+// 注意：前往docker目录，自定义 .env 配置；如修改 MYSQL_PATH 配置设置Mysql数据持久化目录；
+cd ./docker
+cat .env
+```
+
+- 第四步：启动 XXL-MQ
+```
+// 启动 
+docker compose up -d
+
+// 停止
+docker compose down
+```
 
 ## 五、消息中心 OpenApi
 
@@ -987,8 +1017,28 @@ Header：
 - 1、【优化】Topic消费者服务隔离，限制消息中心绑定的Appname才允许消费（ISSUE-53）；
 - 2、【优化】消息中心OpenAPI校验token调整，由“XXL_MQ_ACCESS_TOKEN”调整为“XXL-MQ-ACCESS-TOKEN”，兼容nginx代理场景参数传递（本版本兼容旧版本参数，客户端不需要升级）；
 - 3、【升级】升级多项maven依赖至较新版本，如 spring、mybatis 等；
-- 4、【ING】注册节点完善：展示IP、时间等扩展信息；
-- 5、【ING】消费者限流；
+- 4、【新增】新增 Docker Compose 配置，支持一键配置启动调度中心集群；
+
+<details>
+    <summary>Docker Compose启动步骤：</summary>    
+
+    ```
+    // 下载 XXL-MQ
+    git clone --branch "$(curl -s https://api.github.com/repos/xuxueli/xxl-mq/releases/latest | jq -r .tag_name)" https://github.com/xuxueli/xxl-mq.git
+    // 构建 XXL-MQ
+    mvn clean package -Dmaven.test.skip=true
+    // 配置 XXL-MQ（前往docker目录，自定义 .env）
+    cd ./docker
+    cat .env
+    // 启动 XXL-MQ
+    docker compose up -d
+    // 停止 XXL-MQ
+    docker compose down
+    ```
+</details>
+
+- 5、【ING】注册节点完善：展示IP、时间等扩展信息；
+- 6、【ING】消费者限流：消费preCheck时校验topic状态与限流控制，增加限流控制逻辑；
 
 
 ### TODO
