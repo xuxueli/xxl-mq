@@ -15,6 +15,10 @@ public interface BrokerService {
     /**
      * registry instance
      *
+     *  1、refresh instance （only appname）
+     *  2、init-topic
+     *  3、init-appname
+     *
      * @param registryRequest
      * @return
      */
@@ -22,6 +26,8 @@ public interface BrokerService {
 
     /**
      * registry remove instance
+     *
+     *  1、remove instance （only appname）
      *
      * @param registryRequest
      * @return
@@ -31,6 +37,8 @@ public interface BrokerService {
     /**
      * produce messages (new message)
      *
+     *  1、message (with topic)
+     *
      * @param produceRequest
      * @return
      */
@@ -38,6 +46,8 @@ public interface BrokerService {
 
     /**
      * consume messages (callback message status)
+     *
+     *  1、message (with msg-id)
      *
      * @param consumeRequest
      * @return
@@ -47,6 +57,8 @@ public interface BrokerService {
     /**
      * pull messages (will lock message)
      *
+     *  1、pullAndLock message (with topic + appname)
+     *
      * @param pullRequest
      * @return
      */
@@ -54,6 +66,8 @@ public interface BrokerService {
 
     /**
      * pull pre-check (check partition permission)
+     *
+     *  1、pullPreCheck message (with topic + appname)
      *
      * @param pullRequest
      * @return

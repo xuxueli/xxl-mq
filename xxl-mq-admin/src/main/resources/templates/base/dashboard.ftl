@@ -178,7 +178,7 @@ $(function () {
     function lineChartInit(data) {
         var option = {
             title: {
-                text: '日期分布圖'
+                text: '日期分布图'
             },
             tooltip : {
                 trigger: 'axis',
@@ -263,7 +263,7 @@ $(function () {
     function pieChartInit(data) {
         var option = {
             title : {
-                text: '成功比例圖' ,
+                text: '成功比例图' ,
                 /*subtext: 'subtext',*/
                 x:'center'
             },

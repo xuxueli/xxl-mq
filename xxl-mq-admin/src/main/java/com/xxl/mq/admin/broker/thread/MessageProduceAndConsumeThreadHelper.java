@@ -292,8 +292,13 @@ public class MessageProduceAndConsumeThreadHelper {
         List<String> validTopicList = new ArrayList<>();
         for (String topic: pullRequest.getTopicList()) {
             Topic topicData = brokerBootstrap.getLocalCacheThreadHelper().findTopic(topic);
-            if (topicData!=null && topicData.getStatus() == TopicStatusEnum.INACTIVE.getValue()) {
-                // inactive topic, pass
+            if (topicData == null) {
+                logger.debug("Topic inactive or not exist, topic: {}", topic);
+                continue;
+            }
+            if (!topicData.getAppname().equals(pullRequest.getAppname())) {
+                // topic not belong to current appname
+                logger.debug("Topic not belong to current appname, topic: {}, appname: {}", topic, pullRequest.getAppname());
                 continue;
             }
             validTopicList.add(topic);
