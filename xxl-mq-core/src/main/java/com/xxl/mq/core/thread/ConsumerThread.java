@@ -32,7 +32,8 @@ public class ConsumerThread {
     public ConsumerThread(XxlMqBootstrap xxlMqBootstrap, IConsumer consumer) {
         this.xxlMqBootstrap = xxlMqBootstrap;
         this.consumer = consumer;
-        this.scheduledExecutorService = new ScheduledThreadPoolExecutor(1);
+        this.scheduledExecutorService = new ScheduledThreadPoolExecutor(xxlMqBootstrap.getConsumerThreadPoolSize());
+        this.scheduledExecutorService.setMaximumPoolSize(xxlMqBootstrap.getConsumerThreadPoolMaxSize());
         this.lastExecuteTime = System.currentTimeMillis();
     }
 
