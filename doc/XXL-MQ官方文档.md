@@ -181,7 +181,7 @@ xxl.mq.i18n=zh_CN
 
 默认登录账号 "admin/123456", 登录后运行界面如下图所示。
 
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_01.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-mq/images/img_01.png "在这里输入图片标题")
 
 至此“消息中心”项目已经部署成功。
 
@@ -401,7 +401,7 @@ public void consume() {
 
 访问部署成功的 "springboot版本示例项目" 地址，浏览器访问展示如下如下：
 
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_02.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-mq/images/img_02.png "在这里输入图片标题")
 
 该示例项目已经提供了多个消息生产与消费的实例：
 
@@ -409,14 +409,14 @@ public void consume() {
 连续点击 "并行消费" 按钮3次，将会生产3条并行消息；
 
 进入消息中心 "消息管理" 菜单，输入指定“topic = topic_sample” 查询，消息数据如下：
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_06.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-mq/images/img_06.png "在这里输入图片标题")
 
 并行消费逻辑说明：
 - 分区范围：进入“服务管理”菜单，可以看到消费者服务（xxl-mq-sample）注册节点数为2。消息中心固定总分区数 1W，因此2个客户端各自负责分区范围为 [1, 5000]、[5001, 10000]。
 - 并行逻辑：进入“主题管理”才看，可以看到 “topic = topic_sample” 的 “分区策略” 选择为 “轮询”；消息分区路由将会依次分配给2个注册节点，因此 partitionId（分区ID）依次为 “1、5001、1”，符合预期。 
 
 点击 “查看消费轨迹”按钮，支持查看消息轨迹日志，包括生产、路由、消费详细日志：
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_04.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-mq/images/img_04.png "在这里输入图片标题")
 
 
 #### b、"串行消息" 测试：   
@@ -452,7 +452,7 @@ public void consume() {
 
 进入消息中心 "消息管理" 菜单，输入指定“topic = topic_sample_07” 查询。点击所生产消息的 “查看消费轨迹”，可见最大和最小生产时间相差1S，说明 1S 内客户端生产了 1W条消息、且 100% 投递成功，即单机TPS过万；
 
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_14.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-mq/images/img_14.png "在这里输入图片标题")
 
 #### 其他测试
 如延时消息、重试消息 …… 可自行参考示例代码测试；
@@ -463,31 +463,31 @@ public void consume() {
 ### 3.1 运行报表：
 首页的运行报表界面，展示消费者服务、消息主题、消息数量等；支持以日期分布图、成功比例图方式查看消息生产消费情况。（注意：报表存在10min延迟）
 
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_01.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-mq/images/img_01.png "在这里输入图片标题")
 
 ### 3.2 消息主题
 消息主题界面，可查看在线消息主题列表；
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_08.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-mq/images/img_08.png "在这里输入图片标题")
 
 消息主题管理：支持在线管理 “消费主题”，维护消息主题属性：（详细属性，可查看章节 “ 4.2.1、消息主题（Topic）” ）
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_11.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-mq/images/img_11.png "在这里输入图片标题")
 
 ### 3.3 消息管理
 消息管理界面，支持 "新增"、"编辑" 和 "删除" 实时消息数据，支持查看“消息消费轨迹”；
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_06.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-mq/images/img_06.png "在这里输入图片标题")
 
 消息属性编辑：如下图所示，可修改消息属性：
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_12.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-mq/images/img_12.png "在这里输入图片标题")
 
 消息归档/清理：支持在线归档、清理消息，可选择消息主题、归档策略*等；  
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_13.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-mq/images/img_13.png "在这里输入图片标题")
 
 ### 3.4 消费者服务管理
 消费者服务管理界面，可查看服务列表：
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_10.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-mq/images/img_10.png "在这里输入图片标题")
 
 点击 “查看注册节点”，可查看消费者服务在线节点，以及 “注册节点/UUID” 与 “责任分区范围”（用于消息分区路由）。
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_15.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-mq/images/img_15.png "在这里输入图片标题")
 
 
 ## 四、总体设计
@@ -510,7 +510,7 @@ XXL-MQ整体基于 “存算分离” 与 “分区机制” 的设计思想：
 
 #### 4.1.3、架构图
 
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_03.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-mq/images/img_03.png "在这里输入图片标题")
 
 ### 4.2、消息核心模型
 
@@ -613,7 +613,7 @@ XXL-MQ 核心模型包括：
 
 XXL-MQ 采用分区式路由和存储机制、以及动态分区分配和消费平衡机制，确保消息的可靠传递和系统可扩展性。下图展示了从生产者到消费者的完整消息传递流程：
 
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-mq/images/img_16.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-mq/images/img_16.png "在这里输入图片标题")
 
 #### 4.7.1、生产阶段
 
