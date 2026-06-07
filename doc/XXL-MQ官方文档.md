@@ -1016,7 +1016,8 @@ Header：
 ### v1.9.1 Release Notes[2026-06-07]
 - 1、【优化】Topic消费者服务隔离，限制消息中心绑定的Appname才允许消费（ISSUE-53）；
 - 2、【优化】消息中心OpenAPI校验token调整，由“XXL_MQ_ACCESS_TOKEN”调整为“XXL-MQ-ACCESS-TOKEN”，兼容nginx代理场景参数传递（本版本兼容旧版本参数，客户端不需要升级）；
-- 3、【升级】升级多项maven依赖至较新版本，如 spring、mybatis、xxl-sso 等；
+- 3、【调整】消息中心移除context-path前缀配置项，简化客户端配置；
+  （存量客户端升级需要注意：升级后需要将配置项 "xxl.mq.admin.address" 中的 context-path 前缀移除）
 - 4、【新增】新增 Docker Compose 配置，支持一键配置启动调度中心集群；
 
 <details>
@@ -1037,9 +1038,8 @@ Header：
     ```
 </details>
 
-- 5、【调整】消息中心移除context-path前缀配置项，简化客户端配置；
-  （存量客户端升级需要注意：升级后需要将配置项 "xxl.mq.admin.address" 中的 context-path 前缀移除）
-- 6、【重构】项目结构AI Ready重构，将业务逻辑与数据访问逻辑分离，提升项目可读性与可维护性；
+- 5、【重构】项目结构AI Ready重构，将业务逻辑与数据访问逻辑分离，提升项目可读性与可维护性；
+- 6、【升级】升级多项maven依赖至较新版本，如 spring、mybatis、xxl-sso 等；
 
 
 ### v1.9.2 Release Notes[ING]
