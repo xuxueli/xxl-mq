@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 public class XxlMqBootstrapTest {
     private static final Logger logger = LoggerFactory.getLogger(XxlMqBootstrapTest.class);
 
-    private static String url = "http://127.0.0.1:8080/xxl-mq-admin/openapi";
+    private static String url = "http://127.0.0.1:8080";
     private static String service = "brokerService";
     private static String accessToken = "defaultaccesstoken";
 

@@ -177,7 +177,7 @@ xxl.mq.i18n=zh_CN
 #### 步骤二：消息中心部署：  
 如果已经正确进行上述配置，可将项目编译打包部署。
 
-消息中心访问地址：http://127.0.0.1:8080/xxl-mq-admin  (该地址接入方项目将会使用到)。
+消息中心访问地址：http://127.0.0.1:8080  (该地址接入方项目将会使用到)。
 
 默认登录账号 "admin/123456", 登录后运行界面如下图所示。
 
@@ -241,7 +241,7 @@ xuxueli/xxl-mq-admin:{指定版本}
 
 ```
 # 消息中心根地址 [必填]；支持配置多个，建议域名方式配置；
-xxl.mq.admin.address=http://127.0.0.1:8080/xxl-mq-admin
+xxl.mq.admin.address=http://127.0.0.1:8080
 # 通讯TOKEN [必填]：非空时启用；
 xxl.mq.admin.accesstoken=defaultaccesstoken
 
@@ -396,7 +396,7 @@ public void consume() {
 ### 2.6 功能测试 & 性能测试
 
 依次启动 “消息中心”、 "springboot版本示例项目"、"frameless版本示例项目"，访问地址如下：
-- 消息中心：http://127.0.0.1:8080/xxl-mq-admin
+- 消息中心：http://127.0.0.1:8080
 - "springboot版本示例项目"：http://127.0.0.1:8081/
 
 访问部署成功的 "springboot版本示例项目" 地址，浏览器访问展示如下如下：
@@ -1013,7 +1013,7 @@ Header：
 - 3、【优化】增加主题皮肤选项并优化界面交互；
 - 4、【优化】表格交互优化：优化分页显示配置；禁用分页循环；多选行操作优化/默认单选；
 
-### v1.9.1 Release Notes[ING]
+### v1.9.1 Release Notes[2026-06-07]
 - 1、【优化】Topic消费者服务隔离，限制消息中心绑定的Appname才允许消费（ISSUE-53）；
 - 2、【优化】消息中心OpenAPI校验token调整，由“XXL_MQ_ACCESS_TOKEN”调整为“XXL-MQ-ACCESS-TOKEN”，兼容nginx代理场景参数传递（本版本兼容旧版本参数，客户端不需要升级）；
 - 3、【升级】升级多项maven依赖至较新版本，如 spring、mybatis、xxl-sso 等；
@@ -1037,6 +1037,12 @@ Header：
     ```
 </details>
 
+- 5、【调整】消息中心移除context-path前缀配置项，简化客户端配置；
+  （存量客户端升级需要注意：升级后需要将配置项 "xxl.mq.admin.address" 中的 context-path 前缀移除）
+- 6、【重构】项目结构AI Ready重构，将业务逻辑与数据访问逻辑分离，提升项目可读性与可维护性；
+
+
+### v1.9.2 Release Notes[ING]
 - 5、【ING】注册节点完善：展示IP、时间等扩展信息；
 - 6、【ING】消费者限流：消费preCheck时校验topic状态与限流控制，增加限流控制逻辑；
 

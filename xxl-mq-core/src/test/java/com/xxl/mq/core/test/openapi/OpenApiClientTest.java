@@ -15,7 +15,7 @@ import java.util.List;
 public class OpenApiClientTest {
     private static Logger logger = LoggerFactory.getLogger(OpenApiClientTest.class);
 
-    private static String url = "http://127.0.0.1:8080/xxl-mq-admin";
+    private static String url = "http://127.0.0.1:8080";
     private static String accessToken = "defaultaccesstoken";
 
     private BrokerService buildClient(){

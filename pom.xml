@@ -31,8 +31,8 @@
 		<maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
 		<central-publishing-maven-plugin.version>0.10.0</central-publishing-maven-plugin.version>
 		<!-- base -->
-		<slf4j-api.version>2.0.17</slf4j-api.version>
-		<junit-jupiter.version>6.0.3</junit-jupiter.version>
+		<slf4j-api.version>2.0.18</slf4j-api.version>
+		<junit-jupiter.version>6.1.0</junit-jupiter.version>
 
 		<!-- spring -->
 		<spring-boot.version>4.0.6</spring-boot.version>
