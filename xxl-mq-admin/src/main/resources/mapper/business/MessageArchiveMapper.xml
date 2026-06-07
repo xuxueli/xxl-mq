@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xxl.mq.admin.mapper.MessageArchiveMapper">
+<mapper namespace="com.xxl.mq.admin.business.mapper.MessageArchiveMapper">
 
-    <resultMap id="MessageArchive" type="com.xxl.mq.admin.model.entity.MessageArchive" >
+    <resultMap id="MessageArchive" type="com.xxl.mq.admin.business.model.entity.MessageArchive" >
         <result column="id" property="id" />
         <result column="topic" property="topic" />
         <result column="partition_id" property="partitionId" />
@@ -172,7 +172,7 @@
         )
     </delete>
 
-    <select id="queryReport" resultType="com.xxl.mq.admin.model.entity.MessageReport" >
+    <select id="queryReport" resultType="com.xxl.mq.admin.business.model.entity.MessageReport" >
         SELECT
             DATE_FORMAT(t.`add_time`,'%Y-%m-%d') produceDay,
             SUM(CASE WHEN t.`status` = 0 then 1 else 0 end) as newCount,

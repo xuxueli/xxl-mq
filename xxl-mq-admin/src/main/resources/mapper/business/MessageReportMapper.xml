@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xxl.mq.admin.mapper.MessageReportMapper">
+<mapper namespace="com.xxl.mq.admin.business.mapper.MessageReportMapper">
 
-    <resultMap id="MessageArchive" type="com.xxl.mq.admin.model.entity.MessageReport" >
+    <resultMap id="MessageArchive" type="com.xxl.mq.admin.business.model.entity.MessageReport" >
         <result column="id" property="id" />
         <result column="produce_day" property="produceDay" />
         <result column="new_count" property="newCount" />

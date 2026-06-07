@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xxl.mq.admin.mapper.TopicMapper">
+<mapper namespace="com.xxl.mq.admin.business.mapper.TopicMapper">
 
-    <resultMap id="Topic" type="com.xxl.mq.admin.model.entity.Topic" >
+    <resultMap id="Topic" type="com.xxl.mq.admin.business.model.entity.Topic" >
         <result column="id" property="id" />
         <result column="appname" property="appname" />
         <result column="topic" property="topic" />
