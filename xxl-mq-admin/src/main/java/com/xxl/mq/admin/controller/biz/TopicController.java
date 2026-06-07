@@ -55,7 +55,7 @@ public class TopicController {
         List<Application> applicationList = findPermissionApplication(request, applicationService);
         model.addAttribute("applicationList", applicationList);
 
-        return "biz/topic";
+        return "business/topic";
     }
 
     /**

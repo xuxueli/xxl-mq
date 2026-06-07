@@ -62,7 +62,7 @@ public class MessageArchiveController {
         // param
         model.addAttribute("topic", topic);
 
-        return "biz/messageArchive";
+        return "business/messageArchive";
     }
 
     /**

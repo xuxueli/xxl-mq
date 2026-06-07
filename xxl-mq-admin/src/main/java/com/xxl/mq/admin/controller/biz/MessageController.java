@@ -61,7 +61,7 @@ public class MessageController {
         // param
         model.addAttribute("topic", topic);
 
-        return "biz/message";
+        return "business/message";
     }
 
     /**
