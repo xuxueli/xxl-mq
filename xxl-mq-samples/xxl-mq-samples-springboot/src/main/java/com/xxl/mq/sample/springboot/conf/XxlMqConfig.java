@@ -25,10 +25,13 @@ public class XxlMqConfig {
     private int batchsize;
     @Value("${xxl.mq.client.consumer.pull.interval}")
     private int interval;
-
+    @Value("${xxl.mq.client.consumer.threadPoolSize}")
+    private int consumerThreadPoolSize;
+    @Value("${xxl.mq.client.consumer.threadPoolMaxSize}")
+    private int consumerThreadPoolMaxSize;
 
     @Bean
-    public XxlMqSpringBootstrap getXxlMqConsumer(){
+    public XxlMqSpringBootstrap getXxlMqConsumer() {
         // init xxl-mq spring bootstrap
         XxlMqSpringBootstrap xxlMqBootstrap = new XxlMqSpringBootstrap();
         xxlMqBootstrap.setAddress(address);
@@ -38,7 +41,8 @@ public class XxlMqConfig {
         xxlMqBootstrap.setConsumerEnabled(consumerEnabled);
         xxlMqBootstrap.setPullBatchsize(batchsize);
         xxlMqBootstrap.setPullInterval(interval);
-
+        xxlMqBootstrap.setConsumerThreadPoolSize(consumerThreadPoolSize);
+        xxlMqBootstrap.setConsumerThreadPoolMaxSize(consumerThreadPoolMaxSize);
         return xxlMqBootstrap;
     }
 
