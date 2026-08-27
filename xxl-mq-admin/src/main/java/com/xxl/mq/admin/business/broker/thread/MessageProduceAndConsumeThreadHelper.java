@@ -316,8 +316,10 @@ public class MessageProduceAndConsumeThreadHelper {
         // 1、消息检索
         int pagesize = pullRequest.getBatchsize();
         Date prePullTime = DateTool.addSeconds(new Date(), 30);
+        // Only query topics validated to belong to the requesting application.
+        // Reusing the original request list here could bypass the application isolation check above.
         List<Message> messageList = brokerBootstrap.getMessageMapper().pullQuery(
-                pullRequest.getTopicList(),
+                validTopicList,
                 MessageStatusEnum.NEW.getValue(),
                 partitionRange.getPartitionIdFrom(),
                 partitionRange.getPartitionIdTo(),
