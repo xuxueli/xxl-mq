@@ -1,7 +1,6 @@
 package com.xxl.mq.admin.business.service.impl;
 
 import com.xxl.mq.admin.business.constant.enums.ArchiveStrategyEnum;
-import com.xxl.mq.core.constant.MessageStatusEnum;
 import com.xxl.mq.admin.business.mapper.*;
 import com.xxl.mq.admin.business.model.adaptor.MessageAdaptor;
 import com.xxl.mq.admin.business.model.dto.MessageDTO;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
@@ -41,6 +39,8 @@ public class MessageServiceImpl implements MessageService {
 	private ApplicationMapper applicationMapper;
 	@Resource
 	private MessageArchiveMapper messageArchiveMapper;
+	@Resource
+	private MessageArchiveBatchService messageArchiveBatchService;
 
 	/**
     * 新增
@@ -184,37 +184,16 @@ public class MessageServiceImpl implements MessageService {
 				effectTimeFrom = null;
 				break;
 		}
-		Date finalEffectTimeFrom = effectTimeFrom;
-
-		// init param
-		List<Integer> archiveStatusList = Stream.of(MessageStatusEnum.EXECUTE_SUCCESS, MessageStatusEnum.EXECUTE_FAIL, MessageStatusEnum.EXECUTE_TIMEOUT)
-				.map(MessageStatusEnum::getValue)
-				.collect(Collectors.toList());
-
-		// do archive
+		// Process one small transaction per batch. A single transaction for the
+		// complete archive job could otherwise hold locks for hundreds of thousands of rows.
 		int pageSize = 100;
 		long archiveNum = 0;
-		List<Message> messageList = messageMapper.queryFinishedData(topic, archiveStatusList, MessageStatusEnum.EXECUTE_SUCCESS.getValue(),  pageSize);
-		while (maxCycleCount>0 && CollectionTool.isNotEmpty(messageList)){			// maxCycleCount: Avoid dead loops
-
-			// 1、clean finished message
-			List<Long> ids = messageList.stream().map(Message::getId).collect(Collectors.toList());
-			messageMapper.delete(ids);
-			archiveNum += ids.size();
-
-			// 2、write to archive table （new）
-			if (isArchive) {
-				List<MessageArchive> messageArchiveList = messageList.stream()
-						.filter(message -> message.getEffectTime().after(finalEffectTimeFrom))
-						.map(MessageAdaptor::adaptorToArchive)
-						.collect(Collectors.toList());
-				if (CollectionTool.isNotEmpty(messageArchiveList)) {
-					messageArchiveMapper.batchInsert(messageArchiveList);
-				}
+		while (maxCycleCount > 0) {
+			int archiveBatchCount = messageArchiveBatchService.archiveBatch(topic, isArchive, effectTimeFrom, pageSize);
+			if (archiveBatchCount == 0) {
+				break;
 			}
-
-			// next page
-			messageList = messageMapper.queryFinishedData(topic, archiveStatusList, MessageStatusEnum.EXECUTE_SUCCESS.getValue(), pageSize);
+			archiveNum += archiveBatchCount;
 			maxCycleCount--;
 		}
 
