@@ -264,8 +264,7 @@
     <select id="pullQueryByUuid" parameterType="java.util.Map" resultMap="Message">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_mq_message AS t
-        WHERE t.`topic` = #{topic}
-        AND t.`id` IN
+        WHERE t.`id` IN
             <foreach collection="messageIdList" item="item" open="(" close=")" separator="," >
                 #{item}
             </foreach>
